@@ -1,12 +1,12 @@
 # Basic
-title: 潘柏信
+title: YUKIPEDIA
 subtitle: 个人站
-description: 欢迎来到我的个人站~
+description: 一个baka
 # 头像里面的标题
-avatarTitle: leopardpan
+avatarTitle: YUKIPEDIA
 # 头像里面的描述
-avatarDesc: iOS / 机器学习
-url: "http://leopardpan.cn"
+avatarDesc: XMU-SE Student
+url: "https://yuk1pedia.github.io/"
 
 # 博客是否自动生成目录，false为不生成
 enableToc: true
@@ -14,30 +14,26 @@ enableToc: true
 # Comment
 comment:
     # livere: MTAyMC81MDk5NC8yNzQ3Ng  # https://www.livere.com
-    disqus: leopard
+    # disqus: leopard
     # uyan: 2143225  # 有言id,登录有言官网申请
 
 # Social
 social:
-    weibo: 5366874726 
-    github: leopardpan
+    # weibo: 5366874726
+    github: YUK1PEDIA
     # zhihu: panpanleopard
     # juejin: xxx
-    jianshu: 2ada30d8d0f7
-    # twitter: 
-    mail: leopardpan@icloud.com
+    # jianshu: 2ada30d8d0f7
+    # twitter:
+    mail: 18627927506@163.com
 
 
-# 百度统计 
-# 使用博客模板请去掉或者更换 id 
-baidu:
-    id: 8ba1c6be0953b6f9c2ba38e57f615421  
-
-# Google Analytics
+# 百度统计
 # 使用博客模板请去掉或者更换 id
-ga:
-    id: UA-84134159-3  
-    host: auto  
+baidu:
+    id: 69e60d48c4d8e8f9bae76af19a2d1801
+
+
 
 
 # 《----------------- 上面的信息修改成你自己的 ---------------------------》
@@ -65,15 +61,13 @@ blog_button:
 
 # Navigation buttons in the front page.s
 nav:
-    - {title: 所有文章, description: archive, url: '/archive'}   
-    - {title: 标签, description: tags, url: '/tags'}      
-    - {title: 技术支持, description: support, url: '/support'}      
-    - {title: 关于我, description: about, url: '/about'}   
-    
+    - {title: 所有文章, description: archive, url: '/archive'}
+    - {title: 标签, description: tags, url: '/tags'}
+    - {title: 技术支持, description: support, url: '/support'}
+    - {title: 关于我, description: about, url: '/about'}
+
 
 # Pagination
 gems: [jekyll-paginate,jekyll-sitemap]
 paginate: 20
 paginate_path: "page/:num/"
-
-
