@@ -64,11 +64,11 @@ void traverse(TreeNode root) {
 
 - **首先，网格结构中的格子有多少相邻节点**？答案是上下左右四个。对于格子 `(r, c)` 来说（`r` 和 `c`分别代表行坐标和列坐标），四个相邻的格子分别是 `(r-1, c)` 、 `(r+1, c)` 、 `(r, c-1)` 、 `(r, c+1)` 。换句话说，网格结构是「四叉」的
 
-![网格结构中四个相邻的格子](https://pic.leetcode-cn.com/63f5803e9452ccecf92fa64f54c887ed0e4e4c3434b9fb246bf2b410e4424555.jpg) 
+![网格结构中四个相邻的格子](https://pic.leetcode-cn.com/63f5803e9452ccecf92fa64f54c887ed0e4e4c3434b9fb246bf2b410e4424555.jpg)
 
 - **其次，网格DFS中的 `base case` 是什么**？从二叉树的 `base case` 对应过来，应该是网格中不需要继续遍历、 **`grid[r][c]` 会出现数组下标越界异常的格子，也就是那些超出网格范围的格子**。
 
-![网格 DFS 的 base case](https://pic.leetcode-cn.com/5a91ec351bcbe8e631e7e3e44e062794d6e53af95f6a5c778de369365b9d994e.jpg) 
+![网格 DFS 的 base case](https://pic.leetcode-cn.com/5a91ec351bcbe8e631e7e3e44e062794d6e53af95f6a5c778de369365b9d994e.jpg)
 
 
 
@@ -92,7 +92,7 @@ void dfs(int[][] grid, int r, int c) {
 
 // 判断坐标 (r, c) 是否在网格中
 boolean inArea(int[][] grid, int r, int c) {
-    return 0 <= r && r < grid.length 
+    return 0 <= r && r < grid.length
         	&& 0 <= c && c < grid[0].length;
 }
 ```
@@ -107,7 +107,7 @@ boolean inArea(int[][] grid, int r, int c) {
 
 这时候，DFS可能会不停的**「兜圈子」**，永远停不下来。
 
-![DFS 遍历可能会兜圈子（动图）](https://pic.leetcode-cn.com/7fec64afe8ab72c5df17d6a41a9cc9ba3879f58beec54a8791cbf108b9fd0685.gif) 
+![DFS 遍历可能会兜圈子（动图）](https://pic.leetcode-cn.com/7fec64afe8ab72c5df17d6a41a9cc9ba3879f58beec54a8791cbf108b9fd0685.gif)
 
 如何避免这样的重复遍历？答案是标记已经遍历过的格子。以岛屿问题为例，我们需要在所有值为 1 的陆地格子上进行DFS。**每走过一个陆地格子，就把格子的值改为 2**，这样当我们遇到 2 的时候，就知道这是遍历过的格子了。也就是说，每个格子可能取三个值：
 
@@ -128,7 +128,7 @@ void dfs(int[][] grid, int r, int c) {
         return;
     }
     grid[r][c] = 2; // 将格子标记为「已遍历过」
-    
+
     // 访问上、下、左、右四个相邻结点
     dfs(grid, r - 1, c);
     dfs(grid, r + 1, c);
@@ -138,12 +138,12 @@ void dfs(int[][] grid, int r, int c) {
 
 // 判断坐标 (r, c) 是否在网格中
 boolean inArea(int[][] grid, int r, int c) {
-    return 0 <= r && r < grid.length 
+    return 0 <= r && r < grid.length
         	&& 0 <= c && c < grid[0].length;
 }
 ```
 
-![标记已遍历的格子](https://pic.leetcode-cn.com/20fe202fb5e5fc5048e140c29310c1bcbb17661860d2441e8a3feb1236a2e44d.gif) 
+![标记已遍历的格子](https://pic.leetcode-cn.com/20fe202fb5e5fc5048e140c29310c1bcbb17661860d2441e8a3feb1236a2e44d.gif)
 
 这样，我们就得到了一个岛屿问题、乃至各种网格问题的通用DFS遍历方法。
 
@@ -161,7 +161,7 @@ boolean inArea(int[][] grid, int r, int c) {
 
 此外，你可以假设该网格的四条边均被水包围。
 
- 
+
 
 **示例 1：**
 
@@ -187,7 +187,7 @@ boolean inArea(int[][] grid, int r, int c) {
 输出：3
 ```
 
- 
+
 
 **提示：**
 
@@ -203,7 +203,7 @@ boolean inArea(int[][] grid, int r, int c) {
 ```c++
 class Solution {
 public:
-    {% raw %}
+  {% raw %}
 	vector<pair<int, int>> dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
 	{% endraw %}
     void dfs(vector<vector<char>>& grid, int x, int y) {
