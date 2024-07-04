@@ -203,7 +203,9 @@ boolean inArea(int[][] grid, int r, int c) {
 ```c++
 class Solution {
 public:
-    vector<pair<int, int>> dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    {% raw %}
+	vector<pair<int, int>> dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+	{% endraw %}
     void dfs(vector<vector<char>>& grid, int x, int y) {
         if (!judge(grid, x, y)) return;
         if (grid[x][y] == '1') {
@@ -241,4 +243,4 @@ public:
 
 
 
-有参考：https://leetcode.cn/problems/number-of-islands/solutions/211211/dao-yu-lei-wen-ti-de-tong-yong-jie-fa-dfs-bian-li-/
+参考：https://leetcode.cn/problems/number-of-islands/solutions/211211/dao-yu-lei-wen-ti-de-tong-yong-jie-fa-dfs-bian-li-/
