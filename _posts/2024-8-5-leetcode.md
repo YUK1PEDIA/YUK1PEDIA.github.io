@@ -919,6 +919,8 @@ public:
 
 
 
+
+
 # 12.找出有效子序列的最大长度（dp）
 
 给你一个整数数组 `nums` 和一个 **正** 整数 `k` 。
@@ -1338,3 +1340,375 @@ public:
     }
 };
 ```
+
+
+
+
+
+# 17.生成特殊数字的最少操作
+
+给你一个下标从 **0** 开始的字符串 `num` ，表示一个非负整数。
+
+在一次操作中，您可以选择 `num` 的任意一位数字并将其删除。请注意，如果你删除 `num` 中的所有数字，则 `num` 变为 `0`。
+
+返回最少需要多少次操作可以使 `num` 变成特殊数字。
+
+如果整数 `x` 能被 `25` 整除，则该整数 `x` 被认为是特殊数字。
+
+ 
+
+ 
+
+**示例 1：**
+
+```
+输入：num = "2245047"
+输出：2
+解释：删除数字 num[5] 和 num[6] ，得到数字 "22450" ，可以被 25 整除。
+可以证明要使数字变成特殊数字，最少需要删除 2 位数字。
+```
+
+**示例 2：**
+
+```
+输入：num = "2908305"
+输出：3
+解释：删除 num[3]、num[4] 和 num[6] ，得到数字 "2900" ，可以被 25 整除。
+可以证明要使数字变成特殊数字，最少需要删除 3 位数字。
+```
+
+**示例 3：**
+
+```
+输入：num = "10"
+输出：1
+解释：删除 num[0] ，得到数字 "0" ，可以被 25 整除。
+可以证明要使数字变成特殊数字，最少需要删除 1 位数字。
+```
+
+ 
+
+**提示**
+
+- `1 <= num.length <= 100`
+- `num` 仅由数字 `'0'` 到 `'9'` 组成
+- `num` 不含任何前导零
+
+
+
+## 思路
+
+一个数能被 25 整除，只需满足下列条件：
+
+- 如果是 1 位数，那么就是 0
+- 如果是 2 位数或者更多位数，那么它的**最后两位**必须是 00、25、50、75 中的一个
+
+我们观察第二种情况，可以得出我们只需要判断数字的最后两位即可。所以我们考虑**从右往左遍历**，当找到 0 或 5 的时候标记一下，继续往前找对应的数字，具体情况如下图：
+
+![lc2844.png](https://pic.leetcode.cn/1721712236-KMehiq-lc2844.png) 
+
+
+
+**当我们找到满足条件的内容时，直接返回 `n - i - 2` ， `i` 是当前遍历到的数字下标**。至于为什么是 `n - i - 2` ，因为 `n - i` 表示从第 `i` 位到数字末尾的长度，再 `-2` 表示在这段长度中减去满足条件的两个数字，即：`00、25、50、75` 
+
+```c++
+class Solution {
+public:
+    int minimumOperations(string num) {
+        int n = num.length();
+        bool found0 = false, found5 = false;
+        for (int i = n - 1; i >= 0; i--) {
+            char c = num[i];
+            if (found0 && (c == '0' || c == '5') ||
+                found5 && (c == '2' || c == '7')) {
+                return n - i - 2;
+            }
+            if (c == '0') {
+                found0 = true;
+            } else if (c == '5') {
+                found5 = true;
+            }
+        }
+        return n - found0;
+    }
+};
+```
+
+
+
+
+
+# 18.掉落的方块
+
+在二维平面上的 x 轴上，放置着一些方块。
+
+给你一个二维整数数组 `positions` ，其中 `positions[i] = [lefti, sideLengthi]` 表示：第 `i` 个方块边长为 `sideLengthi` ，其左侧边与 x 轴上坐标点 `lefti` 对齐。
+
+每个方块都从一个比目前所有的落地方块更高的高度掉落而下。方块沿 y 轴负方向下落，直到着陆到 **另一个正方形的顶边** 或者是 **x 轴上** 。一个方块仅仅是擦过另一个方块的左侧边或右侧边不算着陆。一旦着陆，它就会固定在原地，无法移动。
+
+在每个方块掉落后，你必须记录目前所有已经落稳的 **方块堆叠的最高高度** 。
+
+返回一个整数数组 `ans` ，其中 `ans[i]` 表示在第 `i` 块方块掉落后堆叠的最高高度。
+
+ 
+
+**示例 1：**
+
+![img](https://assets.leetcode.com/uploads/2021/04/28/fallingsq1-plane.jpg)
+
+```
+输入：positions = [[1,2],[2,3],[6,1]]
+输出：[2,5,5]
+解释：
+第 1 个方块掉落后，最高的堆叠由方块 1 组成，堆叠的最高高度为 2 。
+第 2 个方块掉落后，最高的堆叠由方块 1 和 2 组成，堆叠的最高高度为 5 。
+第 3 个方块掉落后，最高的堆叠仍然由方块 1 和 2 组成，堆叠的最高高度为 5 。
+因此，返回 [2, 5, 5] 作为答案。
+```
+
+**示例 2：**
+
+```
+输入：positions = [[100,100],[200,100]]
+输出：[100,100]
+解释：
+第 1 个方块掉落后，最高的堆叠由方块 1 组成，堆叠的最高高度为 100 。
+第 2 个方块掉落后，最高的堆叠可以由方块 1 组成也可以由方块 2 组成，堆叠的最高高度为 100 。
+因此，返回 [100, 100] 作为答案。
+注意，方块 2 擦过方块 1 的右侧边，但不会算作在方块 1 上着陆。
+```
+
+ 
+
+**提示：**
+
+- `1 <= positions.length <= 1000`
+- `1 <= lefti <= 10^8`
+- `1 <= sideLengthi <= 10^6`
+
+
+
+## 思路
+
+数据量不是很大，我们顺序遍历每个方块，对于每个方块再从头开始枚举已经稳定下来的方块，判断两个方块是否有重合，如果有就更新当前方块的最大高度即可。
+
+```c++
+class Solution {
+public:
+    vector<int> fallingSquares(vector<vector<int>>& positions) {
+        int n = positions.size();
+        vector<int> height(n);
+        for (int i = 0; i < n; ++i) {
+            // 当前方块的左右边界
+            int left1 = positions[i][0], right1 = positions[i][0] + positions[i][1] - 1;
+            height[i] = positions[i][1];
+            // 从头开始枚举，判断当前方块与前面稳定的方块是否有重叠
+            for (int j = 0; j < i; ++j) {
+                int left2 = positions[j][0], right2 = positions[j][0] + positions[j][1] - 1;
+                // 如果有重叠，更新最大答案
+                if (right1 >= left2 && right2 >= left1) {
+                    height[i] = max(height[i], height[j] + positions[i][1]);
+                }
+            }
+        }
+        // 最后更新一遍当前最大高度
+        for (int i = 1; i < n; ++i) {
+            height[i] = max(height[i], height[i-1]);
+        }
+        return height;
+    }
+};
+```
+
+
+
+
+
+
+
+# 19.另一棵树的子树
+
+给你两棵二叉树 `root` 和 `subRoot` 。检验 `root` 中是否包含和 `subRoot` 具有相同结构和节点值的子树。如果存在，返回 `true` ；否则，返回 `false` 。
+
+二叉树 `tree` 的一棵子树包括 `tree` 的某个节点和这个节点的所有后代节点。`tree` 也可以看做它自身的一棵子树。
+
+ 
+
+**示例 1：**
+
+![img](https://assets.leetcode.com/uploads/2021/04/28/subtree1-tree.jpg)
+
+```
+输入：root = [3,4,5,1,2], subRoot = [4,1,2]
+输出：true
+```
+
+**示例 2：**
+
+![img](https://assets.leetcode.com/uploads/2021/04/28/subtree2-tree.jpg)
+
+```
+输入：root = [3,4,5,1,2,null,null,null,null,0], subRoot = [4,1,2]
+输出：false
+```
+
+ 
+
+**提示：**
+
+- `root` 树上的节点数量范围是 `[1, 2000]`
+- `subRoot` 树上的节点数量范围是 `[1, 1000]`
+- `-10^4 <= root.val <= 10^4`
+- `-10^4 <= subRoot.val <= 10^4`
+
+
+
+## 思路
+
+数据范围不是很大，直接 dfs 判断是否有子树和另一棵树相等即可
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    // 检查两棵树是否相等
+    bool check(TreeNode* o, TreeNode* t) {
+        if (!o && !t) return true;
+        if ((o && !t) || (!o && t) || (o->val != t->val)) return false;
+        return check(o->left, t->left) && check(o->right, t->right);
+    }
+    bool dfs(TreeNode* o, TreeNode* t) {
+        if (!o) return false;
+        // 两棵树相等或者 o 的某棵子树和 t 相等
+        return check(o, t) || dfs(o->left, t) || dfs(o->right, t);
+    }
+    bool isSubtree(TreeNode* root, TreeNode* subRoot) {
+        return dfs(root, subRoot);
+    }
+};
+```
+
+
+
+
+
+# 20.新增道路查询后的最短距离Ⅰ
+
+给你一个整数 `n` 和一个二维整数数组 `queries`。
+
+有 `n` 个城市，编号从 `0` 到 `n - 1`。初始时，每个城市 `i` 都有一条**单向**道路通往城市 `i + 1`（ `0 <= i < n - 1`）。
+
+`queries[i] = [ui, vi]` 表示新建一条从城市 `ui` 到城市 `vi` 的**单向**道路。每次查询后，你需要找到从城市 `0` 到城市 `n - 1` 的**最短路径**的**长度**。
+
+返回一个数组 `answer`，对于范围 `[0, queries.length - 1]` 中的每个 `i`，`answer[i]` 是处理完**前** `i + 1` 个查询后，从城市 `0` 到城市 `n - 1` 的最短路径的*长度*。
+
+ 
+
+**示例 1：**
+
+**输入：** n = 5, queries = [[2, 4], [0, 2], [0, 4]]
+
+**输出：** [3, 2, 1]
+
+**解释：**
+
+![img](https://assets.leetcode.com/uploads/2024/06/28/image8.jpg)
+
+新增一条从 2 到 4 的道路后，从 0 到 4 的最短路径长度为 3。
+
+![img](https://assets.leetcode.com/uploads/2024/06/28/image9.jpg)
+
+新增一条从 0 到 2 的道路后，从 0 到 4 的最短路径长度为 2。
+
+![img](https://assets.leetcode.com/uploads/2024/06/28/image10.jpg)
+
+新增一条从 0 到 4 的道路后，从 0 到 4 的最短路径长度为 1。
+
+**示例 2：**
+
+**输入：** n = 4, queries = [[0, 3], [0, 2]]
+
+**输出：** [1, 1]
+
+**解释：**
+
+![img](https://assets.leetcode.com/uploads/2024/06/28/image11.jpg)
+
+新增一条从 0 到 3 的道路后，从 0 到 3 的最短路径长度为 1。
+
+![img](https://assets.leetcode.com/uploads/2024/06/28/image12.jpg)
+
+新增一条从 0 到 2 的道路后，从 0 到 3 的最短路径长度仍为 1。
+
+ 
+
+**提示：**
+
+- `3 <= n <= 500`
+- `1 <= queries.length <= 500`
+- `queries[i].length == 2`
+- `0 <= queries[i][0] < queries[i][1] < n`
+- `1 < queries[i][1] - queries[i][0]`
+- 查询中没有重复的道路。
+
+
+
+
+
+## 思路
+
+本题数据量不大，主要是熟悉 bfs 的使用
+
+```c++
+class Solution {
+public:
+    int bfs(int n, const vector<vector<int>>& city) {
+        // dist[i] 表示从第 0 个城市到达第 i 个城市所需要的最短距离
+        vector<int> dist(n, -1);
+        queue<int> q;
+        q.push(0);
+        dist[0] = 0;
+        while (!q.empty()) {
+            // 当前城市能够到达的城市
+            int u = q.front();
+            q.pop();
+            for (int v: city[u]) {
+                // 未访问过就更新
+                // 这里这样判断是因为我们是从前往后遍历城市的，当这个城市在前面被访问过，
+                // 那么从当前这个点再到这个城市的距离就会更大
+                if (dist[v] == -1) {
+                    dist[v] = dist[u] + 1;
+                    q.push(v);
+                }
+            }
+        }
+        return dist[n - 1];
+    }
+
+    vector<int> shortestDistanceAfterQueries(int n, vector<vector<int>>& queries) {
+        // 城市 i 能到达的城市
+        vector<vector<int>> city(n);
+        vector<int> ans;
+        for (int i = 0; i < n - 1; ++i) city[i].push_back(i + 1);
+        // 处理每次询问
+        for (auto &q : queries) {
+            // 对应城市加上能到达的城市
+            city[q[0]].push_back(q[1]);
+            // bfs 一次
+            ans.push_back(bfs(n, city));
+        }
+        return ans;
+    }
+};
+```
+
