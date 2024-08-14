@@ -5,6 +5,8 @@ description: 记录
 tag: 算法
 ---
 
+
+
 # 1.找出最具竞争力的子序列（单调栈+贪心）
 
 给你一个整数数组 `nums` 和一个正整数 `k` ，返回长度为 `k` 且最具 **竞争力** 的 `nums` 子序列。
@@ -1708,6 +1710,456 @@ public:
             ans.push_back(bfs(n, city));
         }
         return ans;
+    }
+};
+```
+
+
+
+
+
+# 21.判断子序列
+
+给定字符串 **s** 和 **t** ，判断 **s** 是否为 **t** 的子序列。
+
+字符串的一个子序列是原始字符串删除一些（也可以不删除）字符而不改变剩余字符相对位置形成的新字符串。（例如，`"ace"`是`"abcde"`的一个子序列，而`"aec"`不是）。
+
+**进阶：**
+
+如果有大量输入的 S，称作 S1, S2, ... , Sk 其中 k >= 10亿，你需要依次检查它们是否为 T 的子序列。在这种情况下，你会怎样改变代码？
+
+**致谢：**
+
+特别感谢 [@pbrother ](https://leetcode.com/pbrother/)添加此问题并且创建所有测试用例。
+
+ 
+
+**示例 1：**
+
+```
+输入：s = "abc", t = "ahbgdc"
+输出：true
+```
+
+**示例 2：**
+
+```
+输入：s = "axc", t = "ahbgdc"
+输出：false
+```
+
+ 
+
+**提示：**
+
+- `0 <= s.length <= 100`
+- `0 <= t.length <= 10^4`
+- 两个字符串都只由小写字符组成。
+
+
+
+## 思路
+
+首先，如果 `s` 是空串，直接返回 `true` ，因为空串是任何字符串的子序列。
+
+如果 `s` 不是空串，我们可以遍历 `t` ，在遍历的过程中看能否匹配 `s`  中的每个字母。按照子序列的定义，在遍历 `t` 的过程中，**把没匹配到的字母删除，剩下得就是匹配的字母**，即字符串 `s` ，这就说明 `s` 是 `t` 的子序列。
+
+具体算法如下：
+
+1. 初始化 `i = 0` 。
+2. 遍历字符串 `t` 中的字符 `c = t[j]` ，看其是否与 `s[i]`  匹配，如果匹配就把 `i` 加一。加一后，如果 `i` 等于 `s` 的长度，说明 `s` 的所有字符匹配完毕，`s` 是 `t` 的子序列，返回 `true` 。
+3. 如果遍历中没有返回，说明 `s` 不是 `t` 的子序列，返回 `false` 。
+
+代码如下：
+
+```c++
+class Solution {
+public:
+    bool isSubsequence(string s, string t) {
+        if (s.empty()) return true;
+        int i = 0;
+        for (auto c: t) if (s[i] == c && ++i == s.length()) return true;
+        return false;
+    }
+};
+```
+
+
+
+
+
+# 22.找出与数组相加的整数Ⅱ
+
+给你两个整数数组 `nums1` 和 `nums2`。
+
+从 `nums1` 中移除两个元素，并且所有其他元素都与变量 `x` 所表示的整数相加。如果 `x` 为负数，则表现为元素值的减少。
+
+执行上述操作后，`nums1` 和 `nums2` **相等** 。当两个数组中包含相同的整数，并且这些整数出现的频次相同时，两个数组 **相等** 。
+
+返回能够实现数组相等的 **最小** 整数 `x` 。
+
+ 
+
+**示例 1:**
+
+**输入：**nums1 = [4,20,16,12,8], nums2 = [14,18,10]
+
+**输出：**-2
+
+**解释：**
+
+移除 `nums1` 中下标为 `[0,4]` 的两个元素，并且每个元素与 `-2` 相加后，`nums1` 变为 `[18,14,10]` ，与 `nums2` 相等。
+
+**示例 2:**
+
+**输入：**nums1 = [3,5,5,3], nums2 = [7,7]
+
+**输出：**2
+
+**解释：**
+
+移除 `nums1` 中下标为 `[0,3]` 的两个元素，并且每个元素与 `2` 相加后，`nums1` 变为 `[7,7]` ，与 `nums2` 相等。
+
+ 
+
+**提示：**
+
+- `3 <= nums1.length <= 200`
+- `nums2.length == nums1.length - 2`
+- `0 <= nums1[i], nums2[i] <= 1000`
+- 测试用例以这样的方式生成：存在一个整数 `x`，`nums1` 中的每个元素都与 `x` 相加后，再移除两个元素，`nums1` 可以与 `nums2` 相等。
+
+
+
+
+
+## 思路
+
+把两个数组都从小到大排序。
+
+由于只能移除两个元素，**所以 `nums1` 的前三小元素必定有一个是保留下来的**，我们可以枚举**保留下来的最小元素**是 `nums1[0]` 还是 `nums1[1]` 还是 `nums1[2]` 。
+
+注意：保留下来的最小元素绝不可能是 `nums1[3]` 或更大的数，因为这意味着我们把前三小的数都移除了，而题目要求只能移除两个元素。
+
+例如排序后 `nums1 = [2, 5, 6, 7, 8, 10]` ，`nums2 = [3, 4, 5, 8]` ，如果 `nums1` 中保留下来的最小元素是 `nums1[1] = 5` ，那么 `x = nums2[0] - nums[1] = 3 - 5 = -2` ，这意味着我们把 `nums1` 的每个数都加上 `x = -2` ，得到 `nums1' = [0, 3, 4, 5, 6, 8]` ，问题就变成判断 `nums2` 是否为 `nums1'` 的子序列，如果是子序列，那么就可以移除多余的两个数了。判断是否是子序列参照上一题 T21.
+
+```c++
+class Solution {
+public:
+    int minimumAddedInteger(vector<int>& nums1, vector<int>& nums2) {
+        sort(nums1.begin(), nums1.end());
+        sort(nums2.begin(), nums2.end());
+        // 前三小的数一定有一个保留下来，枚举留下来的数
+        for (int i = 2; i > 0; --i) {
+            int x = nums2[0] - nums1[i];
+            int j = 0;
+            // 判断子序列
+            for (int k = i; k < nums1.size(); ++k) {
+                if (nums2[j] == nums1[k] + x && ++j == nums2.size()) return x;
+            }
+        }
+        return nums2[0] - nums1[0];
+    }
+};
+```
+
+
+
+
+
+
+
+# 23.统计好节点的数目（建树+dfs）
+
+现有一棵 **无向** 树，树中包含 `n` 个节点，按从 `0` 到 `n - 1` 标记。树的根节点是节点 `0` 。给你一个长度为 `n - 1` 的二维整数数组 `edges`，其中 `edges[i] = [ai, bi]` 表示树中节点 `ai` 与节点 `bi` 之间存在一条边。
+
+如果一个节点的所有子节点为根的子树包含的节点数相同，则认为该节点是一个 **好节点**。
+
+
+
+返回给定树中 **好节点** 的数量。
+
+**子树** 指的是一个节点以及它所有后代节点构成的一棵树。
+
+ 
+
+ 
+
+**示例 1：**
+
+**输入：**edges = [[0,1],[0,2],[1,3],[1,4],[2,5],[2,6]]
+
+**输出：**7
+
+**说明：**
+
+![img](https://assets.leetcode.com/uploads/2024/05/26/tree1.png)
+
+树的所有节点都是好节点。
+
+**示例 2：**
+
+**输入：**edges = [[0,1],[1,2],[2,3],[3,4],[0,5],[1,6],[2,7],[3,8]]
+
+**输出：**6
+
+**说明：**
+
+![img](https://assets.leetcode.com/uploads/2024/06/03/screenshot-2024-06-03-193552.png)
+
+树中有 6 个好节点。上图中已将这些节点着色。
+
+**示例 3：**
+
+**输入：**edges = [[0,1],[1,2],[1,3],[1,4],[0,5],[5,6],[6,7],[7,8],[0,9],[9,10],[9,12],[10,11]]
+
+**输出：**12
+
+**解释：**
+
+![img](https://assets.leetcode.com/uploads/2024/08/08/rob.jpg)
+
+除了节点 9 以外其他所有节点都是好节点。
+
+ 
+
+**提示：**
+
+- `2 <= n <= 10^5`
+- `edges.length == n - 1`
+- `edges[i].length == 2`
+- `0 <= ai, bi < n`
+- 输入确保 `edges` 总表示一棵有效的树。
+
+
+
+
+
+## 思路
+
+建树操作可以参考本题，使用 `unordered_map` 创建无向树（有向树和无向树的区别在于向 `unordered_map` 中 push 的内容）。
+
+**dfs 时要注意不要回溯到父节点**。这里利用 `unordered_set` 不允许重复元素的特性，判断当前节点的所有子节点为根的子树包含的节点数是否相等。
+
+```c++
+class Solution {
+private:
+    unordered_map<int, vector<int>> tree;
+    int goodNodes;
+public:
+    int dfs(int node, int parent) {
+        int size = 1; // 自身也算在子树节点数目中
+        unordered_set<int> childSizes;
+        for (auto child: tree[node]) {
+            if (child != parent) {
+                int childSubtreeSize = dfs(child, node);
+                size += childSubtreeSize;
+                childSizes.insert(childSubtreeSize);
+            }
+        }
+        if (childSizes.size() <= 1) {
+            goodNodes++;
+        }
+        return size;
+    }
+
+    int countGoodNodes(vector<vector<int>>& edges) {
+        int n = edges.size() + 1;
+        goodNodes = 0;
+        tree.clear();
+        for (const auto& edge: edges) {
+            tree[edge[0]].push_back(edge[1]);
+            tree[edge[1]].push_back(edge[0]);
+        }
+        dfs(0, -1);
+        return goodNodes;
+    }
+};
+```
+
+
+
+
+
+# 24.单调数组对的数目Ⅱ
+
+给你一个长度为 `n` 的 **正** 整数数组 `nums` 。
+
+如果两个 **非负** 整数数组 `(arr1, arr2)` 满足以下条件，我们称它们是 **单调** 数组对：
+
+- 两个数组的长度都是 `n` 。
+- `arr1` 是单调 **非递减** 的，换句话说 `arr1[0] <= arr1[1] <= ... <= arr1[n - 1]` 。
+- `arr2` 是单调 **非递增** 的，换句话说 `arr2[0] >= arr2[1] >= ... >= arr2[n - 1]` 。
+- 对于所有的 `0 <= i <= n - 1` 都有 `arr1[i] + arr2[i] == nums[i]` 。
+
+请你返回所有 **单调** 数组对的数目。
+
+由于答案可能很大，请你将它对 `109 + 7` **取余** 后返回。
+
+ 
+
+**示例 1：**
+
+**输入：**nums = [2,3,2]
+
+**输出：**4
+
+**解释：**
+
+单调数组对包括：
+
+1. `([0, 1, 1], [2, 2, 1])`
+2. `([0, 1, 2], [2, 2, 0])`
+3. `([0, 2, 2], [2, 1, 0])`
+4. `([1, 2, 2], [1, 1, 0])`
+
+**示例 2：**
+
+**输入：**nums = [5,5,5,5]
+
+**输出：**126
+
+ 
+
+**提示：**
+
+- `1 <= n == nums.length <= 2000`
+- `1 <= nums[i] <= 1000`
+
+
+
+## 思路
+
+记 `f(i, j)` 表示考虑前 `i` 个元素，且 `arr1[i] = j` 的方案数。
+
+由于 `arr1[i] + arr2[i] == nums[i]` ，因此 `arr2[i] = nums[i] - arr1[i] = nums[i] - j` 。
+
+考虑 `arr1[i-1] = j'` ，根据题目要求：
+
+- `arr1` 非递减，因此 `j' <= j`
+- `arr2` 非递增，因此 `nums[i] - j <= nums[i-1] - j'` ，移项得 `j' <= j + nums[i-1] - nums[i]`
+
+因此 `f(i, j) = sum(f(i-1, j'))` ，其中 `j' <= min(j, j + nums[i-1] - nums[i])` ，可以使用前缀和优化。
+
+```c++
+class Solution {
+public:
+    int countOfPairs(vector<int>& nums) {
+        int n = nums.size();
+        int mx = 0;
+        for (int x : nums) mx = max(mx, x);
+        const int MOD = 1e9 + 7;
+
+        // 初始化 f[0][j] 以及对应的前缀和
+        long long f[n][mx+1], g[n][mx+1];
+        memset(f, 0, sizeof(f)); memset(g, 0, sizeof(g));
+        for (int i = 0; i <= nums[0]; i++) f[0][i] = 1;
+        g[0][0] = f[0][0];
+        for (int i = 1; i <= mx; i++) g[0][i] = (g[0][i - 1] + f[0][i]) % MOD;
+
+        for (int i = 1; i < n; i++) {
+            // 计算单个 DP 状态
+            for (int j = 0; j <= nums[i]; j++) {
+                int lim = min(j, j + nums[i - 1] - nums[i]);
+                if (lim >= 0) f[i][j] = g[i - 1][lim];
+            }
+            // 计算前缀和
+            g[i][0] = f[i][0];
+            for (int j = 1; j <= mx; j++) g[i][j] = (g[i][j - 1] + f[i][j]) % MOD;
+        }
+
+        return g[n - 1][mx];
+    }
+};
+```
+
+
+
+
+
+# 25.特殊数组Ⅱ（前缀和）
+
+如果数组的每一对相邻元素都是两个奇偶性不同的数字，则该数组被认为是一个 **特殊数组** 。
+
+你有一个整数数组 `nums` 和一个二维整数矩阵 `queries`，对于 `queries[i] = [fromi, toi]`，请你帮助你检查 
+
+子数组 `nums[fromi..toi]` 是不是一个 **特殊数组** 。
+
+
+
+返回布尔数组 `answer`，如果 `nums[fromi..toi]` 是特殊数组，则 `answer[i]` 为 `true` ，否则，`answer[i]` 为 `false` 。
+
+ 
+
+**示例 1：**
+
+**输入：**nums = [3,4,1,2,6], queries = [[0,4]]
+
+**输出：**[false]
+
+**解释：**
+
+子数组是 `[3,4,1,2,6]`。2 和 6 都是偶数。
+
+**示例 2：**
+
+**输入：**nums = [4,3,1,6], queries = [[0,2],[2,3]]
+
+**输出：**[false,true]
+
+**解释：**
+
+1. 子数组是 `[4,3,1]`。3 和 1 都是奇数。因此这个查询的答案是 `false`。
+2. 子数组是 `[1,6]`。只有一对：`(1,6)`，且包含了奇偶性不同的数字。因此这个查询的答案是 `true`。
+
+ 
+
+**提示：**
+
+- `1 <= nums.length <= 10^5`
+- `1 <= nums[i] <= 10^5`
+- `1 <= queries.length <= 10^5`
+- `queries[i].length == 2`
+- `0 <= queries[i][0] <= queries[i][1] <= nums.length - 1`
+
+
+
+## 思路
+
+如果直接对于每个询问去遍历 `nums[from]到nums[to]` ，是 `O(n^2)` 的复杂度，看数据范围一定会超时。
+
+如果一个子数组存在一堆相邻元素，它们的奇偶性相同，那么这个子数组一定不是特殊数组。
+
+怎么快速判断是否有奇偶性相同的相邻元素？
+
+**我们考虑这样一个问题：对于一个只含有 0 和 1 的数组，如何快速判断一个子数组是否全为 0 ？**
+
+**如果子数组的元素和为 0** ，那么这个子数组一定全为 0 ；**如果子数组的元素和大于 0** ，那么子数组一定包含 1 。
+
+对于本题，定义一个长度为 `n-1` 的数组，`a` ，其中：
+
+![1.png](https://s2.loli.net/2024/08/14/KHQfiU3x1BnzajM.png)
+
+如果 `a` 的下标从 `from` 到 `to-1` 的子数组和等于 0 ，就说明 `nums` 的下标从 `from` 到 `to` 的这个子数组，其所有相邻元素的奇偶性都不同，那么该子数组就为特殊数组。
+
+计算 `a` 的前缀和 `s` ，可以快速判断子数组和是否为 0 ，也就是判断：`s[to] - s[from] = 0` ，即：`s[from] = s[to]`
+
+代码如下：
+
+```c++
+class Solution {
+public:
+    vector<bool> isArraySpecial(vector<int>& nums, vector<vector<int>>& queries) {
+        vector<int> s(nums.size());
+        for (int i = 1; i < nums.size(); ++i) {
+            s[i] = s[i-1] + (nums[i-1] % 2 == nums[i] % 2);
+        }
+        vector<bool> res(queries.size());
+        for (int i = 0; i < queries.size(); ++i) {
+            auto& q = queries[i];
+            res[i] = s[q[0]] == s[q[1]];
+        }
+        return res;
     }
 };
 ```
