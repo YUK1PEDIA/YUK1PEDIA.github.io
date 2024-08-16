@@ -3656,8 +3656,14 @@ public:
         vector<string> ans;
         string temp = "";
         unordered_map<char, string> map;
-        map = {{'2', "abc"}, {'3', "def"}, {'4', "ghi"}, {'5', "jkl"}, {'6', "mno"},
-        {'7', "pqrs"}, {'8', "tuv"}, {'9', "wxyz"}};
+        map.insert({'2', "abc"});
+        map.insert({'3', "def"});
+        map.insert({'4', "ghi"});
+        map.insert({'5', "jkl"});
+        map.insert({'6', "mno"});
+        map.insert({'7', "pqrs"});
+        map.insert({'8', "tuv"});
+        map.insert({'9', "wxyz"});
         dfs(temp, ans, 0, digits, map);
         return ans;
     }
