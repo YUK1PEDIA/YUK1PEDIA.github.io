@@ -3878,7 +3878,7 @@ public:
 class Solution {
 public:
     bool vis[10][10] = {false};
-    vector<pair<int, int>> dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    vector<pair<int, int>> dir = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
 
     bool dfs(vector<vector<char>>& board, string& word, int depth, int row,
     int col) {
@@ -7526,7 +7526,7 @@ public:
 ```c++
 class Solution {
 public:
-    vector<pair<int, int>> dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    vector<pair<int, int>> dir = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
     void dfs(vector<vector<char>>& grid, int x, int y) {
         if (!judge(grid, x, y)) return;
         if (grid[x][y] == '1') {
@@ -7661,7 +7661,7 @@ while queue 非空:
 ```c++
 class Solution {
 public:
-    vector<pair<int, int>> dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    vector<pair<int, int>> dir = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
     int orangesRotting(vector<vector<int>>& grid) {
         int ans = 0, fresh = 0; // fresh记录新鲜橘子数
         queue<pair<int, int>> q;
