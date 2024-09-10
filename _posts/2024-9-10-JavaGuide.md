@@ -1,11 +1,11 @@
 ---
 layout: post
-title: JavaGuide
+title: JavaGuide——Java部分
 description: 记录
 tag: 笔记
 ---
 
-# JavaGuide
+# JavaGuide——Java部分
 
 ## 前言
 
@@ -13,11 +13,9 @@ tag: 笔记
 
 
 
-## 基础
+## 基本数据类型
 
-### 基本数据类型
-
-#### Java中的几种基本数据类型了解么？
+### Java中的几种基本数据类型了解么？
 
 Java中有 8 种基本数据类型：
 
@@ -56,7 +54,7 @@ Java 的每种基本类型所占存储空间的大小不会像其他大多数语
 
 
 
-#### 基本类型和包装类型的区别？
+### 基本类型和包装类型的区别？
 
 - **用途**：除了定义一些常量和局部变量之外，我们在其他地方比如**方法参数、对象属性**中很少会使用基本类型来定义变量。并且，**包装类型可用于泛型**，而基本类型不可以。
 - **存储方式**：基本数据类型的**局部变量**存放在 Java 虚拟机**栈**中的局部变量表中，基本数据类型的**成员变量**（未被 `static` 修饰 ）存放在 Java 虚拟机的**堆**中。**包装类型属于对象类型**，我们知道几乎所有对象实例都存在于堆中。
@@ -87,7 +85,7 @@ public class Test {
 
 
 
-#### 包装类型的缓存机制了解么？
+### 包装类型的缓存机制了解么？
 
 在 Java 中，包装类型的缓存机制是一种优化策略，用于提高性能和减少内存使用。通过缓存常用的包装类型对象，可以**避免在频繁创建相同值的对象时重复分配内存**。
 
@@ -175,7 +173,7 @@ System.out.println(i1==i2);
 
 
 
-#### 自动装箱和拆箱了解吗？原理是什么？
+### 自动装箱和拆箱了解吗？原理是什么？
 
 **什么是自动拆装箱？**
 
@@ -244,7 +242,7 @@ private static long sum() {
 
 
 
-#### 如何解决浮点数运算的精度丢失问题？
+### 如何解决浮点数运算的精度丢失问题？
 
 `BigDecimal` 可以实现对浮点数的运算，**不会造成精度丢失**。通常情况下，大部分需要浮点数精确运算结果的业务场景（比如涉及到钱的场景）都是通过 `BigDecimal` 来做的。
 
@@ -268,7 +266,7 @@ System.out.println(0 == x.compareTo(y)); /* true */
 
 
 
-#### 超过 long 整形的数据应该如何表示？
+### 超过 long 整形的数据应该如何表示？
 
 在 Java 中，64 位 long 整型是**最大的整数类型**。
 
@@ -286,9 +284,9 @@ System.out.println(l + 1 == Long.MIN_VALUE); // true
 
 
 
-### 变量
+## 变量
 
-#### 成员变量和局部变量的区别？
+### 成员变量和局部变量的区别？
 
 - **语法形式**：从语法形式上看，成员变量是属于类的，而局部变量是在代码块或方法中定义的变量或是方法的参数；成员变量可以被 `public`,`private`,`static` 等修饰符所修饰，而局部变量不能被访问控制修饰符及 `static` 所修饰；但是，成员变量和局部变量都能被 `final` 所修饰。
 
@@ -342,7 +340,7 @@ public class VariableExample {
 
 
 
-#### 静态变量有什么用？
+### 静态变量有什么用？
 
 静态变量也就是被 `static` 关键字修饰的变量。**它可以被类的所有实例共享**，无论一个类创建了多少个对象，它们都**共享同一份静态变量**。也就是说，**静态变量只会被分配一次内存**，即使创建多个对象，这样可以节省内存。
 
@@ -368,7 +366,7 @@ public class ConstantVariableExample {
 
 
 
-#### 字符型常量和字符串常量的区别？
+### 字符型常量和字符串常量的区别？
 
 - **形式** : **字符常量**是**单引号**引起的一个字符，**字符串常量**是**双引号**引起的 0 个或若干个字符。
 - **含义** : **字符常量相当于一个整型值**( ASCII 值),可以参加表达式运算; **字符串常量代表一个地址值**(该字符串在内存中存放位置)。
@@ -402,9 +400,9 @@ public class StringExample {
 
 
 
-### 方法
+## 方法
 
-#### 静态方法为什么不能调用非静态成员？
+### 静态方法为什么不能调用非静态成员？
 
 这个需要结合 JVM 的相关知识，主要原因如下：
 
@@ -417,7 +415,7 @@ public class StringExample {
 
 
 
-#### 静态方法和实例方法有什么不同？
+### 静态方法和实例方法有什么不同？
 
 **1、调用方式**
 
@@ -458,7 +456,7 @@ public class Person {
 
 
 
-#### 重载和重写有什么区别？
+### 重载和重写有什么区别？
 
 > 重载就是同样的一个方法能够根据输入数据的不同，做出不同的处理
 >
@@ -536,7 +534,7 @@ public class SuperSuperMan extends SuperMan {
 
 
 
-#### 什么是可变长参数？
+### 什么是可变长参数？
 
 从 Java5 开始，Java 支持定义可变长参数，**它允许你在调用方法时传递任意数量的参数**。这种方法参数声明使用省略号 `...` 来表示，紧跟在一个**基本类型或引用类型**的后面。就比如下面这个方法就可以接受 0 个或者多个参数。
 
@@ -612,4 +610,402 @@ public class VariableLengthArgument {
     // ......
 }
 ```
+
+
+
+
+
+
+
+## 面向对象基础
+
+### 面向对象和面向过程的区别
+
+面向过程编程（Procedural-Oriented Programming，POP）和面向对象编程（Object-Oriented Programming，OOP）是两种常见的编程范式，两者的主要区别在于解决问题的方式不同：
+
+- **面向过程编程（POP）**：面向过程把解决问题的过程拆成一个个方法，通过一个个方法的执行解决问题。
+- **面向对象编程（OOP）**：面向对象会先抽象出对象，然后用对象执行方法的方式解决问题。
+
+相比较于 POP，OOP 开发的程序一般具有下面这些优点：
+
+- **易维护**：由于良好的结构和封装性，OOP 程序通常更容易维护。
+- **易复用**：通过继承和多态，OOP 设计使得代码更具复用性，方便扩展功能。
+- **易扩展**：模块化设计使得系统扩展变得更加容易和灵活。
+
+POP 的编程方式通常更为简单和直接，适合处理一些较简单的任务。
+
+POP 和 OOP 的性能差异主要取决于它们的运行机制，而不仅仅是编程范式本身。因此，简单地比较两者的性能是一个常见的误区。
+
+![ POP 和 OOP  性能比较不合适](https://oss.javaguide.cn/github/javaguide/java/basis/pop-vs-oop-performance.png) 
+
+在选择编程范式时，性能并不是唯一的考虑因素。代码的可维护性、可扩展性和开发效率同样重要。
+
+现代编程语言基本都支持多种编程范式，既可以用来进行面向过程编程，也可以进行面向对象编程。
+
+下面是一个求圆的面积和周长的示例，简单分别展示了面向对象和面向过程两种不同的解决方案。
+
+**面向对象：**
+
+```java
+public class Circle {
+    // 定义圆的半径
+    private double radius;
+
+    // 构造函数
+    public Circle(double radius) {
+        this.radius = radius;
+    }
+
+    // 计算圆的面积
+    public double getArea() {
+        return Math.PI * radius * radius;
+    }
+
+    // 计算圆的周长
+    public double getPerimeter() {
+        return 2 * Math.PI * radius;
+    }
+
+    public static void main(String[] args) {
+        // 创建一个半径为3的圆
+        Circle circle = new Circle(3.0);
+
+        // 输出圆的面积和周长
+        System.out.println("圆的面积为：" + circle.getArea());
+        System.out.println("圆的周长为：" + circle.getPerimeter());
+    }
+}
+```
+
+我们定义了一个 `Circle` 类来表示圆，该类包含了圆的半径属性和计算面积、周长的方法。
+
+
+
+**面向过程：**
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        // 定义圆的半径
+        double radius = 3.0;
+
+        // 计算圆的面积和周长
+        double area = Math.PI * radius * radius;
+        double perimeter = 2 * Math.PI * radius;
+
+        // 输出圆的面积和周长
+        System.out.println("圆的面积为：" + area);
+        System.out.println("圆的周长为：" + perimeter);
+    }
+}
+```
+
+我们直接定义了圆的半径，并使用该半径直接计算出圆的面积和周长。
+
+
+
+
+
+### 创建一个对象用什么运算符？对象实体和对象引用有什么不同？
+
+new 运算符，new 创建对象实例（**对象实例在堆内存中**），对象引用指向对象实例（对象引用存放在栈内存中）。
+
+- 一个对象引用可以指向 0 个或 1 个对象（一根绳子可以不系气球，也可以系一个气球）；
+- 一个对象可以有 n 个引用指向它（可以用 n 条绳子系住一个气球）。
+
+
+
+
+
+### 对象的相等和引用相等的区别
+
+- **对象的相等**一般比较的是内存中存放的**内容是否相等**。
+- **引用相等**一般比较的是他们指向的**内存地址是否相等**。
+
+这里举一个例子：
+
+```java
+String str1 = "hello";
+String str2 = new String("hello");
+String str3 = "hello";
+// 使用 == 比较字符串的引用相等
+System.out.println(str1 == str2);
+System.out.println(str1 == str3);
+// 使用 equals 方法比较字符串的相等
+System.out.println(str1.equals(str2));
+System.out.println(str1.equals(str3));
+```
+
+输出结果：
+
+```java
+false
+true
+true
+true
+```
+
+从上面的代码输出结果可以看出：
+
+- `str1` 和 `str2` 不相等，而 `str1` 和 `str3` 相等。这是因为 `==` 运算符比较的是字符串的引用是否相等。
+- `str1`、 `str2`、`str3` 三者的内容都相等。这是因为`equals` 方法比较的是字符串的内容，即使这些字符串的对象引用不同，只要它们的内容相等，就认为它们是相等的。
+
+
+
+
+
+### 如果一个类没有声明构造方法，该程序能正确执行吗？
+
+构造方法是一种特殊的方法，主要作用是完成对象的初始化工作。
+
+如果一个类没有声明构造方法，也可以执行！因为一个类即使没有声明构造方法也会有默认的不带参数的构造方法。如果我们自己添加了类的构造方法（无论是否有参），Java 就不会添加默认的无参数的构造方法了。
+
+我们一直在不知不觉地使用构造方法，这也是为什么我们在创建对象的时候后面要加一个括号（因为要调用无参的构造方法）。**如果我们重载了有参的构造方法，记得都要把无参的构造方法也写出来（无论是否用到），因为这可以帮助我们在创建对象的时候少踩坑**。
+
+
+
+
+
+### 构造方法有哪些特点？是否可以被override？
+
+构造方法具有以下特点：
+
+- **名称与类名相同**：构造方法的名称必须与类名完全一致。
+- **没有返回值**：构造方法没有返回类型，且不能使用 `void` 声明。
+- **自动执行**：在生成类的对象时，构造方法会自动执行，无需显式调用。
+
+构造方法**不能被重写（override）**，但**可以被重载（overload）**。因此，一个类中可以有多个构造方法，这些构造方法可以具有不同的参数列表，以提供不同的对象初始化方式。
+
+
+
+
+
+### 面向对象的三大特征
+
+**封装**
+
+封装是指把一个对象的状态信息（也就是属性）隐藏在对象内部，不允许外部对象直接访问对象的内部信息。但是可以提供一些可以被外界访问的方法来操作属性。就好像我们看不到挂在墙上的空调的内部的零件信息（也就是属性），但是可以通过遥控器（方法）来控制空调。如果属性不想被外界访问，我们大可不必提供方法给外界访问。但是如果一个类没有提供给外界访问的方法，那么这个类也没有什么意义了。就好像如果没有空调遥控器，那么我们就无法操控空凋制冷，空调本身就没有意义了（当然现在还有很多其他方法 ，这里只是为了举例子）。
+
+```java
+public class Student {
+    private int id;//id属性私有化
+    private String name;//name属性私有化
+
+    //获取id的方法
+    public int getId() {
+        return id;
+    }
+
+    //设置id的方法
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    //获取name的方法
+    public String getName() {
+        return name;
+    }
+
+    //设置name的方法
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+
+
+
+**继承**
+
+不同类型的对象，相互之间经常有一定数量的共同点。例如，小明同学、小红同学、小李同学，都共享学生的特性（班级、学号等）。同时，每一个对象还定义了额外的特性使得他们与众不同。例如小明的数学比较好，小红的性格惹人喜爱；小李的力气比较大。继承是使用已存在的类的定义作为基础建立新类的技术，**新类的定义可以增加新的数据或新的功能**，也可以用父类的功能，**但不能选择性地继承父类**。通过使用继承，可以快速地创建新的类，可以提高代码的重用，程序的可维护性，节省大量创建新类的时间 ，提高我们的开发效率。
+
+**关于继承如下 3 点请记住：**
+
+1. 子类拥有父类对象所有的属性和方法（**包括私有属性和私有方法**），但是父类中的私有属性和方法子类是无法访问，**只是拥有**。
+2. 子类可以拥有自己属性和方法，即子类可以对父类进行扩展。
+3. 子类可以用自己的方式实现父类的方法。
+
+
+
+**多态**
+
+多态，顾名思义，表示一个对象具有多种的状态，具体表现为**父类的引用指向子类**的实例。
+
+**多态的特点:**
+
+- 对象类型和引用类型之间具有继承（类）/实现（接口）的关系；
+- 引用类型变量发出的方法调用的到底是哪个类中的方法，必须在程序运行期间才能确定；
+- 多态不能调用“只在子类存在但在父类不存在”的方法；
+- 如果子类重写了父类的方法，真正执行的是子类重写的方法，如果子类没有重写父类的方法，执行的是父类的方法。
+
+
+
+
+
+### 接口和抽象类有什么共同点和区别
+
+接口和抽象类的共同点
+
+- **实例化**：接口和抽象类都**不能直接实例化**，只能被实现（接口）或继承（抽象类）后才能创建具体的对象。
+- **抽象方法**：接口和抽象类都可以包含抽象方法。抽象方法没有方法体，必须在子类或实现类中实现。
+
+
+
+接口和抽象类的区别
+
+- **设计目的**：接口主要用于对类的行为进行约束，你实现了某个接口就具有了对应的行为。抽象类主要用于代码复用，强调的是所属关系。
+
+- **继承和实现**：一个类只能继承一个类（包括抽象类），因为 Java 不支持多继承。但一个类可以实现多个接口，一个接口也可以继承多个其他接口。
+
+- **成员变量**：接口中的成员变量只能是 `public static final` 类型的，不能被修改且必须有初始值。抽象类的成员变量可以有任何修饰符（`private`, `protected`, `public`），可以在子类中被重新定义或赋值。
+
+- **方法**： 
+
+  - Java 8 之前，接口中的方法默认是 `public abstract` ，也就是只能有方法声明。自 Java 8 起，可以在接口中定义 `default`（默认） 方法和 `static` （静态）方法。 自 Java 9 起，接口可以包含 `private` 方法。
+
+  - 抽象类可以包含抽象方法和非抽象方法。抽象方法没有方法体，必须在子类中实现。非抽象方法有具体实现，可以直接在抽象类中使用或在子类中重写。
+
+在 Java 8 及以上版本中，接口引入了新的方法类型：`default` 方法、`static` 方法和 `private` 方法。这些方法让接口的使用更加灵活。
+
+Java 8 引入的`default` 方法用于提供接口方法的默认实现，可以在实现类中被覆盖。这样就可以在不修改实现类的情况下向现有接口添加新功能，从而增强接口的扩展性和向后兼容性。
+
+```java
+public interface MyInterface {
+    default void defaultMethod() {
+        System.out.println("This is a default method.");
+    }
+}
+```
+
+Java 8 引入的`static` 方法无法在实现类中被覆盖，只能通过接口名直接调用（ `MyInterface.staticMethod()`），类似于类中的静态方法。`static` 方法通常用于定义一些通用的、与接口相关的工具方法，一般很少用。
+
+```java
+public interface MyInterface {
+    static void staticMethod() {
+        System.out.println("This is a static method in the interface.");
+    }
+}
+```
+
+Java 9 允许在接口中使用 `private` 方法。`private`方法可以用于在接口内部共享代码，不对外暴露。
+
+```java
+public interface MyInterface {
+    // default 方法
+    default void defaultMethod() {
+        commonMethod();
+    }
+
+    // static 方法
+    static void staticMethod() {
+        commonMethod();
+    }
+
+    // 私有静态方法，可以被 static 和 default 方法调用
+    private static void commonMethod() {
+        System.out.println("This is a private method used internally.");
+    }
+
+      // 实例私有方法，只能被 default 方法调用。
+    private void instanceCommonMethod() {
+        System.out.println("This is a private instance method used internally.");
+    }
+}
+```
+
+
+
+
+
+
+
+### 深拷贝和浅拷贝了解么？什么是引用拷贝？
+
+- **浅拷贝**：浅拷贝会在堆上创建一个新的对象（区别于引用拷贝的一点），不过，如果原对象内部的属性是引用类型的话，浅拷贝会直接复制内部对象的引用地址，也就是说拷贝对象和原对象共用同一个内部对象。
+
+- **深拷贝**：深拷贝会完全复制整个对象，包括这个对象所包含的内部对象。
+
+
+
+举个例子：
+
+**浅拷贝**
+
+浅拷贝的示例代码如下，我们这里实现了 `Cloneable` 接口，并重写了 `clone()` 方法。
+
+`clone()` 方法的实现很简单，直接调用的是父类 `Object` 的 `clone()` 方法。
+
+```java
+public class Address implements Cloneable{
+    private String name;
+    // 省略构造函数、Getter&Setter方法
+    @Override
+    public Address clone() {
+        try {
+            return (Address) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+}
+
+public class Person implements Cloneable {
+    private Address address;
+    // 省略构造函数、Getter&Setter方法
+    @Override
+    public Person clone() {
+        try {
+            Person person = (Person) super.clone();
+            return person;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+}
+```
+
+测试：
+
+```java
+Person person1 = new Person(new Address("武汉"));
+Person person1Copy = person1.clone();
+// true
+System.out.println(person1.getAddress() == person1Copy.getAddress());
+```
+
+从输出结构就可以看出， `person1` 的克隆对象和 `person1` 使用的仍然是同一个 `Address` 对象。
+
+
+
+**深拷贝**
+
+这里我们简单对 `Person` 类的 `clone()` 方法进行修改，连带着要把 `Person` 对象内部的 `Address` 对象一起复制。
+
+```java
+@Override
+public Person clone() {
+    try {
+        Person person = (Person) super.clone();
+        person.setAddress(person.getAddress().clone());
+        return person;
+    } catch (CloneNotSupportedException e) {
+        throw new AssertionError();
+    }
+}
+```
+
+测试：
+
+```java
+Person person1 = new Person(new Address("武汉"));
+Person person1Copy = person1.clone();
+// false
+System.out.println(person1.getAddress() == person1Copy.getAddress());
+```
+
+从输出结构就可以看出，显然 `person1` 的克隆对象和 `person1` 包含的 `Address` 对象已经是不同的了。
+
+**那什么是引用拷贝呢？** 简单来说，引用拷贝就是两个不同的引用指向同一个对象。
+
+![shallow&deep-copy](https://oss.javaguide.cn/github/javaguide/java/basis/shallow&deep-copy.png)
 
