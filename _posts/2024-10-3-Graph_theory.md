@@ -137,7 +137,7 @@ tag: 算法
 
 ### (3)图的存储结构
 
-具体可看原网站：[02. 图的存储结构和问题应用 | 算法通关手册（LeetCode） (itcharge.cn)](https://algo.itcharge.cn/08.Graph/01.Graph-Basic/02.Graph-Structure/)
+具体可看原网站：https://algo.itcharge.cn/08.Graph/01.Graph-Basic/02.Graph-Structure/
 
 
 
