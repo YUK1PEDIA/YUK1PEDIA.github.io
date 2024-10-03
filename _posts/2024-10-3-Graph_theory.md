@@ -5,10 +5,6 @@ description: 记录
 tag: 算法
 ---
 
-[TOC]
-
-
-
 # 图论
 
 ## 前言
@@ -339,6 +335,40 @@ public:
 注意，如果一个节点 *x* 在出堆前，其最短路长度 `dis[x]` 被多次更新，那么堆中会有多个重复的 *x* ，并且包含 *x* 的二元组中的 `dis[x]` 是互不相同的（因为我们只在找到更小的最短路时才会把二元组入堆）。
 
 所以写法一中的 `done` 数组可以省去，取而代之的是用出堆的最短路值（记作 `dx` ）与当前的 `dis[x]` 比较，如果 `dx > dis[x]` 说明 *x* 之前出堆过，我们已经更新了 *x* 的邻居的最短路，所以这次就不用更新了，继续外层循环。
+
+```c++
+class Solution {
+public:
+    int networkDelayTime(vector<vector<int>>& times, int n, int k) {
+        vector<vector<pair<int, int>>> g(n); // 邻接表
+        // 建图
+        for (auto& t: times) {
+            g[t[0]-1].emplace_back(t[1] - 1, t[2]);
+        }
+
+        vector<int> dis(n, INT_MAX);
+        dis[k-1] = 0;
+        // 最小堆中存放的是 (dis[i], i)
+        priority_queue<pair<int, int>, vector<pair<int, int>>, greater<>> pq;
+        pq.emplace(0, k - 1); // (dis[k], k) 入堆
+        while (!pq.empty()) {
+            auto [dx, x] = pq.top();
+            pq.pop();
+            // x 之前出堆过
+            if (dx > dis[x]) continue;
+            for (auto& [y, d] : g[x]) {
+                int new_dis = dx + d;
+                if (new_dis < dis[y]) {
+                    dis[y] = new_dis;
+                    pq.emplace(new_dis, y);
+                }
+            }
+        }
+        int mx = ranges::max(dis);
+        return mx < INT_MAX ? mx : -1;
+    }
+};
+```
 
 
 
