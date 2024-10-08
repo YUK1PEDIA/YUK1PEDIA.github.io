@@ -5,8 +5,6 @@ description: 记录
 tag: 算法
 ---
 
-# 快速幂
-
 ![LC50-1.png](https://pic.leetcode.cn/1722389981-SLFaTc-LC50-1.png) 
 
 

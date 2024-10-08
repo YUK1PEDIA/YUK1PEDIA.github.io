@@ -5,8 +5,6 @@ description: 记录
 tag: 笔记
 ---
 
-# Spring Task
-
 ## 什么是 Spring Task
 
 Spring Task 是 Spring 框架提供的任务调度工具，可以按照约定的时间自动执行某个代码逻辑，是一个**定时任务框架**。

@@ -5,8 +5,6 @@ description: 记录
 tag: 笔记
 ---
 
-# Spring Cache
-
 ## 什么是Spring Cache？
 
 Spring Cache 是一个框架，实现了基于**注解**的缓存功能。

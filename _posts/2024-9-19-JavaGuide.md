@@ -5,11 +5,9 @@ description: 记录
 tag: 笔记
 ---
 
-# JavaGuide——Java部分
-
 ## 前言
 
-自用，整理自 JavaGuide 八股，原文地址：[Java 面试指南 | JavaGuide](https://javaguide.cn/)
+自用，整理自 JavaGuide 八股，原文地址：https://javaguide.cn/
 
 
 

@@ -5,8 +5,6 @@ description: 记录
 tag: 算法
 ---
 
-# 图论
-
 ## 前言
 
 整理自：https://algo.itcharge.cn/

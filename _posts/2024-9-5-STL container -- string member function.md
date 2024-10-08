@@ -5,9 +5,7 @@ description: 记录
 tag: 算法
 ---
 
-# STL容器——string成员函数
-
-转载，原文链接：[你终于回来了(。・∀・)ノ (cnblogs.com)](https://www.cnblogs.com/lynx-peng/p/16552710.html)
+转载，原文链接：https://www.cnblogs.com/lynx-peng/p/16552710.html
 
 
 
