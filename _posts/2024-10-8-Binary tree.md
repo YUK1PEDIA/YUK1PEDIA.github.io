@@ -7,13 +7,7 @@ tag: 算法
 
 
 
-
-
-
-
-## 1.根据序列构造二叉树
-
-### 根据前序与中序遍历序列构造二叉树
+## 1.根据前序与中序遍历序列构造二叉树
 
 给定两个整数数组 `preorder` 和 `inorder` ，其中 `preorder` 是二叉树的**先序遍历**， `inorder` 是同一棵树的**中序遍历**，请构造二叉树并返回其根节点。
 
@@ -552,6 +546,403 @@ private:
 public:
     bool isSubStructure(TreeNode* A, TreeNode* B) {
         return (A != nullptr && B != nullptr) && (recur(A, B) || isSubStructure(A->left, B) || isSubStructure(A->right, B));
+    }
+};
+```
+
+
+
+
+
+## 7.翻转二叉树（二叉树的镜像）
+
+给定一棵二叉树的根节点 `root`，请左右翻转这棵二叉树，并返回其根节点。
+
+ 
+
+**示例 1：**
+
+![img](https://pic.leetcode.cn/1694686821-qlvjod-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91.png)
+
+```
+输入：root = [5,7,9,8,3,2,4]
+输出：[5,9,7,4,2,3,8]
+```
+
+ 
+
+**提示：**
+
+- 树中节点数目范围在 `[0, 100]` 内
+- `-100 <= Node.val <= 100`
+
+
+
+
+
+**思路**
+
+对于二叉树递归问题，我们需要分析他的子问题是什么。我们要对给定的二叉树进行镜像操作，可以通过以下步骤实现：
+
+- 交换根节点的左右节点
+- 对左子树进行镜像操作
+- 对右子树进行镜像操作
+
+完成上面三步之后，这棵二叉树就被完全镜像了
+
+
+
+**Code**
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* mirrorTree(TreeNode* root) {
+        if (!root) return root;
+        TreeNode* temp = root->left;
+        root->left = root->right;
+        root->right = temp;
+        mirrorTree(root->left);
+        mirrorTree(root->right);
+        return root;
+    }
+};
+```
+
+
+
+
+
+
+
+## 8.从上到下逐层打印二叉树Ⅰ
+
+一棵圣诞树记作根节点为 `root` 的二叉树，节点值为该位置装饰彩灯的颜色编号。请按照从 **左** 到 **右** 的顺序返回每一层彩灯编号。
+
+ 
+
+**示例 1：**
+
+![img](https://pic.leetcode.cn/1694758674-XYrUiV-%E5%89%91%E6%8C%87%20Offer%2032%20-%20I_%E7%A4%BA%E4%BE%8B1.png)
+
+```
+输入：root = [8,17,21,18,null,null,6]
+输出：[8,17,21,18,6]
+```
+
+ 
+
+**提示：**
+
+1. `节点总数 <= 1000`
+
+
+
+
+
+**思路**
+
+简单 *BFS* ，逐层将节点加入答案数组即可。
+
+
+
+**Code**
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> decorateRecord(TreeNode* root) {
+        if (!root) return {};
+        queue<TreeNode*> q;
+        vector<int> res;
+        q.push(root);
+        while (!q.empty()) {
+            TreeNode* node = q.front();
+            q.pop();
+            res.push_back(node->val);
+            if (node->left) q.push(node->left);
+            if (node->right) q.push(node->right);
+        }
+        return res;
+    }
+};
+```
+
+
+
+
+
+
+
+## 9.从上到下逐层打印二叉树Ⅱ
+
+一棵圣诞树记作根节点为 `root` 的二叉树，节点值为该位置装饰彩灯的颜色编号。请按照从左到右的顺序返回每一层彩灯编号，每一层的结果记录于一行。
+
+ 
+
+**示例 1：**
+
+![img](https://pic.leetcode.cn/1694758674-XYrUiV-%E5%89%91%E6%8C%87%20Offer%2032%20-%20I_%E7%A4%BA%E4%BE%8B1.png)
+
+```
+输入：root = [8,17,21,18,null,null,6]
+输出：[[8],[17,21],[18,6]]
+```
+
+**提示：**
+
+1. `节点总数 <= 1000`
+
+
+
+
+
+**思路**
+
+本题与上一题唯一不同的是需要将每层节点的值先放到一个 *vector* 中，再将每一层对应的 *vector* 压入答案数组里。因此处理队列的 *while* 循环里需要通过 *for* 循环来对每一层进行切分。
+
+
+
+**Code**
+
+```c++
+class Solution {
+public:
+    vector<vector<int>> decorateRecord(TreeNode* root) {
+        queue<TreeNode*> que;
+        vector<vector<int>> res;
+        if(root != NULL) que.push(root);
+        while(!que.empty()) {
+            vector<int> tmp;
+            for(int i = que.size(); i > 0; --i) {
+                root = que.front();
+                que.pop();
+                tmp.push_back(root->val);
+                if(root->left != NULL) que.push(root->left);
+                if(root->right != NULL) que.push(root->right);
+            }
+            res.push_back(tmp);
+        }
+        return res;
+    }
+};
+```
+
+
+
+
+
+
+
+## 10.从上到下逐层打印二叉树Ⅲ
+
+一棵圣诞树记作根节点为 `root` 的二叉树，节点值为该位置装饰彩灯的颜色编号。请按照如下规则记录彩灯装饰结果：
+
+- 第一层按照从左到右的顺序记录
+- 除第一层外每一层的记录顺序均与上一层相反。即第一层为从左到右，第二层为从右到左。
+
+ 
+
+**示例 1：**
+
+![img](https://pic.leetcode.cn/1694758674-XYrUiV-%E5%89%91%E6%8C%87%20Offer%2032%20-%20I_%E7%A4%BA%E4%BE%8B1.png)
+
+```
+输入：root = [8,17,21,18,null,null,6]
+输出：[[8],[21,17],[18,6]]
+```
+
+ 
+
+**提示：**
+
+- `节点总数 <= 1000`
+
+
+
+
+
+**思路**
+
+在前两题的基础上，需要实现：从上往下，每层存放的节点值顺序不同，**奇数层顺序存，偶数层逆序存**。
+
+本题可以通过双端队列 *deque* 实现。
+
+具体实现方式看代码。
+
+
+
+**Code**
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<vector<int>> decorateRecord(TreeNode* root) {
+        if (!root) return {};
+        deque<TreeNode*> deq;
+        deq.push_back(root);
+        vector<vector<int>> res;
+        bool ok = true; // 奇数层：true；偶数层：false
+        while (!deq.empty()) {
+            vector<int> temp;
+            int sz = deq.size();
+            if (ok) { // 若为奇数层，则顺序存储
+                for (int i = 0; i < sz; ++i) {
+                    TreeNode* node = deq.front();
+                    temp.push_back(node->val);
+                    deq.pop_front();
+                    if (node->left != nullptr) deq.push_back(node->left);
+                    if (node->right != nullptr) deq.push_back(node->right);
+                }
+                ok = false;
+            } else { // 若为偶数层，则逆序存储
+                for (int i = 0; i < sz; ++i) {
+                    TreeNode* node = deq.back();
+                    temp.push_back(node->val); // 逆序压入答案
+                    deq.pop_back();
+                    /*
+                    对偶数层逆序存储时插入下一层需要从 deq 的前端插入
+                    取到本层数据是从 deq 尾端取，从尾端插入新数据会导致本层答案错误
+                    注意，为了保证从队头到队尾的顺序需要先插入右节点，再插入左节点
+                    */
+                    if (node->right != nullptr) deq.push_front(node->right);
+                    if (node->left != nullptr) deq.push_front(node->left);
+                }
+                ok = true;
+            }
+            res.push_back(temp);
+        }
+        return res;
+    }
+};
+```
+
+
+
+
+
+
+
+## 11.验证二叉搜索树的后序遍历序列
+
+请实现一个函数来判断整数数组 `postorder` 是否为二叉搜索树的后序遍历结果。
+
+ 
+
+**示例 1：**
+
+![img](https://pic.leetcode.cn/1706665328-rfvWhs-%E6%88%AA%E5%B1%8F2024-01-31%2009.41.48.png)
+
+```
+输入: postorder = [4,9,6,5,8]
+输出: false 
+解释：从上图可以看出这不是一颗二叉搜索树
+```
+
+**示例 2：**
+
+![img](https://pic.leetcode.cn/1694762510-vVpTic-%E5%89%91%E6%8C%8733.png)
+
+```
+输入: postorder = [4,6,5,9,8]
+输出: true 
+解释：可构建的二叉搜索树如上图
+```
+
+ 
+
+**提示：**
+
+- `数组长度 <= 1000`
+- `postorder` 中无重复数字
+
+
+
+
+
+**思路**
+
+二叉树的后序遍历是：`左子节点-右子节点-根节点` 。
+
+二叉搜索树的性质是：左子节点的值小于根节点，右子节点的值大于根节点，并且左右子树也都是二叉搜索树。
+
+对于本题，我们需要：
+
+1. **根据后序遍历序列**，
+2. **判断该树是否为二叉搜索树。**
+
+先思考第二个问题，我们如何判断一棵树是二叉搜索树？
+
+根据二叉搜索树的性质，根节点的左右两棵子树都是二叉搜索树，并且左子节点的值小于根节点，右子节点的值大于根节点。
+
+于是我们可以先判断左子节点、右子节点和根节点的大小关系，然后递归判断根节点的左右子树即可。
+
+
+
+**但我们现在拿到的是一个二叉树的后序遍历序列，我们怎么还原出二叉树从而进行递归呢？**
+
+由于后序遍历的顺序是 `左子节点-右子节点-根节点` ，**所以给定的后序序列的最后一个元素一定是整棵二叉树的根节点。**
+
+根据二叉搜索树的性质，右子节点的值一定是最大的，左子节点的值一定是最小的，并且我们知道当前二叉树的根节点，所以我们可以先把整棵树划分成：左子树部分、根节点、右子树部分。
+
+**定义：*recur(postorder, i, j)* 表示序列 *postorder* 的 *[i, j]* 区间是否为二叉搜索树**
+
+我们用一个指针 *p* 去遍历整个序列，先找到当前 *[i, j]* 区间第一个大于根节点的索引 *m*（**根据后序遍历的性质，当前区间的根节点索引为 *j*** ），此时就确定了整棵二叉树的左子树区间：*[i, m-1]* 。**如果剩下的右子树区间：*[m, j-1]* 满足该区间的数都比根节点大，那么当前搜索树树的基本结构是正确的**。
+
+为什么上面说的是基本正确而不是完全正确呢？这是因为此时只能说明整棵树的根节点、根节点的左子节点、根节点的右子节点的大小顺序是正确的，**但是它的左右子树不一定满足搜索树的性质**。
+
+所以我们需要递归遍历上面的左右子树区间，将这些条件联合起来判断，才能说明给定的树是否为二叉搜索树。
+
+
+
+**Code**
+
+```c++
+class Solution {
+public:
+    bool verifyTreeOrder(vector<int>& postorder) {
+        // j 表示根节点索引，i 表示后序区间最左侧
+        auto recur = [&](auto&& recur, vector<int> postorder, int i, int j) -> bool {
+            if (i >= j) return true;
+            int p = i;
+            while (postorder[p] < postorder[j]) ++p;
+            int m = p; // 第一个大于根节点的索引，那么左子树区间：[i, m-1]；右子树区间：[m, j-1]
+            while (postorder[p] > postorder[j]) ++p; // 循环结束后如果 p == j，那么该树是基本正确的
+            return p == j && recur(recur, postorder, i, m - 1) && recur(recur, postorder, m, j - 1);
+        };
+
+        return recur(recur, postorder, 0, postorder.size() - 1);
     }
 };
 ```
