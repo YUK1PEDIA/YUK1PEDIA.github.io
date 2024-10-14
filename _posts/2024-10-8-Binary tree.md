@@ -947,3 +947,221 @@ public:
 };
 ```
 
+
+
+
+
+## 12.二叉树中和为目标值的路径
+
+给你二叉树的根节点 `root` 和一个整数目标和 `targetSum` ，找出所有 **从根节点到叶子节点** 路径总和等于给定目标和的路径。
+
+**叶子节点** 是指没有子节点的节点。
+
+ 
+
+**示例 1：**
+
+![img](https://assets.leetcode.com/uploads/2021/01/18/pathsumii1.jpg)
+
+```
+输入：root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22
+输出：[[5,4,11,2],[5,8,4,5]]
+```
+
+**示例 2：**
+
+![img](https://assets.leetcode.com/uploads/2021/01/18/pathsum2.jpg)
+
+```
+输入：root = [1,2,3], targetSum = 5
+输出：[]
+```
+
+**示例 3：**
+
+```
+输入：root = [1,2], targetSum = 0
+输出：[]
+```
+
+ 
+
+**提示：**
+
+- 树中节点总数在范围 `[0, 5000]` 内
+- `-1000 <= Node.val <= 1000`
+- `-1000 <= targetSum <= 1000`
+
+
+
+
+
+**思路**
+
+前序遍历二叉树，回溯枚举答案即可。
+
+
+
+**Code**
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+private:
+    vector<vector<int>> res;
+    vector<int> path;
+
+public:
+    vector<vector<int>> pathTarget(TreeNode* root, int target) {
+        auto dfs = [&](auto&& dfs, TreeNode* root, int target) {
+            if (root == nullptr) return;
+            path.push_back(root->val);
+            target -= root->val;
+            if (target == 0 && root->left == nullptr && root->right == nullptr) {
+                res.push_back(path);
+            }
+            dfs(dfs, root->left, target);
+            dfs(dfs, root->right, target);
+            path.pop_back();
+            target += root->val;
+        };
+
+        dfs(dfs, root, target);
+        return res;
+    }
+};
+```
+
+
+
+
+
+
+
+## 13.将二叉搜索树转化为排序的双向链表
+
+将一个 **二叉搜索树** 就地转化为一个 **已排序的双向循环链表** 。
+
+对于双向循环列表，你可以将左右孩子指针作为双向循环链表的前驱和后继指针，第一个节点的前驱是最后一个节点，最后一个节点的后继是第一个节点。
+
+特别地，我们希望可以 **就地** 完成转换操作。当转化完成以后，树中节点的左指针需要指向前驱，树中节点的右指针需要指向后继。还需要返回链表中最小元素的指针。
+
+ 
+
+**示例 1：**
+
+```
+输入：root = [4,2,5,1,3] 
+
+
+输出：[1,2,3,4,5]
+
+解释：下图显示了转化后的二叉搜索树，实线表示后继关系，虚线表示前驱关系。
+```
+
+**示例 2：**
+
+```
+输入：root = [2,1,3]
+输出：[1,2,3]
+```
+
+**示例 3：**
+
+```
+输入：root = []
+输出：[]
+解释：输入是空树，所以输出也是空链表。
+```
+
+**示例 4：**
+
+```
+输入：root = [1]
+输出：[1]
+```
+
+ 
+
+**提示：**
+
+- `-1000 <= Node.val <= 1000`
+- `Node.left.val < Node.val < Node.right.val`
+- `Node.val` 的所有值都是独一无二的
+- `0 <= Number of Nodes <= 2000`
+
+
+
+
+
+**思路**
+
+题目要求将给定的二叉搜索树**原地**转换为**已排序的双向链表**，我们可以利用二叉搜索树的性质：根节点的左子树都比根节点小，右子树都比根节点大。
+
+为了利用这个性质，我们可以**中序遍历**二叉树，定义前驱节点指针 *pre* 和当前节点指针 *cur* ，在遍历的过程中根据要求将节点的左右指针指向对应的节点即可。注意遍历完后还需要把双向链表的头尾节点连起来。
+
+
+
+**Code**
+
+```c++
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+
+    Node() {}
+
+    Node(int _val) {
+        val = _val;
+        left = NULL;
+        right = NULL;
+    }
+
+    Node(int _val, Node* _left, Node* _right) {
+        val = _val;
+        left = _left;
+        right = _right;
+    }
+};
+*/
+class Solution {
+private:
+    Node *pre, *head;
+
+public:
+    Node* treeToDoublyList(Node* root) {
+        auto dfs = [&](auto&& dfs, Node* cur) {
+            if (cur == nullptr) return;
+            // 中序遍历
+            dfs(dfs, cur->left);
+            if (pre != nullptr) pre->right = cur;
+            else head = cur; // 如果前序节点，说明是头节点
+            cur->left = pre;
+            pre = cur;
+            dfs(dfs, cur->right);
+        };
+
+        if (root == nullptr) return nullptr;
+        dfs(dfs, root);
+        // 处理链表头尾，保证为循环链表
+        head->left = pre;
+        pre->right = head;
+        return head;
+    }
+};
+```
+
