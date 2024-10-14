@@ -75,6 +75,8 @@ tag: 笔记
 
 
 
+### 2.索引结构
+
 - 索引结构：MySQL 的索引在存储引擎层实现，不同的存储引擎有不同的结构
 
 ![1.png](https://s2.loli.net/2024/10/14/izNCLWFbGBVUDad.png)
@@ -117,7 +119,7 @@ tag: 笔记
 
 
 
-- 索引分类
+### 3.索引分类
 
 ![1.png](https://s2.loli.net/2024/10/14/H4DCPA5EkN1lQJT.png)
 
