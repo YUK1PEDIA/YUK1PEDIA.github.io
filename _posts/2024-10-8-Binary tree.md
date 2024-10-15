@@ -1165,3 +1165,334 @@ public:
 };
 ```
 
+
+
+
+
+
+
+## 14.序列化与反序列化二叉树
+
+序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。
+
+请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。
+
+**提示:** 输入输出格式与 LeetCode 目前使用的方式一致，详情请参阅 [LeetCode 序列化二叉树的格式](https://leetcode.cn/faq/#binary-tree)。你并非必须采取这种方式，你也可以采用其他的方法解决这个问题。
+
+ 
+
+**示例 1：**
+
+![img](https://assets.leetcode.com/uploads/2020/09/15/serdeser.jpg)
+
+```
+输入：root = [1,2,3,null,null,4,5]
+输出：[1,2,3,null,null,4,5]
+```
+
+**示例 2：**
+
+```
+输入：root = []
+输出：[]
+```
+
+**示例 3：**
+
+```
+输入：root = [1]
+输出：[1]
+```
+
+**示例 4：**
+
+```
+输入：root = [1,2]
+输出：[1,2]
+```
+
+ 
+
+**提示：**
+
+- 树中结点数在范围 `[0, 104]` 内
+- `-1000 <= Node.val <= 1000`
+
+
+
+
+
+**思路**
+
+序列化二叉树需要对二叉树进行前序遍历，在遍历的过程中判断当前节点是否为空，如果为空就在答案字符串中添加 `"None,"` ，否则添加节点值。
+
+反序列化二叉树需要将字符串根据逗号分割，将分割出来的单词放到 *list* 中，然后递归遍历 *list* 构建二叉树。
+
+**注意：这里 *c++* 要用 *list* 存放分割出来的 *string* 不能用 *vector* 。因为 *list* 是用双向链表实现的，适合实现增删改查，而 *vector* 是连续空间的数组，增删耗时较多**
+
+
+
+**Code**
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Codec {
+public:
+    void rserialize(TreeNode* root, string& str) {
+        if (root == nullptr) {
+            str += "None,";
+        } else {
+            str += to_string(root->val) + ",";
+            rserialize(root->left, str);
+            rserialize(root->right, str);
+        }
+    }
+
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        string res;
+        rserialize(root, res);
+        return res;
+    }
+
+    TreeNode* rdeserialize(list<string>& dataArray) {
+        if (dataArray.front() == "None") {
+            dataArray.erase(dataArray.begin());
+            return nullptr;
+        }
+
+        TreeNode* root = new TreeNode(stoi(dataArray.front()));
+        dataArray.erase(dataArray.begin());
+        root->left = rdeserialize(dataArray);
+        root->right = rdeserialize(dataArray);
+        return root;
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        list<string> dataArray;
+        string str;
+        for (auto& ch: data) {
+            if (ch == ',') {
+                dataArray.push_back(str);
+                str.clear();
+            } else {
+                str.push_back(ch);
+            }
+        }
+        if (!str.empty()) {
+            dataArray.push_back(str);
+            str.clear();
+        }
+        return rdeserialize(dataArray);
+    }
+};
+
+// Your Codec object will be instantiated and called as such:
+// Codec codec;
+// codec.deserialize(codec.serialize(root));
+```
+
+
+
+
+
+
+
+
+
+## 15.寻找二叉搜索树中的目标节点
+
+某公司组织架构以二叉搜索树形式记录，节点值为处于该职位的员工编号。请返回第 `cnt` 大的员工编号。
+
+ 
+
+**示例 1：**
+
+![img](https://pic.leetcode.cn/1695101634-kzHKZW-image.png)
+
+```
+输入：root = [7, 3, 9, 1, 5], cnt = 2
+       7
+      / \
+     3   9
+    / \
+   1   5
+输出：7
+```
+
+**示例 2：**
+
+![img](https://pic.leetcode.cn/1695101636-ESZtLa-image.png)
+
+```
+输入: root = [10, 5, 15, 2, 7, null, 20, 1, null, 6, 8], cnt = 4
+       10
+      / \
+     5   15
+    / \    \
+   2   7    20
+  /   / \ 
+ 1   6   8
+输出: 8
+```
+
+ 
+
+**提示：**
+
+- 1 ≤ cnt ≤ 二叉搜索树元素个数
+
+
+
+
+
+
+
+**思路**
+
+因为给定的是一棵二叉搜索树，我们对这棵树进行中序遍历，用一个 *cnt* 记录当前是第几大的节点，最终返回即可。
+
+
+
+**Code**
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+private:
+    int res, cnt;
+
+public:
+    int findTargetNode(TreeNode* root, int k) {
+        cnt = k;
+        auto dfs = [&](auto&& dfs, TreeNode* node) {
+            if (node == nullptr) return;
+            dfs(dfs, node->right);
+            if (cnt == 0) return;
+            if (--cnt == 0) {
+                res = node->val;
+                return;
+            }
+            dfs(dfs,node->left);
+        };
+
+        dfs(dfs, root);
+        return res;
+    }
+};
+```
+
+
+
+
+
+
+
+## 16.计算二叉树的深度
+
+某公司架构以二叉树形式记录，请返回该公司的层级数。
+
+ 
+
+**示例 1：**
+
+![img](https://pic.leetcode.cn/1695101942-FSrxqu-image.png)
+
+```
+输入：root = [1, 2, 2, 3, null, null, 5, 4, null, null, 4]
+输出: 4
+解释: 上面示例中的二叉树的最大深度是 4，沿着路径 1 -> 2 -> 3 -> 4 或 1 -> 2 -> 5 -> 4 到达叶节点的最长路径上有 4 个节点。
+```
+
+
+
+
+
+**思路**
+
+第一种做法是直接递归：分别递归计算左右子树高度，那么这棵树的高度就是左右子树高度的最大值 + 1 。
+
+第二种做法是对左右子树分别 *dfs* ，记录下来大小然后计算高度。
+
+
+
+**Code**
+
+1.直接递归
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int calculateDepth(TreeNode* root) {
+        if (root == nullptr) return 0;
+        int l_depth = calculateDepth(root->left);
+        int r_depth = calculateDepth(root->right);
+        return max(l_depth, r_depth) + 1;
+    }
+};
+```
+
+2.分别 *dfs* 计算
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    int calculateDepth(TreeNode* root) {
+        auto dfs = [&](auto&& dfs, TreeNode* root, int& res, int temp) {
+            if (root == nullptr) {
+                res = max(res, temp);
+                return;
+            }
+            temp++;
+            dfs(dfs, root->left, res, temp);
+            dfs(dfs, root->right, res, temp);
+        };
+
+        int res = 0, temp = 0;
+        dfs(dfs, root, res, temp);
+        return res;
+    }
+};
+```
+
