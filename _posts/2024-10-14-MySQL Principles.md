@@ -5,6 +5,10 @@ description: 记录
 tag: 笔记
 ---
 
+[TOC]
+
+
+
 ## 一、存储引擎
 
 ### 1.MySQL体系结构
@@ -152,11 +156,141 @@ tag: 笔记
 
 
 
+### 4.索引语法
+
+- 创建索引
+
+```mysql
+CREATE [UNIQUE|FULLTEXT] INDEX index_name ON table_name (index_col_name,...);
+```
+
+- 查看索引
+
+```mysql
+SHOW INDEX FROM table_name;
+```
+
+- 删除索引
+
+```mysql
+DROP INDEX index_name ON table_name;
+```
 
 
 
 
 
+### 5. SQL 性能分析
+
+- SQL 执行频率
+
+![1.png](https://s2.loli.net/2024/10/21/OX1AFlUa32fnLmi.png)
+
+![1.png](https://s2.loli.net/2024/10/21/pB5oNvZkw7A8WfH.png) 
+
+
+
+- 慢查询日志
+
+首先需要修改 *mysql* 配置文件 `/etc/my.cnf` ，在其中添加如下内容：
+
+![1.png](https://s2.loli.net/2024/10/21/dYZDcXmfjy4F9vJ.png)
+
+然后重启 mysql ，再登录 mysql 看慢查询日志是否已经启动
+
+![1.png](https://s2.loli.net/2024/10/21/PkmdA2jStz4QWwu.png)
+
+启动之后，慢查询日志将记录到 `/var/lib/mysql/localhost-slow.log` 文件中
+
+
+
+- profile 详情
+
+`show profiles` 能够在做 SQL 优化时帮助我们了解时间耗费在哪里。通过 `have_profiling` 参数，能够看到 *mysql* 是否支持 *profile* 操作
+
+![1.png](https://s2.loli.net/2024/10/21/1gKPtG36cWNbh7a.png) 
+
+默认 *profiling* 是关闭的，可以通过 *set* 语句在 *session/global* 级别开启 *profiling*：
+
+![1.png](https://s2.loli.net/2024/10/21/uaDWFHS7UQAsTtk.png) 
+
+
+
+开启之后就可以通过如下指令查看之前 SQL 指令的执行耗时：
+
+```mysql
+#查看每一条 SQL 的耗时基本情况
+show profiles;
+
+#查看指定 query_id 的 SQL 语句各个阶段的耗时情况
+show profile for query query_id;
+
+#查看指定 query_id 的 SQL 语句 CPU 的使用情况
+show profile cpu for query query_id;
+```
+
+
+
+
+
+- *explain* 执行计划
+
+![1.png](https://s2.loli.net/2024/10/21/dnSjNq4guXO5R39.png)
+
+![1.jpg](https://s2.loli.net/2024/10/21/EMb2376jRvqHBxw.jpg)
+
+![aa8739ff2bcb098721ddc3dc5a43502d.png](https://s2.loli.net/2024/10/21/sqMZBkHdcQaKwEx.png)
+
+
+
+
+
+### 6.索引使用
+
+1. 最左前缀法则：如果索引关联了多列（联合索引），要遵守该法则。最左前缀法则指的是查询从索引的**最左列**开始，并且**不跳过**索引中的列。如果跳跃某一列，**索引将部分失效（后面的字段索引失效）**
+
+比如下面的第三个 *explain* ，profession 是最左列，但此处并没有用到最左列，所以**索引全部失效**。
+
+![1.jpg](https://s2.loli.net/2024/10/21/6UaebCTWRi7k9nc.jpg)
+
+2. 范围查询：联合索引中，出现范围查询(>,<)，**范围查询右侧的列索引失效**。在业务允许的情况下，如果需要进行范围查询，尽量用**大于等于或小于等于**这种范围查询，这样所有的列索引都不会失效。
+3. 索引列运算：不要在索引列上进行运算操作，**索引会失效**。
+4. 字符串不加单引号：字符串类型字段使用时，**不加引号索引将失效**。
+5. 模糊查询：如果仅仅是**尾部模糊匹配**，索引**不会失效**。如果是**头部模糊匹配**，索引**会失效**。
+6. or 连接的条件：用 or 分割开的条件，如果 or 前的条件中的列有索引，而后面的列中没有索引，那么涉及的索引都不会被用到。
+7. 数据分布影响：如果 *mysql* 评估使用索引比全表扫描更慢，则不使用索引。
+
+**补充：**
+
+1. SQL 提示
+
+![1.jpg](https://s2.loli.net/2024/10/21/aVg3HLKE57XtoBO.jpg)
+
+2. 覆盖索引
+
+覆盖索引是指当一个索引包含了查询语句中所需要的所有列时，MySQL可以不必加载表中的实际数据行，而是直接从索引中获取查询结果。这意味着查询可以直接使用索引来找到并返回所需的数据，而不需要回到主键索引或者实际的数据行（这个过程叫做回表查询），这可以减少磁盘I/O操作，提高查询效率。
+
+![1.png](https://s2.loli.net/2024/10/21/CTNz9lMPfgiqGYV.png)
+
+3. 前缀索引
+
+![1.png](https://s2.loli.net/2024/10/21/vhalfVSy72O43r8.png)
+
+![1.png](https://s2.loli.net/2024/10/21/7Uc9KPBsWHnSF4g.png)
+
+
+
+
+
+### 7.索引设计原则
+
+1. 针对数据量较大（超过100w），且查询频繁的表建立索引。
+2. 针对于常作为查询条件（where）、排序（order by）、分组（group by）操作的字段建立索引。
+3. 尽量选择**区分度高**的列作为索引，尽量建立唯一索引，区分度越高，使用索引的效率越高。
+4. 如果是字符串类型的字段，字段的长度较长，可以针对于字段的特点建立**前缀索引**。
+5. **尽量使用联合索引**，减少单列索引，查询时，联合索引很多时候可以覆盖索引，节省存储空间，避免回表查询。
+6. 要控制索引的数量，索引并不是多多益善，索引越多，维护索引结构的代价越大，会影响增删改的效率。
+7. 如果索引列不能存 *NULL* 值，请在创建表时使用 *NOT NULL* 约束它。当优化器知道每列是否包含 *NULL* 值时，它可以更好地确定哪个索引最有效地用于查询。
 
 
 
