@@ -602,7 +602,7 @@ update course set name = 'SpringBoot' where name = 'PHP' ;
 
 ### 1.视图
 
-- 介绍：视图（View）是一种**虚拟存在的表**。视图中的数据并不在数据库中实际存在，行和列数据来自于定义视图的查询中使用的表，并且是在使用视图时动态生成的。
+1. 介绍：视图（View）是一种**虚拟存在的表**。视图中的数据并不在数据库中实际存在，行和列数据来自于定义视图的查询中使用的表，并且是在使用视图时动态生成的。
 
   - 通俗的讲，视图只保存了查询的SQL逻辑，不保存查询结果。所以我们在创建视图的时候，主要的工作就落在创建这条SQL查询语句上。
 
@@ -678,7 +678,269 @@ update course set name = 'SpringBoot' where name = 'PHP' ;
    drop view if exists stu_v_1;
    ```
 
-   
+   上述我们演示了，视图应该如何创建、查询、修改、删除，那么我们能不能通过视图来插入、更新数据呢？
+
+   ```mysql
+   create or replace view stu_v_1 as select id,name from student where id <= 10 ;
+   select * from stu_v_1;
+   insert into stu_v_1 values(6,'Tom');
+   insert into stu_v_1 values(17,'Tom22');
+   ```
+
+   执行上述的SQL会发现，id为6和17的数据都是可以**成功插入**的。 但是我们执行查询，查询出来的数据，**却没有id为17的记录**。
+
+   因为我们在创建视图的时候，指定的条件为 **id<=10**, id为17的数据，是不符合条件的，所以没有查询出来，但是这条数据确实是**已经成功的插入到了基表中**。 
+
+   如果我们定义视图时，如果指定了条件，然后我们在**插入、修改、删除**数据时，是否可以做到必须满足条件才能操作，否则不能够操作呢？ 答案是可以的，这就需要借助于视图的**检查**选项了。
+
+3. 检查选项
+
+   当使用**WITH CHECK OPTION**子句创建视图时，MySQL会通过视图检查正在更改的每个行，例如 插入，更新，删除，以使其符合视图的定义。 **MySQL允许基于另一个视图创建视图**，它还会检查依赖视图中的规则以保持一致性。为了确定检查的范围，mysql提供了两个选项： CASCADED 和 LOCAL，默认值为 CASCADED 。
+
+   - **CASCADED级联**
+
+     - 比如，v2视图是基于v1视图的，如果在v2视图创建的时候指定了检查选项为 cascaded，但是v1视图创建时未指定检查选项。 则在执行检查时，不仅会检查v2，还会级联检查v2的关联视图v1。
+
+       ![1.png](https://s2.loli.net/2024/10/27/T4OQdIwufjyrgLE.png)
+
+   - **LOCAL本地**
+
+     - 比如，v2视图是基于v1视图的，如果在v2视图创建的时候指定了检查选项为 local ，但是v1视图创建时未指定检查选项。 则在执行检查时，只会检查v2，不会检查v2的关联视图v1。
+
+       ![1.png](https://s2.loli.net/2024/10/27/MpdkxvgQXAtw7lj.png)
+
+4. 视图的更新
+
+   - 要使视图可更新，视图中的行与基础表中的行之间**必须存在一对一的关系**。如果视图包含以下任何一项，则该视图不可更新：
+
+      - 聚合函数或窗口函数（SUM()、 MIN()、 MAX()、 COUNT()等）
+      -  DISTINCT
+      -  GROUP BY
+      -  HAVING
+      -  UNION 或者 UNION ALL
+
+   - 示例演示
+
+      ```mysql
+      create view stu_v_count as select count(*) from student;
+      ```
+
+      上述的视图中，就只有一个单行单列的数据，如果我们对这个视图进行更新或插入的，将会报错。
+
+5. 视图的作用
+
+   - 简单：视图不仅可以简化用户对数据的理解，也可以简化他们的操作。那些被经常使用的查询可以被定义为视图，从而使得用户不必为以后的操作每次指定全部的条件。
+   - 安全：数据库可以授权，但不能授权到数据库特定行和特定的列上。通过视图用户只能查询和修改他们所能见到的数据。
+   - 数据独立：视图可帮助用户屏蔽真实表结构变化带来的影响。
+
+6. 案例
+
+   - 为了保证数据库表的安全性，开发人员在操作tb_user表时，只能看到的用户的基本字段，屏蔽手机号和邮箱两个字段。
+
+      ```mysql
+      create view tb_user_view as select id,name,profession,age,gender,status,createtime from tb_user;
+      select * from tb_user_view;
+      ```
+
+   - 查询每个学生所选修的课程（三张表联查），这个功能在很多的业务中都有使用到，为了简化操作，定义一个视图。
+
+      ```mysql
+      create view tb_stu_course_view as select s.name student_name, s.no student_no, c.name course_name from student s, student_course sc, course c where s.id = sc.studentid and sc.courseid = c.id;
+      select * from tb_stu_course_view;
+      ```
+
+
+
+
+
+
+### 2.存储过程
+
+1. 介绍：**存储过程是事先经过编译并存储在数据库中的一段 SQL 语句的集合**，调用存储过程可以简化应用开发人员的很多工作，减少数据在数据库和应用服务器之间的传输，对于提高数据处理的效率是有好处的。存储过程思想上很简单，**就是数据库 SQL 语言层面的代码封装与重用**。
+
+   ![1.png](https://s2.loli.net/2024/10/27/Vwv3Z97fXNCKD4F.png)
+
+   特点：
+
+   - 封装，复用：可以把某一业务SQL封装在存储过程中，需要用到的时候直接调用即可。
+   - 可以接收参数，也可以返回数据：在存储过程中，可以传递参数，也可以接收返回值。
+   - 减少网络交互，效率提升：如果涉及到多条SQL，每执行一次都是一次网络传输。 而如果封装在存储过程中，我们只需要网络交互一次可能就可以了。
+
+2. 基本语法：
+
+   - 创建：
+
+     ```mysql
+     CREATE PROCEDURE 存储过程名称 ([ 参数列表 ])
+     BEGIN
+     -- SQL语句
+     END ;
+     ```
+
+   - 调用：
+
+     ```mysql
+     CALL 名称 ([ 参数 ]);
+     ```
+
+   - 查看：
+
+     ```mysql
+     SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_SCHEMA = 'xxx'; -- 查询指定数据库的存储过程及状态信息
+     SHOW CREATE PROCEDURE 存储过程名称 ; -- 查询某个存储过程的定义
+     ```
+
+   - 删除
+
+     ```mysql
+     DROP PROCEDURE [ IF EXISTS ] 存储过程名称 ；
+     ```
+
+     注意：在命令行中，执行创建存储过程的SQL时，需要通过关键字 delimiter 指定SQL语句的结束符。因为命令行中SQL语句的结束符默认是分号 `;` ，如果在IDE中执行则不需要指定。
+
+     ![1.png](https://s2.loli.net/2024/10/27/PBx4riEMjnXsmQJ.png)
+
+   - 演示示例
+
+     ```mysql
+     -- 存储过程基本语法
+     -- 创建
+     create procedure p1()
+     begin
+     select count(*) from student;
+     end;
+     -- 调用
+     call p1();
+     -- 查看
+     select * from information_schema.ROUTINES where ROUTINE_SCHEMA = 'itcast';
+     show create procedure p1;
+     -- 删除
+     drop procedure if exists p1;
+     ```
+
+3. 变量
+
+   在MySQL中变量分为三种类型: 系统变量、用户定义变量、局部变量。
+
+   1. **系统变量**：系统变量 是MySQL服务器提供，不是用户定义的，属于服务器层面。分为全局变量（GLOBAL）、会话变量（SESSION）。
+
+      - 查看系统变量
+
+        ```mysql
+        SHOW [ SESSION | GLOBAL ] VARIABLES ; -- 查看所有系统变量
+        SHOW [ SESSION | GLOBAL ] VARIABLES LIKE '......'; -- 可以通过LIKE模糊匹配方式查找变量
+        SELECT @@[SESSION | GLOBAL] 系统变量名; -- 查看指定变量的值
+        ```
+
+      - 设置系统变量
+
+        ```mysql
+        SET [ SESSION | GLOBAL ] 系统变量名 = 值 ;
+        SET @@[SESSION | GLOBAL]系统变量名 = 值 ;
+        ```
+
+        注意：如果没有指定SESSION/GLOBAL，默认是SESSION，会话变量。mysql服务重新启动之后，**所设置的全局参数会失效**，要想不失效，可以在 /etc/my.cnf 中配置。 
+
+        - 全局变量(GLOBAL): 全局变量针对于所有的会话。
+        - 会话变量(SESSION): 会话变量针对于单个会话，在另外一个会话窗口就不生效了。
+
+      - 演示示例
+
+        ```mysql
+        -- 查看系统变量
+        show session variables ;
+        show session variables like 'auto%';
+        show global variables like 'auto%';
+        select @@global.autocommit;
+        select @@session.autocommit;
+        -- 设置系统变量
+        set session autocommit = 1;
+        insert into course(id, name) VALUES (6, 'ES');
+        set global autocommit = 0;
+        select @@global.autocommit;
+        ```
+
+   2. **用户定义变量**：用户定义变量是用户根据需要自己定义的变量，用户变量不用提前声明，在用的时候直接用 "@变量名" 使用就可以。其作用域为当前连接。
+
+      - 赋值（赋值时，可以使用 = ，也可以使用 := ）
+
+        ```mysql
+        #方式一
+        SET @var_name = expr [, @var_name = expr] ... ;
+        SET @var_name := expr [, @var_name := expr] ... ;
+        
+        #方式二
+        SELECT @var_name := expr [, @var_name := expr] ... ;
+        SELECT 字段名 INTO @var_name FROM 表名;
+        ```
+
+      - 使用
+
+        ```mysql
+        SELECT @var_name ;
+        ```
+
+        注意：用户定义的变量无需对其进行声明或初始化，只不过获取到的值为NULL。
+
+      - 演示示例
+
+        ```mysql
+        -- 赋值
+        set @myname = 'itcast';
+        set @myage := 10;
+        set @mygender := '男',@myhobby := 'java';
+        select @mycolor := 'red';
+        select count(*) into @mycount from tb_user;
+        -- 使用
+        select @myname,@myage,@mygender,@myhobby;
+        select @mycolor , @mycount;
+        select @abc;
+        ```
+
+   3. **局部变量**：局部变量是根据需要定义的在局部生效的变量，访问之前，需要**DECLARE**声明。可用作存储过程内的局部变量和输入参数，局部变量的范围是在其内声明的BEGIN ... END块。
+
+      - 声明
+
+        ```mysql
+        DECLARE 变量名 变量类型 [DEFAULT ... ] ;
+        ```
+
+        变量类型就是数据库字段类型：INT、BIGINT、CHAR、VARCHAR、DATE、TIME等。DEFAULT是指定局部变量的默认值。
+
+      - 赋值
+
+        ```mysql
+        SET 变量名 = 值 ;
+        SET 变量名 := 值 ;
+        SELECT 字段名 INTO 变量名 FROM 表名 ... ;
+        ```
+
+      - 演示示例
+
+        ```mysql
+        -- 声明局部变量 - declare
+        -- 赋值
+        create procedure p2()
+        begin
+        declare stu_count int default 0;
+        # 将学生表的数据个数赋值给 stu_count 这个局部变量
+        select count(*) into stu_count from student;
+        select stu_count;
+        end;
+        call p2();
+        ```
+
+        
+
+
+
+
+
+
+
+
+
+
 
 
 
