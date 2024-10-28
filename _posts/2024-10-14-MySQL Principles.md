@@ -807,7 +807,7 @@ update course set name = 'SpringBoot' where name = 'PHP' ;
      -- 创建
      create procedure p1()
      begin
-     select count(*) from student;
+     	select count(*) from student;
      end;
      -- 调用
      call p1();
@@ -930,7 +930,434 @@ update course set name = 'SpringBoot' where name = 'PHP' ;
         call p2();
         ```
 
-        
+4. if
+
+   - 介绍：if 用于做条件判断，具体的语法结构为：
+
+      ```mysql
+      IF 条件1 THEN
+      .....
+      ELSEIF 条件2 THEN -- 可选
+      .....
+      ELSE -- 可选
+      .....
+      END IF;
+      ```
+
+      在if条件判断的结构中，ELSE IF 结构可以有多个，也可以没有。 ELSE结构可以有，也可以没有。
+
+   - 案例：根据定义的分数score变量，判定当前分数对应的分数等级
+
+      - score >= 85分，等级为优秀。
+      - score >= 60分 且 score < 85分，等级为及格。
+      - score < 60分，等级为不及格。
+
+      ```mysql
+      create procedure p3()
+      begin
+      	declare score int default 58;
+      	declare result varchar(10);
+      	if score >= 85 then
+      		set result := '优秀';
+      	elseif score >= 60 then
+      		set result := '及格';
+      	else
+      		set result := '不及格';
+      	end if;
+      	select result;
+      end;
+      call p3();
+      ```
+
+      上述的需求我们虽然已经实现了，但是也存在一些问题，比如：score 分数我们是在存储过程中定义死的，而且对于最终计算出来的分数等级，我们也仅仅是最终查询展示出来而已。
+
+      那么我们能不能**把score分数动态的传递进来**，计算出来的分数等级是否可以作为返回值返回呢？答案是肯定的，我们可以通过接下来所讲解的 **参数** 来解决上述的问题。
+
+5. 参数
+
+   - 参数的类型主要分为以下三种：IN、OUT、INOUT。 具体的含义如下：
+
+   | 类型  | 含义                                         | 备注 |
+   | ----- | -------------------------------------------- | ---- |
+   | IN    | 该类参数作为输入，也就是需要调用时传入值     | 默认 |
+   | OUT   | 该类参数作为输出，也就是该参数可以作为返回值 |      |
+   | INOUT | 既可以作为输入参数，也可以作为输出参数       |      |
+
+   - 用法：
+
+   ```mysql
+   CREATE PROCEDURE 存储过程名称 ([ IN/OUT/INOUT 参数名 参数类型 ])
+   BEGIN
+   -- SQL语句
+   END ;
+   ```
+
+   于是上面 **if** 中的案例可以改成下面形式：
+
+   ```mysql
+   create procedure p4(in score int, out result varchar(10))
+   begin
+   	if score >= 85 then
+   		set result := '优秀';
+   	elseif score >= 60 then
+   		set result := '及格';
+   	else
+   		set result := '不及格';
+   	end if;
+   end;
+   -- 定义用户变量 @result来接收返回的数据, 用户变量可以不用声明
+   call p4(18, @result);
+   select @result;
+   ```
+
+6. case
+
+   - 语法
+
+      - 语法1：
+
+         ```mysql
+         -- 含义：当case_value的值为 when_value1时，执行statement_list1，当值为 when_value2时，执行statement_list2， 否则就执行 statement_list
+         CASE case_value
+         	WHEN when_value1 THEN statement_list1
+         	[ WHEN when_value2 THEN statement_list2] ...
+         	[ ELSE statement_list ]
+         END CASE;
+         ```
+
+      - 语法2：
+
+         ```mysql
+         -- 含义：当条件search_condition1成立时，执行statement_list1，当条件search_condition2成立时，执行statement_list2， 否则就执行 statement_list
+         CASE
+         	WHEN search_condition1 THEN statement_list1
+         	[WHEN search_condition2 THEN statement_list2] ...
+         	[ELSE statement_list]
+         END CASE;
+         ```
+
+   - 案例：
+
+      - 根据传入的月份，判定月份所属的季节（要求采用case结构）。
+
+         - 1-3月份，为第一季度
+         - 4-6月份，为第二季度
+         - 7-9月份，为第三季度
+         - 10-12月份，为第四季度
+
+         ```mysql
+         create procedure p6(in month int)
+         begin
+         	declare result varchar(10);
+         	case
+         		when month >= 1 and month <= 3 then
+         			set result := '第一季度';
+         		when month >= 4 and month <= 6 then
+         			set result := '第二季度';
+         		when month >= 7 and month <= 9 then
+         			set result := '第三季度';
+         		when month >= 10 and month <= 12 then
+         			set result := '第四季度';
+         		else
+         			set result := '非法参数';
+         	end case ;
+         	select concat('您输入的月份为: ',month, ', 所属的季度为: ',result);
+         end;
+         call p6(16);
+         ```
+
+         **注意：如果判定条件有多个，多个条件之间，可以使用 and 或 or 进行连接。**
+
+7. while
+
+   - while 循环是有条件的循环控制语句。满足条件后，再执行循环体中的SQL语句。具体语法为：
+
+     ```mysql
+     -- 先判定条件，如果条件为true，则执行逻辑，否则，不执行逻辑
+     WHILE 条件 DO
+     	SQL逻辑...
+     END WHILE;
+     ```
+
+   - 案例
+
+     ```mysql
+     -- A. 定义局部变量, 记录累加之后的值;
+     -- B. 每循环一次, 就会对n进行减1 , 如果n减到0, 则退出循环
+     create procedure p7(in n int)
+     begin
+     	declare total int default 0;
+     	while n>0 do
+     		set total := total + n;
+     		set n := n - 1;
+     	end while;
+     	select total;
+     end;
+     call p7(100);
+     ```
+
+8. repeat
+
+   - repeat是有条件的循环控制语句, 当满足until声明的条件的时候，则退出循环 。具体语法为：
+
+     ```mysql
+     -- 先执行一次逻辑，然后判定UNTIL条件是否满足，如果满足，则退出。如果不满足，则继续下一次循环
+     REPEAT
+     	SQL逻辑...
+     UNTIL 条件
+     END REPEAT;
+     ```
+
+   - 案例：计算从1累加到n的值，n为传入的参数值。(使用repeat实现)
+
+     ```mysql
+     -- A. 定义局部变量, 记录累加之后的值;
+     -- B. 每循环一次, 就会对n进行-1 , 如果n减到0, 则退出循环
+     create procedure p8(in n int)
+     begin
+     	declare total int default 0;
+     	repeat
+     		set total := total + n;
+     		set n := n - 1;
+     	until n <= 0
+     	end repeat;
+     	select total;
+     end;
+     call p8(10);
+     call p8(100);
+     ```
+
+9. loop
+
+   - LOOP 实现简单的循环，如果不在SQL逻辑中增加退出循环的条件，可以用其来实现简单的死循环。LOOP可以配合一下两个语句使用：
+
+      - LEAVE ：配合循环使用，退出循环。
+      - ITERATE：必须用在循环中，作用是跳过当前循环剩下的语句，直接进入下一次循环。
+
+      ```mysql
+      [begin_label:] LOOP
+      	SQL逻辑...
+      END LOOP [end_label];
+      LEAVE label; -- 退出指定标记的循环体
+      ITERATE label; -- 直接进入下一次循环
+      ```
+
+      上述语法中出现的 begin_label，end_label，label 指的都是我们所自定义的标记。
+
+   - 案例一：计算从1累加到n的值，n为传入的参数值。
+
+      ```mysql
+      -- A. 定义局部变量, 记录累加之后的值;
+      -- B. 每循环一次, 就会对n进行-1 , 如果n减到0, 则退出循环 ----> leave xx
+      create procedure p9(in n int)
+      begin
+      	declare total int default 0;
+      	sum:loop
+      		if n<=0 then
+      			leave sum;
+      		end if;
+      		set total := total + n;
+      		set n := n - 1;
+      	end loop sum;
+      	select total;
+      end;
+      call p9(100);
+      ```
+
+   - 案例二：计算从1到n之间的偶数累加的值，n为传入的参数值。
+
+      ```mysql
+      -- A. 定义局部变量, 记录累加之后的值;
+      -- B. 每循环一次, 就会对n进行-1 , 如果n减到0, 则退出循环 ----> leave xx
+      -- C. 如果当次累加的数据是奇数, 则直接进入下一次循环. --------> iterate xx
+      create procedure p10(in n int)
+      begin
+      	declare total int default 0;
+      	sum:loop
+      		if n<=0 then
+      			leave sum;
+      		end if;
+      		if n%2 = 1 then
+      			set n := n - 1;
+      			iterate sum;
+      		end if;
+      		set total := total + n;
+      		set n := n - 1;
+      	end loop sum;
+      	select total;
+      end;
+      call p10(100);
+      ```
+
+10. 游标
+
+   - 游标（CURSOR）是用来**存储查询结果集**的数据类型 , 在存储过程和函数中可以使用游标对结果集进行循环的处理。游标的使用包括游标的声明、OPEN、FETCH 和 CLOSE，其语法分别如下。
+
+      - 声明游标
+
+         ```mysql
+         DECLARE 游标名称 CURSOR FOR 查询语句 ;
+         ```
+
+      - 打开游标
+
+         ```mysql
+         OPEN 游标名称 ;
+         ```
+
+      - 获取游标记录
+
+         ```mysql
+         FETCH 游标名称 INTO 变量 [, 变量 ] ;
+         ```
+
+      - 关闭游标
+
+         ```mysql
+         CLOSE 游标名称 ;
+         ```
+
+   - 案例：根据传入的参数uage，来查询用户表**tb_user**中，所有的用户年龄小于等于**uage**的用户姓名**（name）**和专业**（profession）**，并将用户的姓名和专业插入到所创建的一张新表**(id,name,profession)**中。
+
+      ```mysql
+      -- 逻辑:
+      -- A. 声明游标, 存储查询结果集
+      -- B. 准备: 创建表结构
+      -- C. 开启游标
+      -- D. 获取游标中的记录
+      -- E. 插入数据到新表中
+      -- F. 关闭游标
+      create procedure p11(in uage int)
+      begin
+      	declare uname varchar(100);
+      	declare upro varchar(100);
+      	declare u_cursor cursor for select name,profession from tb_user where age <= uage;
+      	drop table if exists tb_user_pro;
+      	create table if not exists tb_user_pro(
+      		id int primary key auto_increment,
+      		name varchar(100),
+      		profession varchar(100)
+      	);	
+      	open u_cursor;
+      	while true do
+      		fetch u_cursor into uname,upro;
+      		insert into tb_user_pro values (null, uname, upro);
+      	end while;
+      	close u_cursor;
+      end;
+      call p11(30);
+      ```
+
+      上述的存储过程，最终我们在调用的过程中会报错，之所以报错是因为在上面的while循环中并没有退出条件。当游标的数据集获取完毕之后，再次获取数据，就会报错，从而终止了程序的执行。
+
+      ![1.png](https://s2.loli.net/2024/10/28/PyaFSIQpnL4bcgA.png)
+
+      但是此时，tb_user_pro表结构及其数据都已经插入成功了，我们可以直接刷新表结构，检查表结构中的数据。
+
+      ![1.png](https://s2.loli.net/2024/10/28/bzPZQFGjdmk8WiU.png)
+
+      上述的功能虽然我们实现了，但是逻辑并不完善，而且程序执行完毕获取不到数据，数据库还报错。 接下来，我们就需要来完成这个存储过程，并且解决这个问题。
+
+      要想解决这个问题，就需要通过MySQL中提供的 **条件处理程序 Handler** 来解决。
+
+11. 条件处理程序
+
+    - **条件处理程序（Handler）**可以用来定义在流程控制结构执行过程中**遇到问题时相应的处理步骤**。具体语法为：
+
+       ```mysql
+       DECLARE handler_action HANDLER FOR condition_value [, condition_value] ... statement ;
+       
+       handler_action 的取值：
+       	CONTINUE: 继续执行当前程序
+       	EXIT: 终止执行当前程序
+       	
+       condition_value 的取值：
+       	SQLSTATE sqlstate_value: 状态码，如 02000
+       	SQLWARNING: 所有以01开头的SQLSTATE代码的简写
+       	NOT FOUND: 所有以02开头的SQLSTATE代码的简写
+       	SQLEXCEPTION: 所有没有被SQLWARNING 或 NOT FOUND捕获的SQLSTATE代码的简写
+       ```
+
+    - 案例：
+
+    - 我们继续来完成在上一小节提出的这个需求，并解决其中的问题。根据传入的参数uage，来查询用户表tb_user中，所有的用户年龄小于等于uage的用户姓名（name）和专业（profession），并将用户的姓名和专业插入到所创建的一张新表(id,name,profession)中。
+
+      - 通过SQLSTATE指定具体的状态码
+
+        ```mysql
+        -- 逻辑:
+        -- A. 声明游标, 存储查询结果集
+        -- B. 准备: 创建表结构
+        -- C. 开启游标
+        -- D. 获取游标中的记录
+        -- E. 插入数据到新表中
+        -- F. 关闭游标
+        create procedure p11(in uage int)
+        begin
+        	declare uname varchar(100);
+        	declare upro varchar(100);
+        	declare u_cursor cursor for select name,profession from tb_user where age <= uage;
+        	
+        	-- 声明条件处理程序 ： 当SQL语句执行抛出的状态码为02000时，将关闭游标u_cursor，并退出
+        	declare exit handler for SQLSTATE '02000' close u_cursor;
+        	drop table if exists tb_user_pro;
+        	create table if not exists tb_user_pro(
+        		id int primary key auto_increment,
+        		name varchar(100),
+        		profession varchar(100)
+        	);
+        	
+        	open u_cursor;
+        	
+        	while true do
+        		fetch u_cursor into uname,upro;
+        		insert into tb_user_pro values (null, uname, upro);
+        	end while;
+        	
+        	close u_cursor;
+        	
+        end;
+        call p11(30);
+        ```
+
+      - 通过SQLSTATE的代码简写方式 NOT FOUND。02 开头的状态码，代码简写为 NOT FOUND
+
+        ```mysql
+        create procedure p12(in uage int)
+        begin
+        	declare uname varchar(100);
+        	declare upro varchar(100);
+        	declare u_cursor cursor for select name,profession from tb_user where age <= uage;
+        	
+        	-- 声明条件处理程序 ： 当SQL语句执行抛出的状态码为02开头时，将关闭游标u_cursor，并退出
+        	declare exit handler for not found close u_cursor;
+        	drop table if exists tb_user_pro;
+        	create table if not exists tb_user_pro(
+        		id int primary key auto_increment,
+        		name varchar(100),
+        		profession varchar(100)
+        	);
+        	
+        	open u_cursor;
+        	
+        	while true do
+        		fetch u_cursor into uname,upro;
+        		insert into tb_user_pro values (null, uname, upro);
+        	end while;
+        	
+        	close u_cursor;
+        end;
+        call p12(30);
+        ```
+
+
+
+
+### 3.存储函数
+
+
+
+
 
 
 
