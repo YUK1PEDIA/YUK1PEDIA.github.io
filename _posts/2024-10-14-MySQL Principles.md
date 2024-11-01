@@ -1231,6 +1231,7 @@ update course set name = 'SpringBoot' where name = 'PHP' ;
       begin
       	declare uname varchar(100);
       	declare upro varchar(100);
+      	# 注意游标的声明要在普通变量声明之后，否则会报错
       	declare u_cursor cursor for select name,profession from tb_user where age <= uage;
       	drop table if exists tb_user_pro;
       	create table if not exists tb_user_pro(
@@ -1247,17 +1248,17 @@ update course set name = 'SpringBoot' where name = 'PHP' ;
       end;
       call p11(30);
       ```
-
-      上述的存储过程，最终我们在调用的过程中会报错，之所以报错是因为在上面的while循环中并没有退出条件。当游标的数据集获取完毕之后，再次获取数据，就会报错，从而终止了程序的执行。
-
+      
+      上述的存储过程，最终我们在调用的过程中会报错，之所以报错是因为在上面的while循环中并没有退出条件。当游标的数据集获取完毕之后，再次获取数据就会报错（游标中已经没有数据可供获取），从而终止了程序的执行。
+      
       ![1.png](https://s2.loli.net/2024/10/28/PyaFSIQpnL4bcgA.png)
-
+      
       但是此时，tb_user_pro表结构及其数据都已经插入成功了，我们可以直接刷新表结构，检查表结构中的数据。
-
+      
       ![1.png](https://s2.loli.net/2024/10/28/bzPZQFGjdmk8WiU.png)
-
+      
       上述的功能虽然我们实现了，但是逻辑并不完善，而且程序执行完毕获取不到数据，数据库还报错。 接下来，我们就需要来完成这个存储过程，并且解决这个问题。
-
+      
       要想解决这个问题，就需要通过MySQL中提供的 **条件处理程序 Handler** 来解决。
 
 11. 条件处理程序
@@ -1272,100 +1273,195 @@ update course set name = 'SpringBoot' where name = 'PHP' ;
        	EXIT: 终止执行当前程序
        	
        condition_value 的取值：
-       	SQLSTATE sqlstate_value: 状态码，如 02000
+       	SQLSTATE sqlstate_value: 状态码，如 02000（表示没有数据了）
        	SQLWARNING: 所有以01开头的SQLSTATE代码的简写
        	NOT FOUND: 所有以02开头的SQLSTATE代码的简写
        	SQLEXCEPTION: 所有没有被SQLWARNING 或 NOT FOUND捕获的SQLSTATE代码的简写
        ```
 
-    - 案例：
+    - 案例：我们继续来完成在上一小节提出的这个需求，并解决其中的问题。根据传入的参数uage，来查询用户表tb_user中，所有的用户年龄小于等于uage的用户姓名（name）和专业（profession），并将用户的姓名和专业插入到所创建的一张新表(id,name,profession)中。
 
-    - 我们继续来完成在上一小节提出的这个需求，并解决其中的问题。根据传入的参数uage，来查询用户表tb_user中，所有的用户年龄小于等于uage的用户姓名（name）和专业（profession），并将用户的姓名和专业插入到所创建的一张新表(id,name,profession)中。
+       - 通过SQLSTATE指定具体的状态码
 
-      - 通过SQLSTATE指定具体的状态码
-
-        ```mysql
-        -- 逻辑:
-        -- A. 声明游标, 存储查询结果集
-        -- B. 准备: 创建表结构
-        -- C. 开启游标
-        -- D. 获取游标中的记录
-        -- E. 插入数据到新表中
-        -- F. 关闭游标
-        create procedure p11(in uage int)
-        begin
-        	declare uname varchar(100);
-        	declare upro varchar(100);
-        	declare u_cursor cursor for select name,profession from tb_user where age <= uage;
-        	
-        	-- 声明条件处理程序 ： 当SQL语句执行抛出的状态码为02000时，将关闭游标u_cursor，并退出
-        	declare exit handler for SQLSTATE '02000' close u_cursor;
-        	drop table if exists tb_user_pro;
-        	create table if not exists tb_user_pro(
-        		id int primary key auto_increment,
-        		name varchar(100),
-        		profession varchar(100)
-        	);
-        	
-        	open u_cursor;
-        	
-        	while true do
-        		fetch u_cursor into uname,upro;
-        		insert into tb_user_pro values (null, uname, upro);
-        	end while;
-        	
-        	close u_cursor;
-        	
-        end;
-        call p11(30);
-        ```
-
-      - 通过SQLSTATE的代码简写方式 NOT FOUND。02 开头的状态码，代码简写为 NOT FOUND
-
-        ```mysql
-        create procedure p12(in uage int)
-        begin
-        	declare uname varchar(100);
-        	declare upro varchar(100);
-        	declare u_cursor cursor for select name,profession from tb_user where age <= uage;
-        	
-        	-- 声明条件处理程序 ： 当SQL语句执行抛出的状态码为02开头时，将关闭游标u_cursor，并退出
-        	declare exit handler for not found close u_cursor;
-        	drop table if exists tb_user_pro;
-        	create table if not exists tb_user_pro(
-        		id int primary key auto_increment,
-        		name varchar(100),
-        		profession varchar(100)
-        	);
-        	
-        	open u_cursor;
-        	
-        	while true do
-        		fetch u_cursor into uname,upro;
-        		insert into tb_user_pro values (null, uname, upro);
-        	end while;
-        	
-        	close u_cursor;
-        end;
-        call p12(30);
-        ```
+         ```mysql
+         -- 逻辑:
+         -- A. 声明游标, 存储查询结果集
+         -- B. 准备: 创建表结构
+         -- C. 开启游标
+         -- D. 获取游标中的记录
+         -- E. 插入数据到新表中
+         -- F. 关闭游标
+         create procedure p11(in uage int)
+         begin
+         	declare uname varchar(100);
+         	declare upro varchar(100);
+         	declare u_cursor cursor for select name,profession from tb_user where age <= uage;
+         	
+         	-- 声明条件处理程序 ： 当SQL语句执行抛出的状态码为02000时，将关闭游标u_cursor，并退出
+         	declare exit handler for SQLSTATE '02000' close u_cursor;
+         	
+         	drop table if exists tb_user_pro;
+         	create table if not exists tb_user_pro(
+         		id int primary key auto_increment,
+         		name varchar(100),
+         		profession varchar(100)
+         	);
+         	
+         	open u_cursor;
+         	
+         	while true do
+         		fetch u_cursor into uname,upro;
+         		insert into tb_user_pro values (null, uname, upro);
+         	end while;
+         	
+         	close u_cursor;
+         	
+         end;
+         call p11(30);
+         ```
+    
+       - 通过SQLSTATE的代码简写方式 NOT FOUND。02 开头的状态码，代码简写为 NOT FOUND
+    
+         ```mysql
+         create procedure p12(in uage int)
+         begin
+         	declare uname varchar(100);
+         	declare upro varchar(100);
+         	declare u_cursor cursor for select name,profession from tb_user where age <= uage;
+         	
+         	-- 声明条件处理程序 ： 当SQL语句执行抛出的状态码为02开头时，将关闭游标u_cursor，并退出
+         	declare exit handler for not found close u_cursor;
+         	
+         	drop table if exists tb_user_pro;
+         	create table if not exists tb_user_pro(
+         		id int primary key auto_increment,
+         		name varchar(100),
+         		profession varchar(100)
+         	);
+         	
+         	open u_cursor;
+         	
+         	while true do
+         		fetch u_cursor into uname,upro;
+         		insert into tb_user_pro values (null, uname, upro);
+         	end while;
+         	
+         	close u_cursor;
+         end;
+         call p12(30);
+         ```
 
 
 
 
 ### 3.存储函数
 
+- 存储函数是**有返回值的存储过程**，存储函数的参数只能是IN类型的。具体语法如下：
 
+  ```mysql
+  CREATE FUNCTION 存储函数名称 ([ 参数列表 ])
+  RETURNS type [characteristic ...]
+  BEGIN
+  	-- SQL语句
+  	RETURN ...;
+  END ;
+  ```
 
+- characteristic说明：
 
+  - DETERMINISTIC：相同的输入参数总是产生相同的结果
 
+  - NO SQL ：不包含 SQL 语句
 
+  - READS SQL DATA：包含读取数据的语句，但不包含写入数据的语句
 
+- 案例：计算从1累加到n的值，n为传入的参数值。
 
+  ```mysql
+  create function fun1(n int)
+  returns int deterministic
+  begin
+  	declare total int default 0;
+  	while n>0 do
+  		set total := total + n;
+  		set n := n - 1;
+  	end while;
+  	return total;
+  end;
+  
+  select fun1(50);
+  ```
 
+  
 
+### 4.触发器
 
+1. 介绍：触发器是与表有关的数据库对象，指在 insert/update/delete 之前(BEFORE)或之后(AFTER)，触发并执行触发器中定义的SQL语句集合。触发器的这种特性可以协助应用在数据库端确保数据的完整性, 日志记录 , 数据校验等操作 。使用别名OLD和NEW来引用触发器中发生变化的记录内容，这与其他的数据库是相似的。现在触发器还只支持行级触发，不支持语句级触发。
 
+   | 触发器类型      | NEW 和 OLD                                              |
+   | --------------- | ------------------------------------------------------- |
+   | INSERT 型触发器 | NEW 表示将要或者已经新增的数据                          |
+   | UPDATE 型触发器 | OLD 表示修改之前的数据 , NEW 表示将要或已经修改后的数据 |
+   | DELETE 型触发器 | OLD 表示将要或者已经删除的数据                          |
+
+2. 语法
+
+   - 创建
+
+     ```mysql
+     CREATE TRIGGER trigger_name
+     BEFORE/AFTER INSERT/UPDATE/DELETE
+     ON tbl_name FOR EACH ROW -- 行级触发器
+     BEGIN
+     	trigger_stmt ;
+     END;
+     ```
+
+   - 查看
+
+     ```mysql
+     SHOW TRIGGERS ;
+     ```
+
+   - 删除
+
+     ```mysql
+     DROP TRIGGER [schema_name.]trigger_name ; -- 如果没有指定 schema_name，默认为当前数据库。
+     ```
+
+3. 案例：通过触发器记录 tb_user 表的数据变更日志，将变更日志插入到日志表user_logs中, 包含增加,修改 , 删除 ;
+
+   - 表结构准备
+
+     ```mysql
+     -- 准备工作 : 日志表 user_logs
+     create table user_logs(
+     	id int(11) not null auto_increment,
+     	operation varchar(20) not null comment '操作类型, insert/update/delete',
+     	operate_time datetime not null comment '操作时间',
+     	operate_id int(11) not null comment '操作的ID',
+     	operate_params varchar(500) comment '操作参数',
+     	primary key(`id`)
+     )engine=innodb default charset=utf8;
+     ```
+
+   - 插入数据触发器
+
+     ```mysql
+     create trigger tb_user_insert_trigger
+     	after insert on tb_user for each row
+     begin
+     	insert into user_logs(id, operation, operate_time, operate_id, operate_params)
+     VALUES
+     	(null, 'insert', now(), new.id, concat('插入的数据内容为:
+     	id=',new.id,',name=',new.name, ', phone=', NEW.phone, ', email=', NEW.email, ',
+     	profession=', NEW.profession));
+     end;
+     ```
+
+     
+
+   
 
 
 
