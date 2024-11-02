@@ -5,6 +5,8 @@ description: 算法
 tag: 算法
 ---
 
+[TOC]
+
 
 
 ## 前言
@@ -151,7 +153,7 @@ boolean inArea(int[][] grid, int r, int c) {
 
 
 
-## 例题：岛屿数量
+### 例题1：岛屿数量
 
 给你一个由 `'1'`（陆地）和 `'0'`（水）组成的的二维网格，请你计算网格中岛屿的数量。
 
@@ -241,4 +243,96 @@ public:
 
 
 
-参考：https://leetcode.cn/problems/number-of-islands/solutions/211211/dao-yu-lei-wen-ti-de-tong-yong-jie-fa-dfs-bian-li-/
+### 例题2：字母迷宫
+
+字母迷宫游戏初始界面记作 `m x n` 二维字符串数组 `grid`，请判断玩家是否能在 `grid` 中找到目标单词 `target`。
+注意：寻找单词时 **必须** 按照字母顺序，通过水平或垂直方向相邻的单元格内的字母构成，同时，同一个单元格内的字母 **不允许被重复使用** 。
+
+ 
+
+![img](https://assets.leetcode.com/uploads/2020/11/04/word2.jpg)
+
+ 
+
+**示例 1：**
+
+```
+输入：grid = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], target = "ABCCED"
+输出：true
+```
+
+**示例 2：**
+
+```
+输入：grid = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], target = "SEE"
+输出：true
+```
+
+**示例 3：**
+
+```
+输入：grid = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], target = "ABCB"
+输出：false
+```
+
+ 
+
+**提示：**
+
+- `m == grid.length`
+- `n = grid[i].length`
+- `1 <= m, n <= 6`
+- `1 <= target.length <= 15`
+- `grid` 和 `target` 仅由大小写英文字母组成
+
+
+
+
+
+**思路**
+
+思路很好想，遍历表中所有的字母，当前字母为起点进行 DFS ，逐位地匹配 `target` 字符串，如果还没有达到 `target` 的长度就出现了不同，说明此次搜索没有搜索到，直接返回 false ，具体看代码实现：
+
+
+
+**Code**
+
+```c++
+class Solution {
+    static constexpr int DIRS[4][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+public:
+    bool wordPuzzle(vector<vector<char>>& grid, string target) {
+        int m = grid.size(), n = grid[0].size();
+        auto dfs = [&](auto&& dfs, int i, int j, int k) -> bool {
+            if (grid[i][j] != target[k]) { // 当前字符匹配失败
+                return false;
+            }
+            if (k + 1 == target.length()) { // 匹配成功
+                return true;
+            }
+            
+            grid[i][j] = 0; // 标记访问过
+            for (auto& [dx, dy]: DIRS) {
+                int x = i + dx, y = j + dy;
+                // 没有越界并且搜索成功
+                if (x >= 0 && x < m && y >= 0 && y < n && dfs(dfs, x, y, k + 1)) {
+                    return true;
+                }
+            }
+            // 没有搜到，恢复现场
+            grid[i][j] = target[k];
+            return false;
+        };
+
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (dfs(dfs, i, j, 0)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+```
+
