@@ -299,7 +299,9 @@ public:
 
 ```c++
 class Solution {
+  {% raw %}
     static constexpr int DIRS[4][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}};
+    {% endraw %}
 public:
     bool wordPuzzle(vector<vector<char>>& grid, string target) {
         int m = grid.size(), n = grid[0].size();
