@@ -328,6 +328,37 @@ public:
 };
 ```
 
+另解：哈希表
+
+1. 首先，将数组中的所有整数存入哈希集合中，这样可以在接近常数时间内进行查找操作，同时去除重复的整数。
+2. 然后，遍历哈希集合中的每个整数。如果当前整数的前一个整数不在集合中，说明当前整数可能是一个连续序列的起点。存在那这个数肯定不是开头，直接跳过。
+3. 从可能的起点开始，不断检查下一个连续的整数是否在集合中，如果在，则继续延伸连续序列，同时记录连续序列的长度。
+4. 最后，在遍历过程中不断更新最长连续序列的长度。
+
+```c++
+class Solution {
+public:
+    int longestConsecutive(vector<int>& nums) {
+        unordered_set<int> st(nums.begin(), nums.end());
+        int res = 0;
+        for (auto& num: nums) {
+            if (!st.count(num - 1)) {
+                int cur = num;
+                int temp = 1;
+                while (st.count(cur + 1)) {
+                    ++temp;
+                    ++cur;
+                }
+                res = max(res, temp);
+            }
+        }
+        return res;
+    }
+};
+```
+
+
+
 
 
 ## 4.移动零（双指针）
