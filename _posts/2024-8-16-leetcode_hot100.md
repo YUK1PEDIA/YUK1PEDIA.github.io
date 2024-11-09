@@ -5,6 +5,8 @@ description: 记录
 tag: 算法
 ---
 
+
+
 ## 1.两数之和
 
 给定一个整数数组 `nums` 和一个整数目标值 `target`，请你在该数组中找出 **和为目标值** *`target`* 的那 **两个** 整数，并返回它们的数组下标。
@@ -1396,20 +1398,17 @@ public:
 class Solution {
 public:
     void rotate(vector<int>& nums, int k) {
-        int len = nums.size();
-        int i = len - 1;
+        int n = nums.size();
         while (k--) {
-            while (i > 0) {
-                swap(nums[i], nums[i - 1]);
-                i--;
+            for (int i = n - 1; i > 0; --i) {
+                swap(nums[i], nums[i-1]);
             }
-            i = len - 1;
         }
     }
 };
 ```
 
-考虑直接将末尾的 k 个元素扔到数组前面（通过新创建一个数组实现），就能得到答案。但这样的做法有一个前提：数组长度 len 要比 k 更大。所以可以分两种情况解答
+考虑直接**将末尾的 k 个元素扔到数组前面**（通过新创建一个数组实现），就能得到答案。但这样的做法有一个前提：数组长度 len 要比 k 更大。所以可以分两种情况解答
 
 - len > k 时采用将末尾的 k 个元素扔到数组前面
 - len <= k 时直接模拟
@@ -1420,23 +1419,21 @@ public:
 class Solution {
 public:
     void rotate(vector<int>& nums, int k) {
-        vector<int> ans;
-        int len = nums.size();
-        if (len > k) {
-            int p = len - k;
-            for (int i = p; i < len; ++i)
-                ans.push_back(nums[i]);
-            for (int i = 0; i < p; ++i)
-                ans.push_back(nums[i]);
-            nums = ans;
+        int n = nums.size();
+        if (k < n) {
+            vector<int> res;
+            for (int i = n - k; i < n; ++i) {
+                res.push_back(nums[i]);
+            }
+            for (int i = 0; i < n - k; ++i) {
+                res.push_back(nums[i]);
+            }
+            nums = res;
         } else {
-            int i = len - 1;
             while (k--) {
-                while (i > 0) {
-                    swap(nums[i], nums[i - 1]);
-                    i--;
+                for (int i = n - 1; i > 0; --i) {
+                    swap(nums[i], nums[i-1]);
                 }
-                i = len - 1;
             }
         }
     }
