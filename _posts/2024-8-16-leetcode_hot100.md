@@ -5,6 +5,8 @@ description: 记录
 tag: 算法
 ---
 
+[TOC]
+
 
 
 ## 1.两数之和
@@ -1629,6 +1631,26 @@ public:
 ```
 
 
+
+**正解**
+
+上述排序做法的时间复杂度明显不为 `O(n)` ，我们要找到一个时间复杂度为 `O(n)` 的做法，可以借助哈希表。我们将 `nums` 的所有元素都加入到哈希表中，并且记录 `nums` 的最大值 `mx` 。然后我们从 1 开始枚举正整数，枚举的同时判断当前正整数是否在哈希表中，如果不在就是我们要找的答案。
+
+```c++
+class Solution {
+public:
+    int firstMissingPositive(vector<int>& nums) {
+        unordered_set<int> st(nums.begin(), nums.end());
+        int mx = *max_element(nums.begin(), nums.end());
+        for (int i = 1; i <= mx; ++i) {
+            if (!st.contains(i)) {
+                return i;
+            }
+        }
+        return mx > 0 ? mx + 1 : 1;
+    }
+};
+```
 
 
 
