@@ -1727,19 +1727,18 @@ public:
 class Solution {
 public:
     void setZeroes(vector<vector<int>>& matrix) {
-        int m = matrix.size(); // 行数
-        int n = matrix[0].size(); // 列数
-        vector<pair<int, int>> flag; // 记录0的坐标
-
-        for (int i = 0; i < m; ++i) 
-            for (int j = 0; j < n; ++j) 
-                if (matrix[i][j] == 0) flag.push_back({i, j});
-
-        for (int i = 0; i < flag.size(); ++i) {
-            for (int p = 0; p < m; ++p)
-                matrix[p][flag[i].second] = 0;
-            for (int q = 0; q < n; ++q) 
-                matrix[flag[i].first][q] = 0;
+        int m = matrix.size(), n = matrix[0].size();
+        vector<pair<int, int>> zero;
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                if (matrix[i][j] == 0) {
+                    zero.push_back({i, j});
+                }
+            }
+        }
+        for (auto& [x, y]: zero) {
+            for (int i = 0; i < m; ++i) matrix[i][y] = 0;
+            for (int j = 0; j < n; ++j) matrix[x][j] = 0;
         }
     }
 };
