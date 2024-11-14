@@ -2283,7 +2283,40 @@ public:
 };
 ```
 
+除了以上思路，我们还可以用栈来实现链表的反转：
 
+```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        stack<int> st;
+        ListNode* p = head;
+        while (p != nullptr) {
+            st.push(p->val);
+            p = p->next;
+        }
+        ListNode* dummy = new ListNode();
+        p = dummy;
+        while (!st.empty()) {
+            ListNode *temp = new ListNode(st.top());
+            p->next = temp;
+            p = p->next;
+            st.pop();
+        }
+        return dummy->next;
+    }
+};
+```
 
 
 
