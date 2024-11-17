@@ -2357,89 +2357,101 @@ public:
 
 ### 思路
 
-最简单的想法，创建一个数组，用来存放链表中每个节点的地址，**然后链表的回文判断就变成了线性表的回文判断**。代码如下
+遍历链表，将值存放到数组里，那么链表的回文判断就变成了线性表的回文判断。代码如下
 
 ```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 class Solution {
 public:
     bool isPalindrome(ListNode* head) {
-        // 特判空表和单节点表
-        if (head == nullptr) return false;
-        if (head->next == nullptr) return true;
-        ListNode *tail;
-        tail = head;
-        int cnt = 0; // 节点个数
-
-        ListNode *node[100005];
-        while (tail != nullptr) {
-            node[cnt++] = tail;
-            tail = tail->next;
+        vector<int> f;
+        ListNode* p = head;
+        while (p) {
+            f.push_back(p->val);
+            p = p->next;
         }
-
-        // 奇偶有别
-        if (cnt % 2 == 0) {
-            for (int i = cnt/2 - 1, j = cnt/2; i >= 0; --i, ++j)
-                if (node[i]->val != node[j]->val) return false;
-        } else {
-            for (int i = cnt/2 - 1, j = cnt/2 + 1; i >= 0; --i, ++j)
-                if (node[i]->val != node[j]->val) return false;
+        int n = f.size();
+        for (int i = 0; i < n / 2; ++i) {
+            if (f[i] != f[n-1-i]) {
+                return false;
+            }
         }
         return true;
     }
 };
 ```
 
-这种做法的空间复杂度为O(n)，可以进一步减小空间复杂度，其实思路也很简单：将后半部分链表翻转再判断是否回文，反转链表用上一题的方法即可。参考代码如下
+这种做法的空间复杂度为O(n)，可以进一步减小空间复杂度，其实思路也很简单：找到链表的中间结点 mid，然后反转从 mid 到链表末尾这段，反转第二段得到头节点 head2 ，最后同时遍历 head 和 head2 两个链表，直到 head2 链表遍历结束，判断有无节点值对应不相等。
+
+注意：找中间结点使用快慢指针：
+
+- 如果链表节点数为奇数，那么找的就是正中间的节点
+
+![lc-midlist1.jpg](https://pic.leetcode.cn/1729048747-htsJVo-lc-midlist1.jpg)
+
+- 如果链表节点数为偶数，那么找的是正中间右边的节点
+
+![lc-midlist2.jpg](https://pic.leetcode.cn/1729048754-HLNfqE-lc-midlist2.jpg)
+
+
+
+**Code**
 
 ```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 class Solution {
-public:
-    bool isPalindrome(ListNode* head) {
-        if (head == nullptr) {
-            return true;
-        }
-
-        // 找到前半部分链表的尾节点并反转后半部分链表
-        ListNode* firstHalfEnd = endOfFirstHalf(head);
-        ListNode* secondHalfStart = reverseList(firstHalfEnd->next);
-
-        // 判断是否回文
-        ListNode* p1 = head;
-        ListNode* p2 = secondHalfStart;
-        bool result = true;
-        while (result && p2 != nullptr) {
-            if (p1->val != p2->val) {
-                result = false;
-            }
-            p1 = p1->next;
-            p2 = p2->next;
-        }        
-
-        // 还原链表并返回结果
-        firstHalfEnd->next = reverseList(secondHalfStart);
-        return result;
-    }
-
-    ListNode* reverseList(ListNode* head) {
-        ListNode* prev = nullptr;
-        ListNode* curr = head;
-        while (curr != nullptr) {
-            ListNode* nextTemp = curr->next;
-            curr->next = prev;
-            prev = curr;
-            curr = nextTemp;
-        }
-        return prev;
-    }
-
-    ListNode* endOfFirstHalf(ListNode* head) {
-        ListNode* fast = head;
-        ListNode* slow = head;
-        while (fast->next != nullptr && fast->next->next != nullptr) {
-            fast = fast->next->next;
+    // 找链表的中间结点
+    ListNode* midNode(ListNode* head) {
+        ListNode* slow = head, *fast = head;
+        while (fast && fast->next) {
             slow = slow->next;
+            fast = fast->next->next;
         }
         return slow;
+    }
+
+    // 反转链表
+    ListNode* reverseList(ListNode* head) {
+        ListNode* pre = nullptr, *cur = head;
+        while (cur) {
+            ListNode* nxt = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = nxt;
+        }
+        return pre;
+    }
+
+public:
+    bool isPalindrome(ListNode* head) {
+        ListNode* mid = midNode(head);
+        ListNode* head2 = reverseList(mid);
+        while (head2) {
+            if (head->val != head2->val) {
+                return false;
+            }
+            head = head->next;
+            head2 = head2->next;
+        }    
+        return true;
     }
 };
 ```
@@ -2503,17 +2515,22 @@ public:
 比较直接的想法就是创建一个哈希集合，然后遍历一遍链表，遍历的过程中判断这个节点是否在哈希集合里，如果不在就加入到哈希集合，否则就说明出现了环，直接返回true，代码如下
 
 ```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution {
 public:
     bool hasCycle(ListNode *head) {
-        ListNode *p = head;
-        unordered_set<ListNode*> hash_set;
-        while (p != nullptr) {
-            if (hash_set.find(p) != hash_set.end()) {
-                return true;
-            } else {
-                hash_set.insert(p);
-            } 
+        unordered_set<ListNode*> st;
+        ListNode* p = head;
+        while (p) {
+            if (!st.count(p)) st.insert(p);
+            else return true;
             p = p->next;
         }
         return false;
