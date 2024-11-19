@@ -2627,17 +2627,22 @@ public:
 和前一道题一样的思路，使用哈希集合来存储已经出现过的节点。我们只用遍历一次链表，边遍历边往哈希集合中添加元素，每次添加都判断一次哈希集合中是否存在这个元素，如果存在就说明有环，直接返回当前节点即为答案。代码如下
 
 ```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution {
 public:
     ListNode *detectCycle(ListNode *head) {
-        unordered_set<ListNode*> hash_set;
-        ListNode *p = head;
-        while (p != nullptr) {
-            if (hash_set.find(p) != hash_set.end()) {
-                return p;
-            } else {
-                hash_set.insert(p);
-            }
+        unordered_set<ListNode*> st;
+        ListNode* p = head;
+        while (p) {
+            if (st.count(p)) return p;
+            else st.insert(p); 
             p = p->next;
         }
         return nullptr;
@@ -2657,29 +2662,35 @@ public:
 
 有了这个等量关系，我们发现**从相遇点到入环点的距离加上 n - 1 圈的环长，恰好等于头节点到入环点的距离**。
 
-**因此，当发现slow和fast相遇时，我们额外使用一个指针p，起始指向链表头部，随后它和slow每次向后移动一个位置，最终它们会在入环点相遇**
+因此，**当发现 slow 和 fast 相遇时**，我们额外使用一个指针p，起始指向链表头部，随后它和slow每次向后移动一个位置，最终它们会在入环点相遇
 
 代码如下
 
 ```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution {
 public:
     ListNode *detectCycle(ListNode *head) {
-        ListNode *slow = head, *fast = head;
-        while (fast != nullptr) {
-            slow = slow->next;
-            if (fast->next == nullptr) return nullptr;
+        if (head == nullptr || head->next == nullptr) return nullptr;
+        ListNode *fast = head, *slow = head;
+        do {
+            if (fast == nullptr || fast->next == nullptr) return nullptr;
             fast = fast->next->next;
-            if (fast == slow) {
-                ListNode *p = head;
-                while (p != slow) {
-                    p = p->next;
-                    slow = slow->next;
-                }
-                return p;
-            }
+            slow = slow->next;
+        } while (fast != slow);
+        ListNode *p = head;
+        while (p != slow) {
+            p = p->next;
+            slow = slow->next;
         }
-        return nullptr;
+        return p;
     }
 };
 ```
@@ -2734,24 +2745,23 @@ public:
 一直到某个链表走到头，若此时另一个链表还没有遍历完，那么就直接将剩余链表接到尾部。代码如下
 
 ```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 class Solution {
 public:
     ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
-        if (list1 == nullptr && list2 != nullptr) return list2;
-        if (list1 != nullptr && list2 == nullptr) return list1;
-        if (list1 == nullptr && list2 == nullptr) return nullptr;
-        ListNode *p1 = list1; // 遍历第一个链表的指针
-        ListNode *p2 = list2; // 遍历第二个链表的指针
-        ListNode *ans, *p; // 合并后的链表
-        if (p1->val <= p2->val) {
-            ans = p = p1;
-            p1 = p1->next;
-        } else {
-            ans = p = p2;
-            p2 = p2->next;
-        }
-        while (p1 != nullptr && p2 != nullptr) {
-            if (p1->val <= p2->val) {
+        ListNode *p1 = list1, *p2 = list2;
+        ListNode *dummy = new ListNode(), *p = dummy;
+        while (p1 && p2) {
+            if (p1->val < p2->val) {
                 p->next = p1;
                 p1 = p1->next;
             } else {
@@ -2760,11 +2770,9 @@ public:
             }
             p = p->next;
         }
-        if (p1 == nullptr) 
-            p->next = p2;
-        if (p2 == nullptr)
-            p->next = p1;
-        return ans;
+        if (!p1) p->next = p2;
+        else p->next = p1;
+        return dummy->next;
     }
 };
 ```
@@ -3008,15 +3016,17 @@ public:
 class Solution {
 public:
     ListNode* removeNthFromEnd(ListNode* head, int n) {
-        if (head->next == nullptr) return nullptr;
+        if (!head->next) return nullptr;
         ListNode *dummy = new ListNode(0, head);
-        ListNode *first = head, *second = dummy;
-        for (int i = 0; i < n; ++i) first = first->next;
-        while (first) {
-            first = first->next;
-            second = second->next;
+        ListNode *slow = dummy, *fast = head;
+        while (n--) {
+            fast = fast->next;
         }
-        second->next = second->next->next;
+        while (fast) {
+            slow = slow->next;
+            fast = fast->next;
+        }
+        slow->next = slow->next->next;
         // 注意此处不能直接返回head，因为有可能删除的就是head节点
         return dummy->next;
     }
