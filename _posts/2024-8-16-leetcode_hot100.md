@@ -3094,16 +3094,14 @@ class Solution {
 public:
     ListNode* swapPairs(ListNode* head) {
         ListNode *dummy = new ListNode(0, head);
-        // tmp作为两个待交换节点中第一个节点的前驱节点
-        ListNode *tmp = dummy;
-        while (tmp->next != nullptr && tmp->next->next != nullptr) {
-            // 自己模拟一遍就知道怎么操作了
-            ListNode *p1 = tmp->next;
-            ListNode *p2 = tmp->next->next;
-            tmp->next = p2;
+        ListNode *pre = dummy;
+        while (pre->next != nullptr && pre->next->next != nullptr) {
+            ListNode *p1 = pre->next;
+            ListNode *p2 = pre->next->next;
+            pre->next = p2;
             p1->next = p2->next;
             p2->next = p1;
-            tmp = p1;
+            pre = p1;
         }
         return dummy->next;
     }

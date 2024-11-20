@@ -805,3 +805,164 @@ public:
 };
 ```
 
+
+
+**2.新增道路查询后的最短距离Ⅱ**
+
+给你一个整数 `n` 和一个二维整数数组 `queries`。
+
+有 `n` 个城市，编号从 `0` 到 `n - 1`。初始时，每个城市 `i` 都有一条**单向**道路通往城市 `i + 1`（ `0 <= i < n - 1`）。
+
+`queries[i] = [ui, vi]` 表示新建一条从城市 `ui` 到城市 `vi` 的**单向**道路。每次查询后，你需要找到从城市 `0` 到城市 `n - 1` 的**最短路径**的**长度**。
+
+所有查询中不会存在两个查询都满足 `queries[i][0] < queries[j][0] < queries[i][1] < queries[j][1]`。
+
+返回一个数组 `answer`，对于范围 `[0, queries.length - 1]` 中的每个 `i`，`answer[i]` 是处理完**前** `i + 1` 个查询后，从城市 `0` 到城市 `n - 1` 的最短路径的*长度*。
+
+ 
+
+**示例 1：**
+
+**输入：** n = 5, queries = [[2, 4], [0, 2], [0, 4]]
+
+**输出：** [3, 2, 1]
+
+**解释：**
+
+![img](https://assets.leetcode.com/uploads/2024/06/28/image8.jpg)
+
+新增一条从 2 到 4 的道路后，从 0 到 4 的最短路径长度为 3。
+
+![img](https://assets.leetcode.com/uploads/2024/06/28/image9.jpg)
+
+新增一条从 0 到 2 的道路后，从 0 到 4 的最短路径长度为 2。
+
+![img](https://assets.leetcode.com/uploads/2024/06/28/image10.jpg)
+
+新增一条从 0 到 4 的道路后，从 0 到 4 的最短路径长度为 1。
+
+**示例 2：**
+
+**输入：** n = 4, queries = [[0, 3], [0, 2]]
+
+**输出：** [1, 1]
+
+**解释：**
+
+![img](https://assets.leetcode.com/uploads/2024/06/28/image11.jpg)
+
+新增一条从 0 到 3 的道路后，从 0 到 3 的最短路径长度为 1。
+
+![img](https://assets.leetcode.com/uploads/2024/06/28/image12.jpg)
+
+新增一条从 0 到 2 的道路后，从 0 到 3 的最短路径长度仍为 1。
+
+ 
+
+**提示:**
+
+- `3 <= n <= 10^5`
+- `1 <= queries.length <= 10^5`
+- `queries[i].length == 2`
+- `0 <= queries[i][0] < queries[i][1] < n`
+- `1 < queries[i][1] - queries[i][0]`
+- 查询中不存在重复的道路。
+- 不存在两个查询都满足 `i != j` 且 `queries[i][0] < queries[j][0] < queries[i][1] < queries[j][1]`。
+
+
+
+**思路**
+
+本题满足一个性质：所有查询中不会存在两个查询都满足 `queries[i][0] < queries[j][0] < queries[i][1] < queries[j][1]`。
+
+这说明所有添加的边都不会交叉，从贪心的角度来看，遇到捷径就走捷径是最优的。
+
+考虑如上性质，我们把目光放在**边**上：
+
+初始有 `n - 1` 条边，我们在 `0 -> 1` 这条边上，目标是到达 `(n - 2) -> (n - 1)` 这条边，并把这条边走完。
+
+处理 `queries` 之前，我们需要走 `n - 1` 条边。
+
+![w409c-1.jpg](https://pic.leetcode.cn/1722747389-ZsMpqd-w409c-1.jpg)
+
+连一条 2 到 4 的边，意味着什么？
+
+相当于把 `2 -> 3` 这条边和 `3 -> 4` 这条边合并成一条边。现在从起点到终点需要 3 条边。
+
+![w409c-2.jpg](https://pic.leetcode.cn/1722747344-UibNQD-w409c.jpg)
+
+连一条从 0 到 2 的边，相当于把 `0 -> 1` 这条边和 `1 -> 2` 这条边合并成一条边。现在从起点到终点需要 2 条边。
+
+我们可以用**并查集**实现边的合并。初始化一个大小为 `n - 1` 的并查集，并查集中的节点 i 表示题目的边 `i -> (i + 1)` ，这就相当于给每条边编号 `0, 1, 2, ..., n - 2` 。
+
+连一条从 L 到 R 的边，相当于把并查集中的节点 `L, L + 1, L + 2, ... , R - 2` 合并到并查集中的节点 `R - 1` 上。
+
+合并的同时，维护并查集连通块个数，答案就是每次合并后的并查集连通块个数。
+
+
+
+**Code**
+
+```c++
+class Solution {
+public:
+    vector<int> shortestDistanceAfterQueries(int n, vector<vector<int>>& queries) {
+        vector<int> fa(n - 1);
+        iota(fa.begin(), fa.end(), 0);
+
+        auto find = [&](int x) -> int {
+            int rt = x;
+            while (fa[rt] != rt) {
+                rt = fa[rt];
+            }
+            while (fa[x] != rt) {
+                int tmp = fa[x];
+                fa[x] = rt;
+                x = tmp;
+            }
+            return rt;
+        };
+
+        vector<int> ans(queries.size());
+        int cnt = n - 1;
+        for (int qi = 0; qi < queries.size(); ++qi) {
+            int l = queries[qi][0], r = queries[qi][1] - 1;
+            int fr = find(r);
+            for (int i = find(l); i < r; i = find(i + 1)) {
+                fa[i] = fr;
+                cnt--;
+            }
+            ans[qi] = cnt;
+        }
+        return ans;
+    }
+};
+```
+
+下面分析上面的代码是如何使用并查集的：
+
+- 寻根过程：
+
+```c++
+while (fa[rt] != rt) {
+    rt = fa[rt];
+}
+```
+
+逐层跳跃父节点，找到 `x` 所在连通块的根节点 `rt`
+
+- 路径压缩：
+
+```c++
+while (fa[x] != rt) {
+    int tmp = fa[x];
+    fa[x] = rt;
+    x = tmp;
+}
+```
+
+优化并查集的结构，将路径上所有节点直接指向根节点 `rt` ，使树更加“扁平化”。下次查询时，路径上的节点直接指向根节点，大幅加快后续操作的效率。
+
+**为什么使用两次循环而不是递归来实现并查集的寻根过程和路径压缩过程？**
+
+- 使用迭代而非递归可以避免函数调用栈的额外开销，在深度较大的树上更安全。
