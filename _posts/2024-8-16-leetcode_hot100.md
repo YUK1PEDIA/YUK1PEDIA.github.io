@@ -3279,7 +3279,7 @@ public:
 
 ### 思路
 
-这道题理解题意比较困难，这里说明一下题目想要表达的意思。
+题意如下：
 
 给你一个链表，链表中的每个节点除了**自身 val 值**和**指向下一个节点的 next 指针**，还有一个指向链表中某个节点的**随机指针 random**。题目要我们做的操作是将这个链表完整的复制下来，注意，不是将原来的链表原原本本地复制一遍，是新创建一个链表，**将这个链表的结构仿照原有的列表创建出来。简单来说就是新旧链表对应的每个节点的地址不同**。
 
@@ -3357,6 +3357,66 @@ public:
 };
 ```
 
+上面的方法使用到了哈希表来记录 random 的相对位置。那么我们能不能使用 `O(1)` 的空间来完成这种复制操作呢？我们可以把新链表和旧链表**混在一起**
+
+例如链表 `1->2->3` ，依次复制每个节点，把新节点直接插到原节点的后面，形成一个交错链表：`1->1'->2->2'->3->3'` 。
+
+如此一来，**原链表节点的下一个节点，就是其对应的新链表节点了**。
+
+然后遍历交错链表，加入节点 1 的 random 指向节点 3，那么就把节点 1' 的 random 指向节点 3 的下一个节点 3'，这样就完成了对 random 指针的复制。
+
+最后从交错链表中分离出 `1'->2'->3'` ，即为深拷贝后的链表。做法类似于[328. 奇偶链表 - 力扣（LeetCode）](https://leetcode.cn/problems/odd-even-linked-list/)
+
+```c++
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+    
+    Node(int _val) {
+        val = _val;
+        next = NULL;
+        random = NULL;
+    }
+};
+*/
+
+class Solution {
+public:
+    Node* copyRandomList(Node* head) {
+        if (head == nullptr) {
+            return nullptr;
+        }
+
+        // 复制每个节点，把新节点直接添加到被复制节点的后面
+        for (Node *cur = head; cur; cur = cur->next->next) {
+            cur->next = new Node(cur->val, cur->next, nullptr);
+        }
+
+        for (Node *cur = head; cur; cur = cur->next->next) {
+            if (cur->random) {
+                // 要复制的 random 是 cur->random 的下一个节点
+                cur->next->random = cur->random->next;
+            }
+        }
+
+        // 分离交错链表
+        Node *new_head = head->next;
+        Node *cur = head;
+        for (; cur->next->next; cur = cur->next) {
+            Node *copy = cur->next;
+            cur->next = copy->next; // 恢复原节点的 next
+            copy->next = cur->next->next; // 设置新节点的 next
+        }
+        cur->next = nullptr;
+        return new_head;
+    }
+};
+```
+
 
 
 
@@ -3403,7 +3463,7 @@ public:
 
 ### 思路
 
-虽然我们没有对链表排序的 sort，但我们可以用额外 O(n) 的空间，把链表转换成线性表后再 sort，然后再遍历链表依次赋值呀。代码如下
+可以用额外 O(n) 的空间，把链表转换成线性表后再 sort，然后再遍历链表依次赋值。代码如下
 
 ```c++
 /**
@@ -3446,86 +3506,112 @@ public:
 
 能否不用额外的存储空间实现原链表的排序呢？我们可以用**自底向上的归并排序**实现。
 
-归并排序基于分治算法。最容易想到的实现方式是自顶向下的递归实现，考虑到递归调用的栈空间，自顶向下归并排序的空间复杂度是 O(logn) 。如果要达到 O(1) 的空间复杂度，需要用自底向上的实现方式。
+归并排序基于分治算法。最容易想到的实现方式是自顶向下的递归实现，考虑到递归调用的栈空间，自顶向下归并排序的空间复杂度是 O(logn) 。如果要达到 O(1) 的空间复杂度，需要用**自底向上**的实现方式。
 
-**首先求得链表的长度 length，然后将链表拆分成子链表进行合并。**
+自底向上的意思是：
 
-具体做法如下：
+- 首先，归并长度为 1 的子链表。例如 `[4,2,1,3]` ，把第一个节点和第二个节点归并，第三个节点和第四个节点归并，得到 `[2,4,1,3]`
+- 然后，归并长度为 2 的子链表，例如 `[2,4,1,3]` ，把前两个节点和后两个节点归并，得到 `[1,2,3,4]` 
+- 然后，归并长度为 4 的子链表
+- 依此类推，直到归并的长度大于等于链表长度为止
 
-1. 用 subLength 表示每次需要排序的子链表的长度，初始时 subLength = 1.
-2. 每次将链表拆分成若干个长度为 subLength 的子链表（最后一个子链表的长度可以小于 subLength），按照每两个子链表一组进行合并，合并后即可得到若干个长度为 subLength×2 的有序子链表（最后一个子链表的长度可以小于 subLength×2）。
-3. 将 subLength 的值加倍，重复第 2 步，对更长的有序子链表进行合并操作，直到有序子链表的长度大于或等于 length，整个链表排序完毕
+具体算法：
 
-代码如下
+1. 遍历链表，获取链表长度 `length`
+2. 初始化步长 `step = 1`
+3. 循环直到 `step >= length`
+4. 每轮循环，从链表头节点开始
+5. 分割出两段长为 `step` 的链表，合并，把合并后的链表插到新链表的末尾。重复该步骤，直到链表遍历完比。
+6. 把 `step` 扩大一倍，回到第 4 步
+
+
+
+代码如下：
 
 ```c++
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode() : val(0), next(nullptr) {}
+ *     ListNode(int x) : val(x), next(nullptr) {}
+ *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+ * };
+ */
 class Solution {
-public:
-    ListNode* sortList(ListNode* head) {
-        if (head == nullptr) {
-            return head;
-        }
+    // 计算链表长度
+    int getListLength(ListNode* head) {
         int length = 0;
-        ListNode* node = head;
-        while (node != nullptr) {
-            length++;
-            node = node->next;
+        while (head) {
+            ++length;
+            head = head->next;
         }
-        ListNode* dummyHead = new ListNode(0, head);
-        for (int subLength = 1; subLength < length; subLength <<= 1) {
-            ListNode* prev = dummyHead, *curr = dummyHead->next;
-            while (curr != nullptr) {
-                ListNode* head1 = curr; // 第一个子链表的头节点
-                // 寻找第二个子链表的头节点
-                for (int i = 1; i < subLength && curr->next != nullptr; i++) {
-                    curr = curr->next;
-                }
-                // 第二个子链表的头节点
-                ListNode* head2 = curr->next;
-                curr->next = nullptr; // 断开第一、第二个子链表
-                
-                // 下面开始找子链表的后继节点
-                curr = head2;
-                for (int i = 1; i < subLength && curr != nullptr && curr->next != nullptr; i++) {
-                    curr = curr->next;
-                }
-                ListNode* next = nullptr; // 指向后继
-                if (curr != nullptr) {
-                    next = curr->next;
-                    curr->next = nullptr; // 断开第二个子链表和后继
-                }
-                // 合并排序两个子链表
-                ListNode* merged = merge(head1, head2);
-                prev->next = merged;
-                // 找到第二个子链表的后继的前驱位置
-                while (prev->next != nullptr) {
-                    prev = prev->next;
-                }
-                curr = next;
-            }
-        }
-        return dummyHead->next;
+        return length;
     }
 
-    ListNode* merge(ListNode* head1, ListNode* head2) {
-        ListNode* dummyHead = new ListNode(0);
-        ListNode* temp = dummyHead, *temp1 = head1, *temp2 = head2;
-        while (temp1 != nullptr && temp2 != nullptr) {
-            if (temp1->val <= temp2->val) {
-                temp->next = temp1;
-                temp1 = temp1->next;
+    // 分割链表
+    // 如果链表长度 <= size，直接返回空
+    // 如果链表长度 > size，把链表的前 size 个节点分割出来（断开连接），并返回剩余链表的头节点
+    ListNode* splitList(ListNode* head, int size) {
+        ListNode *cur = head;
+        for (int i = 0; i < size - 1 && cur; ++i) {
+            cur = cur->next;
+        }
+
+        // 链表长度 <= size
+        if (cur == nullptr || cur->next == nullptr) {
+            return nullptr;
+        }
+
+        ListNode *next_head = cur->next;
+        cur->next = nullptr;
+        return next_head;
+    }
+
+    // 合并两个有序链表
+    pair<ListNode*, ListNode*> mergeTwoLists(ListNode* list1, ListNode* list2) {
+        ListNode dummy;
+        ListNode *cur = &dummy; // cur 指向新链表的末尾
+        while (list1 && list2) {
+            if (list1->val < list2->val) {
+                cur->next = list1;
+                list1 = list1->next;
             } else {
-                temp->next = temp2;
-                temp2 = temp2->next;
+                cur->next = list2;
+                list2 = list2->next;
             }
-            temp = temp->next;
+            cur = cur->next;
         }
-        if (temp1 != nullptr) {
-            temp->next = temp1;
-        } else if (temp2 != nullptr) {
-            temp->next = temp2;
+        cur->next = list1 ? list1 : list2; // 拼接剩余链表
+        while (cur->next) {
+            cur = cur->next;
         }
-        return dummyHead->next;
+        // 循环结束，cur 是合并后的链表的尾节点
+        return {dummy.next, cur};
+    }
+
+public:
+    ListNode* sortList(ListNode* head) {
+        int length = getListLength(head);
+        ListNode dummy(0, head);
+        // step 为步长，即参与合并的链表长度
+        for (int step = 1; step < length; step *= 2) {
+            ListNode *new_list_tail = &dummy; // 新链表的末尾
+            ListNode *cur = dummy.next;
+            while (cur) {
+                // 从 cur 开始，分割出两段长为 step 的链表，头节点分别为 head1 和 head2
+                ListNode *head1 = cur;
+                ListNode *head2 = splitList(head1, step);
+                cur = splitList(head2, step); // 按照步长 step 不断分割链表
+                // 合并排序两段长为 step 的链表
+                auto [head, tail] = mergeTwoLists(head1, head2);
+                // 合并后的头节点 head，插到 new_list_tail 的后面
+                new_list_tail->next = head;
+                new_list_tail = tail;
+            }
+        }
+        return dummy.next;
     }
 };
 ```
