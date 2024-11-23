@@ -1,6 +1,6 @@
 ---
 layout: post
-title: JavaGuide——Java部分
+title: JavaGuide
 description: 记录
 tag: 八股
 ---
