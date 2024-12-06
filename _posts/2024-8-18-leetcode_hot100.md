@@ -3551,31 +3551,36 @@ public:
 
 ### 思路
 
-根据题意构造解空间树，发现本题是一个排列树，套模板即可解决，代码如下
+直接搜
 
 ```c++
 class Solution {
 public:
-    void dfs(vector<vector<int>>& res, vector<int>& output, int first, int depth) {
-        if (first == depth) {
-            res.push_back(output);
-            return;
-        }
-        for (int i = first; i < len; ++i) {
-            swap(output[i], output[first]);
-            dfs(res, output, first + 1, len);
-            swap(output[i], output[first]);            
-        }
-    }
     vector<vector<int>> permute(vector<int>& nums) {
+        int n = nums.size();
         vector<vector<int>> res;
-        dfs(res, nums, 0, nums.size());
+        vector<int> temp;
+        bool vis[6];
+        auto dfs = [&](auto&& dfs, vector<int>& temp) {
+            if (temp.size() == n) {
+                res.push_back(temp);
+                return;
+            }
+            for (int i = 0; i < n; ++i) {
+                if (!vis[i]) {
+                    vis[i] = true;
+                    temp.push_back(nums[i]);
+                    dfs(dfs, temp);
+                    vis[i] = false;
+                    temp.pop_back();
+                }
+            }
+        };
+        dfs(dfs, temp);
         return res;
     }
 };
 ```
-
-
 
 从本题中总结一下dfs相关的回溯算法。先看本题的解空间树
 
@@ -3646,25 +3651,26 @@ public:
 ```c++
 class Solution {
 public:
-    vector<int> t;
-    vector<vector<int>> ans;
-
-    void dfs(int cur, vector<int>& nums) {
-        if (cur == nums.size()) {
-            ans.push_back(t);
-            return;
-        }
-        // 选当前的数
-        t.push_back(nums[cur]);
-        dfs(cur + 1, nums);
-        t.pop_back();
-
-        // 不选当前的数
-        dfs(cur + 1, nums);
-    }
     vector<vector<int>> subsets(vector<int>& nums) {
-        dfs(0, nums);
-        return ans;
+        vector<vector<int>> res;
+        vector<int> temp;
+        int n = nums.size(), cur = 0;
+        auto dfs = [&](auto&& dfs, vector<int>& temp, int cur) {
+            if (cur == nums.size()) {
+                res.push_back(temp);
+                return;
+            }
+
+            // 选当前的数
+            temp.push_back(nums[cur]);
+            dfs(dfs, temp, cur + 1);
+            temp.pop_back();
+
+            // 不选当前的数
+            dfs(dfs, temp, cur + 1);
+        };
+        dfs(dfs, temp, cur);
+        return res;
     }
 };
 ```
@@ -10163,7 +10169,7 @@ private:
     int capacity;
     // 链表中找到对应的书
     unordered_map<int, Node*> key_to_node;
-    // 对应几摞书
+    // 对应几摞书，键是看书的次数
     unordered_map<int, Node*> freq_to_dummy;
 
     Node* get_node(int key) {
@@ -10173,7 +10179,7 @@ private:
         }
         Node* node = it->second; // 有这本书
         remove(node); // 抽出这本书
-        Node* dummy = freq_to_dummy[node->freq];
+        Node* dummy = freq_to_dummy[node->freq]; // 获取 node 所在的书堆
         if (dummy->prev == dummy) { // 抽出来后，这摞书是空的
             freq_to_dummy.erase(node->freq); // 移除空链表
             delete dummy;
@@ -10186,7 +10192,7 @@ private:
         return node;
     }
 
-    // 创建新的双向链表
+    // 创建新的双向链表（创建新的书堆）
     Node* new_list() {
         Node* dummy = new Node();
         dummy->prev = dummy;
@@ -10198,6 +10204,8 @@ private:
     void push_front(int freq, Node* x) {
         auto it = freq_to_dummy.find(freq);
         if (it == freq_to_dummy.end()) { // 这摞书为空
+            // 创建一个新双向链表，并将其插入到哈希表中
+            // emplace 返回的是 pair 对象，first 是指向插入的元素的迭代器，second 是布尔值，表示是否插入成功
             it = freq_to_dummy.emplace(freq, new_list()).first;
         }
         Node* dummy = it->second;
@@ -10228,8 +10236,8 @@ public:
             return;
         }
         if (key_to_node.size() == capacity) { // 书太多了
-            Node* dummy = freq_to_dummy[min_freq];
-            Node* back_node = dummy->prev; // 最左边那摞书的最下面的书
+            Node* dummy = freq_to_dummy[min_freq]; // 找到最少使用的那摞书
+            Node* back_node = dummy->prev; // 最少使用的那摞书的最下面的书
             key_to_node.erase(back_node->key);
             remove(back_node); // 移除
             delete back_node;
