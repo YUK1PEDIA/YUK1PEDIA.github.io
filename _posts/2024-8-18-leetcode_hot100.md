@@ -3811,34 +3811,31 @@ public:
 
 ### 思路
 
-本题也是深搜，就能过，熟练深搜的框架就好了，注意本题搜索解空间树时可以剪枝。代码如下
+本题也是深搜就能过，熟练深搜的框架就好了，注意本题搜索解空间树时可以剪枝。代码如下
 
 ```c++
 class Solution {
 public:
-    void dfs(int sum, const int target, vector<int>& nums, vector<vector<int>>& ans, const vector<int>& candidates, int start) {
-        if (sum == target) {
-            ans.push_back(nums);
-            return;
-        }
-
-        for (int i = start; i < candidates.size(); ++i) {
-            if (sum + candidates[i] > target) continue; // 剪枝
-            nums.push_back(candidates[i]);
-            dfs(sum + candidates[i], target, nums, ans, candidates, i);
-            nums.pop_back(); // 回溯
-            // sum -= candidates[i]; 这行其实可以省略，因为 sum 是通过传参传递的。
-        }
-    }
-
     vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
-        vector<vector<int>> ans;
-        vector<int> nums;
-        dfs(0, target, nums, ans, candidates, 0);
-        return ans;
+        int n = candidates.size();
+        vector<vector<int>> res;
+        auto dfs = [&](auto&& dfs, int target, int sum, int start, vector<int> temp) {
+            if (sum == target) {
+                res.push_back(temp);
+                return;
+            }
+            for (int i = start; i < n; ++i) {
+                if (sum + candidates[i] > target) continue;
+                temp.push_back(candidates[i]);
+                dfs(dfs, target, sum + candidates[i], i, temp);
+                temp.pop_back();
+            }
+        };
+
+        dfs(dfs, target, 0, 0, {});
+        return res;
     }
 };
-
 ```
 
 
@@ -3880,30 +3877,26 @@ public:
 ```c++
 class Solution {
 public:
-    void dfs(const int n, vector<string>& ans, string temp, 
-    int left, int right) {
-        if (left == n && right == n) {
-            ans.push_back(temp);
-            return;
-        }
-
-        if (left < n) {
-            temp.push_back('(');
-            dfs(n, ans, temp, left + 1, right);
-            temp.pop_back();
-        }
-
-        if (right < n && right < left) {
-            temp.push_back(')');
-            dfs(n, ans, temp, left, right + 1);
-            temp.pop_back();
-        }
-    }
-
     vector<string> generateParenthesis(int n) {
-        vector<string> ans;
-        dfs(n, ans, "", 0, 0);
-        return ans;
+        vector<string> res;
+        auto dfs = [&](auto&& dfs, int front, int back, string temp) {
+            if (front == n && back == n) {
+                res.push_back(temp);
+                return;
+            }
+            if (front < n) {
+                temp.push_back('(');
+                dfs(dfs, front + 1, back, temp);
+                temp.pop_back();
+            } 
+            if (back < n && back < front) {
+                temp.push_back(')');
+                dfs(dfs, front, back + 1, temp);
+                temp.pop_back();
+            }
+        };
+        dfs(dfs, 0, 0, "");
+        return res;
     }
 };
 ```
@@ -3965,39 +3958,45 @@ public:
 
 ```c++
 class Solution {
+private:
+    vector<pair<int, int>> DIRS = { {-1, 0}, {0, -1}, {0, 1}, {1, 0} };
 public:
-    bool vis[10][10] = {false};
-    vector<pair<int, int>> dir = { {-1, 0}, {1, 0}, {0, -1}, {0, 1} };
-
-    bool dfs(vector<vector<char>>& board, string& word, int depth, int row,
-    int col) {
-        if (depth == word.size()) return true;
-        if (row < 0 || col < 0 || row >= board.size() 
-        || col >= board[0].size()) return false;
-        if (board[row][col] != word[depth]) return false;
-
-        bool result = false;
-        auto temp = board[row][col]; // 记录当前值，方便回溯
-        board[row][col] = '0'; // 标记为走过
-        for (auto i : dir) {
-            int dirx = row + i.first;
-            int diry = col + i.second;
-            result = dfs(board, word, depth + 1, dirx, diry) || result;
-        }
-        board[row][col] = temp;
-        return result;
-    }
-
     bool exist(vector<vector<char>>& board, string word) {
         int m = board.size(), n = board[0].size();
-
+        int len = word.length();
+        // 特判单个字符
+        if (m == 1 && n == 1 && len == 1) return word[0] == board[0][0];
+        bool ok = false;
+        auto dfs = [&](auto&& dfs, string temp, int cur_len, int x, int y) {
+            if (cur_len == len) {
+                ok = true;
+                return;
+            }
+            if (board[x][y] != '0') {
+                char c = board[x][y];
+                if (board[x][y] == word[cur_len]) {
+                    temp.push_back(board[x][y]);
+                    board[x][y] = '0';
+                } else {
+                    return;
+                }
+                for (int i = 0; i < 4; ++i) {
+                    int dx = x + DIRS[i].first;
+                    int dy = y + DIRS[i].second;
+                    if (dx >= 0 && dx < m && dy >= 0 && dy < n) {
+                        dfs(dfs, temp, cur_len + 1, dx, dy);
+                    }
+                }
+                board[x][y] = c;
+            }
+        };
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                if (board[i][j] != word[0]) continue; // 剪枝
-                if (dfs(board, word, 0, i, j)) return true;
+                if (board[i][j] != word[0]) continue;
+                dfs(dfs, "", 0, i, j);
             }
         }
-        return false;
+        return ok;
     }
 };
 ```
@@ -4011,8 +4010,6 @@ public:
 给你一个字符串 `s`，请你将 `s` 分割成一些子串，使每个子串都是 
 
 **回文串**。返回 `s` 所有可能的分割方案。
-
-
 
  
 
@@ -4099,7 +4096,44 @@ public:
 };
 ```
 
+另解：回溯枚举
 
+```c++
+class Solution {
+public:
+    vector<vector<string>> partition(string s) {
+        auto is_reverse = [&](string& s, int left, int right) -> bool {
+            while (left < right) {
+                if (s[left++] != s[right--]) {
+                    return false;
+                }
+            }
+            return true;
+        };
+
+        int len = s.length();
+        vector<vector<string>> ans;
+        vector<string> path;
+
+        auto dfs = [&](auto&& dfs, int i) {
+            if (i == len) {
+                ans.emplace_back(path);
+                return;
+            }
+            for (int j = i; j < len; ++j) { // 枚举字串结束的位置
+                if (is_reverse(s, i, j)) {
+                    path.push_back(s.substr(i, j - i + 1));
+                    dfs(dfs, j + 1);
+                    path.pop_back();
+                }
+            }
+        };
+
+        dfs(dfs, 0);
+        return ans;
+    }
+};
+```
 
 
 
