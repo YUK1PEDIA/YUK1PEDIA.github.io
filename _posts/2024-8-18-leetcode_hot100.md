@@ -8287,10 +8287,27 @@ public:
 class Solution {
 public:
     bool searchMatrix(vector<vector<int>>& matrix, int target) {
-        int n = matrix.size(), m = matrix[0].size();
-        int i;
-        for (i = 0; i < n; ++i) if (target <= matrix[i][m-1]) break;
-        if(i < n) return binary_search(matrix[i].begin(), matrix[i].end(), target);
+        auto binary = [&](vector<int>& nums, int target) -> int {
+            int left = 0, right = nums.size() - 1;
+            while (left <= right) {
+                int mid = left + (right - left) / 2;
+                if (nums[mid] < target) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+            return left;
+        };
+
+        int m = matrix.size(), n = matrix[0].size();
+        for (int i = 0; i < m; ++i) {
+            if (matrix[i][n-1] < target) {
+                continue;
+            }
+            int index = binary(matrix[i], target);
+            if (matrix[i][index] == target) return true;
+        }
         return false;
     }
 };
@@ -8349,20 +8366,26 @@ public:
 ```c++
 class Solution {
 public:
-    int lower_bound(vector<int>& nums, int target) {
-        int left = 0, right = (int) nums.size() - 1;
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            if (nums[mid] < target) left = mid + 1;
-            else right = mid - 1;
-        }
-        return left;
-    }
-
     vector<int> searchRange(vector<int>& nums, int target) {
-        int start = lower_bound(nums, target);
-        if (start == nums.size() || nums[start] != target) return {-1, -1};
-        int end = lower_bound(nums, target + 1) - 1;
+        auto binary = [&](vector<int>& nums, int target) -> int {
+            int left = 0, right = nums.size() - 1;
+            while (left <= right) {
+                int mid = left + (right - left) / 2;
+                if (nums[mid] < target) {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            }
+            return left;
+        };
+
+        int start = binary(nums, target);
+        if (start == nums.size() || nums[start] != target) {
+            return {-1, -1}; // nums 中没有 target
+        }
+        // start 存在，end 必存在
+        int end = binary(nums, target + 1) - 1;
         return {start, end};
     }
 };
