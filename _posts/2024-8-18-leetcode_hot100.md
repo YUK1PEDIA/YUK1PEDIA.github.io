@@ -8561,16 +8561,16 @@ public:
 class Solution {
 public:
     int findMin(vector<int>& nums) {
-        int left = -1, right = nums.size() - 1;
-        while (left + 1 < right) {
+        int left = 0, right = nums.size() - 1;
+        while (left <= right) {
             int mid = left + (right - left) / 2;
-            if (nums[mid] < nums.back()) { // 与最小值比较
-                right = mid;
+            if (nums[mid] > nums.back()) { // 与最小值比较
+                left = mid + 1;
             } else {
-                left =mid;
+                right = mid - 1;
             }
         }
-        return nums[right];
+        return nums[left];
     }
 };
 ```
