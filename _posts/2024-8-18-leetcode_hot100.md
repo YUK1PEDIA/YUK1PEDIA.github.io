@@ -4613,6 +4613,8 @@ public:
 
 ### 思路
 
+**递归写法**
+
 递归遍历二叉树，先 dfs 左子节点，再访问中间结点，最后 dfs 右子节点
 
 ```c++
@@ -4638,6 +4640,184 @@ public:
             dfs(dfs, root->right);
         };
         dfs(dfs, root);
+        return res;
+    }
+};
+```
+
+**非递归写法（迭代）**
+
+递归写法中隐式地维护了一个栈，迭代写法就是将这个栈显示的写出来。
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> res;
+        stack<TreeNode*> stk;
+        while (root != nullptr || !stk.empty()) {
+            while (root != nullptr) {
+                stk.push(root);
+                root = root->left;
+            }
+            root = stk.top();
+            stk.pop();
+            res.push_back(root->val);
+            root = root->right;
+        }
+        return res;
+    }
+};
+```
+
+### 补充：前序遍历与后序遍历
+
+前序遍历**递归写法**
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+        vector<int> res;
+        auto dfs = [&](auto&& dfs, TreeNode* root) {
+            if (!root) return;
+            res.push_back(root->val);
+            dfs(dfs, root->left);
+            dfs(dfs, root->right);
+        };
+        dfs(dfs, root);
+        return res;
+    }
+};
+```
+
+前序遍历**迭代写法**
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+        vector<int> res;
+        if (!root) return res;
+
+        stack<TreeNode*> stk;
+        TreeNode* node = root;
+        while (!stk.empty() || node != nullptr) {
+            while (node != nullptr) {
+                res.push_back(node->val);
+                stk.push(node);
+                node = node->left;
+            }
+            node = stk.top();
+            stk.pop();
+            node = node->right;
+        }
+        return res;
+    }
+};
+```
+
+后序遍历**递归写法**
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> res;
+        auto dfs = [&](auto&& dfs, TreeNode* root) {
+            if (!root) return;
+            dfs(dfs, root->left);
+            dfs(dfs, root->right);
+            res.push_back(root->val);
+        };
+        dfs(dfs, root);
+        return res;
+    }
+};
+```
+
+后序遍历**迭代写法**
+
+```c++
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> res;
+        if (!root) return res;
+
+        stack<TreeNode*> stk;
+        TreeNode* pre = nullptr;
+        while (root != nullptr || !stk.empty()) {
+            while (root != nullptr) {
+                stk.push(root);
+                root = root->left;
+            }
+            root = stk.top();
+            stk.pop();
+            if (root->right == nullptr || root->right == pre) {
+                res.push_back(root->val);
+                pre = root;
+                root = nullptr;
+            } else {
+                stk.push(root);
+                root = root->right;
+            }
+        }
         return res;
     }
 };
@@ -8845,17 +9025,16 @@ minStack.getMin();   --> 返回 -2.
 
 ```c++
 class MinStack {
+private:
     stack<int> x_stack;
     stack<int> min_stack;
 public:
-    MinStack() {
-        min_stack.push(INT_MAX);
-    }
+    MinStack() {}
     
     void push(int val) {
         x_stack.push(val);
-        // 跟新最小栈栈顶元素
-        min_stack.push(min(min_stack.top(), val));
+        if (min_stack.empty()) min_stack.push(val);
+        else min_stack.push(min(min_stack.top(), val));
     }
     
     void pop() {
@@ -8959,21 +9138,24 @@ public:
         string res = "";
         stack<int> nums; // 记录重复次数
         stack<string> strs; // 记录需要重复的字符串
-        int num = 0, len = s.size();
+        int num = 0, len = s.length();
         for (int i = 0; i < len; ++i) {
             if (isdigit(s[i])) {
                 num = num * 10 + s[i] - '0';
             } else if (isalpha(s[i])) {
-                res += s[i]; // 拼接
+                res += s[i];
             } else if (s[i] == '[') { // 将左括号前的数字和字符串分别入栈
                 nums.push(num);
                 num = 0;
                 strs.push(res);
                 res = "";
-            } else { // 遇到右括号，进行拼接
+            } else { // 遇见右括号，进行拼接
                 int times = nums.top();
                 nums.pop();
-                for (int j = 0; j < times; ++j) strs.top() += res;
+                for (int j = 0; j < times; ++j) {
+                    // 此时 res 中是需要重复的字符串，strs.top() 是已经重复完的字符串
+                    strs.top() += res;
+                }
                 res = strs.top();
                 strs.pop();
             }
