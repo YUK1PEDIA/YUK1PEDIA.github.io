@@ -9466,7 +9466,7 @@ public:
 
 ### 思路
 
-堆排序
+堆排序，时间复杂度 `O(logn)` 。
 
 ```c++
 class Solution {
@@ -9504,7 +9504,48 @@ public:
 };
 ```
 
+快速选择（类似快速排序），时间复杂度 `O(n)` 。
 
+```c++
+class Solution {
+private:
+    int quickSelect(vector<int>& nums, int k) {
+        // 随机选择基准数
+        int pivot = nums[rand() % nums.size()];
+        // 将大于、小于、等于 pivot 的元素划分至 big, small, equal 中
+        // 基准左边更大，基准右边更小
+        vector<int> big, equal, small;
+        for (int num : nums) {
+            if (num > pivot)
+                big.push_back(num);
+            else if (num < pivot)
+                small.push_back(num);
+            else
+                equal.push_back(num);
+        }
+
+        // 注意此处是基准数左侧的数更小，右侧的数更大
+        // 第 k 大元素在 big 中，递归划分
+        if (k <= big.size()) {
+            // 在 big 中找第 k 大元素
+            return quickSelect(big, k);
+        }
+        // 第 k 大元素在 small 中，递归划分
+        if (nums.size() - small.size() < k) {
+            //在 small 中找第 k 大
+            return quickSelect(small, k - (nums.size() - small.size()));
+        }
+
+        // 第 k 大元素在 equal 中，直接返回 pivot
+        return pivot;
+    }
+
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        return quickSelect(nums, k);
+    }
+};
+```
 
 
 
@@ -9634,55 +9675,69 @@ medianFinder.findMedian(); // return 2.0
 
 
 
-
-
 ### 思路
 
-我们用两个优先队列 `queMax` 和 `queMin` 分别记录大于中位数的数和小于等于中位数的数。当累计添加的数的数量为奇数时，`queMin` 中的数的数量比 `queMax` 多一个，此时中位数为 `queMin` 的队头。当累计添加的数的数量为偶数时，两个优先队列中的数的数量相同，此时中位数为它们的队头的平均值。
+比如现在有 6 个数：`1,5,6,2,3,4`，要计算中位数，可以把这 6 个数从小到大排序，得到 `1,2,3,4,5,6`，中间 3 和 4 的平均值 3.5 就是中位数。
 
-当我们尝试添加一个数 `num` 到数据结构中，我们需要分情况讨论：
+中位数把这 6 个数均分成了左右两部分，一边是 `left=[1,2,3]`，另一边是 `right=[4,5,6]`。我们要计算的中位数，就来自 *left* 中的最大值，以及 *right* 中的最小值。
 
-1. `num≤max{queMin}`
+随着 *addNum* 不断地添加数字，我们需要：
 
-此时 `num` 小于等于中位数，我们需要将该数添加到 `queMin` 中。新的中位数将小于等于原来的中位数，因此我们可能需要将 `queMin` 中最大的数移动到 `queMax` 中。
+- 保证 *left* 的大小和 *right* 的大小尽量相等。**规定**：在有奇数个数时，*left* 比 *right* 多 1 个数。
+- 保证 *left* 的所有元素都小于等于 *right* 的所有元素。
 
-2. `num>max{queMin}`
+只要时时刻刻满足以上两个要求，我们就可以用 *left* 的最大值以及 *right* 的最小值计算中位数。
 
-此时 `num` 大于中位数，我们需要将该数添加到 `queMin` 中。新的中位数将大于等于原来的中位数，因此我们可能需要将 `queMax` 中最小的数移动到 `queMin` 中。
+分类讨论：
 
-特别地，当累计添加的数的数量为 0 时，我们将 `num` 添加到 `queMin` 中。
+- 如果当前 *left* 的大小和 *right* 的大小相等：
+  - 如果添加的数字 *num* 比较大，比如添加 7，那么把 7 加到 *right* 中。现在 *left* 比 *right* 少 1 个数，不符合前文的规定，所以必须把 *right* 的最小值从 *right* 中去掉，添加到 *left* 中。如此操作后，可以保证 *left* 的所有元素都小于等于 *right* 的所有元素。
+  - 如果添加的数字 *num* 比较小，比如添加 0，那么把 0 加到 *left* 中。
+  - 这两种情况可以**合并**：无论 *num* 是大是小，都可以先把 *num* 加到 *right* 中，然后把 *right* 的最小值从 *right* 中去掉，并添加到 *left* 中。
+- 如果当前 *left* 比 *right* 多 1 个数：
+  - 如果添加的数字 *num* 比较大，比如添加 7，那么把 7 加到 *right* 中。
+  - 如果添加的数字 *num* 比较小，比如添加 0，那么把 0 加到 *left* 中。现在 *left* 比 *right* 多 2 个数，不符合前文的规定，所以必须把 *left* 的最大值从 *left* 中去掉，添加到 *right* 中。如此操作后，可以保证 *left* 的所有元素都小于等于 *right* 的所有元素。
+  - 这两种情况可以**合并**：无论 *num* 是大是小，都可以先把 *num* 加到 *left* 中，然后把 *left* 的最大值从 *left* 中去掉，并添加到 *right* 中。
+
+最后，我们需要什么样的数据结构？这个数据结构需要能高效地执行如下操作：
+
+- 添加元素
+- 找到最大（小）值
+- 删除最大（小）值
+
+这个数据结构是**堆**。
+
+*left* 是**最大堆**，*right* 是**最小堆**。
+
+- 如果当前有奇数个元素，中位数是 *left* 的堆顶
+- 如果当前有偶数个元素，中位数是 *left* 的堆顶和 *right* 的堆顶的平均值
 
 ```c++
 class MedianFinder {
 private:
-    priority_queue<int, vector<int>, less<int>> queMin;
-    priority_queue<int, vector<int>, greater<int>> queMax;
+    priority_queue<int> left; // 最大堆
+    priority_queue<int, vector<int>, greater<int>> right; //最小堆
 
 public:
-    MedianFinder() {
-    }
+    MedianFinder() {}
     
     void addNum(int num) {
-        if (queMin.empty() || num <= queMin.top()) {
-            queMin.push(num);
-            if (queMax.size() + 1 < queMin.size()) {
-                queMax.push(queMin.top());
-                queMin.pop();
-            }
+        if (left.size() == right.size()) {
+            right.push(num);
+            left.push(right.top());
+            right.pop();
         } else {
-            queMax.push(num);
-            if (queMax.size() > queMin.size()) {
-                queMin.push(queMax.top());
-                queMax.pop();
-            }
+            left.push(num);
+            right.push(left.top());
+            left.pop();
         }
     }
     
     double findMedian() {
-        if (queMin.size() > queMax.size()) {
-            return queMin.top();
+        if (left.size() > right.size()) {
+            return left.top();
         }
-        return (queMin.top() + queMax.top()) / 2.0;
+        return (left.top() + right.top()) / 2.0;
     }
 };
 
