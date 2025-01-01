@@ -1,6 +1,6 @@
 ---
 layout: post
-title: 2026届主Java选手暑期实习+秋招全记录
+title: 2026届主Java选手暑期实习+秋招记录
 description: 记录
 tag: 杂七杂八
 ---
