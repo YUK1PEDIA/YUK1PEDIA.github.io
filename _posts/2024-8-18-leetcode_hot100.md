@@ -6880,22 +6880,23 @@ public:
 
 ### 思路
 
-和零钱兑换（下一道题）问题很像，两个dp问题可以类比着理解
+定义 `f[i]` 表示最少需要多少个数的平方表示整数 `i` ，我们从 1 开始枚举到 n 。对于每个枚举到的 `i` ，再从 1 开始枚举构成 `i` 的最少数量。假设当前枚举到 `j` ，那么还需要取若干数的平方，构成 `i - j^2` ，于是构成整数 `i` 的最小平方数个数就是 `f[i-j*j] + 1` 。
 
 ```c++
 class Solution {
 public:
     int numSquares(int n) {
-        vector<int> dp(n+1); // dp[i]表示凑够i的最少完全平方数
-        dp[1] = 1;
-        for (int i = 2; i <= n; ++i) {
-            dp[i] = INT_MAX;
-            for (int j = 1; j <= sqrt(i); ++j) {
-                dp[i] = min(dp[i], dp[i-j*j] + 1);
+        // f[i] 表示最少需要多少个数表示整数 i
+        vector<int> f(n + 1);
+        for (int i = 1; i <= n; ++i) {
+            // 记录表示整数 i 所需要的最少数的个数
+            int minn = INT_MAX;
+            for (int j = 1; j * j <= i; ++j) {
+                minn = min(minn, f[i-j*j]);
             }
+            f[i] = minn + 1;
         }
-        return dp[n];
-    }
+        return f[n];
 };
 ```
 
