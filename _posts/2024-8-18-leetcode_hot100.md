@@ -7168,28 +7168,25 @@ public:
 
 ### 思路
 
-本题和上一题类似，但是**并不满足上一题的最优子结构性质**。因为是乘积，所以数组中存在负数，**会导致最大的变成最小的，最小的变成最大的**。所以**还需要维护当前最小值`imin`。**
+由于是乘积，可能出现本来是最大的数乘上负数后变成了最小的数，因此我们需要记录最大和最小的数。
 
-令`imax`为当前最大值，则当前最大值为：`imax = max(imax * nums[i], nums[i])`
+定义：`f_max[i]` 表示以 `nums[i]` 结尾的最大乘积，`f_min[i]` 表示以 `nums[i]` 结尾的最小乘积。
 
-同理，`imin = min(imin * nums[i], nums[i])`。
-
-**当负数出现时，将`imax`和`imin`进行交换再进行下一步计算**
+在状态转移时，需要在 `f_max[i-1] * nums[i]、f_min[i-1] * nums[i] 和 nums[i]` 中选出最大值与最小值，最后返回 `f_max` 数组中的最大值即可。
 
 ```c++
 class Solution {
 public:
     int maxProduct(vector<int>& nums) {
-        int ans = INT_MIN;
-        int imax = 1, imin = 1;
-        for (int i = 0; i < nums.size(); ++i) {
-            if (nums[i] < 0) swap(imax, imin);
-            imax = max(imax * nums[i], nums[i]);
-            imin = min(imin * nums[i], nums[i]);
-            ans = max(ans, imax);
-            if(ans==1000000000) return 1000000000; // 处理新用例，可忽略
+        int n = nums.size();
+        vector<int> f_max(n, 0);
+        vector<int> f_min(n, 0);
+        f_max[0] = f_min[0] = nums[0];
+        for (int i = 1; i < n; ++i) {
+            f_max[i] = max({f_max[i-1] * nums[i], f_min[i-1] * nums[i], nums[i]});
+            f_min[i] = min({f_max[i-1] * nums[i], f_min[i-1] * nums[i], nums[i]});
         }
-        return ans;
+        return *max_element(f_max.begin(), f_max.end());
     }
 };
 ```
