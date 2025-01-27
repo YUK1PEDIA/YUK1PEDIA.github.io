@@ -7349,7 +7349,7 @@ public:
 
 
 
-### 思路
+### 思路1：动态规划
 
 **有效括号子串是指在当前子串中，所有的左括号都正确的与右括号相匹配，**我们要求的是这种子串的最长长度。
 
@@ -7389,7 +7389,43 @@ public:
 };
 ```
 
+### 思路2：栈
 
+我们始终保持栈底元素为当前已经遍历过的元素中**最后一个没有被匹配的右括号的下标**，这样的做法主要是考虑了边界条件的处理，栈里其他元素维护左括号的下标：
+
+- 对于遇到的 `'('` ，我们将它的下标放入栈中
+- 对于遇到的 `')'` ，我们先弹出栈顶元素表示匹配了当前右括号，接下来判断：
+  - 如果栈空，说明**当前的右括号为没有被匹配的右括号**，接下来把他的下标放入栈中来更新之前提到的**最后一个没有被匹配的右括号的下标**
+  - 如果栈非空，当前右括号的下标减去栈顶元素即为**以该右括号为结尾的最长有效括号的长度**
+
+从前往后遍历字符串并更新答案即可。
+
+如果一开始栈空，并且第一个字符为左括号，那就无法满足“栈底元素始终是右括号的下标”这一条件。于是首先往栈中压入 -1。
+
+```c++
+class Solution {
+public:
+    int longestValidParentheses(string s) {
+        int len = s.length();
+        stack<int> stk;
+        stk.push(-1);
+        int res = 0;
+        for (int i = 0; i < len; ++i) {
+            if (s[i] == '(') {
+                stk.push(i);
+            } else {
+                stk.pop();
+                if (stk.empty()) {
+                    stk.push(i);
+                } else {
+                    res = max(res, i - stk.top());
+                }
+            }
+        }
+        return res;
+    }
+};
+```
 
 
 
@@ -7711,7 +7747,45 @@ public:
 };
 ```
 
+至于为什么把 dp 数组的大小设置成 `(m + 1) * (n + 1)` ，这是为了避免出现负数下标，并且保证字符串的第一个字符也能够被全部计算到。
 
+比如下面的错误代码，就没有保证字符串的第一个字符被全部计算到：
+
+```c++
+// 错误代码
+#include<bits/stdc++.h>
+using namespace std;
+
+int solve(string text1, string text2) {
+    int len1 = text1.length(), len2 = text2.length();
+    vector<vector<int>> f(len1, vector<int>(len2));
+    // 此处仅仅初始化了两个字符串的第一个字符匹配的情况
+    if (text1[0] == text2[0]) f[0][0] = 1;
+    else f[0][0] = 0;
+    int res = f[0][0];
+    // 实际上还需要计算 text1[0] 和 text2[0...j] 这种情况
+    // 但是下面的循环是从 text1[1] 开始的，就说明上面仅仅考虑了 text1[0] 和 text2[0]
+    for (int i = 1; i < len1; ++i) {
+        for (int j = 1; j < len2; ++j) {
+            if (text1[i] == text2[j]) {
+                f[i][j] = f[i-1][j-1] + 1;
+            } else {
+                f[i][j] = max(f[i-1][j], f[i][j-1]);
+            }
+            res = max(f[i][j], res);
+        }
+    }
+    return res;
+}
+
+int main() {
+    string text1 = "abcde";
+    string text2 = "ace";
+    cout << solve(text1, text2) << endl;
+    // 期望输出为 3，实际输出为 2
+    return 0;
+}
+```
 
 
 
