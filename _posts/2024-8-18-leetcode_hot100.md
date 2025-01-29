@@ -10152,7 +10152,7 @@ public:
 
 ### 思路
 
-建哈希表记录每个元素出现的次数，然后遍历哈希表找到出现次数**大于** `⌊ n/2 ⌋` 的元素
+建哈希表记录每个元素出现的次数，然后遍历哈希表找到出现次数**大于** `⌊ n/2 ⌋` 的元素，时间复杂度 `O(n)` ，空间复杂度 `O(n)` 。
 
 代码如下：
 
@@ -10179,6 +10179,52 @@ public:
         return res;
     }
 };
+```
+
+### Boyer-Moore 投票算法
+
+该算法用于**快速找出数组中出现次数超过一半的元素**。
+
+假设有一个数组，例如 `[2, 2, 3, 2, 4, 2, 5]`，其中元素 `2` 出现了 4 次（超过半数）。如何用 **O(n)时间、O(1)空间** 找出这个“多数元素”？
+
+Boyer-Moore 投票算法的核心思想是**消消乐**，想象一群不同阵营的人混战，每次让两个不同阵营的人“同归于尽”。最终剩下的阵营一定是人数超过一半的阵营（如果存在的话）。
+
+具体步骤：
+
+1. 初始化
+   - 维护一个候选值 `candidate` 和一个计数器 `count`
+   - 初始时 `candidate` 为空，`count = 0`
+2. 遍历数组
+   - 如果 `count == 0` ，将当前遍历到的元素设置成新的 `candidate` ，并设 `count = 1`
+   - 如果当前遍历到的元素等于 `candidate` ，那么令 `count` + 1
+   - 如果当前遍历到的元素不等于 `candidate` ，那么令 `count` - 1
+3. 遍历数组结束后，`candidate` 的值即为“多数元素”
+
+**Code**
+
+```c++
+#include<bits/stdc++.h>
+using namespace std;
+
+int solve(vector<int>& nums) {
+    int candidate = 0;
+    int cnt = 0;
+    for (int& x : nums) {
+        if (cnt == 0) {
+            candidate = x;
+        }
+        cnt += x == candidate ? 1 : -1;
+    }
+    return candidate;
+}
+
+int main() {
+    vector<int> nums1 = {3,2,3};
+    vector<int> nums2 = {2,2,1,1,1,2,2,};
+    cout << solve(nums1) << endl;
+    cout << solve(nums2) << endl;
+    return 0;
+}
 ```
 
 
