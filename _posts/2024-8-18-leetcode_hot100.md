@@ -10286,7 +10286,12 @@ public:
 };
 ```
 
-不用 `sort` 时，可以用**单指针**法进行原地排序
+不用 `sort` 时，可以用**单指针**法进行原地排序：
+
+首先令 `ptr` 指向 `0...index1` ，表示 0 所在的区间
+
+- 初始化将 `ptr` 设置成 0 ，遍历一次数组，如果遇到 0 ，就交换 `nums[ptr]` 和 `nums[i]` ；
+- 从 `ptr` 的位置开始，再遍历一次数组，如果遇到 1 ，就交换 `nums[ptr]` 和 `nums[i]` 
 
 ```c++
 class Solution {
@@ -10310,7 +10315,41 @@ public:
 };
 ```
 
+上面的单指针需要遍历两次数组，我们也可以使用双指针只遍历一次数组：
 
+指针 `p0` 用来交换 0，`p1` 用来交换 1，两个指针初始值均为 0。当我们从左向右遍历整个数组时：
+
+- 遇到 0 时，将当前元素与 `p0` 位置交换。此时，如果 `p0 < p1` ，说明原 `p0` 位置是 1（`p1` 总在 `p0` 之后），交换后当前元素会变成 1，需要再次将其与 `p1` 位置的元素交换，确保 1 被移动到中间区域，随后同时递增 `p1` 和 `p0` 。
+- 遇到 1 时，直接与 `p1` 位置交换，递增 `p1` 。
+
+```c++
+#include<bits/stdc++.h>
+using namespace std;
+
+void solve(vector<int>& nums) {
+    int p0 = 0, p1 = 0;
+    for (int i = 0; i < nums.size(); ++i) {
+        if (nums[i] == 1) {
+            swap(nums[i], nums[p1]);
+            ++p1;
+        } else if (nums[i] == 0) {
+            swap(nums[i], nums[p0]);
+            if (p0 < p1) {
+                swap(nums[i], nums[p1]);
+            }
+            ++p0;
+            ++p1;
+        }
+    }
+}
+
+int main() {
+    vector<int> nums = {2,0,2,1,1,0};
+    solve(nums);
+    for (int& x : nums) cout << x << " ";
+    return 0;
+}
+```
 
 
 
