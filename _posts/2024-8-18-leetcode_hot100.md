@@ -3584,7 +3584,7 @@ public:
 
 从本题中总结一下dfs相关的回溯算法。先看本题的解空间树
 
-![image.png](https://pic.leetcode-cn.com/0bf18f9b86a2542d1f6aa8db6cc45475fce5aa329a07ca02a9357c2ead81eec1-image.png)
+![image.png](https://s2.loli.net/2025/02/05/rjUWBG3Zv2lJ5zP.png)
 
 **说明：**
 
@@ -3606,7 +3606,7 @@ public:
 
 之后，我们应用遍历排列树的思想。我们将给定 n 个数的数组 nums 划分为左右两部分，左边的表示已经填过的数，右边表示待填的数，我们在回溯的时候只要动态维护这个数组即可。
 
-举个简单的例子，假设我们有 [2, 5, 8, 9, 10] 这5个数要填入，我们先填了 [8, 9] 两个数，那么这个数组目前为 [8, 9 | 2, 5, 10] 这样的状态，当前我们填到了第3个位置，分隔符区分了左右两部分。假设这个位置我们要填 10 这个数，为了维护数组，我们将 2 和 10 交换，即能使得数组继续保持分隔符左边的数已经填过，右边的待填，目前就为 [8, 9, 10 | 2, 5]
+![image.png](https://s2.loli.net/2025/02/05/ynVuwp6RGFjfLsx.png)
 
 
 
@@ -3675,6 +3675,98 @@ public:
 };
 ```
 
+### 补充：子集Ⅱ
+
+给你一个整数数组 `nums` ，其中可能包含重复元素，请你返回该数组所有可能的子集（幂集）。
+
+解集 **不能** 包含重复的子集。返回的解集中，子集可以按 **任意顺序** 排列。
+
+ 
+
+**示例 1：**
+
+```
+输入：nums = [1,2,2]
+输出：[[],[1],[1,2],[1,2,2],[2],[2,2]]
+```
+
+**示例 2：**
+
+```
+输入：nums = [0]
+输出：[[],[0]]
+```
+
+ 
+
+**提示：**
+
+- `1 <= nums.length <= 10`
+- `-10 <= nums[i] <= 10`
+
+
+
+#### 思路
+
+本题和上一题类似，需要注意的是，由于集合可能包含重复元素，在不选 `nums[i]` 时，要跳过后续所有等于 `nums[i]` 的数。如果不跳过这些数，设 `x = nums[i]` ，`x' = nums[i+1]` ，那么 **选 x 不选 x'** 和 **不选 x 选 x'** 这两种情况就都会加到答案中，出现重复。
+
+```c++
+#include<bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> solve(vector<int>& nums) {
+    ranges::sort(nums);
+    int n = nums.size();
+    vector<vector<int>> res;
+    vector<int> temp;
+    unordered_set<int> st;
+    auto dfs = [&](auto&& dfs, int i) {
+        if (i == n) {
+            res.push_back(temp);
+            return;
+        }
+        
+        int x = nums[i];
+        temp.push_back(x);
+        dfs(dfs, i + 1);
+        temp.pop_back();
+
+        ++i;
+        while (i < n && nums[i] == x) {
+            ++i;
+        }
+        dfs(dfs, i);
+    };
+    dfs(dfs, 0);
+    return res;
+}
+
+void print(vector<vector<int>>& res) {
+    for (auto& x : res) {
+        for (auto& y : x) {
+            cout << y << " ";
+        }
+        cout << endl;
+    }
+}
+
+int main() {
+    vector<int> nums1 = {1,2,2};
+    vector<int> nums2 = {1,2,3};
+    vector<int> nums3 = {0};
+    vector<int> nums4 = {1,2,3,4,4,4,5};
+    auto res1 = solve(nums1);
+    auto res2 = solve(nums2);
+    auto res3 = solve(nums3);
+    auto res4 = solve(nums4);
+    print(res1);
+    print(res2);
+    print(res3);
+    print(res4);
+    return 0;
+}
+```
+
 
 
 
@@ -3685,7 +3777,7 @@ public:
 
 给出数字到字母的映射如下（与电话按键相同）。注意 1 不对应任何字母。
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2021/11/09/200px-telephone-keypad2svg.png) 
+![image.png](https://s2.loli.net/2025/02/05/PjFu72GJAI68lsv.png) 
 
  
 
