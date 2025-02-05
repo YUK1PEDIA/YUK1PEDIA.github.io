@@ -85,7 +85,69 @@ A：mysql、redis、mongo，吟唱一小段mysql和redis的八股
 两个栈实现队列力扣有原题，翻转字符串暂时没找到，面试后自己重新做了一遍，补一下题解，面试的时候面试官说可以不考虑输入输出，硬编码进main函数中就行。 整体思路是先按照逗号将原字符串分割成子字符串，对每个子字符串按照空格分割成一个个单词，对单词顺序进行翻转
 
 ```c++
-// 待补充
+#include<bits/stdc++.h>
+using namespace std;
+
+string solve(string input) {
+    // 翻转子串
+    auto reverseSubStr = [&](string str) -> string {
+        vector<string> words;
+        string word = "";
+        for (char c : str) {
+            if (c == ' ') {
+                if (!word.empty()) {
+                    words.push_back(word);
+                    word = "";
+                }
+            } else {
+                word += c;
+            }
+        }
+        if (!word.empty()) {
+            words.push_back(word);
+        }
+        string res = "";
+        for (int i = words.size() - 1; i >= 0; --i) {
+            res += words[i];
+            if (i != 0) {
+                res += " ";
+            }
+        }
+        return res;
+    };
+
+    vector<string> substrs;
+    string substr = "";
+    for (char c : input) {
+        if (c == ',') {
+            substrs.push_back(substr);
+            substr = "";
+        } else {
+            substr += c;
+        }
+    }
+    if (!substr.empty()) {
+        substrs.push_back(substr);
+    }
+    for (auto& substr : substrs) {
+        substr = reverseSubStr(substr);
+    }
+    string res = "";
+    for (int i = 0; i < substrs.size(); ++i) {
+        res += substrs[i];
+        if (i != substrs.size() - 1) {
+            res += ",";
+        }
+    }
+    return res;
+}
+
+int main() {
+    string in = "hello world,god bless you";
+    string out = solve(in);
+    cout << out << endl;
+    return 0;
+}
 ```
 
 
