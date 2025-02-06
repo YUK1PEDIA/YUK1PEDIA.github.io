@@ -3608,7 +3608,132 @@ public:
 
 ![image.png](https://s2.loli.net/2025/02/05/ynVuwp6RGFjfLsx.png)
 
+### 补充：全排列Ⅱ
 
+给定一个可包含重复数字的序列 `nums` ，***按任意顺序*** 返回所有不重复的全排列。
+
+ 
+
+**示例 1：**
+
+```
+输入：nums = [1,1,2]
+输出：
+[[1,1,2],
+ [1,2,1],
+ [2,1,1]]
+```
+
+**示例 2：**
+
+```
+输入：nums = [1,2,3]
+输出：[[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+```
+
+ 
+
+**提示：**
+
+- `1 <= nums.length <= 8`
+- `-10 <= nums[i] <= 10`
+
+
+
+#### 思路
+
+与上一题的区别在于可能存在重复元素，以 `nums = {1,1,2}` 为例，在递归的过程中可能会发生如下情况：
+
+1. 第一个位置填 `nums[0]` ，第二个位置填 `nums[1]` 
+2. 第一个位置填 `nums[1]` ，第二个位置填 `nums[0]` 
+
+这两种填法都会得到 `[1,1,2]` ，导致重复
+
+要保证第二种情况不会发生：在填 `nums[1] = 1` 时发现 `nums[0]` **还没填过**，那么就直接 continue 。
+
+推广到更多数时，比如：`nums = {1,1,1,2}` ，它有四个排列：
+
+- `[1,1,1,2]`
+- `[1,1,2,1]`
+- `[1,2,1,1]`
+- `[2,1,1,1]`
+
+第一个位置要么填 1 ，要么填 2
+
+**其中第一个位置填 1 的三个排列，会在第一个位置填 `nums[0]` 时枚举到，如果第一个位置填 `nums[1]` 或者 `nums[2]` ，那么必然会产生重复的排列**
+
+所以 `nums[1]` 和 `nums[2]` 绝对不能填到第一个位置上
+
+这意味着，如果有多个 `nums[i]` 相同，我们只需要枚举其中一个 `nums[i]` 填第一个位置的情况，其余所有等于 `nums[i]` 的数都不能填到第一个位置
+
+如果 `nums[0]` 填在了第一个位置，那么问题变成：剩余的 `[1,1,2]` 怎么填？
+
+**这是一个和原问题相似，规模更小的子问题**，处理方式同上：`nums[1]` 可以填在排列的第二个位置，而 `nums[2]` 不能填在排列的第二个位置，否则会导致重复的排列。
+
+**怎么判断？**如果我们还没有填入 `nums[1]` ，那么和 `nums[1]` 相等的 `nums[2]` 是不能填入的。
+
+**那么怎么判断 `nums[i]` 能不能填？**
+
+为了方便判断，先将 `nums` 排序，分类讨论：
+
+- 如果 `nums[i] != nums[i-1]` ，那么 `nums[i]` 就是所有等于 `nums[i]` 的数中的第一个数，这种情况可以随便填
+- 如果 `nums[i] == nums[i-1]` ，继续讨论：
+  - 如果 `nums[i-1]` 没有填入排列，为了避免重复排列，绝对不能填 `nums[i]` ，直接 continue 
+  - 如果 `nums[i-1]` 已经填入排列，那么 `nums[i]` 是剩余元素（子问题）中的第一个等于 `nums[i]` 的数，可以随便填
+
+```c++
+#include<bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> solve(vector<int> nums) {
+    ranges::sort(nums);
+    int n = nums.size();
+    vector<vector<int>> res;
+    vector<int> path(n); // 所有排列的长度都是 n
+    vector<int> on_path(n); // on_path[j] 表示 nums[j] 是否已经填入排列
+    auto dfs = [&] (auto&& dfs, int i) {
+        if (i == n) {
+            res.push_back(path);
+            return;
+        }
+        // 枚举 nums[j] 填入 path[i]
+        for (int j = 0; j < n; ++j) {
+            // 如果 nums[j] 已经填入了排列 或者 nums[j] == nums[j-1] 并且 nums[j-1] 没有填入排列
+            // 就直接跳过
+            if (on_path[j] || j > 0 && nums[j] == nums[j-1] && !on_path[j-1]) {
+                continue;
+            }
+            path[i] = nums[j];
+            on_path[j] = true;
+            dfs(dfs, i + 1);
+            on_path[j] = false;
+            // path[i] 不需要恢复，可以直接覆盖
+        }
+    };
+    dfs(dfs, 0);
+    return res;
+}
+
+void print(vector<vector<int>> nums) {
+    for (auto x : nums) {
+        for (auto y : x) {
+            cout << y << " ";
+        }
+        cout << endl;
+    }
+    cout << endl;
+}
+
+int main() {
+    vector<int> nums1 = {1,1,2};
+    auto res1 = solve(nums1);
+    vector<int> nums2 = {1,2,3};
+    auto res2 = solve(nums2);
+    print(res1);
+    print(res2);
+    return 0;
+}
+```
 
 
 
