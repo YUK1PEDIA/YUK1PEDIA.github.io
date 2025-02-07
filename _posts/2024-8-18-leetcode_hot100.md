@@ -1728,46 +1728,49 @@ public:
 
 ### 思路
 
-直接模拟就行，从左往右、从上往下、从右往左、从下往上分别模拟，具体可以参考以下代码，模拟方法比较巧妙
+直接模拟，使用额外数组模拟方向变化
 
 ```c++
-class Solution {
-public:
-    vector<int> spiralOrder(vector<vector<int>>& matrix) {
-        if (matrix.size() == 0 || matrix[0].size() == 0) {
-            return {};
+#include<bits/stdc++.h>
+using namespace std;
+
+vector<int> solve(vector<vector<int>> matrix) {
+    int DIRS[4][2] = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
+    int m = matrix.size(), n = matrix[0].size();
+    vector<vector<bool>> vis(m, vector<bool>(n, false));
+    int i = 0, j = 0, dir = 0;
+    vector<int> res;
+    // 数字个数
+    int cnt = m * n;
+    while (cnt--) {
+        res.push_back(matrix[i][j]);
+        vis[i][j] = true;
+        int x = i + DIRS[dir][0];
+        int y = j + DIRS[dir][1];
+        // 如果该方向下一个点出界或者已经访问过，那么就变换方向
+        if (x < 0 || x >= m || y < 0 || y >= n || vis[x][y]) {
+            dir = (dir + 1) % 4;
         }
-
-        vector<int> ans;
-        // 行的开头和结尾
-        int lineBegin = 0, lineEnd = matrix[0].size() - 1;
-        // 列的开头和结尾
-        int listBegin = 0, listEnd = matrix.size() - 1;
-
-        while (1) {
-            // 从左到右
-            for (int i = lineBegin; i <= lineEnd; ++i)
-                ans.push_back(matrix[listBegin][i]);
-            if (++listBegin > listEnd) break;
-
-            // 从上往下
-            for (int i = listBegin; i <= listEnd; ++i)
-                ans.push_back(matrix[i][lineEnd]);
-            if (--lineEnd < lineBegin) break;
-
-            // 从右往左
-            for (int i = lineEnd; i >= lineBegin; --i)
-                ans.push_back(matrix[listEnd][i]);
-            if (--listEnd < listBegin) break;
-
-            // 从下往上
-            for (int i = listEnd; i >= listBegin; --i)
-                ans.push_back(matrix[i][lineBegin]);
-            if (++lineBegin > lineEnd) break;
-        }
-        return ans;
+        i += DIRS[dir][0];
+        j += DIRS[dir][1];
     }
-};
+    return res;
+}
+
+void print(vector<int> res) {
+    for (auto x : res) cout << x << " ";
+    cout << endl;
+}
+
+int main() {
+    vector<vector<int>> matrix1 = {{1,2,3}, {4,5,6}, {7,8,9}};
+    auto res = solve(matrix1);
+    print(res);
+    vector<vector<int>> matrix2 = {{1,2,3,4}, {5,6,7,8}, {9,10,11,12}};
+    res = solve(matrix2);
+    print(res);
+    return 0;
+}
 ```
 
 
