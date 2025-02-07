@@ -1735,7 +1735,11 @@ public:
 using namespace std;
 
 vector<int> solve(vector<vector<int>> matrix) {
-    int DIRS[4][2] = { {0, 1}, {1, 0}, {0, -1}, {-1, 0} };
+	vector<vector<int>> DIRS;
+    DIRS.push_back({0, 1});
+    DIRS.push_back({1, 0});
+    DIRS.push_back({0, -1});
+    DIRS.push_back({-1, 0});
     int m = matrix.size(), n = matrix[0].size();
     vector<vector<bool>> vis(m, vector<bool>(n, false));
     int i = 0, j = 0, dir = 0;
@@ -1763,12 +1767,7 @@ void print(vector<int> res) {
 }
 
 int main() {
-    vector<vector<int>> matrix1 = {{1,2,3}, {4,5,6}, {7,8,9}};
-    auto res = solve(matrix1);
-    print(res);
-    vector<vector<int>> matrix2 = {{1,2,3,4}, {5,6,7,8}, {9,10,11,12}};
-    res = solve(matrix2);
-    print(res);
+    // test cases
     return 0;
 }
 ```
