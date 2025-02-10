@@ -8095,31 +8095,35 @@ exection -> execution (插入 'u')
 - 否则，`dp[i][j] = 1 + min(dp[i][j-1], dp[i-1][j], dp[i-1][j-1])`
 
 ```c++
-class Solution {
-public:
-    int minDistance(string word1, string word2) {
-        int n = word1.length();
-        int m = word2.length();
-        if (n * m == 0) return n + m; // 有一个空串
-        // dp[i][j]表示word1[1..i]到word2[1..j]的编辑距离
-        vector<vector<int>> dp(n+1, vector<int>(m+1));
+#include<bits/stdc++.h>
+using namespace std;
 
-        // 初始化
-        for (int i = 0; i < n + 1; ++i) dp[i][0] = i;
-        for (int j = 0; j < m + 1; ++j) dp[0][j] = j;
+int solve(string word1, string word2) {
+    int len1 = word1.length(), len2 = word2.length();
+    vector<vector<int>> f(len1 + 1, vector<int>(len2 + 1));
+    for (int i = 1; i <= len1; ++i) f[i][0] = i;
+    for (int j = 1; j <= len2; ++j) f[0][j] = j;
 
-        for (int i = 1; i < n + 1; ++i) {
-            for (int j = 1; j < m + 1; ++j) {
-                int left = dp[i-1][j] + 1;
-                int down = dp[i][j-1] + 1;
-                int left_down = dp[i-1][j-1];
-                if (word1[i-1] != word2[j-1]) left_down += 1;
-                dp[i][j] = min(left, min(down, left_down));
+    for (int i = 1; i <= len1; ++i) {
+        for (int j = 1; j <= len2; ++j) {
+            if (word1[i-1] == word2[j-1]) {
+                f[i][j] = f[i-1][j-1];
+            } else {
+                // 枚举插入、删除、替换三种情况
+                f[i][j] = 1 + min({f[i-1][j], f[i][j-1], f[i-1][j-1]});
             }
         }
-        return dp[n][m];
     }
-};
+    return f[len1][len2];
+}
+
+int main() {
+    string s1 = "horse", s2 = "ros";
+    cout << solve(s1, s2) << endl;
+    string s3 = "intention", s4 = "execution";
+    cout << solve(s3, s4) << endl;
+    return 0;
+}
 ```
 
 
