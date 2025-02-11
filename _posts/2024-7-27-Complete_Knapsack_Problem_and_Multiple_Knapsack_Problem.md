@@ -28,7 +28,7 @@ for (int i = 0; i < weight.size(); ++i) { // 遍历物品
 
 ```c++
 for (int i = 0; i < weight.size(); ++i) { // 遍历物品
-	for (int j = weight[i]; j >= bagWeight; ++j) { // 遍历背包容量
+	for (int j = weight[i]; j <= bagWeight; ++j) { // 遍历背包容量
 		dp[j] = max(dp[j], dp[j-weight[i]] + value[i]);
 	}
 }
