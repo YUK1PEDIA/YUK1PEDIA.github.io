@@ -4544,7 +4544,7 @@ public:
 - 第一轮合并后，k个链表被合并成了k/2个链表，平均长度为：n / (k/2) = 2n/k。然后是k/4个链表、k/8个链表等等
 - 重复这一过程，直到最终得到有序链表
 
-![img](https://pic.leetcode-cn.com/6f70a6649d2192cf32af68500915d84b476aa34ec899f98766c038fc9cc54662-image.png)
+![image.png](https://s2.loli.net/2025/02/11/AYh6pdwWZD4lfm2.png)
 
 ```c++
 /**
@@ -4709,6 +4709,9 @@ lRUCache.get(4);    // 返回 4
 ![img](https://pic.leetcode.cn/1696039105-PSyHej-146-3-c.png)
 
 ```c++
+#include<bits/stdc++.h>
+using namespace std;
+
 class Node {
     public:
         int key;
@@ -4720,72 +4723,89 @@ class Node {
 };
 
 class LRUCache {
-private:
-    int capacity;
-    Node *dummy;
-    unordered_map<int, Node*> key_to_node;
+    private:
+        int capacity;
+        Node *dummy;
+        unordered_map<int, Node*> key_to_node;
 
-    // 删除一个节点（抽出一本书）
-    void remove(Node *x) {
-        x->prev->next = x->next;
-        x->next->prev = x->prev;
-    }
-
-    // 链表头添加一个节点（把一本书放在最上面）
-    void push_front(Node *x) {
-        x->prev = dummy;
-        x->next = dummy->next;
-        x->next->prev = x;
-        x->prev->next = x;
-    }
-
-    // 获取 key 对应的节点，同时把该节点移到链表头部
-    Node* get_node(int key) {
-        auto it = key_to_node.find(key);
-        if (it == key_to_node.end()) { // 没有这本书
-            return nullptr;
+        // 删除双向链表中的一个节点
+        void remove(Node *x) {
+            x->prev->next = x->next;
+            x->next->prev = x->prev;
         }
-        Node *node = it->second; // 有这本书
-        remove(node); // 把这本书抽出来
-        push_front(node); // 放到最上面
-        return node;
-    }
 
+        // 链表头部添加一个节点
+        void push_front(Node *x) {
+            x->prev = dummy;
+            x->next = dummy->next;
+            x->next->prev = x;
+            x->prev->next = x;
+        }
 
-public:
-    LRUCache(int capacity) : capacity(capacity), dummy(new Node()) {
-        dummy->prev = dummy;
-        dummy->next = dummy;
-    }
-    
-    int get(int key) {
-        Node *node = get_node(key);
-        return node ? node->value : -1;    
-    }
-    
-    void put(int key, int value) {
-        Node *node = get_node(key);
-        if (node) { // 有这本书
-            node->value = value;
-            return;
+        // 获取 key 对应节点，并放到链表头部
+        Node* get_node(int key) {
+            auto it = key_to_node.find(key);
+            // 没有这本书
+            if (it == key_to_node.end()) {
+                return nullptr;
+            }
+            // 有这本书
+            Node *node = it->second;
+            remove(node); // 把这本书抽出来
+            push_front(node); // 放到最上面
+            return node;
         }
-        key_to_node[key] = node = new Node(key, value); // 新书
-        push_front(node); // 放在最上面
-        if (key_to_node.size() > capacity) { // 书太多了
-            Node *back_node = dummy->prev;
-            key_to_node.erase(back_node->key);
-            remove(back_node);
-            delete back_node;
+
+    public:
+        LRUCache(int capacity) : capacity(capacity), dummy(new Node()) {
+            dummy->prev = dummy;
+            dummy->next = dummy;
         }
-    }
+
+        int get(int key) {
+            Node *node = get_node(key);
+            return node ? node->value : -1;
+        }
+
+        void put(int key, int value) {
+            Node *node = get_node(key);
+            if (node) { // 有这本书
+                node->value = value;
+                return;
+            }
+            // 没有这本书
+            key_to_node[key] = node = new Node(key, value);
+            push_front(node); // 放到最上面
+            if (key_to_node.size() > capacity) {
+                Node *back_node = dummy->prev;
+                // 哈希表中删除
+                key_to_node.erase(back_node->key);
+                // 双向链表中删除
+                remove(back_node);
+                delete back_node;
+            }
+        }
 };
 
-/**
- * Your LRUCache object will be instantiated and called as such:
- * LRUCache* obj = new LRUCache(capacity);
- * int param_1 = obj->get(key);
- * obj->put(key,value);
- */
+
+int main() {
+    LRUCache* obj = new LRUCache(2);
+    obj->put(1, 1);
+    obj->put(2, 2);
+    int value = obj->get(1);
+    cout << "key:1, value:" << value << endl;
+    obj->put(3, 3);
+    value = obj->get(2);
+    cout << "key:2, value:" << value << endl;
+    obj->put(4, 4);
+    value = obj->get(1);
+    cout << "key:1, value:" << value << endl;
+    value = obj->get(3);
+    cout << "key:3, value:" << value << endl;
+    value = obj->get(4);
+    cout << "key:4, value:" << value << endl;
+    return 0;
+}
 ```
 
 
