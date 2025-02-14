@@ -496,7 +496,7 @@ public:
 
 **示例 1：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/10/22/rainwatertrap.png)
+![image.png](https://s2.loli.net/2025/02/14/t1AysBgIP7MTVvm.png)
 
 ```
 输入：height = [0,1,0,2,1,0,1,3,2,1,2,1]
@@ -812,26 +812,7 @@ public:
 
 ### 思路
 
-看题目给的数据范围，枚举在数据较大时肯定会超时，枚举思路就是**考虑以 i 结尾的和为 k 的连续子数组个数**。这里只给出枚举代码（枚举思路较简单）
-
-```c++
-class Solution {
-public:
-    int subarraySum(vector<int>& nums, int k) {
-        int ans = 0;
-        for (int i = 0; i < nums.size(); ++i) {
-            int sum = 0;
-            for (int j = i; j >= 0; --j) {
-                sum += nums[j];
-                if (sum == k) ans++;
-            }
-        }
-        return ans;
-    }
-};
-```
-
-**正解（前缀和+哈希表）**
+**前缀和+哈希表**
 
 由于枚举肯定会超时，所以要对其进行优化。我们可以通过前缀和尝试减少时间复杂度，定义 pre[i] 表示 nums 数组中前 i 个元素的和，那么 pre[i] = pre[i - 1] + nums[i]。
 
@@ -897,7 +878,7 @@ public:
 
 ### 思路
 
-与之前几题类似，肯定不能每次移动滑动窗口时就从窗口第一个元素开始枚举，这样一定会超时。
+与之前几题类似，不能每次移动滑动窗口时就从窗口第一个元素开始枚举，这样一定会超时。
 
 考虑到这个题滑动窗口的操作过程，很容易联想到队列，再根据他要返回滑动窗口中的最大值，可以考虑使用**优先队列**。
 
@@ -910,7 +891,7 @@ public:
         int len = nums.size();
         // 优先队列默认从大到小排序
         // 在pair中存放的是“值-index”的二元组
-        priority_queue<pair<int, int> > q;
+        priority_queue<pair<int, int>> q;
         
         // 先将前k个元素压入优先队列中
         for (int i = 0; i < k; ++i) {
@@ -4783,75 +4764,77 @@ int main() {
 
 
 
-### 思路
-
-**递归写法**
-
-递归遍历二叉树，先 dfs 左子节点，再访问中间结点，最后 dfs 右子节点
+### 中序遍历递归与迭代写法
 
 ```c++
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
-class Solution {
-public:
-    vector<int> inorderTraversal(TreeNode* root) {
-        vector<int> res;
-        auto dfs = [&](auto&& dfs, TreeNode *root) {
-            if (!root) return;
-            dfs(dfs, root->left);
-            res.push_back(root->val);
-            dfs(dfs, root->right);
-        };
-        dfs(dfs, root);
-        return res;
-    }
+#include<bits/stdc++.h>
+using namespace std;
+
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(left) {}
 };
-```
 
-**非递归写法（迭代）**
+// 递归实现中序遍历二叉树
+vector<int> solve1(TreeNode *root) {
+    vector<int> res;
+    auto dfs = [&](auto&& dfs, TreeNode *root) {
+        if (!root) return;
+        dfs(dfs, root->left);
+        res.push_back(root->val);
+        dfs(dfs, root->right);
+    };
+    dfs(dfs, root);
+    return res;
+}
 
-递归写法中隐式地维护了一个栈，迭代写法就是将这个栈显示的写出来。
+// 迭代实现中序遍历二叉树
+vector<int> solve2(TreeNode *root) {
+    vector<int> res;
+    stack<TreeNode*> stk;
+    TreeNode *cur = root;
 
-```c++
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
- *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
- *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
- * };
- */
-class Solution {
-public:
-    vector<int> inorderTraversal(TreeNode* root) {
-        vector<int> res;
-        stack<TreeNode*> stk;
-        while (root != nullptr || !stk.empty()) {
-            while (root != nullptr) {
-                stk.push(root);
-                root = root->left;
-            }
-            root = stk.top();
-            stk.pop();
-            res.push_back(root->val);
-            root = root->right;
+    while (cur || stk.size()) {
+        // 不断将左节点压栈，直到叶子节点
+        while (cur) {
+            stk.push(cur);
+            cur = cur->left;
         }
-        return res;
+
+        // 访问当前节点
+        cur = stk.top();
+        stk.pop();
+        res.push_back(cur->val);
+
+        // 右子树准备到下一轮循环
+        cur = cur->right;
     }
-};
+
+    return res;
+}
+
+void print(vector<int> nums) {
+    for (int x : nums) cout << x << " ";
+    cout << endl;
+}
+
+int main() {
+    TreeNode *root = new TreeNode(1);
+    root->right = new TreeNode(2);
+    root->right->left = new TreeNode(3);
+    auto res1 = solve1(root);
+    auto res2 = solve2(root);
+    print(res1);
+    print(res2);
+    return 0;
+}
 ```
+
+
 
 ### 补充：前序遍历与后序遍历
 
