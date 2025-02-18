@@ -1901,7 +1901,7 @@ public:
 
 图示两个链表在节点 `c1` 开始相交**：**
 
-[![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/14/160_statement.png)](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/14/160_statement.png)
+[![image.png](https://s2.loli.net/2025/02/18/o2JH3umn5WISqwf.png)](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/14/160_statement.png)
 
 题目数据 **保证** 整个链式结构中不存在环。
 
@@ -1923,7 +1923,7 @@ public:
 
 **示例 1：**
 
-[![img](https://assets.leetcode.com/uploads/2021/03/05/160_example_1_1.png)](https://assets.leetcode.com/uploads/2018/12/13/160_example_1.png)
+[![image.png](https://s2.loli.net/2025/02/18/Lsg5Hva3oxV4mpQ.png)](https://assets.leetcode.com/uploads/2018/12/13/160_example_1.png)
 
 ```
 输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,6,1,8,4,5], skipA = 2, skipB = 3
@@ -1938,7 +1938,7 @@ public:
 
 **示例 2：**
 
-[![img](https://assets.leetcode.com/uploads/2021/03/05/160_example_2.png)](https://assets.leetcode.com/uploads/2018/12/13/160_example_2.png)
+[![image.png](https://s2.loli.net/2025/02/18/smjODC94YBeIlnf.png)](https://assets.leetcode.com/uploads/2018/12/13/160_example_2.png)
 
 ```
 输入：intersectVal = 2, listA = [1,9,1,2,4], listB = [3,2,4], skipA = 3, skipB = 1
@@ -1950,7 +1950,7 @@ public:
 
 **示例 3：**
 
-[![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/14/160_example_3.png)](https://assets.leetcode.com/uploads/2018/12/13/160_example_3.png)
+[![image.png](https://s2.loli.net/2025/02/18/O7zHAZreYUS5nbQ.png)](https://assets.leetcode.com/uploads/2018/12/13/160_example_3.png)
 
 ```
 输入：intersectVal = 0, listA = [2,6,4], listB = [1,5], skipA = 3, skipB = 2
@@ -2280,7 +2280,7 @@ public:
 
 **示例 1：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/07/circularlinkedlist.png)
+![image.png](https://s2.loli.net/2025/02/18/nRFy9ZtdaK8fHNv.png)
 
 ```
 输入：head = [3,2,0,-4], pos = 1
@@ -2290,7 +2290,7 @@ public:
 
 **示例 2：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/07/circularlinkedlist_test2.png)
+![image.png](https://s2.loli.net/2025/02/18/CrTm6S8bGx5ilIN.png)
 
 ```
 输入：head = [1,2], pos = 0
@@ -2300,7 +2300,7 @@ public:
 
 **示例 3：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/07/circularlinkedlist_test3.png)
+![image.png](https://s2.loli.net/2025/02/18/bqDX9FMQWHNaEpf.png)
 
 ```
 输入：head = [1], pos = -1
@@ -2392,7 +2392,7 @@ public:
 
 **示例 1：**
 
-![img](https://assets.leetcode.com/uploads/2018/12/07/circularlinkedlist.png)
+![image.png](https://s2.loli.net/2025/02/18/nRFy9ZtdaK8fHNv.png)
 
 ```
 输入：head = [3,2,0,-4], pos = 1
@@ -2402,7 +2402,7 @@ public:
 
 **示例 2：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/07/circularlinkedlist_test2.png)
+![image.png](https://s2.loli.net/2025/02/18/CrTm6S8bGx5ilIN.png)
 
 ```
 输入：head = [1,2], pos = 0
@@ -2412,7 +2412,7 @@ public:
 
 **示例 3：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/07/circularlinkedlist_test3.png)
+![image.png](https://s2.loli.net/2025/02/18/bqDX9FMQWHNaEpf.png)
 
 ```
 输入：head = [1], pos = -1
@@ -2462,7 +2462,7 @@ public:
 
 如下图所示，设链表中环外部分的长度为**a**。slow进入环后，又走了**b**的距离和fast相遇，此时fast已经走完了环的**n**圈，因此他走过的总距离为：**a + n(b + c) + b = a + (n + 1)b + nc**
 
-![fig1](https://assets.leetcode-cn.com/solution-static/142/142_fig1.png)
+![image.png](https://s2.loli.net/2025/02/18/TjbfLIugsiVnF8O.png)
 
 根据题意，**任意时刻，fast走过的距离都为slow的2倍**，所以我们有
 
@@ -2601,7 +2601,7 @@ public:
 
 **示例 1：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2021/01/02/addtwonumber1.jpg)
+![image.png](https://s2.loli.net/2025/02/18/wi4f3Ysh9zj6ClL.png)
 
 ```
 输入：l1 = [2,4,3], l2 = [5,6,4]
@@ -3050,7 +3050,7 @@ public:
 
 **示例 1：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/01/09/e1.png)
+![image.png](https://s2.loli.net/2025/02/18/BJbCkxYyTqAuRFf.png)
 
 ```
 输入：head = [[7,null],[13,0],[11,4],[10,2],[1,0]]
@@ -3059,7 +3059,7 @@ public:
 
 **示例 2：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/01/09/e2.png)
+![image.png](https://s2.loli.net/2025/02/18/SImNfsXkHjYcMKJ.png)
 
 ```
 输入：head = [[1,1],[2,1]]
@@ -3068,7 +3068,7 @@ public:
 
 **示例 3：**
 
-**![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/01/09/e3.png)**
+![image.png](https://s2.loli.net/2025/02/18/QdE5HliNCUxGg1b.png)
 
 ```
 输入：head = [[3,null],[3,0],[3,null]]
@@ -5508,11 +5508,11 @@ public:
 
 给定二叉搜索树的中序遍历，能否唯一的确定二叉搜索树？答案是否定的，如果没有要求二叉搜索树的高度平衡，则任何一个数字都可以作为二叉搜索树的根节点。
 
-![fig1](https://assets.leetcode-cn.com/solution-static/108/108_fig1.png) 
+![image.png](https://s2.loli.net/2025/02/18/mnF3LQWCxgpcrfM.png) 
 
 那如果增加一个限制条件，要求二叉搜索树的高度平衡，是否可以唯一确定二叉搜索树？仍然不可以。
 
-![fig2](https://assets.leetcode-cn.com/solution-static/108/108_fig2.png) 
+![image.png](https://s2.loli.net/2025/02/18/tSXlnOJfTdwve3L.png) 
 
 直观上看，我们可以选择中间数字作为二叉搜索树的根节点，这样分给左右子树的数字个数相同或只相差 1，可以使得树保持平衡。**如果数组长度是奇数，则根节点的选择是唯一的**，**如果数组长度是偶数，则可以选择中间位置左边的数字作为根节点或者选择中间位置右边的数字作为根节点**，选择不同的数字作为根节点则创建的平衡二叉搜索树也是不同的。
 
@@ -5534,17 +5534,19 @@ public:
  */
 class Solution {
 public:
-    TreeNode* helper(vector<int> &nums, int left, int right) {
-        if (left > right) return nullptr;
-        int mid = (left + right) / 2; // 选择根节点
-        TreeNode* root = new TreeNode(nums[mid]);
-        root->left = helper(nums, left, mid - 1); // 左子树为平衡二叉搜索树
-        root->right = helper(nums, mid + 1, right); // 右子树为平衡二叉搜索树
-        return root;
-    }
     TreeNode* sortedArrayToBST(vector<int>& nums) {
+        auto build = [&](auto&& build, vector<int>& nums, int left, int right) -> TreeNode* {
+            if (left > right) return nullptr;
+            // 给定数组有序，中间节点即为根节点
+            int mid = (left + right) / 2;
+            TreeNode *root = new TreeNode(nums[mid]); // 构建根节点
+            root->left = build(build, nums, left, mid - 1); // 构建左子树
+            root->right = build(build, nums, mid + 1, right); // 构建右子树
+            return root;
+        };
+
         if (!nums.size()) return nullptr;
-        return helper(nums, 0, nums.size() - 1);
+        return build(build, nums, 0, nums.size() - 1);
     }
 };
 ```
@@ -6887,8 +6889,6 @@ public:
 
 在「杨辉三角」中，每个数是它左上方和右上方的数的和。
 
-![img](https://pic.leetcode-cn.com/1626927345-DZmfxB-PascalTriangleAnimated2.gif)
-
  
 
 **示例 1:**
@@ -8174,7 +8174,7 @@ public:
 
 **示例 1：**
 
-**![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2019/02/16/oranges.png)**
+![image.png](https://s2.loli.net/2025/02/18/RUQ1yawrgTiF8PD.png)
 
 ```
 输入：grid = [[2,1,1],[1,1,0],[0,1,1]]
@@ -8663,7 +8663,7 @@ public:
 
 **示例 1：**
 
-![img](https://assets.leetcode.com/uploads/2020/10/05/mat.jpg)
+![image.png](https://s2.loli.net/2025/02/18/5Lhd9tbfcDKRuPr.png)
 
 ```
 输入：matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3
@@ -8672,7 +8672,7 @@ public:
 
 **示例 2：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/11/25/mat2.jpg)
+![image.png](https://s2.loli.net/2025/02/18/X39Jz1LDBWM5cjH.png)
 
 ```
 输入：matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 13
@@ -9033,7 +9033,7 @@ public:
 
 同样需要使用二分的方法。我们要寻找的是中位数，以下面的数据为例：
 
-![image.png](https://pic.leetcode-cn.com/735ea8129ab5b56b7058c6286217fa4bb5f8a198e4c8b2172fe0f75b29a966cd-image.png)
+![image.png](https://s2.loli.net/2025/02/18/dHXt73oTK4h6Flk.png)
 
 寻找这两个数组的中位数，就是寻找两个有序数组中第 `k` 小的数，其中 `k` 是中位数的下标，在上面的例子中 `k = 7` 。为了找到第 `k` 小的数，我们可以分别找两个数组中第 `k/2` 个数，如果 `k` 是奇数就向下取整。
 
@@ -9041,15 +9041,15 @@ public:
 
 由于我们已经排除掉了 3 个数字，那么这 3 个数字一定是在最前面的，所以在两个新数组中我们只需要找到第 `7 - 3 = 4` 小的数字就可以了，也就是 `k = 4` 。同样我们分别找到两个数组中第 `k/2` 个数，此时两个数组如下（橙色表示已经排除掉的数字）：
 
-![image.png](https://pic.leetcode-cn.com/09b8649cd2b8bbea74f7f632b098fed5f8404530ff44b5a0b54a360b3cf7dd8f-image.png)
+![image.png](https://s2.loli.net/2025/02/18/k3mASIrWbNpun9O.png)
 
 此时就可以排除第一个数组的 `[1, 3]` ，于是乎 `k` 再减小 2 ，此时 `k = 2` ，得到如下情况：
 
-![image.png](https://pic.leetcode-cn.com/f2d72fd3dff109ad810895b9a0c8d8782f47df6b2f24f9de72704961bc547fcb-image.png)
+![image.png](https://s2.loli.net/2025/02/18/sHy98nlgXLWchRx.png)
 
 此时发现两个数组第 `k/2` 小的数相等，此时我们随便去掉一个都行，这里去掉第二个数组的 4 ，得到下面的情况：
 
-![image.png](https://pic.leetcode-cn.com/3c89a8ea29f2e19057b57242c8bc37c5f09b6796b96c30f3d42caea21c12f294-image.png)
+![image.png](https://s2.loli.net/2025/02/18/gmQ3vYwcCdMGKIF.png)
 
 **此时 `k = 1` ，说明需要找到第 `1` 小的数，我们直接返回此时更小的数就是题目所需要的结果**
 
@@ -10095,7 +10095,7 @@ public:
 
 从头开始遍历数组，维护当前能到达的最远距离 `max_dis` ，**每次在上次能跳到的范围（end）内选择一个能跳的最远的位置（max_dis）作为下次的起跳点**。
 
-![fig1](https://assets.leetcode-cn.com/solution-static/45/45_fig1.png) 
+![image.png](https://s2.loli.net/2025/02/18/FumEwoIQOXqWMVg.png) 
 
 在遍历数组时，我们**不访问最后一个元素**，这是因为在访问最后一个元素之前，我们的边界一定大于等于最后一个位置，否则就无法跳到最后一个位置了。**如果访问最后一个元素，在边界正好为最后一个位置的情况下，我们会增加一次「不必要的跳跃次数」**，因此我们不必访问最后一个元素。
 
