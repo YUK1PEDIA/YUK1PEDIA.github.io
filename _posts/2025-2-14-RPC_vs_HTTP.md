@@ -23,7 +23,7 @@ fd = socket(AF_INET,SOCK_STREAM,0);
 
 其中 `SOCK_STREAM` ，是指使用**字节流**传输协议，说白了就是 TCP。
 
-定义了 Socket 后，我们就可以对这个 Socket 进行操作，比如用 `bing()` 绑定 IP 端口，用 `connect()` 发起建连。
+定义了 Socket 后，我们就可以对这个 Socket 进行操作，比如用 `bind()` 绑定 IP 端口，用 `connect()` 发起建连。
 
 连接建立之后，我们就可以使用 `send()` 发送数据，`recv()` 接收数据。
 
