@@ -1814,7 +1814,7 @@ public:
 
 **示例 1：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/11/25/searchgrid2.jpg)
+![image.png](https://s2.loli.net/2025/02/25/GCuRgvO8i9co1DJ.png)
 
 ```
 输入：matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 5
@@ -1823,7 +1823,7 @@ public:
 
 **示例 2：**
 
-![img](https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2020/11/25/searchgrid.jpg)
+![image.png](https://s2.loli.net/2025/02/25/xluEsgtJamc8nLv.png)
 
 ```
 输入：matrix = [[1,4,7,11,15],[2,5,8,12,19],[3,6,9,16,22],[10,13,14,17,24],[18,21,23,26,30]], target = 20
