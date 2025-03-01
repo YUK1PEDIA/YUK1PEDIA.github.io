@@ -538,7 +538,7 @@ img::-moz-selection {
     max-width: 320px; }
 
   .panel-cover--overlay {
-    /* display: block;
+    display: block;
     position: absolute;
     z-index: 0;
     top: 0;
@@ -547,9 +547,7 @@ img::-moz-selection {
     left: 0;
     background-color: rgba(68, 68, 68, 0.6);
     background-image: -webkit-linear-gradient(-410deg, rgba(68, 68, 68, 0.6) 20%, rgba(0, 0, 0, 0.9));
-    background-image: linear-gradient(140deg,rgba(68, 68, 68, 0.6) 20%, rgba(0, 0, 0, 0.9));  */
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(5px);
+    background-image: linear-gradient(140deg,rgba(68, 68, 68, 0.6) 20%, rgba(0, 0, 0, 0.9));
   }
 
   .panel-cover__logo {
