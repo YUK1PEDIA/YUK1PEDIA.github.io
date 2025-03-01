@@ -550,6 +550,7 @@ img::-moz-selection {
     background-image: linear-gradient(140deg,rgba(68, 68, 68, 0.6) 20%, rgba(0, 0, 0, 0.9)); */
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.15));
     backdrop-filter: brightness(1.1) blur(2px);
+    background-color: rgba(68, 68, 68, 0.6);
   }
 
   .panel-cover__logo {
