@@ -3025,7 +3025,63 @@ public:
 };
 ```
 
+另解：
 
+```c++
+#include<bits/stdc++.h>
+using namespace std;
+
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+
+ListNode* solve(ListNode *head, int k) {
+    // 翻转子链表
+    auto reverse = [&](ListNode *head) -> ListNode* {
+        ListNode *pre = nullptr;
+        ListNode *cur = head;
+        while (cur != nullptr) {
+            ListNode *next = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = next;
+        }
+        return pre;
+    };
+
+    ListNode *dummy = new ListNode(0);
+    dummy->next = head;
+
+    ListNode *pre = dummy;
+    ListNode *end = dummy;
+
+    while (end->next != nullptr) {
+        // 往后找 k 个节点
+        for (int i = 0; i < k && end != nullptr; ++i) {
+            end = end->next;
+        }
+        // 如果不足 k 个，不做任何处理
+        if (end == nullptr) break;
+        ListNode *start = pre->next; // 待翻转子链表的头部
+        ListNode *next = end->next; // 待翻转子链表的后续链表
+        end->next = nullptr; // 将子链表拿出来
+        pre->next = reverse(start);
+        start->next = next;
+        pre = start;
+        end = pre;
+    }
+    return dummy->next;
+}
+
+int main() {
+    // test cases
+
+}
+```
 
 
 
