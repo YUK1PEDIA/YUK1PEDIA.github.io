@@ -271,3 +271,37 @@ TL：2.21 ssob 投递，3.3 一面
 - 手撕：下一个更大元素Ⅲ（https://leetcode.cn/problems/next-greater-element-iii/description/）
 
 算法没撕出来，应该寄了
+
+补一下手撕题解：
+
+```c++
+#include<bits/stdc++.h>
+using namespace std;
+
+int solve(int n) {
+    string nums = to_string(n);
+    int i = nums.length() - 2;
+    // 从后往前找第一个递减的位置
+    while (i >= 0 && nums[i] >= nums[i+1]) {
+        --i;
+    }
+    if (i < 0) return -1;
+    
+    int j = nums.length() - 1;
+    // 从后往前找第一个比递减位置更大的数
+    while (j >= 0 && nums[i] >= nums[j]) {
+        --j;
+    }
+    swap(nums[i], nums[j]);
+    reverse(nums.begin() + i + 1, nums.end());
+    long ans = stol(nums);
+    return ans > INT_MAX ? -1 : ans;
+}
+
+int main() {
+    cout << solve(12) << endl;
+    cout << solve(21) << endl;
+    return 0;
+}
+```
+
