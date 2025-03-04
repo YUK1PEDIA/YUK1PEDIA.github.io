@@ -2204,11 +2204,11 @@ public:
 
 - 如果链表节点数为奇数，那么找的就是正中间的节点
 
-![lc-midlist1.jpg](https://pic.leetcode.cn/1729048747-htsJVo-lc-midlist1.jpg)
+![image.png](https://s2.loli.net/2025/03/04/ahSUk1yvD7LmsjC.png)
 
 - 如果链表节点数为偶数，那么找的是正中间右边的节点
 
-![lc-midlist2.jpg](https://pic.leetcode.cn/1729048754-HLNfqE-lc-midlist2.jpg)
+![image.png](https://s2.loli.net/2025/03/04/TA6C1xokEc9URNn.png)
 
 
 
@@ -5648,15 +5648,7 @@ public:
 
 **有效** 二叉搜索树定义如下：
 
-- 节点的左
-
-  子树
-
-  只包含
-
-   小于 
-
-  当前节点的数。
+- 节点的左子树只包含小于当前节点的数。
 
 - 节点的右子树只包含 **大于** 当前节点的数。
 
@@ -7645,28 +7637,42 @@ public:
 如果一开始栈空，并且第一个字符为左括号，那就无法满足“栈底元素始终是右括号的下标”这一条件。于是首先往栈中压入 -1。
 
 ```c++
-class Solution {
-public:
-    int longestValidParentheses(string s) {
-        int len = s.length();
-        stack<int> stk;
-        stk.push(-1);
-        int res = 0;
-        for (int i = 0; i < len; ++i) {
-            if (s[i] == '(') {
+#include<bits/stdc++.h>
+using namespace std;
+
+/*
+栈如果非空，栈底永远存的是当前遍历过的字符串中上一个没有被匹配的右括号的下标
+上一个没有被匹配的右括号的下标可以理解为每段有效括号之间的 “隔板”
+比如，())((()))，第三个右括号，即左右 2 段匹配括号中间的 “隔板”
+“隔板” 的存在影响计算最长括号长度，如果不存在 “隔板”，前后 2 段括号应该 “融合” 在一起，最长长度为：2 + 6 = 8
+但此处因为 “隔板” 存在，所以最长长度只能为 6 
+*/
+int solve(string s) {
+    int len = s.length();
+    stack<int> stk;
+    stk.push(-1);
+    int res = 0;
+    for (int i = 0; i < len; ++i) {
+        if (s[i] == '(') {
+            stk.push(i);
+        } else {
+            stk.pop();
+            if (stk.empty()) {
                 stk.push(i);
             } else {
-                stk.pop();
-                if (stk.empty()) {
-                    stk.push(i);
-                } else {
-                    res = max(res, i - stk.top());
-                }
+                res = max(res, i - stk.top());
             }
         }
-        return res;
     }
-};
+    return res;
+}
+
+int main() {
+    cout << solve("(()") << endl;
+    cout << solve(")()())") << endl;
+    cout << solve("") << endl;
+    return 0;
+}
 ```
 
 
