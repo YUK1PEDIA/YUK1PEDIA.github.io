@@ -8118,7 +8118,7 @@ exection -> execution (插入 'u')
 
 
 
-我们定义 `dp[i][j]` 表示将 `word1[1..i]` 变为 `word2[1..j]` 所需要的编辑距离。
+我们定义 `dp[i][j]` 表示`word1` 的前 `i` 个字母到 `word2` 的前 `j` 个字母所需要的编辑距离。
 
 - 当 `word1[i] == word2[j]` 时，有 `dp[i][j] = dp[i-1][j-1]`
 - 否则，`dp[i][j] = 1 + min(dp[i][j-1], dp[i-1][j], dp[i-1][j-1])`
