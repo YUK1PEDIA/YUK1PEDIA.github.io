@@ -412,20 +412,21 @@ int main() {
 3. final 修饰的类可以被继承吗
 4. ArrayList 和 LinkedList 区别
 5. 动态代理底层原理，几种实现方式之间的区别
-6. spring 中用到哪些设计模式
-7. 从 springboot 的角度，讲讲前端请求到达 controller 后的一系列流程
-8. InnoDB 索引数据结构
-9. 从磁盘读写角度考虑，B+ 树节点为什么这样设计
-10. 聚簇索引和非聚簇索引
-11. 什么是 MVCC
-12. 设计索引要考虑哪些问题
-13. redis 是单线程还是多线程
-14. redis 多线程 I/O 体现在哪里
-15. 讲讲 redis 的数据结构及其应用（zset，排行榜）
-16. 如果数据量是千万级，还适合用 redis 吗
-17. redis 做集群还能保证排行榜的正确性吗
-18. 讲讲在一个全新的领域，你怎么学习新技术
-19. 手撕：写一个单例模式
+6. 重载和重写的区别
+7. spring 中用到哪些设计模式
+8. 从 springboot 的角度，讲讲前端请求到达 controller 后的一系列流程
+9. InnoDB 索引数据结构
+10. 从磁盘读写角度考虑，B+ 树节点为什么这样设计
+11. 聚簇索引和非聚簇索引
+12. 什么是 MVCC
+13. 设计索引要考虑哪些问题
+14. redis 是单线程还是多线程
+15. redis 多线程 I/O 体现在哪里
+16. 讲讲 redis 的数据结构及其应用（zset，排行榜）
+17. 如果数据量是千万级，还适合用 redis 吗
+18. redis 做集群还能保证排行榜的正确性吗
+19. 讲讲在一个全新的领域，你怎么学习新技术
+20. 手撕：写一个单例模式
 
 体验感拉满，面试官非常尊重人，反问阶段回答了很多，受益匪浅的一次面试
 
@@ -434,7 +435,7 @@ int main() {
 **腾讯 PCG技术线-应用架构方向 后台一面**
 
 1. 闲聊，实习时长能有多久
-2. 手撕：给定字符串 s 和整数 k ，找到 s 的最长子串，该子串满足每个字符出现的次数至少为 k 次，返回最长字串长度。比如 s = "aaabbb，k = 3，返回 6；s = "aaabb"，k = 3，返回 3；s = "ababbc"，k = 2，返回 5
+2. 手撕：给定字符串 s 和整数 k ，找到 s 的最长子串，该子串满足每个字符出现的次数至少为 k 次，返回最长子串长度。比如 s = "aaabbb，k = 3，返回 6；s = "aaabb"，k = 3，返回 3；s = "ababbc"，k = 2，返回 5
 3. hashmap 底层原理
 4. 创建线程的三种方式，区别
 5. final 关键字
@@ -442,4 +443,68 @@ int main() {
 7. redis 常用数据结构
 8. redis cluster
 9. 概率：三个信封中只有一个信封有钱，先拿一个信封，然后把剩下两个信封中没有钱的信封丢掉，问要不要交换手上的信封和剩下的一个信封
+
+手撕解法：
+
+**分治**：先遍历一遍字符串，记录每个字符出现的次数
+
+- 如果每个字符出现的次数都至少为 k ，那么返回原字符串长度
+- 如果有字符出现次数小于 k ，以该字符为界，递归计算最长子串长度
+
+```c++
+#include<bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    int longestSubstring(string s, int k) {
+        if (s.empty() || k > s.size()) return 0;
+        if (k <= 0) return s.size();
+        
+        unordered_map<char, int> charCount;
+        for (char c : s) {
+            charCount[c]++;
+        }
+        
+        // 记录字符串中出现次数小于 k 次的字符
+        unordered_set<char> invalidChars;
+        for (const auto& pair : charCount) {
+            if (pair.second < k) {
+                invalidChars.insert(pair.first);
+            }
+        }
+        
+        // 如果每个字符出现次数都大于等于 k，答案就是原字符串长度
+        if (invalidChars.empty()) {
+            return s.size();
+        }
+        
+        int maxLen = 0;
+        int start = 0;
+        for (int i = 0; i <= s.size(); ++i) {
+            // 字符串末尾或者遍历到不满足要求的字符
+            if (i == s.size() || invalidChars.count(s[i])) {
+                if (i > start) {
+                    // 递归计算答案
+                    int currentLen = longestSubstring(s.substr(start, i - start), k);
+                    maxLen = max(maxLen, currentLen);
+                }
+                start = i + 1;
+            }
+        }
+        return maxLen;
+    }
+};
+
+int main() {
+    Solution solution;
+    string s1 = "aaabbb";
+    string s2 = "aaabb";
+    string s3 = "ababbc";
+    cout << solution.longestSubstring(s1, 3) << endl;
+    cout << solution.longestSubstring(s2, 3) << endl;
+    cout << solution.longestSubstring(s3, 2) << endl;
+    return 0;
+}
+```
 
