@@ -96,3 +96,24 @@ print(motorcycles)
 
 `remove()` 和 `pop()` 类似，也可以返回被删除的元素，另外，**方法 `remove()` 只删除第一个指定的值**。如果要删除的值可能在列表中 出现多次，就需要使用循环来确保将每个值都删除
 
+对于列表复制，需要使用切片，如果直接赋值，两个列表指向的会是同一个对象
+
+```python
+players = ['charles', 'martina', 'michael', 'florence', 'eli']
+# 同一个对象
+players2 = players
+# 副本，不同的对象
+players3 = players[:]
+print(id(players))
+print(id(players2))
+print(id(players3))
+```
+
+输出结果：
+
+```
+2011801227200
+2011801227200
+2011800984832
+```
+
