@@ -117,3 +117,130 @@ print(id(players3))
 2011800984832
 ```
 
+**面向对象**
+
+以下面的代码为例，了解 python 中的面向对象思想
+
+```python
+class Dog:
+    # 类属性
+    species = "Canis familiaris"
+    
+    # 在 __init__ 中添加实例属性
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    # 动态添加实例属性
+    def set_age(self, age):
+        self.age = age
+        
+    def sit(self):
+        print(f"{self.name} is now sitting.")
+
+    def roll_over(self):
+        print(f"{self.name} rolled over.")
+
+
+my_dog = Dog('Willie', 6)
+print(f"My dog's name is {my_dog.name}")
+print(f"My dog is {my_dog.age} years old")
+my_dog.sit()
+my_dog.roll_over()
+```
+
+python 是动态类型语言，定义类时不需要像 java 那样单独把类中的属性显示写出来
+
+在类中定义属性有两种常见方式：**类属性** 和 **实例属性**
+
+- **类属性**：属于类本身的属性，**所有实例共享该属性**，可以在类的定义中直接赋值来定义类属性，比如上面代码的 `species`
+
+- **实例属性**：属于类的每个实例，通常在 `__init__` 方法中通过 `self` 参数来定义和初始化实例属性，也可以在其他实例方法中动态添加
+
+在 python 中，不存在像 java 那种严格意义上的私有属性（使用 `private` 修饰），但可以通过 **单下划线前缀（弱私有约定）** 来限制访问
+
+```python
+class Person:
+    def __init__(self, name, age):
+        self._name = name
+        self._age = age
+
+    def _display_info(self):
+        print(f"Name: {self._name}, Age: {self._age}")
+
+p = Person("Alice", 25)
+# 可以访问，但不建议
+print(p._name)  
+p._display_info()
+```
+
+在上述代码中，`_name`、`_age` 和 `_display_info` 以单下划线开头，按照约定应在类内部使用，**但仍然可以在类外部访问它们** 。因此这仅仅是一种约定，而非强制性的修饰符
+
+**类的继承**
+
+```python
+# 父类
+class Car:
+    def __init__(self, make, model, year):
+        self.make = make
+        self.model = model
+        self.year = year
+        self.odometer_reading = 0
+
+    def get_descriptive_name(self):
+        long_name = f"{self.year} {self.make} {self.model}"
+        return long_name.title()
+
+    def read_odometer(self):
+        print(f"This car has {self.odometer_reading} miles on it.")
+
+    def update_odometer(self, mileage):
+        if mileage >= self.odometer_reading:
+            self.odometer_reading += mileage
+        else:
+            print("You can't roll back odometer!")
+            
+    def increment_odometer(self, miles):
+        self.odometer_reading += miles
+
+
+# 子类
+class ElectricCar(Car):
+    def __init__(self, make, model, year):
+        super().__init__(make, model, year)
+
+
+my_tesla = ElectricCar('tesla', 'models', 2019)
+```
+
+创建子类时，父类 **必须包含** 在当前文件中，且位于子类前面。这里的 **必须包含** 不是说父类与子类必须写在同一个 `.py` 文件中，我们也可以把父类和子类分别写在不同的 `.py` 文件里，比如下面的代码：
+
+```python
+# animal.py
+class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def speak(self):
+        print(f"{self.name} makes a sound.")
+```
+
+```python
+# dog.py
+from animal import Animal
+
+class Dog(Animal):
+    def speak(self):
+        print(f"{self.name} barks.")
+
+# 创建子类实例并调用方法
+dog = Dog("Buddy")
+dog.speak()
+```
+
+运行 `dog.py` 时，python 会先从 `animal.py` 文件里导入 `Animal` 类，然后创建 `Dog` 类的实例并调用其方法
+
+**重写父类方法**
+
+父类方法不符合子类模拟的实物行为时，都可以进行重写。为此，可在子类中定义一个与要重写的父类方法同名的方法，这样，python 将不考虑父类方法，只关注子类方法
+
