@@ -5,7 +5,11 @@ description: 记录
 tag: 笔记
 ---
 
+
+
 ## python
+
+### 语法
 
 **文件类型相关**
 
@@ -243,4 +247,92 @@ dog.speak()
 **重写父类方法**
 
 父类方法不符合子类模拟的实物行为时，都可以进行重写。为此，可在子类中定义一个与要重写的父类方法同名的方法，这样，python 将不考虑父类方法，只关注子类方法
+
+### 算法相关
+
+**如何遍历可迭代对象？**
+
+以 https://leetcode.cn/problems/two-sum/description/ 为例
+
+- 使用 `range` 函数，其中使用到 `range` 去创建一个可迭代对象（对象中数字从 0 开始）
+
+  - `range` 的完整语法：`range(start, stop[, step])`，其中：
+    - `start`：可选参数，序列起始值，默认为 0
+    - `stop`：必选参数，序列结束值，生成的序列不包含该值
+    - `step`：可选参数，序列步长，默认是 1
+
+  ```python
+  class Solution:
+      def twoSum(self, nums: List[int], target: int) -> List[int]:
+          for i in range(len(nums)):
+              for j in range(i + 1, len(nums)):
+                  if nums[i] + nums[j] == target:
+                      return [i, j]
+          return []
+  ```
+
+- 使用 `enumerate` 函数，**遍历可迭代对象时同时获取元素的索引和值**
+
+  - `enumerate` 的完整语法：`enumerate(iterable, start=0)`，其中：
+    - `iterable`：必选参数，代表要遍历的可迭代对象
+    - `start`：可选参数，用于指定索引的起始值，默认是 0
+
+  ```python
+  class Solution:
+      def twoSum(self, nums: List[int], target: int) -> List[int]:
+          indices = {}
+          for i, v in enumerate(nums):
+              pre = target - v
+              if pre in indices:
+                  return [i, indices[pre]]
+              indices[v] = i
+  
+          return []
+  ```
+
+**这里提到 `range` 函数生成可迭代对象**，该对象不是 list 也不是 tuple，而是 range 类型
+
+- range 对象是可迭代的，所以可以用于 for 循环
+
+  ```python
+  for i in range(5):
+  	print(i)
+  ```
+
+- **内存高效**：range 对象不会像 list 那样一次性把所有元素存储在内存中，而是在迭代时逐个生成元素，因此在处理大序列时，能节省大量内存
+
+- **不可变**：一旦 range 对象被创建，其元素和范围就不能改变。若要得到不同的范围，需要重新创建一个新的 range 对象
+
+### 文件与异常
+
+**文件**
+
+```python
+with open('test.txt') as file_object:
+    contents = file_object.read()
+print(contents)
+```
+
+上面的代码里，`open()` 函数打开对应文件，返回一个表示文件 `test.txt` 的对象，python 将该对象赋给 `file_object` 供以后使用
+
+**关键字 `with` 在不再需要访问文件后将其关闭**，我们也可以调用 `open()` 和 `close()` 来打开和关闭文件，但这样做时，如果程序存在 bug 导致 `close()` 未执行，文件将不会关闭，可能导致数据丢失或受损
+
+tips：如果文件的绝对路径比较长，可以把它赋给一个变量，再把变量传递给 `open()`
+
+**异常**
+
+类似 java，当发生让 python 不知所措的错误时，它都会创建一个异常对象。如果程序中有处理该异常的代码，程序将继续运行；如果未对异常进行处理，程序将停止并显示 traceback，其中包含有关异常的报告
+
+写代码时如果认为可能发生错误，可编写一个 `try-except` 代码块来处理可能引发的异常。如果 try 代码块中的代码引发了异常，python 将查找与之匹配的 except 代码块并运行其中的代码
+
+```python
+# 程序停止，显示 traceback
+print(1 / 0)
+
+# 程序继续执行，异常被捕获并运行 except 代码块中的代码
+try:
+    print(1 / 0)
+except ZeroDivisionError:
+    print("You can't divide by zero")
+```
 
