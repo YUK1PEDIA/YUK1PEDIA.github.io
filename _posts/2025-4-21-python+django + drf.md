@@ -336,3 +336,30 @@ except ZeroDivisionError:
     print("You can't divide by zero")
 ```
 
+**静默失败**
+
+每次捕获到异常时，可能不需要告诉用户，想让程序保持静默，这里就可以使用 `pass` 语句
+
+```python
+def count_words(filename):
+	# 计算一个文件大致包含多少个单词
+	try:
+		--snip--
+	except FileNotFoundError:
+		pass
+	else:
+		--snip
+
+filenames = {'1', '2', '3', '4'}
+for filename in filenames:
+	count_words(filename)
+```
+
+假设文件 “3” 不存在，python 在执行上述代码时，只会打印 1、2、4 的单词数，不会有任何 traceback
+
+
+
+## Django
+
+
+
