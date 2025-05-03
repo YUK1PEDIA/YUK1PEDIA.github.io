@@ -1,6 +1,6 @@
 ---
 layout: post
-title: python + django + drf
+title: python + django
 description: 记录
 tag: 笔记
 ---
@@ -360,6 +360,37 @@ for filename in filenames:
 
 
 ## Django
+
+Django 是一个高级的 **Python Web 框架**，采用了模型-视图-控制器（MVC）的架构模式，能够快速、高效地构建 Web 应用程序。
+
+在 PyCharm 中创建一个 Django 项目，PyCharm 会自动构建项目需要的虚拟环境，下面是完成创建的目录结构。
+
+![image.png](https://s2.loli.net/2025/05/03/J1Zku7IUTGyeFSC.png)
+
+目录 learning_log 包含 5 个文件，最重要的是 settings.py、urls.py 和 wsgi.py。
+
+- settings.py：指定 Django 如何与系统交互以及如何管理项目，可以根据具体需求，选择修改一些设置并添加一些设置
+- urls.py：该文件告诉 Django 应该创建哪些页面来响应浏览器请求
+- wsgi.py：wsgi 是 **Web Server Gateway Interface** 的缩写，在 Django 项目中，`wsgi.py` 文件是启动 WSGI 服务器的入口文件，它负责创建一个 WSGI 应用程序对象，加载 Django 项目的配置（设置 `DJANGO_SETTINGS_MODULE` 环境变量指定配置文件 ），并将应用程序对象传递给 WSGI 服务器，使服务器能处理传入的 HTTP 请求
+- asgi.py(补充)：asgi 是 Asynchronous Server Gateway Interface 的缩写，是异步服务器网关接口，是对 wsgi 的扩展，用于处理异步 Web 请求，能更好地支持异步编程和 WebSocket 等长连接操作
+
+### 创建数据库
+
+首先创建一个供 Django 使用的数据库，在终端执行下面的指令：
+
+![image.png](https://s2.loli.net/2025/05/03/kpstZbCAw4zm1T3.png)
+
+我们将修改数据库成为 **迁移** 数据库，首次执行 migrate 命令时，将让 Django 确保数据库与项目的当前状态匹配。在使用 SQLite 的新项目中首次执行这个命令时，Django 将新建一个数据库。**SQLite 是一种使用单个文件的数据库**，不用太关注数据库管理的问题。
+
+### 查看项目
+
+可以使用 runserver 查看项目的状态：
+
+![image.png](https://s2.loli.net/2025/05/03/gl6YKfxzSTkPNdw.png)
+
+Django 启动了一个名为 development server 的服务器，此时使用浏览器访问 `http://localhost:8000/` 以请求页面，Django 服务器将进行相应，生成合适的页面并发送给浏览器，如下图：
+
+![image.png](https://s2.loli.net/2025/05/03/PJFz4wBdyfxrTop.png)
 
 
 
