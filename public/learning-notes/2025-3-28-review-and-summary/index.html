@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>复盘总结 | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="记录">
+<meta name="author" content="">
+<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2025-3-28-review-and-summary/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2025-3-28-review-and-summary/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2025-3-28-review-and-summary/">
+  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
+  <meta property="og:title" content="复盘总结">
+  <meta property="og:description" content="记录">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="learning-notes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="复盘总结">
+<meta name="twitter:description" content="记录">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Learning Notes",
+      "item": "https://yuk1pedia.github.io/learning-notes/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "复盘总结",
+      "item": "https://yuk1pedia.github.io/learning-notes/2025-3-28-review-and-summary/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "复盘总结",
+  "name": "复盘总结",
+  "description": "记录",
+  "keywords": [
+    
+  ],
+  "articleBody": "[TOC]\nOS 进程、线程和协程三者的区别？各自有什么优势？ 进程是操作系统资源调度的基本单位，拥有独立的内存空间和系统资源。每个进程有独立的内存空间，互不干扰，创建和切换进程的开销比较大，进程间通信较复杂 线程是进程内的执行单元，共享进程的内存和资源。创建和切换线程的开销较小，但同步比较复杂 协程是用户态的轻量级线程，由程序员控制调度，无需操作系统介入。创建和切换协程的开销非常小，适合高并发的场景 线程同步方式有哪些？ 互斥锁、读写锁、信号量、自旋锁、临界区 协程调度的底层？ 协程调度主要由用户态控制，底层机制依赖于 协作式多任务 ，即协程主动让出执行权，而不是被强制抢占 协程调度基于以下两个核心机制： 保存和恢复上下文：切换时保存程序计数器、寄存器、栈指针等信息，并恢复下一个协程的上下文 事件循环：协程调度器通常基于事件循环实现，事件循环负责管理协程的状态和调度（FIFO、优先级调度、时间片轮转等） 当前内存不足 500mb，此时申请 500mb 会发生什么？ 可能直接抛出异常，返回内存分配失败 如果系统启用了 交换空间 机制，操作系统会将部分不常用的内存页换出到交换空间，然后尝试分配 500mb 内存 交换空间：当内存不足时，Linux 把某些页的内容转移到硬盘上的一块空间，以释放内存。硬盘上的那块空间叫做交换空间 内存严重不足时，Linux 内核中的 OOM Killer 会终止占用内存最多的进程，然后尝试分配 500mb 内存 Linux 是如何管理内存的？ 虚拟内存机制 主要采用的是 页式内存管理 虚拟地址空间分为 内核空间 和 用户空间 两部分，每个进程有自己的用户空间，包含代码段、数据段、堆、栈等；内核空间被所有进程共享 内存回收机制 页面缓存、交换空间、内存压缩、OOM Killer epoll 介绍一下？ IO 多路复用：用一个线程（或进程）同时管理多个 I/O 操作，而不是为每个 I/O 操作单独开一个线程 将已连接的 Socket 都放到一个 文件描述符集合 中，epoll 使用 红黑树 来跟踪进程所有待检测的文件描述字，select/poll 每次操作都传入整个 Socket 集合给内核，而 epoll 只需要传入一个待检测的 Socket，减少了内核和用户空间大量的数据拷贝 epoll 红黑树中存储键值对（文件描述符以及对应的事件） key：文件描述符（fd） value：监听的事件类型 事件驱动 机制，内核维护了一个链表记录就绪事件，当某个 Socket 有事件发生，通过 回调函数 内核会将其加入到就绪事件列表 就绪链表存放的也是 已就绪的 文件描述符 和 监听的事件类型 epoll 支持两种事件触发模式：边缘触发 和 水平触发 边缘触发：当被监控的 Socket 上有可读事件发生时，服务器端只会从 epoll_wait 中 苏醒一次 ，即使进程没有调用 read 函数从内核读取数据，也依然只苏醒一次，因此我们程序要保证一次性将内核缓冲区的数据读取完 水平触发：当被监控的 Socket 上有可读事件发生时，服务器端不断地从 epoll_wait 中苏醒，直到内核缓冲区数据被 read 函数读完才结束 举个例子，你的快递被放到了一个快递箱里，如果快递箱只会通过短信通知你一次，即使你一直没有去取，它也不会再发送第二条短信提醒你，这个方式就是 边缘触发；如果快递箱发现你的快递没有被取出，它就会不停地发短信通知你，直到你取出了快递，它才消停，这个就是水平触发的方式 计网 TCP 和 UDP 的区别？\nTCP 可靠，UDP 不可靠 TCP 一对一，UDP 可以一对多，多对一 TCP 有序，UDP 无序 HTTPS 连接过程？\n客户端请求 HTTPS 网址，连接到 server 的 443 端口（HTTPS 默认端口） 服务端响应客户端请求，将 证书 传递给客户端，证书包含公钥和大量其他信息，比如证书颁发机构、公司信息、有效期等 客户端解析证书并验证，判断服务端是否可信。如果证书没有问题，客户端会从证书中取出服务端的 公钥 A ，然后客户端会生成一个随机码 key，并使用公钥 A 进行加密 客户端把加密后的 key 发送给服务端，作为后面对称加密的密钥 服务端收到随机码 key 后使用 私钥 B 解密，经过以上步骤就建立了安全连接 消息队列 为什么选择 RocketMQ？有没有考虑过其他的消息队列？消息队列的选型是怎么考虑的？ 商城项目往往会有很高的在线人数，需要高吞吐量，RabbitMQ 就不适合高吞吐场景 电商场景下，要求整体延迟低，RocketMQ 在延迟方面表现更好，适合金融、电商等场景 电商平台中，订单、交易等场景需要保证消息的消费顺序，RocketMQ 支持全局顺序消息和分区顺序消息，适合需要严格顺序的场景 RocketMQ 使用 java 开发，和项目联系更紧密 数据库 缓存三问，项目中是如何解决这三个问题的\n缓存穿透：布隆过滤器 布隆过滤器底层原理？（位图，多次哈希运算） 缓存雪崩：熔断机制，或者在原有的失效时间上加上一个随机值，防止同时失效造成雪崩效应 缓存穿透：逻辑过期，发现缓存中数据过期后，先获取互斥锁，再新建一个线程去进行缓存更新。更新过程中如果有访问请求，先返回旧数据，保证高可用 为什么用 mongodb？和 mysql 有什么不同？\nmysql 是关系型数据库，存储的数据比较结构化，不适合扩展新的结构 mongodb 是文档形 no-sql 数据库，适合存储非结构化数据，适合扩展新结构 两者存储引擎不同，mysql 默认是 InnoDB，mongodb是 WiredTiger，两个存储引擎底层都是 B+ 树 mongodb 的读写性能远高于 mysql ，因为： mongo 里的数据以 BSON 格式存储，适合嵌套和复杂结构，减少了表连接需求 wiredtiger 引擎支持高效压缩和并发控制，优化了读写性能；InnoDB 引擎支持事务和行级锁，高并发下性能不如 WiredTiger mongo 原生支持分片，易于水平扩展，适合大规模数据和高并发场景 mongo 写操作默认是异步的，延迟低，支持批量写入 mongo 默认采用 最终一致性，mysql 采用 强一致性 InnoDB 中索引结构是 B+ 树，从磁盘读写角度考虑，B+ 树节点为什么这样设计？\n索引和数据都是保存在磁盘上的，通过索引查找某行数据的时候，需要先从磁盘读取索引到内存，再通过索引从磁盘中找到某行数据，然后读入到内存，会发生多次磁盘 I/O B+ 树叶子节点存放 索引 + 记录 ，非叶子节点 只存放索引，另外，所有的索引都会在叶子节点中出现，并且是在子结点中所有索引的最大（或最小），非叶子节点仅用于导航到叶子节点 B+ 树非叶子节点不存放实际数据，相较于 B 树能够存放更多的索引，因此 B+ 树可以比 B 树更 矮胖 ，查询底层节点的磁盘 I/O 次数会更少 设计索引需要考虑哪些问题？\n选择合适的列，比如选择 不同值较多的列 作为索引，能够有效缩小查找范围 最左前缀法则，防止索引失效 非空、唯一 最左前缀法则？\n创建多列联合索引时，根据业务需求，把查询条件里出现频率最高的列放在最左侧 这样可以更有效地缩小数据查找范围，提高查找效率 使用联合索引查询时，只有从索引的最左侧开始的连续列组合才能使用该联合索引来加速查询 向右匹配时，遇到 范围查询（\u003e、\u003c、between、like）就停止匹配 原理：联合索引在 B+ 树中是按照索引列的顺序依次排序的，如果查询条件中的列顺序与索引列顺序一致，那么就可以利用 B+ 树的有序性快速定位 介绍一下 redis cluster\nredis 的分布式解决方案，用于实现 数据的分片存储和高可用性 。单点 redis 服务器会面临性能和容量限制，redis cluster 可以将数据 分散存储在多个节点上，通过集群方式扩展存储能力和处理能力\n底层原理：redis cluster 采用 哈希槽 来处理数据和节点之间的映射关系。一个 redis cluster 集群中，共有 16384 个哈希槽，这些哈希槽类似于数据分区，每个键值对会根据它的 key，被映射到一个哈希槽中，具体过程分为两大步：\n根据键值对的 key，按照 CRC16算法 计算一个 16 bit 的值 再用 16 bit 值对 16384 取模，得到 0 ~ 16383 范围内的模数，每个模数代表一个相应编号的哈希槽 那么这些哈希槽怎么被映射到具体的 redis 节点上？有两种方案：\n平均分配：使用 cluster create 创建集群时，redis 会自动把所有哈希槽平均分配到集群节点上 手动分配：可以使用 cluster meet 命令手动建立节点间的连接，组成集群，再使用 cluster addslots 命令，指定每个节点上的哈希槽个数。需要注意的是，手动分配需要把 16384 个槽都分配完，否则 redis 集群无法正常工作 节点通信：redis cluster 中的节点通过 Gossip 协议 进行通信。Gossip 协议是一种基于谣言传播的通信机制，节点之间会定期互相交换信息，将自己的状态（在线状态、负责的哈希槽等）传播给其他节点\nredis cluster 中的主从节点：哈希槽分配给不同的主节点后，每个主节点可以配置一个或多个从节点，以实现高可用性和数据冗余\n编程语言相关 java 编译运行的流程？ 编写 java 源代码文件，扩展名为 .java 使用 javac 命令将源代码编译成 字节码文件，扩展名为 .class 运行 java 程序时，JVM 类加载器会加载 .class 文件 类加载器工作流程：加载 -\u003e 验证 -\u003e 准备 -\u003e 解析 -\u003e 初始化 JVM 通过 解释器 逐行解释字节码（将字节码转换为机器码），然后逐行执行机器码 为了提高性能，JVM 会将频繁执行的代码通过 即时编译器（JIT Compiler） 编译成机器码，然后把机器码保存下来，下次可以直接使用 cpp 编译运行的流程？ 编写 cpp 源代码文件，扩展名为 .cpp 或 .h 使用 预处理器 处理源代码中的预处理指令，预处理后的文件通常以 .i 或 .ii 为扩展名 展开 #include 指令，将头文件内容插入源代码 处理 #define 宏定义，进行文本替换 条件编译（如 #if 、ifdef） 编译器 将预处理后的代码翻译成汇编代码，汇编代码文件通常以 .s 为扩展名 词法分析、语法分析、语义分析、生成和优化中间代码，最后生成目标平台的汇编代码 汇编器 将汇编代码翻译成机器码，生成目标文件（Object File），通常以 .o 为扩展名 链接器 将多个目标文件和库文件合并，生成 可执行文件 操作系统加载 可执行文件 并运行 java 如何管理内存？（gc 机制） JVM 将内存划分为多个区域 方法区：存储类信息、常量、静态变量，即时编译器编译后的代码等 堆：存储对象实例和数组 栈：存储局部变量，方法调用和部分结果 本地方法栈：与栈类似，但用于本地方法 程序计数器：记录当前线程执行的字节码指令地址 堆 是 java 内存管理的核心区域，进一步划分为以下部分： 新生代：存放新创建的对象 Eden 区：对象最初分配的区域 Survivor 区（From 和 To）：存放经过垃圾回收后存活的对象 特点：新生代使用 复制算法 进行垃圾回收，大多数对象在新生代被回收 老年代：存放长期存活的对象 老年代使用 标记-清除或标记-整理 算法进行垃圾回收 元空间：存储类元数据，元空间使用 本地内存 ，而不是 JVM 堆内存 垃圾回收（gc） 垃圾回收算法： 标记-清除：标记所有存活对象，清除未标记对象，会产生内存碎片 复制：用于新生代，将存活对象复制到另一个区域，清除原区域 标记-整理：用于老年代，标记所有存活对象，整理内存，消除碎片 垃圾回收过程： Minor GC：回收新生代，频率高、速度快 Full GC：回收整个堆（包括新生代和老年代），频率低，速度慢 内存分配策略： 大多数对象优先在 Eden 区分配 大对象（比如大数组）直接分配到老年代，避免频繁复制 对象经过多次 Minor GC 后仍然存活，会晋升到老年代 java 动态代理底层原理？实现方式有什么不同？ 动态代理是运行时生成代理类的机制，在不修改原始代码的情况下增强或修改其行为 底层通过 java.lang.reflect.Proxy 类和 java.lang.reflect.InvocationHandler 接口实现 Proxy 类用于动态生成代理类 InvocationHandler 接口用于定义代理类的行为，所有对代理对象的方法调用都会转发到 InvocationHandler 的 invoke 方法 实现方式： JDK 动态代理：基于接口，只能代理实现了接口的类，由于是基于反射的，性能较差，可以代理 final 类或 final 方法 CGLIB 动态代理：基于类，可以代理没有实现接口的类，基于字节码生成，性能较好，不能代理 final 类或 final 方法 BIO、NIO、AIO 三者的区别 BIO（Blocking I/O）：当程序发起一个 I/O 操作时，程序会被阻塞，直到 I/O 操作完成。比如一个服务器程序接收客户端的连接，在没有客户端连接进来时，服务器程序就会一直阻塞在那里等待，无法去做其他事情 NIO（Non-blocking I/O）：程序发起一个 I/O 操作后，不会被阻塞，可以继续去做其他事情，程序会定期去检查 I/O 操作是否完成 AIO（Asynchronous I/O）：当程序发起一个 I/O 操作时，会立即返回，程序可以继续做其他事情，当 I/O 操作完成后，系统会通过回调函数或者通知机制来告诉程序操作已经完成 final 关键字相关 final 变量：final 修饰的变量不可变，并且该变量必须初始化，final 修饰的变量通常称为常量 final 方法：final 修饰的方法不允许任何子类重写，但子类可以使用该方法 final 类：final 修饰的类不能被继承，所有方法都不能被重写 重载和重写区别 重载是 编译时多态，重写是 运行时多态 重写方法的返回类型和形参都不能变，即 外壳不变，核心重写 重载方法的返回类型和形参可以变，比如 构造器重载 Spring Security Spring Security 基于一系列 Servlet 过滤器和 AOP 实现 过滤器链：一个请求进入应用时，它会依次经过 Spring Security 的过滤器链，过滤器链中的每个过滤器负责不同的安全任务，如处理登录请求、验证用户凭证、检查用户权限等 安全上下文：用于存储当前用户的 身份验证信息 和 授权信息，用户通过身份验证后，相关信息就会被存储在安全上下文中，后续请求可以从安全上下文中获取这些信息，确保用户是否有权访问资源 认证流程： 用户发起登录请求，携带用户名和密码 UsernamePasswordAuthenticationFilter 捕获该请求，提取用户名和密码，创建一个 UsernamePasswordAuthenticationToken 对象 AuthenticationManager 接收到 UsernamePasswordAuthenticationToken 后，调用 UserDetailsService 从数据库或其他数据源中加载用户信息 AuthenticationManager 将用户输入的密码与从 UserDetailsService 中获取的密码进行比对，如果匹配，则认证成功，返回一个已认证的 Authentication 对象 SecurityContextHolder 将已认证的 Authentication 对象存储在当前线程的安全上下文中，以便后续请求可以使用 授权流程： 当用户请求访问受保护的资源时，FilterSecurityInterceptor 会拦截该请求 FilterSecurityInterceptor 根据配置的访问规则，检查当前用户的 Authentication 对象是否包含足够的权限 如果用户具有足够的权限，则允许访问；否则，抛出 AccessDeniedException 异常 RBAC：Role-Based Access Control，基于角色的访问控制，通过 角色 来管理用户对资源的访问权限，Ruoyi 脚手架采用的权限控制模型就是 RBAC。RBAC 模型的核心是将用户和权限解耦，通过角色作为中间桥梁来关联两者 用户：使用系统的个体，可以是具体的人，也可以是代表某个系统或程序的实体 角色：一组权限的集合，代表了在系统中具有特定职责和功能的岗位或身份 权限：对系统中特定资源进行操作的许可 原理：系统管理员定义一系列角色，并为每个角色分配相应的权限；之后用户被分配到一个或多个角色，用户通过其所拥有的角色获得相应的权限，从而可以访问系统中的资源 其他权限模型 DAC（Discretionary Access Control，自主访问控制）允许资源所有者 自主决定 谁可以访问该资源以及可以进行何种操作 MAC（Mandatory Access Control，强制访问控制）根据用户和资源的 安全级别 来决定是否允许访问 ABAC（Attribute-Based Access Control，基于属性的访问控制）根据用户、资源和环境的属性来进行访问决策。比如可以根据用户的部门、职位等属性来决定是否允许访问 杂七杂八 最近 AI 技术比较热门，AI 的底层了解吗？\n神经网络：神经网络是 AI 模型的基础结构，模仿人脑的神经元工作方式。它由多层“节点”（神经元）组成，每一层都会对输入数据进行加工，最终输出结果 输入层：接受原始数据（比如图片像素、文字） 隐藏层：对数据进行多层加工，提取特征 输出层：输出最终结果（比如分类标签、生成文本） 反向传播：神经网络的学习算法，通过不断调整参数来减少预测错误 前向传播：输入数据，计算预测结果 计算误差：比较预测结果和正确答案的差距 反向传播：从输出层到输入层，逐层调整参数 更新参数：用梯度下降法减少误差 梯度下降：优化算法，用于找到使误差最小的参数值。通过梯度下降，AI 不断调整参数，让预测结果越来越准 卷积神经网络（CNN）：CNN 是专门处理图像数据的神经网络，通过卷积操作提取图像特征 卷积层：用滤波器（Filter）扫描图像，提取局部特征（比如边缘、纹理） 池化层：缩小特征图尺寸，减少计算量 全连接层：将提取的特征组合，输出结果 循环神经网络（RNN）：RNN 是处理序列数据（如文本、时间序列）的神经网络，能记住之前的信息 隐藏状态：保存之前时间步的信息 时间步：每一步处理一个输入（比如一个单词） Transformer：擅长处理序列数据的模型架构（比如 ChatGPT 的基础就是这个） 自注意力机制：计算输入序列中每个元素的重要性 多头注意力：从不同角度分析输入序列 位置编码：记录每个元素的位置信息 生成对抗网络（GAN）：GAN 由两个神经网络组成：生成器（Generator）和判别器（Discriminator），通过对抗训练生成逼真数据 生成器：生成假数据 判别器：判断数据是真是假 对抗训练：生成器努力骗过判别器，判别器努力识破生成器 强化学习：通过“试错”学习策略，目标是最大化累积奖励 智能体：学习并执行动作 环境：智能体交互的外部世界 奖励：智能体执行动作后获得的反馈 博弈：550个瓶子，A 和 B 轮流拿，每次可以拿 7-11 个瓶子，A 先拿，A 要怎么拿才能保证拿到第550个瓶子？\nA 先拿 10 个瓶子 之后 B 拿 x 个瓶子，A 就拿 (18 - x) 个瓶子 这是因为 (550 - 10) / 18 = 30，A 一定能保证拿到最后一个瓶子 项目的分布式架构是怎么样的？\n前端通过 API 网关与后端进行交互，通过 nginx 反向代理，实现负载均衡 后端架构上 服务层：采用领域驱动模式将项目拆分成独立的微服务，每个微服务独立部署，通过服务注册与发现实现动态调用 同步场景通过 RPC 进行调用，异步场景使用 RocketMQ 解耦 数据层：后端主要使用了三种数据库，mysql、redis 和 mongodb，mongodb有部署集群 基础设施层：使用 docker 容器化，构建一个 docker-swarm 集群，便于管理；使用 nacos 作为配置和注册中心 如何理解分布式系统中的 高并发、高可用和高扩展 ？\n高并发：系统在 短时间 内处理大量并发请求的能力\n解决方案：负载均衡、异步处理、缓存加速或者限流、熔断等 高可用：系统在 故障发生 时仍能正常运行的能力\n解决方案：多节点同时运行（mysql 主从复制，redis 集群等）；异地容灾 高扩展：系统能通过增加资源（服务器、存储等）线性提升性能的能力\n解决方案：水平扩展，通过 docker 容器化，k8s 集群动态添加节点；垂直扩展，升级单台服务器配置 熔断和限流的区别是什么？\n熔断：服务异常（错误率高，响应超时等）时，暂时切断对该服务的调用，避免故障扩散 限流：控制单位时间内进入系统的请求数量，避免资源耗尽 一般采取的是 先限流，后熔断 的策略 AI 底层的理解？\n机器学习核心流程 数据预处理（标准化、特征工程）→ 模型训练（损失函数、优化器如 Adam）→ 评估（准确率、AUC-ROC） 深度学习底层机制 神经网络：反向传播算法（链式求导）、激活函数（ReLU 解决梯度消失） 分布式训练：参数服务器架构（类比分布式系统中的负载均衡）、模型并行与数据并行策略 Agent 和 RAG 了解吗？\nAgent（智能体） 结合 LLM、工具调用（如 API、数据库）和任务规划的系统（如 AutoGPT） 核心能力： 任务分解：将复杂目标拆解为子步骤（如 “写一篇技术博客”→ 选题→调研→写作） 动态决策：根据反馈调整策略（如调用 Python 解释器验证代码逻辑） RAG（检索增强生成） 通过向量检索（如 FAISS、Elasticsearch）从外部知识库获取相关信息，增强 LLM 输出的准确性 ",
+  "wordCount" : "741",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yuk1pedia.github.io/learning-notes/2025-3-28-review-and-summary/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YUKIPEDIA's blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yuk1pedia.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                    <span>Learning Notes</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      复盘总结
+    </h1>
+    <div class="post-description">
+      记录
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><p>[TOC]</p>
+<h2 id="os">OS<a hidden class="anchor" aria-hidden="true" href="#os">#</a></h2>
+<ol>
+<li>进程、线程和协程三者的区别？各自有什么优势？
+<ul>
+<li>进程是操作系统资源调度的基本单位，拥有独立的内存空间和系统资源。每个进程有独立的内存空间，互不干扰，<strong>创建和切换进程的开销比较大，进程间通信较复杂</strong></li>
+<li>线程是进程内的执行单元，共享进程的内存和资源。<strong>创建和切换线程的开销较小，但同步比较复杂</strong></li>
+<li>协程是用户态的轻量级线程，由程序员控制调度，<strong>无需操作系统介入</strong>。创建和切换协程的开销非常小，适合高并发的场景</li>
+</ul>
+</li>
+<li>线程同步方式有哪些？
+<ul>
+<li>互斥锁、读写锁、信号量、自旋锁、临界区</li>
+</ul>
+</li>
+<li>协程调度的底层？
+<ul>
+<li>协程调度主要由用户态控制，底层机制依赖于 <strong>协作式多任务</strong> ，即协程<strong>主动让出执行权</strong>，而不是被强制抢占</li>
+<li>协程调度基于以下两个核心机制：
+<ul>
+<li><strong>保存和恢复上下文</strong>：切换时保存程序计数器、寄存器、栈指针等信息，并恢复下一个协程的上下文</li>
+<li><strong>事件循环</strong>：协程调度器通常基于事件循环实现，事件循环负责管理协程的状态和调度（FIFO、优先级调度、时间片轮转等）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>当前内存不足 500mb，此时申请 500mb 会发生什么？
+<ul>
+<li>可能直接抛出异常，返回内存分配失败</li>
+<li>如果系统启用了 <strong>交换空间</strong> 机制，操作系统会将部分不常用的内存页换出到交换空间，然后尝试分配 500mb 内存
+<ul>
+<li>交换空间：当内存不足时，Linux 把某些页的内容转移到硬盘上的一块空间，以释放内存。<strong>硬盘上的那块空间叫做交换空间</strong></li>
+</ul>
+</li>
+<li>内存严重不足时，Linux 内核中的 <strong>OOM Killer</strong> 会终止占用内存最多的进程，然后尝试分配 500mb 内存</li>
+</ul>
+</li>
+<li>Linux 是如何管理内存的？
+<ul>
+<li>虚拟内存机制
+<ul>
+<li>主要采用的是 <strong>页式内存管理</strong></li>
+<li>虚拟地址空间分为 <strong>内核空间</strong> 和 <strong>用户空间</strong> 两部分，每个进程有自己的用户空间，包含代码段、数据段、堆、栈等；<strong>内核空间被所有进程共享</strong></li>
+</ul>
+</li>
+<li>内存回收机制
+<ul>
+<li>页面缓存、交换空间、内存压缩、OOM Killer</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>epoll 介绍一下？
+<ul>
+<li>IO 多路复用：用一个线程（或进程）同时管理多个 I/O 操作，而不是为每个 I/O 操作单独开一个线程</li>
+<li>将已连接的 Socket 都放到一个 <strong>文件描述符集合</strong> 中，epoll 使用 <strong>红黑树</strong> 来跟踪进程所有待检测的文件描述字，select/poll 每次操作都传入整个 Socket 集合给内核，而 epoll 只需要传入一个待检测的 Socket，减少了内核和用户空间大量的数据拷贝
+<ul>
+<li>epoll 红黑树中存储键值对（文件描述符以及对应的事件）
+<ul>
+<li>key：文件描述符（fd）</li>
+<li>value：监听的事件类型</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>事件驱动</strong> 机制，内核维护了一个链表记录就绪事件，当某个 Socket 有事件发生，通过 <strong>回调函数</strong> 内核会将其加入到就绪事件列表
+<ul>
+<li>就绪链表存放的也是 已就绪的 <strong>文件描述符</strong> 和 <strong>监听的事件类型</strong></li>
+</ul>
+</li>
+<li>epoll 支持两种事件触发模式：<strong>边缘触发</strong> 和 <strong>水平触发</strong>
+<ul>
+<li>边缘触发：当被监控的 Socket 上有可读事件发生时，服务器端只会从 epoll_wait 中 <strong>苏醒一次</strong> ，即使进程没有调用 read 函数从内核读取数据，也依然只苏醒一次，因此我们程序要保证一次性将内核缓冲区的数据读取完</li>
+<li>水平触发：当被监控的 Socket 上有可读事件发生时，<strong>服务器端不断地从 epoll_wait 中苏醒</strong>，直到内核缓冲区数据被 read 函数读完才结束</li>
+<li>举个例子，你的快递被放到了一个快递箱里，如果快递箱只会通过短信通知你一次，即使你一直没有去取，它也不会再发送第二条短信提醒你，这个方式就是 <strong>边缘触发</strong>；如果快递箱发现你的快递没有被取出，它就会不停地发短信通知你，直到你取出了快递，它才消停，这个就是水平触发的方式</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="计网">计网<a hidden class="anchor" aria-hidden="true" href="#计网">#</a></h2>
+<ol>
+<li>
+<p>TCP 和 UDP 的区别？</p>
+<ul>
+<li>TCP 可靠，UDP 不可靠</li>
+<li>TCP 一对一，UDP 可以一对多，多对一</li>
+<li>TCP 有序，UDP 无序</li>
+</ul>
+</li>
+<li>
+<p>HTTPS 连接过程？</p>
+<ul>
+<li>客户端请求 HTTPS 网址，连接到 server 的 443 端口（HTTPS 默认端口）</li>
+<li>服务端响应客户端请求，将 <strong>证书</strong> 传递给客户端，证书包含公钥和大量其他信息，比如证书颁发机构、公司信息、有效期等</li>
+<li>客户端解析证书并验证，判断服务端是否可信。如果证书没有问题，客户端会从证书中取出服务端的 <strong>公钥 A</strong> ，然后客户端会生成一个随机码 key，并使用公钥 A 进行加密</li>
+<li>客户端把加密后的 key 发送给服务端，作为后面对称加密的密钥</li>
+<li>服务端收到随机码 key 后使用 <strong>私钥 B</strong> 解密，经过以上步骤就建立了安全连接</li>
+</ul>
+</li>
+</ol>
+<h2 id="消息队列">消息队列<a hidden class="anchor" aria-hidden="true" href="#消息队列">#</a></h2>
+<ol>
+<li>为什么选择 RocketMQ？有没有考虑过其他的消息队列？消息队列的选型是怎么考虑的？
+<ul>
+<li>商城项目往往会有很高的在线人数，需要高吞吐量，RabbitMQ 就不适合高吞吐场景</li>
+<li>电商场景下，要求整体延迟低，<strong>RocketMQ 在延迟方面表现更好</strong>，适合金融、电商等场景</li>
+<li>电商平台中，订单、交易等场景需要保证消息的消费顺序，RocketMQ 支持全局顺序消息和分区顺序消息，适合需要严格顺序的场景</li>
+<li>RocketMQ 使用 java 开发，和项目联系更紧密</li>
+</ul>
+</li>
+</ol>
+<h2 id="数据库">数据库<a hidden class="anchor" aria-hidden="true" href="#数据库">#</a></h2>
+<ol>
+<li>
+<p>缓存三问，项目中是如何解决这三个问题的</p>
+<ul>
+<li>缓存穿透：布隆过滤器
+<ul>
+<li>布隆过滤器底层原理？（位图，多次哈希运算）</li>
+</ul>
+</li>
+<li>缓存雪崩：<strong>熔断机制</strong>，或者在原有的失效时间上加上一个随机值，防止同时失效造成雪崩效应</li>
+<li>缓存穿透：<strong>逻辑过期</strong>，发现缓存中数据过期后，先获取互斥锁，再新建一个线程去进行缓存更新。更新过程中如果有访问请求，先返回旧数据，保证高可用</li>
+</ul>
+</li>
+<li>
+<p>为什么用 mongodb？和 mysql 有什么不同？</p>
+<ul>
+<li>mysql 是关系型数据库，存储的数据比较结构化，不适合扩展新的结构</li>
+<li>mongodb 是文档形 no-sql 数据库，适合存储非结构化数据，适合扩展新结构</li>
+<li>两者存储引擎不同，mysql 默认是 InnoDB，mongodb是 WiredTiger，两个存储引擎底层都是 B+ 树</li>
+<li>mongodb 的读写性能远高于 mysql ，因为：
+<ul>
+<li>mongo 里的数据以 BSON 格式存储，适合嵌套和复杂结构，减少了表连接需求</li>
+<li>wiredtiger 引擎支持高效压缩和并发控制，优化了读写性能；InnoDB 引擎支持事务和行级锁，高并发下性能不如 WiredTiger</li>
+<li>mongo 原生支持分片，易于水平扩展，适合大规模数据和高并发场景</li>
+<li>mongo 写操作默认是异步的，延迟低，支持批量写入</li>
+<li>mongo 默认采用 <strong>最终一致性</strong>，mysql 采用 <strong>强一致性</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>InnoDB 中索引结构是 B+ 树，从磁盘读写角度考虑，B+ 树节点为什么这样设计？</p>
+<ul>
+<li>索引和数据都是保存在磁盘上的，通过索引查找某行数据的时候，<strong>需要先从磁盘读取索引到内存</strong>，再通过索引从磁盘中找到某行数据，然后读入到内存，会发生多次磁盘 I/O</li>
+<li>B+ 树叶子节点存放 <strong>索引 + 记录</strong> ，非叶子节点 <strong>只存放索引</strong>，另外，<strong>所有的索引都会在叶子节点中出现</strong>，并且是在子结点中所有索引的最大（或最小），非叶子节点仅用于导航到叶子节点</li>
+<li>B+ 树非叶子节点不存放实际数据，相较于 B 树能够存放更多的索引，因此 B+ 树可以比 B 树更 <strong>矮胖</strong> ，查询底层节点的磁盘 I/O 次数会更少</li>
+</ul>
+</li>
+<li>
+<p>设计索引需要考虑哪些问题？</p>
+<ul>
+<li>选择合适的列，比如选择 <strong>不同值较多的列</strong> 作为索引，能够有效缩小查找范围</li>
+<li>最左前缀法则，防止索引失效</li>
+<li>非空、唯一</li>
+</ul>
+</li>
+<li>
+<p>最左前缀法则？</p>
+<ul>
+<li>创建多列联合索引时，根据业务需求，<strong>把查询条件里出现频率最高的列放在最左侧</strong>
+<ul>
+<li>这样可以更有效地缩小数据查找范围，提高查找效率</li>
+</ul>
+</li>
+<li>使用联合索引查询时，只有从索引的最左侧开始的连续列组合才能使用该联合索引来加速查询</li>
+<li>向右匹配时，遇到 <strong>范围查询</strong>（&gt;、&lt;、between、like）就停止匹配</li>
+<li>原理：<strong>联合索引在 B+ 树中是按照索引列的顺序依次排序的</strong>，如果查询条件中的列顺序与索引列顺序一致，那么就可以利用 B+ 树的有序性快速定位</li>
+</ul>
+</li>
+<li>
+<p>介绍一下 redis cluster</p>
+<ul>
+<li>
+<p>redis 的分布式解决方案，用于实现 <strong>数据的分片存储和高可用性</strong> 。单点 redis 服务器会面临性能和容量限制，redis cluster 可以将数据 <strong>分散存储在多个节点上</strong>，通过集群方式扩展存储能力和处理能力</p>
+</li>
+<li>
+<p><strong>底层原理</strong>：redis cluster 采用 <strong>哈希槽</strong> 来处理数据和节点之间的映射关系。一个 redis cluster 集群中，<strong>共有 16384 个哈希槽</strong>，这些哈希槽类似于数据分区，每个键值对会根据它的 key，被映射到一个哈希槽中，具体过程分为两大步：</p>
+<ul>
+<li>根据键值对的 key，按照 <strong>CRC16算法</strong> 计算一个 16 bit 的值</li>
+<li>再用 16 bit 值对 16384 取模，得到 0 ~ 16383 范围内的模数，每个模数代表一个相应编号的哈希槽</li>
+</ul>
+<p>那么这些哈希槽怎么被映射到具体的 redis 节点上？有两种方案：</p>
+<ul>
+<li><strong>平均分配</strong>：使用 cluster create 创建集群时，redis 会自动把所有哈希槽平均分配到集群节点上</li>
+<li><strong>手动分配</strong>：可以使用 cluster meet 命令手动建立节点间的连接，组成集群，再使用 cluster addslots 命令，指定每个节点上的哈希槽个数。需要注意的是，手动分配需要把 16384 个槽都分配完，否则 redis 集群无法正常工作</li>
+</ul>
+</li>
+<li>
+<p><strong>节点通信</strong>：redis cluster 中的节点通过 <strong>Gossip 协议</strong> 进行通信。Gossip 协议是一种基于谣言传播的通信机制，节点之间会定期互相交换信息，将自己的状态（在线状态、负责的哈希槽等）传播给其他节点</p>
+</li>
+<li>
+<p><strong>redis cluster 中的主从节点</strong>：哈希槽分配给不同的主节点后，每个主节点可以配置一个或多个从节点，以实现高可用性和数据冗余</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="编程语言相关">编程语言相关<a hidden class="anchor" aria-hidden="true" href="#编程语言相关">#</a></h2>
+<ol>
+<li>java 编译运行的流程？
+<ul>
+<li>编写 java 源代码文件，扩展名为 <code>.java</code></li>
+<li>使用 <code>javac</code> 命令将源代码编译成 <strong>字节码文件</strong>，扩展名为 <code>.class</code></li>
+<li>运行 java 程序时，JVM 类加载器会加载 <code>.class</code> 文件
+<ul>
+<li>类加载器工作流程：加载 -&gt; 验证 -&gt; 准备 -&gt; 解析 -&gt; 初始化</li>
+</ul>
+</li>
+<li>JVM 通过 <strong>解释器</strong> 逐行解释字节码（将字节码转换为机器码），然后逐行执行机器码</li>
+<li>为了提高性能，JVM 会将频繁执行的代码通过 <strong>即时编译器（JIT Compiler）</strong> 编译成机器码，然后把机器码保存下来，下次可以直接使用</li>
+</ul>
+</li>
+<li>cpp 编译运行的流程？
+<ul>
+<li>编写 cpp 源代码文件，扩展名为 <code>.cpp</code> 或 <code>.h</code></li>
+<li>使用 <strong>预处理器</strong> 处理源代码中的预处理指令，预处理后的文件通常以 <code>.i</code> 或 <code>.ii</code> 为扩展名
+<ul>
+<li>展开 <code>#include</code> 指令，将头文件内容插入源代码</li>
+<li>处理 <code>#define</code> 宏定义，进行文本替换</li>
+<li>条件编译（如 <code>#if</code> 、<code>ifdef</code>）</li>
+</ul>
+</li>
+<li><strong>编译器</strong> 将预处理后的代码翻译成汇编代码，汇编代码文件通常以 <code>.s</code> 为扩展名
+<ul>
+<li>词法分析、语法分析、语义分析、生成和优化中间代码，最后生成目标平台的汇编代码</li>
+</ul>
+</li>
+<li><strong>汇编器</strong> 将汇编代码翻译成机器码，生成目标文件（Object File），通常以 <code>.o</code> 为扩展名</li>
+<li><strong>链接器</strong> 将多个目标文件和库文件合并，生成 <strong>可执行文件</strong></li>
+<li>操作系统加载 <strong>可执行文件</strong> 并运行</li>
+</ul>
+</li>
+<li>java 如何管理内存？（gc 机制）
+<ul>
+<li>JVM 将内存划分为多个区域
+<ul>
+<li>方法区：存储类信息、常量、静态变量，即时编译器编译后的代码等</li>
+<li>堆：存储对象实例和数组</li>
+<li>栈：存储局部变量，方法调用和部分结果</li>
+<li>本地方法栈：与栈类似，但用于本地方法</li>
+<li>程序计数器：记录当前线程执行的字节码指令地址</li>
+</ul>
+</li>
+<li><strong>堆</strong> 是 java 内存管理的核心区域，进一步划分为以下部分：
+<ul>
+<li>新生代：存放新创建的对象
+<ul>
+<li>Eden 区：对象最初分配的区域</li>
+<li>Survivor 区（From 和 To）：存放经过垃圾回收后存活的对象</li>
+<li>特点：新生代使用 <strong>复制算法</strong> 进行垃圾回收，大多数对象在新生代被回收</li>
+</ul>
+</li>
+<li>老年代：存放长期存活的对象
+<ul>
+<li>老年代使用 <strong>标记-清除或标记-整理</strong> 算法进行垃圾回收</li>
+</ul>
+</li>
+<li>元空间：存储类元数据，元空间使用 <strong>本地内存</strong> ，而不是 JVM 堆内存</li>
+</ul>
+</li>
+<li>垃圾回收（gc）
+<ul>
+<li>垃圾回收算法：
+<ul>
+<li>标记-清除：标记所有存活对象，清除未标记对象，<strong>会产生内存碎片</strong></li>
+<li>复制：用于新生代，将存活对象复制到另一个区域，<strong>清除原区域</strong></li>
+<li>标记-整理：用于老年代，标记所有存活对象，整理内存，消除碎片</li>
+</ul>
+</li>
+<li>垃圾回收过程：
+<ul>
+<li>Minor GC：回收新生代，频率高、速度快</li>
+<li>Full GC：回收整个堆（包括新生代和老年代），频率低，速度慢</li>
+</ul>
+</li>
+<li>内存分配策略：
+<ul>
+<li>大多数对象优先在 Eden 区分配</li>
+<li>大对象（比如大数组）直接分配到老年代，避免频繁复制</li>
+<li>对象经过多次 Minor GC 后仍然存活，会晋升到老年代</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>java 动态代理底层原理？实现方式有什么不同？
+<ul>
+<li>动态代理是运行时生成代理类的机制，在不修改原始代码的情况下增强或修改其行为</li>
+<li>底层通过 <code>java.lang.reflect.Proxy</code> 类和 <code>java.lang.reflect.InvocationHandler</code> 接口实现
+<ul>
+<li><code>Proxy</code> 类用于动态生成代理类</li>
+<li><code>InvocationHandler</code> 接口用于定义代理类的行为，所有对代理对象的方法调用都会转发到 <code>InvocationHandler</code> 的 <code>invoke</code> 方法</li>
+</ul>
+</li>
+<li>实现方式：
+<ul>
+<li><strong>JDK 动态代理</strong>：基于接口，只能代理实现了接口的类，由于是基于反射的，性能较差，可以代理 <code>final</code> 类或 <code>final</code> 方法</li>
+<li><strong>CGLIB 动态代理</strong>：基于类，可以代理没有实现接口的类，基于字节码生成，性能较好，不能代理 <code>final</code> 类或 <code>final</code> 方法</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>BIO、NIO、AIO 三者的区别
+<ul>
+<li>BIO（Blocking I/O）：当程序发起一个 I/O 操作时，程序会被阻塞，直到 I/O 操作完成。比如一个服务器程序接收客户端的连接，在没有客户端连接进来时，<strong>服务器程序就会一直阻塞在那里等待</strong>，无法去做其他事情</li>
+<li>NIO（Non-blocking I/O）：程序发起一个 I/O 操作后，不会被阻塞，可以继续去做其他事情，<strong>程序会定期去检查 I/O 操作是否完成</strong></li>
+<li>AIO（Asynchronous I/O）：当程序发起一个 I/O 操作时，会立即返回，程序可以继续做其他事情，当 I/O 操作完成后，<strong>系统会通过回调函数或者通知机制来告诉程序操作已经完成</strong></li>
+</ul>
+</li>
+<li>final 关键字相关
+<ul>
+<li>final 变量：final 修饰的变量不可变，并且该变量必须初始化，final 修饰的变量通常称为常量</li>
+<li>final 方法：final 修饰的方法<strong>不允许任何子类重写</strong>，但子类可以使用该方法</li>
+<li>final 类：final 修饰的类不能被继承，所有方法都不能被重写</li>
+</ul>
+</li>
+<li>重载和重写区别
+<ul>
+<li>重载是 <strong>编译时多态</strong>，重写是 <strong>运行时多态</strong></li>
+<li><strong>重写</strong>方法的返回类型和形参都不能变，即 <strong>外壳不变，核心重写</strong></li>
+<li><strong>重载</strong>方法的返回类型和形参可以变，比如 <strong>构造器重载</strong></li>
+</ul>
+</li>
+<li>Spring Security
+<ul>
+<li>Spring Security 基于一系列 Servlet 过滤器和 AOP 实现</li>
+<li><strong>过滤器链</strong>：一个请求进入应用时，它会依次经过 Spring Security 的过滤器链，过滤器链中的每个过滤器负责不同的安全任务，如处理登录请求、验证用户凭证、检查用户权限等</li>
+<li><strong>安全上下文</strong>：用于存储当前用户的 <strong>身份验证信息</strong> 和 <strong>授权信息</strong>，用户通过身份验证后，相关信息就会被存储在安全上下文中，后续请求可以从安全上下文中获取这些信息，确保用户是否有权访问资源</li>
+<li><strong>认证流程</strong>：
+<ol>
+<li>用户发起登录请求，携带用户名和密码</li>
+<li><code>UsernamePasswordAuthenticationFilter</code> 捕获该请求，提取用户名和密码，创建一个 <code>UsernamePasswordAuthenticationToken</code> 对象</li>
+<li><code>AuthenticationManager</code> 接收到 <code>UsernamePasswordAuthenticationToken</code> 后，调用 <code>UserDetailsService</code> 从数据库或其他数据源中加载用户信息</li>
+<li><code>AuthenticationManager</code> 将用户输入的密码与从 <code>UserDetailsService</code> 中获取的密码进行比对，如果匹配，则认证成功，返回一个已认证的 <code>Authentication</code> 对象</li>
+<li><code>SecurityContextHolder</code> 将已认证的 <code>Authentication</code> 对象存储在当前线程的安全上下文中，以便后续请求可以使用</li>
+</ol>
+</li>
+<li><strong>授权流程</strong>：
+<ol>
+<li>当用户请求访问受保护的资源时，<code>FilterSecurityInterceptor</code> 会拦截该请求</li>
+<li><code>FilterSecurityInterceptor</code> 根据配置的访问规则，检查当前用户的 <code>Authentication</code> 对象是否包含足够的权限</li>
+<li>如果用户具有足够的权限，则允许访问；否则，抛出 <code>AccessDeniedException</code> 异常</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>RBAC：Role-Based Access Control，基于角色的访问控制，通过 <strong>角色</strong> 来管理用户对资源的访问权限，<strong>Ruoyi 脚手架采用的权限控制模型就是 RBAC</strong>。RBAC 模型的核心是将用户和权限解耦，通过角色作为中间桥梁来关联两者
+<ul>
+<li><strong>用户</strong>：使用系统的个体，可以是具体的人，也可以是代表某个系统或程序的实体</li>
+<li><strong>角色</strong>：<strong>一组权限的集合</strong>，代表了在系统中具有特定职责和功能的岗位或身份</li>
+<li><strong>权限</strong>：对系统中特定资源进行操作的许可</li>
+<li><strong>原理</strong>：系统管理员定义一系列角色，并为每个角色分配相应的权限；之后用户被分配到一个或多个角色，用户通过其所拥有的角色获得相应的权限，从而可以访问系统中的资源</li>
+<li>其他权限模型
+<ul>
+<li>DAC（Discretionary Access Control，自主访问控制）允许资源所有者 <strong>自主决定</strong> 谁可以访问该资源以及可以进行何种操作</li>
+<li>MAC（Mandatory Access Control，强制访问控制）根据用户和资源的 <strong>安全级别</strong> 来决定是否允许访问</li>
+<li>ABAC（Attribute-Based Access Control，基于属性的访问控制）根据用户、资源和环境的属性来进行访问决策。比如可以根据用户的部门、职位等属性来决定是否允许访问</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="杂七杂八">杂七杂八<a hidden class="anchor" aria-hidden="true" href="#杂七杂八">#</a></h2>
+<ol>
+<li>
+<p>最近 AI 技术比较热门，AI 的底层了解吗？</p>
+<ul>
+<li><strong>神经网络</strong>：神经网络是 AI 模型的基础结构，模仿人脑的神经元工作方式。它由多层“节点”（神经元）组成，每一层都会对输入数据进行加工，最终输出结果
+<ul>
+<li>输入层：接受原始数据（比如图片像素、文字）</li>
+<li>隐藏层：对数据进行多层加工，提取特征</li>
+<li>输出层：输出最终结果（比如分类标签、生成文本）</li>
+</ul>
+</li>
+<li><strong>反向传播</strong>：神经网络的学习算法，通过不断调整参数来减少预测错误
+<ul>
+<li>前向传播：输入数据，计算预测结果</li>
+<li>计算误差：比较预测结果和正确答案的差距</li>
+<li>反向传播：从输出层到输入层，逐层调整参数</li>
+<li>更新参数：用梯度下降法减少误差</li>
+</ul>
+</li>
+<li><strong>梯度下降</strong>：优化算法，用于找到使误差最小的参数值。通过梯度下降，AI 不断调整参数，让预测结果越来越准</li>
+<li><strong>卷积神经网络（CNN）</strong>：CNN 是专门处理图像数据的神经网络，通过卷积操作提取图像特征
+<ul>
+<li>卷积层：用滤波器（Filter）扫描图像，提取局部特征（比如边缘、纹理）</li>
+<li>池化层：缩小特征图尺寸，减少计算量</li>
+<li>全连接层：将提取的特征组合，输出结果</li>
+</ul>
+</li>
+<li><strong>循环神经网络（RNN）</strong>：RNN 是处理序列数据（如文本、时间序列）的神经网络，能记住之前的信息
+<ul>
+<li>隐藏状态：保存之前时间步的信息</li>
+<li>时间步：每一步处理一个输入（比如一个单词）</li>
+</ul>
+</li>
+<li><strong>Transformer</strong>：擅长处理序列数据的模型架构（比如 ChatGPT 的基础就是这个）
+<ul>
+<li>自注意力机制：计算输入序列中每个元素的重要性</li>
+<li>多头注意力：从不同角度分析输入序列</li>
+<li>位置编码：记录每个元素的位置信息</li>
+</ul>
+</li>
+<li><strong>生成对抗网络（GAN）</strong>：GAN 由两个神经网络组成：生成器（Generator）和判别器（Discriminator），通过对抗训练生成逼真数据
+<ul>
+<li>生成器：生成假数据</li>
+<li>判别器：判断数据是真是假</li>
+<li>对抗训练：生成器努力骗过判别器，判别器努力识破生成器</li>
+</ul>
+</li>
+<li><strong>强化学习</strong>：通过“试错”学习策略，目标是最大化累积奖励
+<ul>
+<li>智能体：学习并执行动作</li>
+<li>环境：智能体交互的外部世界</li>
+<li>奖励：智能体执行动作后获得的反馈</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>博弈：550个瓶子，A 和 B 轮流拿，每次可以拿 7-11 个瓶子，A 先拿，A 要怎么拿才能保证拿到第550个瓶子？</p>
+<ul>
+<li>A 先拿 10 个瓶子</li>
+<li>之后 B 拿 x 个瓶子，A 就拿 (18 - x) 个瓶子</li>
+<li>这是因为 (550 - 10) / 18 = 30，A 一定能保证拿到最后一个瓶子</li>
+</ul>
+</li>
+<li>
+<p>项目的分布式架构是怎么样的？</p>
+<ul>
+<li>前端通过 API 网关与后端进行交互，通过 nginx 反向代理，实现负载均衡</li>
+<li>后端架构上
+<ul>
+<li><strong>服务层</strong>：采用领域驱动模式将项目拆分成独立的微服务，每个微服务独立部署，通过服务注册与发现实现动态调用
+<ul>
+<li>同步场景通过 RPC 进行调用，异步场景使用 RocketMQ 解耦</li>
+</ul>
+</li>
+<li><strong>数据层</strong>：后端主要使用了三种数据库，mysql、redis 和 mongodb，mongodb有部署集群</li>
+<li><strong>基础设施层</strong>：使用 docker 容器化，构建一个 docker-swarm 集群，便于管理；使用 nacos 作为配置和注册中心</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>如何理解分布式系统中的 <strong>高并发、高可用和高扩展</strong> ？</p>
+<ul>
+<li>
+<p>高并发：系统在 <strong>短时间</strong> 内处理大量并发请求的能力</p>
+<ul>
+<li>解决方案：负载均衡、异步处理、缓存加速或者限流、熔断等</li>
+</ul>
+</li>
+<li>
+<p>高可用：系统在 <strong>故障发生</strong> 时仍能正常运行的能力</p>
+<ul>
+<li>解决方案：多节点同时运行（mysql 主从复制，redis 集群等）；异地容灾</li>
+</ul>
+</li>
+<li>
+<p>高扩展：系统能通过增加资源（服务器、存储等）线性提升性能的能力</p>
+<ul>
+<li>解决方案：水平扩展，通过 docker 容器化，k8s 集群动态添加节点；垂直扩展，升级单台服务器配置</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>熔断和限流的区别是什么？</p>
+<ul>
+<li>熔断：服务异常（错误率高，响应超时等）时，<strong>暂时切断对该服务的调用</strong>，避免故障扩散</li>
+<li>限流：控制单位时间内进入系统的请求数量，避免资源耗尽</li>
+<li>一般采取的是 <strong>先限流，后熔断</strong> 的策略</li>
+</ul>
+</li>
+<li>
+<p>AI 底层的理解？</p>
+<ul>
+<li>机器学习核心流程
+<ul>
+<li>数据预处理（标准化、特征工程）→ 模型训练（损失函数、优化器如 Adam）→ 评估（准确率、AUC-ROC）</li>
+</ul>
+</li>
+<li>深度学习底层机制
+<ul>
+<li>神经网络：反向传播算法（链式求导）、激活函数（ReLU 解决梯度消失）</li>
+<li>分布式训练：参数服务器架构（类比分布式系统中的负载均衡）、模型并行与数据并行策略</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Agent 和 RAG 了解吗？</p>
+<ul>
+<li>Agent（智能体）
+<ul>
+<li>结合 LLM、工具调用（如 API、数据库）和任务规划的系统（如 AutoGPT）</li>
+<li>核心能力：
+<ul>
+<li>任务分解：将复杂目标拆解为子步骤（如 “写一篇技术博客”→ 选题→调研→写作）</li>
+<li>动态决策：根据反馈调整策略（如调用 Python 解释器验证代码逻辑）</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>RAG（检索增强生成）
+<ul>
+<li>通过向量检索（如 FAISS、Elasticsearch）从外部知识库获取相关信息，增强 LLM 输出的准确性</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

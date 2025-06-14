@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>LCR-二叉树 | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="记录">
+<meta name="author" content="">
+<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-10-21-binary-tree/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-10-21-binary-tree/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-10-21-binary-tree/">
+  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
+  <meta property="og:title" content="LCR-二叉树">
+  <meta property="og:description" content="记录">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="learning-notes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="LCR-二叉树">
+<meta name="twitter:description" content="记录">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Learning Notes",
+      "item": "https://yuk1pedia.github.io/learning-notes/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "LCR-二叉树",
+      "item": "https://yuk1pedia.github.io/learning-notes/2024-10-21-binary-tree/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "LCR-二叉树",
+  "name": "LCR-二叉树",
+  "description": "记录",
+  "keywords": [
+    
+  ],
+  "articleBody": "1.根据前序与中序遍历序列构造二叉树 给定两个整数数组 preorder 和 inorder ，其中 preorder 是二叉树的先序遍历， inorder 是同一棵树的中序遍历，请构造二叉树并返回其根节点。\n示例 1:\n输入: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]\r输出: [3,9,20,null,null,15,7] 示例 2:\n输入: preorder = [-1], inorder = [-1]\r输出: [-1] 提示:\n1 \u003c= preorder.length \u003c= 3000 inorder.length == preorder.length -3000 \u003c= preorder[i], inorder[i] \u003c= 3000 preorder 和 inorder 均 无重复 元素 inorder 均出现在 preorder preorder 保证 为二叉树的前序遍历序列 inorder 保证 为二叉树的中序遍历序列 思路\n前序遍历：按照「根-左子树-右子树」的顺序遍历二叉树。\n中序遍历：按照「左子树-根-右子树」的顺序遍历二叉树。\n我们来看看示例 1 是怎么生成这棵二叉树的。\n递归边界：如果 preorder 的长度是 0，对应着空节点，返回空。\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { public: TreeNode* buildTree(vector\u003cint\u003e\u0026 preorder, vector\u003cint\u003e\u0026 inorder) { if (preorder.empty()) return nullptr; // 空节点 // 在中序序列中找根节点，记录左子树序列的长度 int left_size = ranges::find(inorder, preorder[0]) - inorder.begin(); // 在前序序列中找左子树 vector\u003cint\u003e pre1(preorder.begin() + 1, preorder.begin() + 1 + left_size); // 在前序序列中找右子树 vector\u003cint\u003e pre2(preorder.begin() + 1 + left_size, preorder.end()); // 中序遍历同样的操作 vector\u003cint\u003e in1(inorder.begin(), inorder.begin() + left_size); vector\u003cint\u003e in2(inorder.begin() + 1 + left_size, inorder.end()); // 递归 TreeNode *left = buildTree(pre1, in1); TreeNode *right = buildTree(pre2, in2); return new TreeNode(preorder[0], left, right); } }; 2.相同的树 给你两棵二叉树的根节点 p 和 q ，编写一个函数来检验这两棵树是否相同。\n如果两个树在结构上相同，并且节点具有相同的值，则认为它们是相同的。\n示例 1：\n输入：p = [1,2,3], q = [1,2,3]\r输出：true 示例 2：\n输入：p = [1,2], q = [1,null,2]\r输出：false 示例 3：\n输入：p = [1,2,1], q = [1,1,2]\r输出：false 提示：\n两棵树上的节点数目都在范围 [0, 100] 内 -10^4 \u003c= Node.val \u003c= 10^4 思路\n解决二叉树问题就是要灵活运用递归的性质。我们需要思考，如何将原问题分解为更小的子问题来解决，比如这道题。\n要判断两棵二叉树是否相等，我们可以将它分解为以下子问题：\n两棵二叉树的根节点值是否相等？ 两个二叉树根节点的左边两棵子树是否相同？右边两棵子树是否相同？ 分解完子问题后，我们便可以得出判断方法了：先判断根节点的值是否相等，再判断根节点的左右子树是否相等。\n我们怎么判断根节点的左右子树是否相等呢？这个问题可以用递归解决。\n这里需要判断出递归的边界条件：当递归到某个节点为空，就需要判断另外一个节点是否为空，如果为空，返回 true ，否则返回 false。\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { public: bool isSameTree(TreeNode* p, TreeNode* q) { if (p == nullptr || q == nullptr) return p == q; return p-\u003eval == q-\u003eval \u0026\u0026 isSameTree(p-\u003eleft, q-\u003eleft) \u0026\u0026 isSameTree(p-\u003eright, q-\u003eright); } }; 3.对称二叉树 给你一个二叉树的根节点 root ， 检查它是否轴对称。\n示例 1：\n输入：root = [1,2,2,3,4,4,3]\r输出：true 示例 2：\n输入：root = [1,2,2,null,3,null,3]\r输出：false 提示：\n树中节点数目在范围 [1, 1000] 内 -100 \u003c= Node.val \u003c= 100 思路\n判断二叉树是否对称，同样需要将其分解为更小的子问题：\n首先，根节点已经是对称的，可以不用管 然后需要判断根节点的左右子树是否对称 于是我们可以这样做：\n把给定的树拆成左右两棵树，看根节点是否相同。 然后递归左边的左子树，和右边的右子树；以及左边的右子树和右边的左子树，看他们是否相等 这里可以直接用 T2 的代码：\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { public: bool isSame(TreeNode* p, TreeNode* q) { if (p == nullptr || q == nullptr) return p == q; return p-\u003eval == q-\u003eval \u0026\u0026 isSame(p-\u003eleft, q-\u003eright) \u0026\u0026 isSame(p-\u003eright, q-\u003eleft); } bool isSymmetric(TreeNode* root) { return isSame(root-\u003eleft, root-\u003eright); } }; 4.平衡二叉树 给定一个二叉树，判断它是否是平衡二叉树\n示例 1：\n输入：root = [3,9,20,null,null,15,7]\r输出：true 示例 2：\n输入：root = [1,2,2,3,3,null,null,4,4]\r输出：false 示例 3：\n输入：root = []\r输出：true 提示：\n树中的节点数在范围 [0, 5000] 内 -10^4 \u003c= Node.val \u003c= 10^4 思路\n要判断一棵树是否是平衡二叉树，我们需要计算这棵树的左右子树高度，再判断左右子树高度差是否大于 1 。\n那么我们如何通过计算左右子树的高度来判断平衡树呢？\n由于树的高度都是非负数，我们可以利用负数来表示当前子树不平衡。如果当前子树不平衡，那么包含这个子树的树也一定不平衡，直接返回即可。\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { public: int get_height(TreeNode* p) { if (p == nullptr) return 0; // 递归计算左子树高度 int left_height = get_height(p-\u003eleft); // 高度为 -1 表示当前树不平衡，那么包含当前树的树也一定不平衡 if (left_height == -1) return -1; // 递归计算右子树高度 int right_height = get_height(p-\u003eright); if (right_height == -1 || abs(left_height - right_height) \u003e 1) return -1; return max(left_height, right_height) + 1; } bool isBalanced(TreeNode* root) { // 如果不为 -1 ，则代表是平衡二叉树 return get_height(root) != -1; } }; 5.二叉树的右视图 给定一个二叉树的 根节点 root，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。\n示例 1:\n输入: [1,2,3,null,5,null,4]\r输出: [1,3,4] 示例 2:\n输入: [1,null,3]\r输出: [1,3] 示例 3:\n输入: []\r输出: [] 提示:\n二叉树的节点个数的范围是 [0,100] -100 \u003c= Node.val \u003c= 100 思路\n要求二叉树的右视图数组，除了 BFS 还可以这样递归：\n先不断递归二叉树的右子树，将最右侧的数字都加入到答案数组 res 中 然后递归二叉树的左子树，用一个变量 depth 记录当前递归深度，如果 depth 超出了 res 的长度，说明当前”左边的“节点没有被最右边的节点遮挡，那么将其添加到答案数组中即可 Code\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { private: vector\u003cint\u003e res; public: void dfs(TreeNode* root, int depth) { if (root == nullptr) return; // 递归边界 if (depth == res.size()) res.push_back(root-\u003eval); dfs(root-\u003eright, depth + 1); dfs(root-\u003eleft, depth + 1); } vector\u003cint\u003e rightSideView(TreeNode* root) { dfs(root, 0); return res; } }; 6.子结构判断 给定两棵二叉树 tree1 和 tree2，判断 tree2 是否以 tree1 的某个节点为根的子树具有 相同的结构和节点值 。 注意，空树 不会是以 tree1 的某个节点为根的子树具有 相同的结构和节点值 。\n示例 1：\n输入：tree1 = [1,7,5], tree2 = [6,1]\r输出：false\r解释：tree2 与 tree1 的一个子树没有相同的结构和节点值。 示例 2：\n输入：tree1 = [3,6,7,1,8], tree2 = [6,1]\r输出：true\r解释：tree2 与 tree1 的一个子树拥有相同的结构和节点值。即 6 - \u003e 1。 提示：\n0 \u003c= 节点个数 \u003c= 10000 思路\n如果树 B 是树 A 的子结构，则子结构的根节点可能为树 A 的任意一个节点。因此，判断树 B 是否为树 A 的子结构，需要完成以下两步工作：\n先序遍历树 A 中的每个节点 node （调用函数 isSubStructure(A, B) 遍历树 A ） 判断树 A 中以 node 为根节点的子树是否包含树 B （调用函数 recur(A, B) ，判定树 A 包含树 B ） recur(A, B) 用于进行 A 树和 B 树的匹配，判断树 A 是否包含树 B （此处的”包含“建立在树 A 和树 B 的根节点相同的条件上）\n终止条件： 当节点 B 为空：说明树 B 已匹配完成（越过叶子节点），因此返回 true ； 当节点 A 为空：说明已经越过树 A 的叶节点，即匹配失败，返回 false ； 当节点 A 和 B 的值不同：说明匹配失败，返回 false ； 返回值： 判断 A 和 B 的 左子节点 是否相等，即 recur(A.left, B.left) ； 判断 A 和 B 的 右子节点 是否相等，即 recur(A.right, B.right) ； Code\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode(int x) : val(x), left(NULL), right(NULL) {} * }; */ class Solution { private: bool recur(TreeNode* A, TreeNode* B) { // A 树和 B 树从根节点开始同步往下递归 if(B == nullptr) return true; // B 先到达空节点，说明 A 树包含 B 树 if(A == nullptr || A-\u003eval != B-\u003eval) return false; return recur(A-\u003eleft, B-\u003eleft) \u0026\u0026 recur(A-\u003eright, B-\u003eright); } public: bool isSubStructure(TreeNode* A, TreeNode* B) { return (A != nullptr \u0026\u0026 B != nullptr) \u0026\u0026 (recur(A, B) || isSubStructure(A-\u003eleft, B) || isSubStructure(A-\u003eright, B)); } }; 7.翻转二叉树（二叉树的镜像） 给定一棵二叉树的根节点 root，请左右翻转这棵二叉树，并返回其根节点。\n示例 1：\n输入：root = [5,7,9,8,3,2,4]\r输出：[5,9,7,4,2,3,8] 提示：\n树中节点数目范围在 [0, 100] 内 -100 \u003c= Node.val \u003c= 100 思路\n对于二叉树递归问题，我们需要分析他的子问题是什么。我们要对给定的二叉树进行镜像操作，可以通过以下步骤实现：\n交换根节点的左右节点 对左子树进行镜像操作 对右子树进行镜像操作 完成上面三步之后，这棵二叉树就被完全镜像了\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode(int x) : val(x), left(NULL), right(NULL) {} * }; */ class Solution { public: TreeNode* mirrorTree(TreeNode* root) { if (!root) return root; TreeNode* temp = root-\u003eleft; root-\u003eleft = root-\u003eright; root-\u003eright = temp; mirrorTree(root-\u003eleft); mirrorTree(root-\u003eright); return root; } }; 8.从上到下逐层打印二叉树Ⅰ 一棵圣诞树记作根节点为 root 的二叉树，节点值为该位置装饰彩灯的颜色编号。请按照从 左 到 右 的顺序返回每一层彩灯编号。\n示例 1：\n输入：root = [8,17,21,18,null,null,6]\r输出：[8,17,21,18,6] 提示：\n节点总数 \u003c= 1000 思路\n简单 BFS ，逐层将节点加入答案数组即可。\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { public: vector\u003cint\u003e decorateRecord(TreeNode* root) { if (!root) return {}; queue\u003cTreeNode*\u003e q; vector\u003cint\u003e res; q.push(root); while (!q.empty()) { TreeNode* node = q.front(); q.pop(); res.push_back(node-\u003eval); if (node-\u003eleft) q.push(node-\u003eleft); if (node-\u003eright) q.push(node-\u003eright); } return res; } }; 9.从上到下逐层打印二叉树Ⅱ 一棵圣诞树记作根节点为 root 的二叉树，节点值为该位置装饰彩灯的颜色编号。请按照从左到右的顺序返回每一层彩灯编号，每一层的结果记录于一行。\n示例 1：\n输入：root = [8,17,21,18,null,null,6]\r输出：[[8],[17,21],[18,6]] 提示：\n节点总数 \u003c= 1000 思路\n本题与上一题唯一不同的是需要将每层节点的值先放到一个 vector 中，再将每一层对应的 vector 压入答案数组里。因此处理队列的 while 循环里需要通过 for 循环来对每一层进行切分。\nCode\nclass Solution { public: vector\u003cvector\u003cint\u003e\u003e decorateRecord(TreeNode* root) { queue\u003cTreeNode*\u003e que; vector\u003cvector\u003cint\u003e\u003e res; if(root != NULL) que.push(root); while(!que.empty()) { vector\u003cint\u003e tmp; for(int i = que.size(); i \u003e 0; --i) { root = que.front(); que.pop(); tmp.push_back(root-\u003eval); if(root-\u003eleft != NULL) que.push(root-\u003eleft); if(root-\u003eright != NULL) que.push(root-\u003eright); } res.push_back(tmp); } return res; } }; 10.从上到下逐层打印二叉树Ⅲ 一棵圣诞树记作根节点为 root 的二叉树，节点值为该位置装饰彩灯的颜色编号。请按照如下规则记录彩灯装饰结果：\n第一层按照从左到右的顺序记录 除第一层外每一层的记录顺序均与上一层相反。即第一层为从左到右，第二层为从右到左。 示例 1：\n输入：root = [8,17,21,18,null,null,6]\r输出：[[8],[21,17],[18,6]] 提示：\n节点总数 \u003c= 1000 思路\n在前两题的基础上，需要实现：从上往下，每层存放的节点值顺序不同，奇数层顺序存，偶数层逆序存。\n本题可以通过双端队列 deque 实现。\n具体实现方式看代码。\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { public: vector\u003cvector\u003cint\u003e\u003e decorateRecord(TreeNode* root) { if (!root) return {}; deque\u003cTreeNode*\u003e deq; deq.push_back(root); vector\u003cvector\u003cint\u003e\u003e res; bool ok = true; // 奇数层：true；偶数层：false while (!deq.empty()) { vector\u003cint\u003e temp; int sz = deq.size(); if (ok) { // 若为奇数层，则顺序存储 for (int i = 0; i \u003c sz; ++i) { TreeNode* node = deq.front(); temp.push_back(node-\u003eval); deq.pop_front(); if (node-\u003eleft != nullptr) deq.push_back(node-\u003eleft); if (node-\u003eright != nullptr) deq.push_back(node-\u003eright); } ok = false; } else { // 若为偶数层，则逆序存储 for (int i = 0; i \u003c sz; ++i) { TreeNode* node = deq.back(); temp.push_back(node-\u003eval); // 逆序压入答案 deq.pop_back(); /* 对偶数层逆序存储时插入下一层需要从 deq 的前端插入 取到本层数据是从 deq 尾端取，从尾端插入新数据会导致本层答案错误 注意，为了保证从队头到队尾的顺序需要先插入右节点，再插入左节点 */ if (node-\u003eright != nullptr) deq.push_front(node-\u003eright); if (node-\u003eleft != nullptr) deq.push_front(node-\u003eleft); } ok = true; } res.push_back(temp); } return res; } }; 11.验证二叉搜索树的后序遍历序列 请实现一个函数来判断整数数组 postorder 是否为二叉搜索树的后序遍历结果。\n示例 1：\n输入: postorder = [4,9,6,5,8]\r输出: false 解释：从上图可以看出这不是一颗二叉搜索树 示例 2：\n输入: postorder = [4,6,5,9,8]\r输出: true 解释：可构建的二叉搜索树如上图 提示：\n数组长度 \u003c= 1000 postorder 中无重复数字 思路\n二叉树的后序遍历是：左子节点-右子节点-根节点 。\n二叉搜索树的性质是：左子节点的值小于根节点，右子节点的值大于根节点，并且左右子树也都是二叉搜索树。\n对于本题，我们需要：\n根据后序遍历序列， 判断该树是否为二叉搜索树。 先思考第二个问题，我们如何判断一棵树是二叉搜索树？\n根据二叉搜索树的性质，根节点的左右两棵子树都是二叉搜索树，并且左子节点的值小于根节点，右子节点的值大于根节点。\n于是我们可以先判断左子节点、右子节点和根节点的大小关系，然后递归判断根节点的左右子树即可。\n但我们现在拿到的是一个二叉树的后序遍历序列，我们怎么还原出二叉树从而进行递归呢？\n由于后序遍历的顺序是 左子节点-右子节点-根节点 ，所以给定的后序序列的最后一个元素一定是整棵二叉树的根节点。\n根据二叉搜索树的性质，右子节点的值一定是最大的，左子节点的值一定是最小的，并且我们知道当前二叉树的根节点，所以我们可以先把整棵树划分成：左子树部分、根节点、右子树部分。\n定义：recur(postorder, i, j) 表示序列 postorder 的 [i, j] 区间是否为二叉搜索树\n我们用一个指针 p 去遍历整个序列，先找到当前 [i, j] 区间第一个大于根节点的索引 m（根据后序遍历的性质，当前区间的根节点索引为 j ），此时就确定了整棵二叉树的左子树区间：[i, m-1] 。如果剩下的右子树区间：[m, j-1] 满足该区间的数都比根节点大，那么当前搜索树树的基本结构是正确的。\n为什么上面说的是基本正确而不是完全正确呢？这是因为此时只能说明整棵树的根节点、根节点的左子节点、根节点的右子节点的大小顺序是正确的，但是它的左右子树不一定满足搜索树的性质。\n所以我们需要递归遍历上面的左右子树区间，将这些条件联合起来判断，才能说明给定的树是否为二叉搜索树。\nCode\nclass Solution { public: bool verifyTreeOrder(vector\u003cint\u003e\u0026 postorder) { // j 表示根节点索引，i 表示后序区间最左侧 auto recur = [\u0026](auto\u0026\u0026 recur, vector\u003cint\u003e postorder, int i, int j) -\u003e bool { if (i \u003e= j) return true; int p = i; while (postorder[p] \u003c postorder[j]) ++p; int m = p; // 第一个大于根节点的索引，那么左子树区间：[i, m-1]；右子树区间：[m, j-1] while (postorder[p] \u003e postorder[j]) ++p; // 循环结束后如果 p == j，那么该树是基本正确的 return p == j \u0026\u0026 recur(recur, postorder, i, m - 1) \u0026\u0026 recur(recur, postorder, m, j - 1); }; return recur(recur, postorder, 0, postorder.size() - 1); } }; 12.二叉树中和为目标值的路径 给你二叉树的根节点 root 和一个整数目标和 targetSum ，找出所有 从根节点到叶子节点 路径总和等于给定目标和的路径。\n叶子节点 是指没有子节点的节点。\n示例 1：\n输入：root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22\r输出：[[5,4,11,2],[5,8,4,5]] 示例 2：\n输入：root = [1,2,3], targetSum = 5\r输出：[] 示例 3：\n输入：root = [1,2], targetSum = 0\r输出：[] 提示：\n树中节点总数在范围 [0, 5000] 内 -1000 \u003c= Node.val \u003c= 1000 -1000 \u003c= targetSum \u003c= 1000 思路\n前序遍历二叉树，回溯枚举答案即可。\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { private: vector\u003cvector\u003cint\u003e\u003e res; vector\u003cint\u003e path; public: vector\u003cvector\u003cint\u003e\u003e pathTarget(TreeNode* root, int target) { auto dfs = [\u0026](auto\u0026\u0026 dfs, TreeNode* root, int target) { if (root == nullptr) return; path.push_back(root-\u003eval); target -= root-\u003eval; if (target == 0 \u0026\u0026 root-\u003eleft == nullptr \u0026\u0026 root-\u003eright == nullptr) { res.push_back(path); } dfs(dfs, root-\u003eleft, target); dfs(dfs, root-\u003eright, target); path.pop_back(); target += root-\u003eval; }; dfs(dfs, root, target); return res; } }; 13.将二叉搜索树转化为排序的双向链表 将一个 二叉搜索树 就地转化为一个 已排序的双向循环链表 。\n对于双向循环列表，你可以将左右孩子指针作为双向循环链表的前驱和后继指针，第一个节点的前驱是最后一个节点，最后一个节点的后继是第一个节点。\n特别地，我们希望可以 就地 完成转换操作。当转化完成以后，树中节点的左指针需要指向前驱，树中节点的右指针需要指向后继。还需要返回链表中最小元素的指针。\n示例 1：\n输入：root = [4,2,5,1,3] 输出：[1,2,3,4,5]\r解释：下图显示了转化后的二叉搜索树，实线表示后继关系，虚线表示前驱关系。 示例 2：\n输入：root = [2,1,3]\r输出：[1,2,3] 示例 3：\n输入：root = []\r输出：[]\r解释：输入是空树，所以输出也是空链表。 示例 4：\n输入：root = [1]\r输出：[1] 提示：\n-1000 \u003c= Node.val \u003c= 1000 Node.left.val \u003c Node.val \u003c Node.right.val Node.val 的所有值都是独一无二的 0 \u003c= Number of Nodes \u003c= 2000 思路\n题目要求将给定的二叉搜索树原地转换为已排序的双向链表，我们可以利用二叉搜索树的性质：根节点的左子树都比根节点小，右子树都比根节点大。\n为了利用这个性质，我们可以中序遍历二叉树，定义前驱节点指针 pre 和当前节点指针 cur ，在遍历的过程中根据要求将节点的左右指针指向对应的节点即可。注意遍历完后还需要把双向链表的头尾节点连起来。\nCode\n/* // Definition for a Node. class Node { public: int val; Node* left; Node* right; Node() {} Node(int _val) { val = _val; left = NULL; right = NULL; } Node(int _val, Node* _left, Node* _right) { val = _val; left = _left; right = _right; } }; */ class Solution { private: Node *pre, *head; public: Node* treeToDoublyList(Node* root) { auto dfs = [\u0026](auto\u0026\u0026 dfs, Node* cur) { if (cur == nullptr) return; // 中序遍历 dfs(dfs, cur-\u003eleft); if (pre != nullptr) pre-\u003eright = cur; else head = cur; // 如果前序节点，说明是头节点 cur-\u003eleft = pre; pre = cur; dfs(dfs, cur-\u003eright); }; if (root == nullptr) return nullptr; dfs(dfs, root); // 处理链表头尾，保证为循环链表 head-\u003eleft = pre; pre-\u003eright = head; return head; } }; 14.序列化与反序列化二叉树 序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。\n请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。\n提示: 输入输出格式与 LeetCode 目前使用的方式一致，详情请参阅 LeetCode 序列化二叉树的格式。你并非必须采取这种方式，你也可以采用其他的方法解决这个问题。\n示例 1：\n输入：root = [1,2,3,null,null,4,5]\r输出：[1,2,3,null,null,4,5] 示例 2：\n输入：root = []\r输出：[] 示例 3：\n输入：root = [1]\r输出：[1] 示例 4：\n输入：root = [1,2]\r输出：[1,2] 提示：\n树中结点数在范围 [0, 104] 内 -1000 \u003c= Node.val \u003c= 1000 思路\n序列化二叉树需要对二叉树进行前序遍历，在遍历的过程中判断当前节点是否为空，如果为空就在答案字符串中添加 \"None,\" ，否则添加节点值。\n反序列化二叉树需要将字符串根据逗号分割，将分割出来的单词放到 list 中，然后递归遍历 list 构建二叉树。\n注意：这里 c++ 要用 list 存放分割出来的 string 不能用 vector 。因为 list 是用双向链表实现的，适合实现增删改查，而 vector 是连续空间的数组，增删耗时较多\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode(int x) : val(x), left(NULL), right(NULL) {} * }; */ class Codec { public: void rserialize(TreeNode* root, string\u0026 str) { if (root == nullptr) { str += \"None,\"; } else { str += to_string(root-\u003eval) + \",\"; rserialize(root-\u003eleft, str); rserialize(root-\u003eright, str); } } // Encodes a tree to a single string. string serialize(TreeNode* root) { string res; rserialize(root, res); return res; } TreeNode* rdeserialize(list\u003cstring\u003e\u0026 dataArray) { if (dataArray.front() == \"None\") { dataArray.erase(dataArray.begin()); return nullptr; } TreeNode* root = new TreeNode(stoi(dataArray.front())); dataArray.erase(dataArray.begin()); root-\u003eleft = rdeserialize(dataArray); root-\u003eright = rdeserialize(dataArray); return root; } // Decodes your encoded data to tree. TreeNode* deserialize(string data) { list\u003cstring\u003e dataArray; string str; for (auto\u0026 ch: data) { if (ch == ',') { dataArray.push_back(str); str.clear(); } else { str.push_back(ch); } } if (!str.empty()) { dataArray.push_back(str); str.clear(); } return rdeserialize(dataArray); } }; // Your Codec object will be instantiated and called as such: // Codec codec; // codec.deserialize(codec.serialize(root)); 15.寻找二叉搜索树中的目标节点 某公司组织架构以二叉搜索树形式记录，节点值为处于该职位的员工编号。请返回第 cnt 大的员工编号。\n示例 1：\n输入：root = [7, 3, 9, 1, 5], cnt = 2\r7\r/ \\\r3 9\r/ \\\r1 5\r输出：7 示例 2：\n输入: root = [10, 5, 15, 2, 7, null, 20, 1, null, 6, 8], cnt = 4\r10\r/ \\\r5 15\r/ \\ \\\r2 7 20\r/ / \\ 1 6 8\r输出: 8 提示：\n1 ≤ cnt ≤ 二叉搜索树元素个数 思路\n因为给定的是一棵二叉搜索树，我们对这棵树进行中序遍历，用一个 cnt 记录当前是第几大的节点，最终返回即可。\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { private: int res, cnt; public: int findTargetNode(TreeNode* root, int k) { cnt = k; auto dfs = [\u0026](auto\u0026\u0026 dfs, TreeNode* node) { if (node == nullptr) return; dfs(dfs, node-\u003eright); if (cnt == 0) return; if (--cnt == 0) { res = node-\u003eval; return; } dfs(dfs,node-\u003eleft); }; dfs(dfs, root); return res; } }; 16.计算二叉树的深度 某公司架构以二叉树形式记录，请返回该公司的层级数。\n示例 1：\n输入：root = [1, 2, 2, 3, null, null, 5, 4, null, null, 4]\r输出: 4\r解释: 上面示例中的二叉树的最大深度是 4，沿着路径 1 -\u003e 2 -\u003e 3 -\u003e 4 或 1 -\u003e 2 -\u003e 5 -\u003e 4 到达叶节点的最长路径上有 4 个节点。 思路\n第一种做法是直接递归：分别递归计算左右子树高度，那么这棵树的高度就是左右子树高度的最大值 + 1 。\n第二种做法是对左右子树分别 dfs ，记录下来大小然后计算高度。\nCode\n1.直接递归\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { public: int calculateDepth(TreeNode* root) { if (root == nullptr) return 0; int l_depth = calculateDepth(root-\u003eleft); int r_depth = calculateDepth(root-\u003eright); return max(l_depth, r_depth) + 1; } }; 2.分别 dfs 计算\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { public: int calculateDepth(TreeNode* root) { auto dfs = [\u0026](auto\u0026\u0026 dfs, TreeNode* root, int\u0026 res, int temp) { if (root == nullptr) { res = max(res, temp); return; } temp++; dfs(dfs, root-\u003eleft, res, temp); dfs(dfs, root-\u003eright, res, temp); }; int res = 0, temp = 0; dfs(dfs, root, res, temp); return res; } }; 17.判断是否为平衡二叉树 输入一棵二叉树的根节点，判断该树是不是平衡二叉树。如果某二叉树中任意节点的左右子树的深度相差不超过1，那么它就是一棵平衡二叉树。\n示例 1:\n输入：root = [3,9,20,null,null,15,7]\r输出：true 解释：如下图 示例 2:\n输入：root = [1,2,2,3,3,null,null,4,4]\r输出：false\r解释：如下图 提示：\n0 \u003c= 树的结点个数 \u003c= 10000 思路\n计算左右两棵子树的高度，计算两棵子树的高度差，如果大于 1 就说明这棵树不平衡。\n可以在递归过程中判断当前子树是否为平衡二叉树，如果不平衡，说明整棵树不平衡，直接返回 -1 剪枝。\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode() : val(0), left(nullptr), right(nullptr) {} * TreeNode(int x) : val(x), left(nullptr), right(nullptr) {} * TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {} * }; */ class Solution { public: bool isBalanced(TreeNode* root) { auto get_height = [\u0026](auto\u0026\u0026 get_height, TreeNode* node) -\u003e int { if (node == nullptr) return 0; int leftH = get_height(get_height, node-\u003eleft); // 递归计算左子树 if (leftH == -1) return -1; // 若不平衡 int rightH = get_height(get_height, node-\u003eright); // 递归计算右子树 if (rightH == -1 || abs(leftH - rightH) \u003e 1) return -1; return max(leftH, rightH) + 1; // 树的高度为左子树和右子树高度的最大值 + 1 }; return get_height(get_height, root) != -1; } }; 18.二叉搜索树的最近公共祖先 给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。\n百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”\n例如，给定如下二叉搜索树: root = [6,2,8,0,4,7,9,null,null,3,5]\n示例 1:\n输入: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8\r输出: 6 解释: 节点 2 和节点 8 的最近公共祖先是 6。 示例 2:\n输入: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4\r输出: 2\r解释: 节点 2 和节点 4 的最近公共祖先是 2, 因为根据定义最近公共祖先节点可以为节点本身。 说明:\n所有节点的值都是唯一的。 p、q 为不同节点且均存在于给定的二叉搜索树中。 思路\n给定的是二叉搜索树，利用它的性质分类讨论：\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode(int x) : val(x), left(NULL), right(NULL) {} * }; */ class Solution { public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { int x = root-\u003eval; if (p-\u003eval \u003c x \u0026\u0026 q-\u003eval \u003c x) // p、q都在左子树 return lowestCommonAncestor(root-\u003eleft, p, q); if (p-\u003eval \u003e x \u0026\u0026 q-\u003eval \u003e x) // p、q都在右子树 return lowestCommonAncestor(root-\u003eright, p, q); return root; } }; 19.二叉树的最近公共祖先 给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。\n百度百科中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（一个节点也可以是它自己的祖先）。”\n例如，给定如下二叉树: root = [3,5,1,6,2,0,8,null,null,7,4]\n示例 1:\n输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1\r输出: 3\r解释: 节点 5 和节点 1 的最近公共祖先是节点 3。 示例 2:\n输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4\r输出: 5\r解释: 节点 5 和节点 4 的最近公共祖先是节点 5。因为根据定义最近公共祖先节点可以为节点本身。 说明:\n所有节点的值都是唯一的。 p、q 为不同节点且均存在于给定的二叉树中。 思路\n相较于上一题，本题给定的是普通的二叉树，分类讨论：\n其中，左右子树都找到指的是 p 和 q 分别在当前根节点的左右子树中；只有左子树找到指的是 p 和 q 都在当前根节点的左子树中，右子树同理。对于左右子树都没有找到的情况，举个例子：当前递归的是根节点的左子树，但 p 和 q 都在根节点的右子树，所以需要返回空。\nCode\n/** * Definition for a binary tree node. * struct TreeNode { * int val; * TreeNode *left; * TreeNode *right; * TreeNode(int x) : val(x), left(NULL), right(NULL) {} * }; */ class Solution { public: TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) { if (root == nullptr || root == p || root == q) return root; TreeNode *left = lowestCommonAncestor(root-\u003eleft, p, q); TreeNode *right = lowestCommonAncestor(root-\u003eright, p, q); if (left \u0026\u0026 right) return root; return left ? left : right; } }; ",
+  "wordCount" : "3124",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yuk1pedia.github.io/learning-notes/2024-10-21-binary-tree/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YUKIPEDIA's blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yuk1pedia.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                    <span>Learning Notes</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      LCR-二叉树
+    </h1>
+    <div class="post-description">
+      记录
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="1根据前序与中序遍历序列构造二叉树">1.根据前序与中序遍历序列构造二叉树<a hidden class="anchor" aria-hidden="true" href="#1根据前序与中序遍历序列构造二叉树">#</a></h2>
+<p>给定两个整数数组 <code>preorder</code> 和 <code>inorder</code> ，其中 <code>preorder</code> 是二叉树的<strong>先序遍历</strong>， <code>inorder</code> 是同一棵树的<strong>中序遍历</strong>，请构造二叉树并返回其根节点。</p>
+<p><strong>示例 1:</strong></p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2021/02/19/tree.jpg"></p>
+<pre tabindex="0"><code>输入: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]
+输出: [3,9,20,null,null,15,7]
+</code></pre><p><strong>示例 2:</strong></p>
+<pre tabindex="0"><code>输入: preorder = [-1], inorder = [-1]
+输出: [-1]
+</code></pre><p><strong>提示:</strong></p>
+<ul>
+<li><code>1 &lt;= preorder.length &lt;= 3000</code></li>
+<li><code>inorder.length == preorder.length</code></li>
+<li><code>-3000 &lt;= preorder[i], inorder[i] &lt;= 3000</code></li>
+<li><code>preorder</code> 和 <code>inorder</code> 均 <strong>无重复</strong> 元素</li>
+<li><code>inorder</code> 均出现在 <code>preorder</code></li>
+<li><code>preorder</code> <strong>保证</strong> 为二叉树的前序遍历序列</li>
+<li><code>inorder</code> <strong>保证</strong> 为二叉树的中序遍历序列</li>
+</ul>
+<p><strong>思路</strong></p>
+<p><strong>前序遍历</strong>：按照「根-左子树-右子树」的顺序遍历二叉树。</p>
+<p><strong>中序遍历</strong>：按照「左子树-根-右子树」的顺序遍历二叉树。</p>
+<p>我们来看看示例 1 是怎么生成这棵二叉树的。</p>
+<p><img alt="lc105-c.png" loading="lazy" src="https://pic.leetcode.cn/1707907886-ICkiSC-lc105-c.png"></p>
+<p><strong>递归边界</strong>：如果 <em>preorder</em> 的长度是 0，对应着空节点，返回空。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    TreeNode<span style="color:#f92672">*</span> buildTree(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> preorder, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> inorder) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (preorder.empty()) <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nullptr</span>; <span style="color:#75715e">// 空节点
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 在中序序列中找根节点，记录左子树序列的长度
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> left_size <span style="color:#f92672">=</span> ranges<span style="color:#f92672">::</span>find(inorder, preorder[<span style="color:#ae81ff">0</span>]) <span style="color:#f92672">-</span> inorder.begin();
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 在前序序列中找左子树
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> pre1(preorder.begin() <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, preorder.begin() <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">+</span> left_size);
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 在前序序列中找右子树
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> pre2(preorder.begin() <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">+</span> left_size, preorder.end());
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 中序遍历同样的操作
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> in1(inorder.begin(), inorder.begin() <span style="color:#f92672">+</span> left_size);
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> in2(inorder.begin() <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">+</span> left_size, inorder.end());
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 递归
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        TreeNode <span style="color:#f92672">*</span>left <span style="color:#f92672">=</span> buildTree(pre1, in1);
+</span></span><span style="display:flex;"><span>        TreeNode <span style="color:#f92672">*</span>right <span style="color:#f92672">=</span> buildTree(pre2, in2);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">TreeNode</span>(preorder[<span style="color:#ae81ff">0</span>], left, right);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="2相同的树">2.相同的树<a hidden class="anchor" aria-hidden="true" href="#2相同的树">#</a></h2>
+<p>给你两棵二叉树的根节点 <code>p</code> 和 <code>q</code> ，编写一个函数来检验这两棵树是否相同。</p>
+<p>如果两个树在结构上相同，并且节点具有相同的值，则认为它们是相同的。</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2020/12/20/ex1.jpg"></p>
+<pre tabindex="0"><code>输入：p = [1,2,3], q = [1,2,3]
+输出：true
+</code></pre><p><strong>示例 2：</strong></p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2020/12/20/ex2.jpg"></p>
+<pre tabindex="0"><code>输入：p = [1,2], q = [1,null,2]
+输出：false
+</code></pre><p><strong>示例 3：</strong></p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2020/12/20/ex3.jpg"></p>
+<pre tabindex="0"><code>输入：p = [1,2,1], q = [1,1,2]
+输出：false
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li>两棵树上的节点数目都在范围 <code>[0, 100]</code> 内</li>
+<li><code>-10^4 &lt;= Node.val &lt;= 10^4</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>解决二叉树问题就是要灵活运用递归的性质。我们需要思考，如何将原问题分解为更小的子问题来解决，比如这道题。</p>
+<p>要判断两棵二叉树是否相等，我们可以将它分解为以下子问题：</p>
+<ul>
+<li>两棵二叉树的根节点值是否相等？</li>
+<li>两个二叉树根节点的左边两棵子树是否相同？右边两棵子树是否相同？</li>
+</ul>
+<p>分解完子问题后，我们便可以得出判断方法了：<strong>先判断根节点的值是否相等，再判断根节点的左右子树是否相等</strong>。</p>
+<p>我们怎么判断根节点的左右子树是否相等呢？这个问题可以用递归解决。</p>
+<p>这里需要判断出递归的边界条件：当递归到某个节点为空，就需要判断另外一个节点是否为空，如果为空，返回 <em>true</em> ，否则返回 <em>false</em>。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> isSameTree(TreeNode<span style="color:#f92672">*</span> p, TreeNode<span style="color:#f92672">*</span> q) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (p <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span> <span style="color:#f92672">||</span> q <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#66d9ef">return</span> p <span style="color:#f92672">==</span> q;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> p<span style="color:#f92672">-&gt;</span>val <span style="color:#f92672">==</span> q<span style="color:#f92672">-&gt;</span>val <span style="color:#f92672">&amp;&amp;</span> isSameTree(p<span style="color:#f92672">-&gt;</span>left, q<span style="color:#f92672">-&gt;</span>left) <span style="color:#f92672">&amp;&amp;</span> isSameTree(p<span style="color:#f92672">-&gt;</span>right, q<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="3对称二叉树">3.对称二叉树<a hidden class="anchor" aria-hidden="true" href="#3对称二叉树">#</a></h2>
+<p>给你一个二叉树的根节点 <code>root</code> ， 检查它是否轴对称。</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1698026966-JDYPDU-image.png"></p>
+<pre tabindex="0"><code>输入：root = [1,2,2,3,4,4,3]
+输出：true
+</code></pre><p><strong>示例 2：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1698027008-nPFLbM-image.png"></p>
+<pre tabindex="0"><code>输入：root = [1,2,2,null,3,null,3]
+输出：false
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li>树中节点数目在范围 <code>[1, 1000]</code> 内</li>
+<li><code>-100 &lt;= Node.val &lt;= 100</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>判断二叉树是否对称，同样需要将其分解为更小的子问题：</p>
+<ul>
+<li>首先，根节点已经是对称的，可以不用管</li>
+<li>然后需要判断根节点的左右子树是否对称</li>
+</ul>
+<p>于是我们可以这样做：</p>
+<ol>
+<li><strong>把给定的树拆成左右两棵树</strong>，看根节点是否相同。</li>
+<li>然后递归左边的左子树，和右边的右子树；以及左边的右子树和右边的左子树，看他们是否相等</li>
+</ol>
+<p>这里可以直接用 <em>T2</em> 的代码：</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> isSame(TreeNode<span style="color:#f92672">*</span> p, TreeNode<span style="color:#f92672">*</span> q) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (p <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span> <span style="color:#f92672">||</span> q <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#66d9ef">return</span> p <span style="color:#f92672">==</span> q;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> p<span style="color:#f92672">-&gt;</span>val <span style="color:#f92672">==</span> q<span style="color:#f92672">-&gt;</span>val <span style="color:#f92672">&amp;&amp;</span> isSame(p<span style="color:#f92672">-&gt;</span>left, q<span style="color:#f92672">-&gt;</span>right) <span style="color:#f92672">&amp;&amp;</span> isSame(p<span style="color:#f92672">-&gt;</span>right, q<span style="color:#f92672">-&gt;</span>left);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">isSymmetric</span>(TreeNode<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> isSame(root<span style="color:#f92672">-&gt;</span>left, root<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="4平衡二叉树">4.平衡二叉树<a hidden class="anchor" aria-hidden="true" href="#4平衡二叉树">#</a></h2>
+<p>给定一个二叉树，判断它是否是平衡二叉树</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2020/10/06/balance_1.jpg"></p>
+<pre tabindex="0"><code>输入：root = [3,9,20,null,null,15,7]
+输出：true
+</code></pre><p><strong>示例 2：</strong></p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2020/10/06/balance_2.jpg"></p>
+<pre tabindex="0"><code>输入：root = [1,2,2,3,3,null,null,4,4]
+输出：false
+</code></pre><p><strong>示例 3：</strong></p>
+<pre tabindex="0"><code>输入：root = []
+输出：true
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li>树中的节点数在范围 <code>[0, 5000]</code> 内</li>
+<li><code>-10^4 &lt;= Node.val &lt;= 10^4</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>要判断一棵树是否是平衡二叉树，我们需要计算这棵树的左右子树高度，再判断左右子树高度差是否大于 <em>1</em> 。</p>
+<p>那么我们<strong>如何通过计算左右子树的高度来判断平衡树呢</strong>？</p>
+<p>由于树的高度都是非负数，我们可以利用负数来表示当前子树不平衡。如果当前子树不平衡，那么包含这个子树的树也一定不平衡，直接返回即可。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> get_height(TreeNode<span style="color:#f92672">*</span> p) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (p <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 递归计算左子树高度
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> left_height <span style="color:#f92672">=</span> get_height(p<span style="color:#f92672">-&gt;</span>left);
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 高度为 -1 表示当前树不平衡，那么包含当前树的树也一定不平衡
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (left_height <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 递归计算右子树高度
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> right_height <span style="color:#f92672">=</span> get_height(p<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (right_height <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> <span style="color:#f92672">||</span> abs(left_height <span style="color:#f92672">-</span> right_height) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">max</span>(left_height, right_height) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">isBalanced</span>(TreeNode<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 如果不为 -1 ，则代表是平衡二叉树
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> get_height(root) <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="5二叉树的右视图">5.二叉树的右视图<a hidden class="anchor" aria-hidden="true" href="#5二叉树的右视图">#</a></h2>
+<p>给定一个二叉树的 <strong>根节点</strong> <code>root</code>，想象自己站在它的右侧，按照从顶部到底部的顺序，返回从右侧所能看到的节点值。</p>
+<p><strong>示例 1:</strong></p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2021/02/14/tree.jpg"></p>
+<pre tabindex="0"><code>输入: [1,2,3,null,5,null,4]
+输出: [1,3,4]
+</code></pre><p><strong>示例 2:</strong></p>
+<pre tabindex="0"><code>输入: [1,null,3]
+输出: [1,3]
+</code></pre><p><strong>示例 3:</strong></p>
+<pre tabindex="0"><code>输入: []
+输出: []
+</code></pre><p><strong>提示:</strong></p>
+<ul>
+<li>二叉树的节点个数的范围是 <code>[0,100]</code></li>
+<li><code>-100 &lt;= Node.val &lt;= 100</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>要求二叉树的右视图数组，除了 <em>BFS</em> 还可以这样递归：</p>
+<ul>
+<li>先不断递归二叉树的右子树，将最右侧的数字都加入到答案数组 <em>res</em> 中</li>
+<li>然后递归二叉树的左子树，用一个变量 <em>depth</em> 记录当前递归深度，如果 <em>depth</em> 超出了 <em>res</em> 的长度，<strong>说明当前”左边的“节点没有被最右边的节点遮挡</strong>，那么将其添加到答案数组中即可</li>
+</ul>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> res;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> dfs(TreeNode<span style="color:#f92672">*</span> root, <span style="color:#66d9ef">int</span> depth) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (root <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#66d9ef">return</span>; <span style="color:#75715e">// 递归边界
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (depth <span style="color:#f92672">==</span> res.size()) res.push_back(root<span style="color:#f92672">-&gt;</span>val);
+</span></span><span style="display:flex;"><span>        dfs(root<span style="color:#f92672">-&gt;</span>right, depth <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        dfs(root<span style="color:#f92672">-&gt;</span>left, depth <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> rightSideView(TreeNode<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        dfs(root, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="6子结构判断">6.子结构判断<a hidden class="anchor" aria-hidden="true" href="#6子结构判断">#</a></h2>
+<p>给定两棵二叉树 <code>tree1</code> 和 <code>tree2</code>，判断 <code>tree2</code> 是否以 <code>tree1</code> 的某个节点为根的子树具有 <strong>相同的结构和节点值</strong> 。
+注意，<strong>空树</strong> 不会是以 <code>tree1</code> 的某个节点为根的子树具有 <strong>相同的结构和节点值</strong> 。</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1694684670-vwyIgY-two_tree.png"></p>
+<pre tabindex="0"><code>输入：tree1 = [1,7,5], tree2 = [6,1]
+输出：false
+解释：tree2 与 tree1 的一个子树没有相同的结构和节点值。
+</code></pre><p><strong>示例 2：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1694685602-myWXCv-two_tree_2.png"></p>
+<pre tabindex="0"><code>输入：tree1 = [3,6,7,1,8], tree2 = [6,1]
+输出：true
+解释：tree2 与 tree1 的一个子树拥有相同的结构和节点值。即 6 - &gt; 1。
+</code></pre><p><strong>提示：</strong></p>
+<pre tabindex="0"><code>0 &lt;= 节点个数 &lt;= 10000
+</code></pre><p><strong>思路</strong></p>
+<p>如果树 <em>B</em> 是树 <em>A</em> 的子结构，则子结构的根节点可能为树 <em>A</em> 的任意一个节点。因此，判断树 <em>B</em> 是否为树 <em>A</em> 的子结构，需要完成以下两步工作：</p>
+<ol>
+<li>先序遍历树 <em>A</em> 中的每个节点 <em>node</em> （调用函数 <code>isSubStructure(A, B)</code> 遍历树 <em>A</em> ）</li>
+<li>判断树 <em>A</em> 中以 <em>node</em> 为根节点的子树是否包含树 <em>B</em> （调用函数 <code>recur(A, B)</code> ，判定树 <em>A</em> 包含树 <em>B</em> ）</li>
+</ol>
+<p><code>recur(A, B)</code> 用于进行 <em>A</em> 树和 <em>B</em> 树的匹配，判断树 <em>A</em> 是否包含树 <em>B</em> （<strong>此处的”包含“建立在树 <em>A</em> 和树 <em>B</em> 的根节点相同的条件上</strong>）</p>
+<ol>
+<li><strong>终止条件：</strong>
+<ol>
+<li>当节点 <code>B</code> 为空：说明树 <code>B</code> 已匹配完成（越过叶子节点），因此返回 <em>true</em> ；</li>
+<li>当节点 <code>A</code> 为空：说明已经越过树 <code>A</code> 的叶节点，即匹配失败，返回 <em>false</em> ；</li>
+<li>当节点 <code>A</code> 和 <code>B</code> 的值不同：说明匹配失败，返回 <em>false</em> ；</li>
+</ol>
+</li>
+<li><strong>返回值：</strong>
+<ol>
+<li>判断 <code>A</code> 和 <code>B</code> 的 <strong>左子节点</strong> 是否相等，即 <code>recur(A.left, B.left)</code> ；</li>
+<li>判断 <code>A</code> 和 <code>B</code> 的 <strong>右子节点</strong> 是否相等，即 <code>recur(A.right, B.right)</code> ；</li>
+</ol>
+</li>
+</ol>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> recur(TreeNode<span style="color:#f92672">*</span> A, TreeNode<span style="color:#f92672">*</span> B) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// A 树和 B 树从根节点开始同步往下递归
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span>(B <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#66d9ef">return</span> true; <span style="color:#75715e">// B 先到达空节点，说明 A 树包含 B 树
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span>(A <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span> <span style="color:#f92672">||</span> A<span style="color:#f92672">-&gt;</span>val <span style="color:#f92672">!=</span> B<span style="color:#f92672">-&gt;</span>val) <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">recur</span>(A<span style="color:#f92672">-&gt;</span>left, B<span style="color:#f92672">-&gt;</span>left) <span style="color:#f92672">&amp;&amp;</span> recur(A<span style="color:#f92672">-&gt;</span>right, B<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> isSubStructure(TreeNode<span style="color:#f92672">*</span> A, TreeNode<span style="color:#f92672">*</span> B) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> (A <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span> <span style="color:#f92672">&amp;&amp;</span> B <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#f92672">&amp;&amp;</span> (recur(A, B) <span style="color:#f92672">||</span> isSubStructure(A<span style="color:#f92672">-&gt;</span>left, B) <span style="color:#f92672">||</span> isSubStructure(A<span style="color:#f92672">-&gt;</span>right, B));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="7翻转二叉树二叉树的镜像">7.翻转二叉树（二叉树的镜像）<a hidden class="anchor" aria-hidden="true" href="#7翻转二叉树二叉树的镜像">#</a></h2>
+<p>给定一棵二叉树的根节点 <code>root</code>，请左右翻转这棵二叉树，并返回其根节点。</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1694686821-qlvjod-%E7%BF%BB%E8%BD%AC%E4%BA%8C%E5%8F%89%E6%A0%91.png"></p>
+<pre tabindex="0"><code>输入：root = [5,7,9,8,3,2,4]
+输出：[5,9,7,4,2,3,8]
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li>树中节点数目范围在 <code>[0, 100]</code> 内</li>
+<li><code>-100 &lt;= Node.val &lt;= 100</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>对于二叉树递归问题，我们需要分析他的子问题是什么。我们要对给定的二叉树进行镜像操作，可以通过以下步骤实现：</p>
+<ul>
+<li>交换根节点的左右节点</li>
+<li>对左子树进行镜像操作</li>
+<li>对右子树进行镜像操作</li>
+</ul>
+<p>完成上面三步之后，这棵二叉树就被完全镜像了</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    TreeNode<span style="color:#f92672">*</span> mirrorTree(TreeNode<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>root) <span style="color:#66d9ef">return</span> root;
+</span></span><span style="display:flex;"><span>        TreeNode<span style="color:#f92672">*</span> temp <span style="color:#f92672">=</span> root<span style="color:#f92672">-&gt;</span>left;
+</span></span><span style="display:flex;"><span>        root<span style="color:#f92672">-&gt;</span>left <span style="color:#f92672">=</span> root<span style="color:#f92672">-&gt;</span>right;
+</span></span><span style="display:flex;"><span>        root<span style="color:#f92672">-&gt;</span>right <span style="color:#f92672">=</span> temp;
+</span></span><span style="display:flex;"><span>        mirrorTree(root<span style="color:#f92672">-&gt;</span>left);
+</span></span><span style="display:flex;"><span>        mirrorTree(root<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> root;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="8从上到下逐层打印二叉树">8.从上到下逐层打印二叉树Ⅰ<a hidden class="anchor" aria-hidden="true" href="#8从上到下逐层打印二叉树">#</a></h2>
+<p>一棵圣诞树记作根节点为 <code>root</code> 的二叉树，节点值为该位置装饰彩灯的颜色编号。请按照从 <strong>左</strong> 到 <strong>右</strong> 的顺序返回每一层彩灯编号。</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1694758674-XYrUiV-%E5%89%91%E6%8C%87%20Offer%2032%20-%20I_%E7%A4%BA%E4%BE%8B1.png"></p>
+<pre tabindex="0"><code>输入：root = [8,17,21,18,null,null,6]
+输出：[8,17,21,18,6]
+</code></pre><p><strong>提示：</strong></p>
+<ol>
+<li><code>节点总数 &lt;= 1000</code></li>
+</ol>
+<p><strong>思路</strong></p>
+<p>简单 <em>BFS</em> ，逐层将节点加入答案数组即可。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> decorateRecord(TreeNode<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>root) <span style="color:#66d9ef">return</span> {};
+</span></span><span style="display:flex;"><span>        queue<span style="color:#f92672">&lt;</span>TreeNode<span style="color:#f92672">*&gt;</span> q;
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> res;
+</span></span><span style="display:flex;"><span>        q.push(root);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!</span>q.empty()) {
+</span></span><span style="display:flex;"><span>            TreeNode<span style="color:#f92672">*</span> node <span style="color:#f92672">=</span> q.front();
+</span></span><span style="display:flex;"><span>            q.pop();
+</span></span><span style="display:flex;"><span>            res.push_back(node<span style="color:#f92672">-&gt;</span>val);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (node<span style="color:#f92672">-&gt;</span>left) q.push(node<span style="color:#f92672">-&gt;</span>left);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (node<span style="color:#f92672">-&gt;</span>right) q.push(node<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="9从上到下逐层打印二叉树">9.从上到下逐层打印二叉树Ⅱ<a hidden class="anchor" aria-hidden="true" href="#9从上到下逐层打印二叉树">#</a></h2>
+<p>一棵圣诞树记作根节点为 <code>root</code> 的二叉树，节点值为该位置装饰彩灯的颜色编号。请按照从左到右的顺序返回每一层彩灯编号，每一层的结果记录于一行。</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1694758674-XYrUiV-%E5%89%91%E6%8C%87%20Offer%2032%20-%20I_%E7%A4%BA%E4%BE%8B1.png"></p>
+<pre tabindex="0"><code>输入：root = [8,17,21,18,null,null,6]
+输出：[[8],[17,21],[18,6]]
+</code></pre><p><strong>提示：</strong></p>
+<ol>
+<li><code>节点总数 &lt;= 1000</code></li>
+</ol>
+<p><strong>思路</strong></p>
+<p>本题与上一题唯一不同的是需要将每层节点的值先放到一个 <em>vector</em> 中，再将每一层对应的 <em>vector</em> 压入答案数组里。因此处理队列的 <em>while</em> 循环里需要通过 <em>for</em> 循环来对每一层进行切分。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> decorateRecord(TreeNode<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        queue<span style="color:#f92672">&lt;</span>TreeNode<span style="color:#f92672">*&gt;</span> que;
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> res;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(root <span style="color:#f92672">!=</span> NULL) que.push(root);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span>(<span style="color:#f92672">!</span>que.empty()) {
+</span></span><span style="display:flex;"><span>            vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> tmp;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> que.size(); i <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">--</span>i) {
+</span></span><span style="display:flex;"><span>                root <span style="color:#f92672">=</span> que.front();
+</span></span><span style="display:flex;"><span>                que.pop();
+</span></span><span style="display:flex;"><span>                tmp.push_back(root<span style="color:#f92672">-&gt;</span>val);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span>(root<span style="color:#f92672">-&gt;</span>left <span style="color:#f92672">!=</span> NULL) que.push(root<span style="color:#f92672">-&gt;</span>left);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span>(root<span style="color:#f92672">-&gt;</span>right <span style="color:#f92672">!=</span> NULL) que.push(root<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            res.push_back(tmp);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="10从上到下逐层打印二叉树">10.从上到下逐层打印二叉树Ⅲ<a hidden class="anchor" aria-hidden="true" href="#10从上到下逐层打印二叉树">#</a></h2>
+<p>一棵圣诞树记作根节点为 <code>root</code> 的二叉树，节点值为该位置装饰彩灯的颜色编号。请按照如下规则记录彩灯装饰结果：</p>
+<ul>
+<li>第一层按照从左到右的顺序记录</li>
+<li>除第一层外每一层的记录顺序均与上一层相反。即第一层为从左到右，第二层为从右到左。</li>
+</ul>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1694758674-XYrUiV-%E5%89%91%E6%8C%87%20Offer%2032%20-%20I_%E7%A4%BA%E4%BE%8B1.png"></p>
+<pre tabindex="0"><code>输入：root = [8,17,21,18,null,null,6]
+输出：[[8],[21,17],[18,6]]
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>节点总数 &lt;= 1000</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>在前两题的基础上，需要实现：从上往下，每层存放的节点值顺序不同，<strong>奇数层顺序存，偶数层逆序存</strong>。</p>
+<p>本题可以通过双端队列 <em>deque</em> 实现。</p>
+<p>具体实现方式看代码。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> decorateRecord(TreeNode<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>root) <span style="color:#66d9ef">return</span> {};
+</span></span><span style="display:flex;"><span>        deque<span style="color:#f92672">&lt;</span>TreeNode<span style="color:#f92672">*&gt;</span> deq;
+</span></span><span style="display:flex;"><span>        deq.push_back(root);
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> res;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">bool</span> ok <span style="color:#f92672">=</span> true; <span style="color:#75715e">// 奇数层：true；偶数层：false
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!</span>deq.empty()) {
+</span></span><span style="display:flex;"><span>            vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> temp;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> sz <span style="color:#f92672">=</span> deq.size();
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (ok) { <span style="color:#75715e">// 若为奇数层，则顺序存储
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> sz; <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>                    TreeNode<span style="color:#f92672">*</span> node <span style="color:#f92672">=</span> deq.front();
+</span></span><span style="display:flex;"><span>                    temp.push_back(node<span style="color:#f92672">-&gt;</span>val);
+</span></span><span style="display:flex;"><span>                    deq.pop_front();
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (node<span style="color:#f92672">-&gt;</span>left <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>) deq.push_back(node<span style="color:#f92672">-&gt;</span>left);
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (node<span style="color:#f92672">-&gt;</span>right <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>) deq.push_back(node<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                ok <span style="color:#f92672">=</span> false;
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> { <span style="color:#75715e">// 若为偶数层，则逆序存储
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> sz; <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>                    TreeNode<span style="color:#f92672">*</span> node <span style="color:#f92672">=</span> deq.back();
+</span></span><span style="display:flex;"><span>                    temp.push_back(node<span style="color:#f92672">-&gt;</span>val); <span style="color:#75715e">// 逆序压入答案
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                    deq.pop_back();
+</span></span><span style="display:flex;"><span>                    <span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">                    对偶数层逆序存储时插入下一层需要从 deq 的前端插入
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">                    取到本层数据是从 deq 尾端取，从尾端插入新数据会导致本层答案错误
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">                    注意，为了保证从队头到队尾的顺序需要先插入右节点，再插入左节点
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">                    */</span>
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (node<span style="color:#f92672">-&gt;</span>right <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>) deq.push_front(node<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">if</span> (node<span style="color:#f92672">-&gt;</span>left <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>) deq.push_front(node<span style="color:#f92672">-&gt;</span>left);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                ok <span style="color:#f92672">=</span> true;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            res.push_back(temp);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="11验证二叉搜索树的后序遍历序列">11.验证二叉搜索树的后序遍历序列<a hidden class="anchor" aria-hidden="true" href="#11验证二叉搜索树的后序遍历序列">#</a></h2>
+<p>请实现一个函数来判断整数数组 <code>postorder</code> 是否为二叉搜索树的后序遍历结果。</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1706665328-rfvWhs-%E6%88%AA%E5%B1%8F2024-01-31%2009.41.48.png"></p>
+<pre tabindex="0"><code>输入: postorder = [4,9,6,5,8]
+输出: false 
+解释：从上图可以看出这不是一颗二叉搜索树
+</code></pre><p><strong>示例 2：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1694762510-vVpTic-%E5%89%91%E6%8C%8733.png"></p>
+<pre tabindex="0"><code>输入: postorder = [4,6,5,9,8]
+输出: true 
+解释：可构建的二叉搜索树如上图
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>数组长度 &lt;= 1000</code></li>
+<li><code>postorder</code> 中无重复数字</li>
+</ul>
+<p><strong>思路</strong></p>
+<p>二叉树的后序遍历是：<code>左子节点-右子节点-根节点</code> 。</p>
+<p>二叉搜索树的性质是：左子节点的值小于根节点，右子节点的值大于根节点，并且左右子树也都是二叉搜索树。</p>
+<p>对于本题，我们需要：</p>
+<ol>
+<li><strong>根据后序遍历序列</strong>，</li>
+<li><strong>判断该树是否为二叉搜索树。</strong></li>
+</ol>
+<p>先思考第二个问题，我们如何判断一棵树是二叉搜索树？</p>
+<p>根据二叉搜索树的性质，根节点的左右两棵子树都是二叉搜索树，并且左子节点的值小于根节点，右子节点的值大于根节点。</p>
+<p>于是我们可以先判断左子节点、右子节点和根节点的大小关系，然后递归判断根节点的左右子树即可。</p>
+<p><strong>但我们现在拿到的是一个二叉树的后序遍历序列，我们怎么还原出二叉树从而进行递归呢？</strong></p>
+<p>由于后序遍历的顺序是 <code>左子节点-右子节点-根节点</code> ，<strong>所以给定的后序序列的最后一个元素一定是整棵二叉树的根节点。</strong></p>
+<p>根据二叉搜索树的性质，右子节点的值一定是最大的，左子节点的值一定是最小的，并且我们知道当前二叉树的根节点，所以我们可以先把整棵树划分成：左子树部分、根节点、右子树部分。</p>
+<p><strong>定义：<em>recur(postorder, i, j)</em> 表示序列 <em>postorder</em> 的 <em>[i, j]</em> 区间是否为二叉搜索树</strong></p>
+<p>我们用一个指针 <em>p</em> 去遍历整个序列，先找到当前 <em>[i, j]</em> 区间第一个大于根节点的索引 <em>m</em>（<strong>根据后序遍历的性质，当前区间的根节点索引为 <em>j</em></strong> ），此时就确定了整棵二叉树的左子树区间：<em>[i, m-1]</em> 。<strong>如果剩下的右子树区间：<em>[m, j-1]</em> 满足该区间的数都比根节点大，那么当前搜索树树的基本结构是正确的</strong>。</p>
+<p>为什么上面说的是基本正确而不是完全正确呢？这是因为此时只能说明整棵树的根节点、根节点的左子节点、根节点的右子节点的大小顺序是正确的，<strong>但是它的左右子树不一定满足搜索树的性质</strong>。</p>
+<p>所以我们需要递归遍历上面的左右子树区间，将这些条件联合起来判断，才能说明给定的树是否为二叉搜索树。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> verifyTreeOrder(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> postorder) {
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// j 表示根节点索引，i 表示后序区间最左侧
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">auto</span> recur <span style="color:#f92672">=</span> [<span style="color:#f92672">&amp;</span>](<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;&amp;</span> recur, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> postorder, <span style="color:#66d9ef">int</span> i, <span style="color:#66d9ef">int</span> j) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">bool</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">&gt;=</span> j) <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> p <span style="color:#f92672">=</span> i;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">while</span> (postorder[p] <span style="color:#f92672">&lt;</span> postorder[j]) <span style="color:#f92672">++</span>p;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> m <span style="color:#f92672">=</span> p; <span style="color:#75715e">// 第一个大于根节点的索引，那么左子树区间：[i, m-1]；右子树区间：[m, j-1]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">while</span> (postorder[p] <span style="color:#f92672">&gt;</span> postorder[j]) <span style="color:#f92672">++</span>p; <span style="color:#75715e">// 循环结束后如果 p == j，那么该树是基本正确的
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">return</span> p <span style="color:#f92672">==</span> j <span style="color:#f92672">&amp;&amp;</span> recur(recur, postorder, i, m <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">&amp;&amp;</span> recur(recur, postorder, m, j <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">recur</span>(recur, postorder, <span style="color:#ae81ff">0</span>, postorder.size() <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="12二叉树中和为目标值的路径">12.二叉树中和为目标值的路径<a hidden class="anchor" aria-hidden="true" href="#12二叉树中和为目标值的路径">#</a></h2>
+<p>给你二叉树的根节点 <code>root</code> 和一个整数目标和 <code>targetSum</code> ，找出所有 <strong>从根节点到叶子节点</strong> 路径总和等于给定目标和的路径。</p>
+<p><strong>叶子节点</strong> 是指没有子节点的节点。</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2021/01/18/pathsumii1.jpg"></p>
+<pre tabindex="0"><code>输入：root = [5,4,8,11,null,13,4,7,2,null,null,5,1], targetSum = 22
+输出：[[5,4,11,2],[5,8,4,5]]
+</code></pre><p><strong>示例 2：</strong></p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2021/01/18/pathsum2.jpg"></p>
+<pre tabindex="0"><code>输入：root = [1,2,3], targetSum = 5
+输出：[]
+</code></pre><p><strong>示例 3：</strong></p>
+<pre tabindex="0"><code>输入：root = [1,2], targetSum = 0
+输出：[]
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li>树中节点总数在范围 <code>[0, 5000]</code> 内</li>
+<li><code>-1000 &lt;= Node.val &lt;= 1000</code></li>
+<li><code>-1000 &lt;= targetSum &lt;= 1000</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>前序遍历二叉树，回溯枚举答案即可。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> res;
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> path;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> pathTarget(TreeNode<span style="color:#f92672">*</span> root, <span style="color:#66d9ef">int</span> target) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">auto</span> dfs <span style="color:#f92672">=</span> [<span style="color:#f92672">&amp;</span>](<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;&amp;</span> dfs, TreeNode<span style="color:#f92672">*</span> root, <span style="color:#66d9ef">int</span> target) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (root <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            path.push_back(root<span style="color:#f92672">-&gt;</span>val);
+</span></span><span style="display:flex;"><span>            target <span style="color:#f92672">-=</span> root<span style="color:#f92672">-&gt;</span>val;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (target <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">&amp;&amp;</span> root<span style="color:#f92672">-&gt;</span>left <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span> <span style="color:#f92672">&amp;&amp;</span> root<span style="color:#f92672">-&gt;</span>right <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) {
+</span></span><span style="display:flex;"><span>                res.push_back(path);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            dfs(dfs, root<span style="color:#f92672">-&gt;</span>left, target);
+</span></span><span style="display:flex;"><span>            dfs(dfs, root<span style="color:#f92672">-&gt;</span>right, target);
+</span></span><span style="display:flex;"><span>            path.pop_back();
+</span></span><span style="display:flex;"><span>            target <span style="color:#f92672">+=</span> root<span style="color:#f92672">-&gt;</span>val;
+</span></span><span style="display:flex;"><span>        };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        dfs(dfs, root, target);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="13将二叉搜索树转化为排序的双向链表">13.将二叉搜索树转化为排序的双向链表<a hidden class="anchor" aria-hidden="true" href="#13将二叉搜索树转化为排序的双向链表">#</a></h2>
+<p>将一个 <strong>二叉搜索树</strong> 就地转化为一个 <strong>已排序的双向循环链表</strong> 。</p>
+<p>对于双向循环列表，你可以将左右孩子指针作为双向循环链表的前驱和后继指针，第一个节点的前驱是最后一个节点，最后一个节点的后继是第一个节点。</p>
+<p>特别地，我们希望可以 <strong>就地</strong> 完成转换操作。当转化完成以后，树中节点的左指针需要指向前驱，树中节点的右指针需要指向后继。还需要返回链表中最小元素的指针。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：root = [4,2,5,1,3] 
+
+
+输出：[1,2,3,4,5]
+
+解释：下图显示了转化后的二叉搜索树，实线表示后继关系，虚线表示前驱关系。
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：root = [2,1,3]
+输出：[1,2,3]
+</code></pre><p><strong>示例 3：</strong></p>
+<pre tabindex="0"><code>输入：root = []
+输出：[]
+解释：输入是空树，所以输出也是空链表。
+</code></pre><p><strong>示例 4：</strong></p>
+<pre tabindex="0"><code>输入：root = [1]
+输出：[1]
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>-1000 &lt;= Node.val &lt;= 1000</code></li>
+<li><code>Node.left.val &lt; Node.val &lt; Node.right.val</code></li>
+<li><code>Node.val</code> 的所有值都是独一无二的</li>
+<li><code>0 &lt;= Number of Nodes &lt;= 2000</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>题目要求将给定的二叉搜索树<strong>原地</strong>转换为<strong>已排序的双向链表</strong>，我们可以利用二叉搜索树的性质：根节点的左子树都比根节点小，右子树都比根节点大。</p>
+<p>为了利用这个性质，我们可以<strong>中序遍历</strong>二叉树，定义前驱节点指针 <em>pre</em> 和当前节点指针 <em>cur</em> ，在遍历的过程中根据要求将节点的左右指针指向对应的节点即可。注意遍历完后还需要把双向链表的头尾节点连起来。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Definition for a Node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">class Node {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">public:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    Node* left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    Node* right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    Node() {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    Node(int _val) {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        val = _val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        left = NULL;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        right = NULL;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    Node(int _val, Node* _left, Node* _right) {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        val = _val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        left = _left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">        right = _right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">};
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">*/</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    Node <span style="color:#f92672">*</span>pre, <span style="color:#f92672">*</span>head;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    Node<span style="color:#f92672">*</span> treeToDoublyList(Node<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">auto</span> dfs <span style="color:#f92672">=</span> [<span style="color:#f92672">&amp;</span>](<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;&amp;</span> dfs, Node<span style="color:#f92672">*</span> cur) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (cur <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 中序遍历
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            dfs(dfs, cur<span style="color:#f92672">-&gt;</span>left);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (pre <span style="color:#f92672">!=</span> <span style="color:#66d9ef">nullptr</span>) pre<span style="color:#f92672">-&gt;</span>right <span style="color:#f92672">=</span> cur;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">else</span> head <span style="color:#f92672">=</span> cur; <span style="color:#75715e">// 如果前序节点，说明是头节点
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            cur<span style="color:#f92672">-&gt;</span>left <span style="color:#f92672">=</span> pre;
+</span></span><span style="display:flex;"><span>            pre <span style="color:#f92672">=</span> cur;
+</span></span><span style="display:flex;"><span>            dfs(dfs, cur<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>        };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (root <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>        dfs(dfs, root);
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 处理链表头尾，保证为循环链表
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        head<span style="color:#f92672">-&gt;</span>left <span style="color:#f92672">=</span> pre;
+</span></span><span style="display:flex;"><span>        pre<span style="color:#f92672">-&gt;</span>right <span style="color:#f92672">=</span> head;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> head;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="14序列化与反序列化二叉树">14.序列化与反序列化二叉树<a hidden class="anchor" aria-hidden="true" href="#14序列化与反序列化二叉树">#</a></h2>
+<p>序列化是将一个数据结构或者对象转换为连续的比特位的操作，进而可以将转换后的数据存储在一个文件或者内存中，同时也可以通过网络传输到另一个计算机环境，采取相反方式重构得到原数据。</p>
+<p>请设计一个算法来实现二叉树的序列化与反序列化。这里不限定你的序列 / 反序列化算法执行逻辑，你只需要保证一个二叉树可以被序列化为一个字符串并且将这个字符串反序列化为原始的树结构。</p>
+<p><strong>提示:</strong> 输入输出格式与 LeetCode 目前使用的方式一致，详情请参阅 <a href="https://leetcode.cn/faq/#binary-tree">LeetCode 序列化二叉树的格式</a>。你并非必须采取这种方式，你也可以采用其他的方法解决这个问题。</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2020/09/15/serdeser.jpg"></p>
+<pre tabindex="0"><code>输入：root = [1,2,3,null,null,4,5]
+输出：[1,2,3,null,null,4,5]
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：root = []
+输出：[]
+</code></pre><p><strong>示例 3：</strong></p>
+<pre tabindex="0"><code>输入：root = [1]
+输出：[1]
+</code></pre><p><strong>示例 4：</strong></p>
+<pre tabindex="0"><code>输入：root = [1,2]
+输出：[1,2]
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li>树中结点数在范围 <code>[0, 104]</code> 内</li>
+<li><code>-1000 &lt;= Node.val &lt;= 1000</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>序列化二叉树需要对二叉树进行前序遍历，在遍历的过程中判断当前节点是否为空，如果为空就在答案字符串中添加 <code>&quot;None,&quot;</code> ，否则添加节点值。</p>
+<p>反序列化二叉树需要将字符串根据逗号分割，将分割出来的单词放到 <em>list</em> 中，然后递归遍历 <em>list</em> 构建二叉树。</p>
+<p><strong>注意：这里 <em>c++</em> 要用 <em>list</em> 存放分割出来的 <em>string</em> 不能用 <em>vector</em> 。因为 <em>list</em> 是用双向链表实现的，适合实现增删改查，而 <em>vector</em> 是连续空间的数组，增删耗时较多</strong></p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Codec</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> rserialize(TreeNode<span style="color:#f92672">*</span> root, string<span style="color:#f92672">&amp;</span> str) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (root <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) {
+</span></span><span style="display:flex;"><span>            str <span style="color:#f92672">+=</span> <span style="color:#e6db74">&#34;None,&#34;</span>;
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            str <span style="color:#f92672">+=</span> to_string(root<span style="color:#f92672">-&gt;</span>val) <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;,&#34;</span>;
+</span></span><span style="display:flex;"><span>            rserialize(root<span style="color:#f92672">-&gt;</span>left, str);
+</span></span><span style="display:flex;"><span>            rserialize(root<span style="color:#f92672">-&gt;</span>right, str);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Encodes a tree to a single string.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    string <span style="color:#a6e22e">serialize</span>(TreeNode<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        string res;
+</span></span><span style="display:flex;"><span>        rserialize(root, res);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    TreeNode<span style="color:#f92672">*</span> <span style="color:#a6e22e">rdeserialize</span>(list<span style="color:#f92672">&lt;</span>string<span style="color:#f92672">&gt;&amp;</span> dataArray) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (dataArray.front() <span style="color:#f92672">==</span> <span style="color:#e6db74">&#34;None&#34;</span>) {
+</span></span><span style="display:flex;"><span>            dataArray.erase(dataArray.begin());
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        TreeNode<span style="color:#f92672">*</span> root <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> TreeNode(stoi(dataArray.front()));
+</span></span><span style="display:flex;"><span>        dataArray.erase(dataArray.begin());
+</span></span><span style="display:flex;"><span>        root<span style="color:#f92672">-&gt;</span>left <span style="color:#f92672">=</span> rdeserialize(dataArray);
+</span></span><span style="display:flex;"><span>        root<span style="color:#f92672">-&gt;</span>right <span style="color:#f92672">=</span> rdeserialize(dataArray);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> root;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Decodes your encoded data to tree.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    TreeNode<span style="color:#f92672">*</span> <span style="color:#a6e22e">deserialize</span>(string data) {
+</span></span><span style="display:flex;"><span>        list<span style="color:#f92672">&lt;</span>string<span style="color:#f92672">&gt;</span> dataArray;
+</span></span><span style="display:flex;"><span>        string str;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> ch: data) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (ch <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;,&#39;</span>) {
+</span></span><span style="display:flex;"><span>                dataArray.push_back(str);
+</span></span><span style="display:flex;"><span>                str.clear();
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                str.push_back(ch);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>str.empty()) {
+</span></span><span style="display:flex;"><span>            dataArray.push_back(str);
+</span></span><span style="display:flex;"><span>            str.clear();
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> rdeserialize(dataArray);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Your Codec object will be instantiated and called as such:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// Codec codec;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">// codec.deserialize(codec.serialize(root));
+</span></span></span></code></pre></div><h2 id="15寻找二叉搜索树中的目标节点">15.寻找二叉搜索树中的目标节点<a hidden class="anchor" aria-hidden="true" href="#15寻找二叉搜索树中的目标节点">#</a></h2>
+<p>某公司组织架构以二叉搜索树形式记录，节点值为处于该职位的员工编号。请返回第 <code>cnt</code> 大的员工编号。</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1695101634-kzHKZW-image.png"></p>
+<pre tabindex="0"><code>输入：root = [7, 3, 9, 1, 5], cnt = 2
+       7
+      / \
+     3   9
+    / \
+   1   5
+输出：7
+</code></pre><p><strong>示例 2：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1695101636-ESZtLa-image.png"></p>
+<pre tabindex="0"><code>输入: root = [10, 5, 15, 2, 7, null, 20, 1, null, 6, 8], cnt = 4
+       10
+      / \
+     5   15
+    / \    \
+   2   7    20
+  /   / \ 
+ 1   6   8
+输出: 8
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li>1 ≤ cnt ≤ 二叉搜索树元素个数</li>
+</ul>
+<p><strong>思路</strong></p>
+<p>因为给定的是一棵二叉搜索树，我们对这棵树进行中序遍历，用一个 <em>cnt</em> 记录当前是第几大的节点，最终返回即可。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> res, cnt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> findTargetNode(TreeNode<span style="color:#f92672">*</span> root, <span style="color:#66d9ef">int</span> k) {
+</span></span><span style="display:flex;"><span>        cnt <span style="color:#f92672">=</span> k;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">auto</span> dfs <span style="color:#f92672">=</span> [<span style="color:#f92672">&amp;</span>](<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;&amp;</span> dfs, TreeNode<span style="color:#f92672">*</span> node) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (node <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            dfs(dfs, node<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (cnt <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">--</span>cnt <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) {
+</span></span><span style="display:flex;"><span>                res <span style="color:#f92672">=</span> node<span style="color:#f92672">-&gt;</span>val;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            dfs(dfs,node<span style="color:#f92672">-&gt;</span>left);
+</span></span><span style="display:flex;"><span>        };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        dfs(dfs, root);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="16计算二叉树的深度">16.计算二叉树的深度<a hidden class="anchor" aria-hidden="true" href="#16计算二叉树的深度">#</a></h2>
+<p>某公司架构以二叉树形式记录，请返回该公司的层级数。</p>
+<p><strong>示例 1：</strong></p>
+<p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1695101942-FSrxqu-image.png"></p>
+<pre tabindex="0"><code>输入：root = [1, 2, 2, 3, null, null, 5, 4, null, null, 4]
+输出: 4
+解释: 上面示例中的二叉树的最大深度是 4，沿着路径 1 -&gt; 2 -&gt; 3 -&gt; 4 或 1 -&gt; 2 -&gt; 5 -&gt; 4 到达叶节点的最长路径上有 4 个节点。
+</code></pre><p><strong>思路</strong></p>
+<p>第一种做法是直接递归：分别递归计算左右子树高度，那么这棵树的高度就是左右子树高度的最大值 + 1 。</p>
+<p>第二种做法是对左右子树分别 <em>dfs</em> ，记录下来大小然后计算高度。</p>
+<p><strong>Code</strong></p>
+<p>1.直接递归</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> calculateDepth(TreeNode<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (root <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> l_depth <span style="color:#f92672">=</span> calculateDepth(root<span style="color:#f92672">-&gt;</span>left);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> r_depth <span style="color:#f92672">=</span> calculateDepth(root<span style="color:#f92672">-&gt;</span>right);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">max</span>(l_depth, r_depth) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>2.分别 <em>dfs</em> 计算</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> calculateDepth(TreeNode<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">auto</span> dfs <span style="color:#f92672">=</span> [<span style="color:#f92672">&amp;</span>](<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;&amp;</span> dfs, TreeNode<span style="color:#f92672">*</span> root, <span style="color:#66d9ef">int</span><span style="color:#f92672">&amp;</span> res, <span style="color:#66d9ef">int</span> temp) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (root <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) {
+</span></span><span style="display:flex;"><span>                res <span style="color:#f92672">=</span> max(res, temp);
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            temp<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>            dfs(dfs, root<span style="color:#f92672">-&gt;</span>left, res, temp);
+</span></span><span style="display:flex;"><span>            dfs(dfs, root<span style="color:#f92672">-&gt;</span>right, res, temp);
+</span></span><span style="display:flex;"><span>        };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, temp <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        dfs(dfs, root, res, temp);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="17判断是否为平衡二叉树">17.判断是否为平衡二叉树<a hidden class="anchor" aria-hidden="true" href="#17判断是否为平衡二叉树">#</a></h2>
+<p>输入一棵二叉树的根节点，判断该树是不是平衡二叉树。如果某二叉树中任意节点的左右子树的深度相差不超过1，那么它就是一棵平衡二叉树。</p>
+<p><strong>示例 1:</strong></p>
+<pre tabindex="0"><code>输入：root = [3,9,20,null,null,15,7]
+输出：true 
+解释：如下图
+</code></pre><p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1695102431-vbmWJn-image.png"></p>
+<p><strong>示例 2:</strong></p>
+<pre tabindex="0"><code>输入：root = [1,2,2,3,3,null,null,4,4]
+输出：false
+解释：如下图
+</code></pre><p><img alt="img" loading="lazy" src="https://pic.leetcode.cn/1695102434-WlaxCo-image.png"></p>
+<p><strong>提示：</strong></p>
+<ul>
+<li><code>0 &lt;= 树的结点个数 &lt;= 10000</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>计算左右两棵子树的高度，计算两棵子树的高度差，如果大于 <em>1</em> 就说明这棵树不平衡。</p>
+<p>可以在递归过程中判断当前子树是否为平衡二叉树，如果不平衡，说明整棵树不平衡，直接返回 <em>-1</em> 剪枝。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode() : val(0), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> isBalanced(TreeNode<span style="color:#f92672">*</span> root) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">auto</span> get_height <span style="color:#f92672">=</span> [<span style="color:#f92672">&amp;</span>](<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;&amp;</span> get_height, TreeNode<span style="color:#f92672">*</span> node) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">int</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (node <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span>) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> leftH <span style="color:#f92672">=</span> get_height(get_height, node<span style="color:#f92672">-&gt;</span>left); <span style="color:#75715e">// 递归计算左子树
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (leftH <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>; <span style="color:#75715e">// 若不平衡
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> rightH <span style="color:#f92672">=</span> get_height(get_height, node<span style="color:#f92672">-&gt;</span>right); <span style="color:#75715e">// 递归计算右子树
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (rightH <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> <span style="color:#f92672">||</span> abs(leftH <span style="color:#f92672">-</span> rightH) <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">1</span>) <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">max</span>(leftH, rightH) <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>; <span style="color:#75715e">// 树的高度为左子树和右子树高度的最大值 + 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        };
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">get_height</span>(get_height, root) <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="18二叉搜索树的最近公共祖先">18.二叉搜索树的最近公共祖先<a hidden class="anchor" aria-hidden="true" href="#18二叉搜索树的最近公共祖先">#</a></h2>
+<p>给定一个二叉搜索树, 找到该树中两个指定节点的最近公共祖先。</p>
+<p><a href="https://baike.baidu.com/item/%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88/8918834?fr=aladdin">百度百科</a>中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（<strong>一个节点也可以是它自己的祖先</strong>）。”</p>
+<p>例如，给定如下二叉搜索树: root = [6,2,8,0,4,7,9,null,null,3,5]</p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/14/binarysearchtree_improved.png"></p>
+<p><strong>示例 1:</strong></p>
+<pre tabindex="0"><code>输入: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8
+输出: 6 
+解释: 节点 2 和节点 8 的最近公共祖先是 6。
+</code></pre><p><strong>示例 2:</strong></p>
+<pre tabindex="0"><code>输入: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 4
+输出: 2
+解释: 节点 2 和节点 4 的最近公共祖先是 2, 因为根据定义最近公共祖先节点可以为节点本身。
+</code></pre><p><strong>说明:</strong></p>
+<ul>
+<li>所有节点的值都是唯一的。</li>
+<li>p、q 为不同节点且均存在于给定的二叉搜索树中。</li>
+</ul>
+<p><strong>思路</strong></p>
+<p>给定的是<strong>二叉搜索树</strong>，利用它的性质分类讨论：</p>
+<p><img alt="235.png" loading="lazy" src="https://pic.leetcode.cn/1681701383-TwtQeO-235.png"></p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    TreeNode<span style="color:#f92672">*</span> lowestCommonAncestor(TreeNode<span style="color:#f92672">*</span> root, TreeNode<span style="color:#f92672">*</span> p, TreeNode<span style="color:#f92672">*</span> q) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> root<span style="color:#f92672">-&gt;</span>val;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (p<span style="color:#f92672">-&gt;</span>val <span style="color:#f92672">&lt;</span> x <span style="color:#f92672">&amp;&amp;</span> q<span style="color:#f92672">-&gt;</span>val <span style="color:#f92672">&lt;</span> x) <span style="color:#75715e">// p、q都在左子树
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">return</span> lowestCommonAncestor(root<span style="color:#f92672">-&gt;</span>left, p, q);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (p<span style="color:#f92672">-&gt;</span>val <span style="color:#f92672">&gt;</span> x <span style="color:#f92672">&amp;&amp;</span> q<span style="color:#f92672">-&gt;</span>val <span style="color:#f92672">&gt;</span> x) <span style="color:#75715e">// p、q都在右子树
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">return</span> lowestCommonAncestor(root<span style="color:#f92672">-&gt;</span>right, p, q);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> root;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="19二叉树的最近公共祖先">19.二叉树的最近公共祖先<a hidden class="anchor" aria-hidden="true" href="#19二叉树的最近公共祖先">#</a></h2>
+<p>给定一个二叉树, 找到该树中两个指定节点的最近公共祖先。</p>
+<p><a href="https://baike.baidu.com/item/%E6%9C%80%E8%BF%91%E5%85%AC%E5%85%B1%E7%A5%96%E5%85%88/8918834?fr=aladdin">百度百科</a>中最近公共祖先的定义为：“对于有根树 T 的两个结点 p、q，最近公共祖先表示为一个结点 x，满足 x 是 p、q 的祖先且 x 的深度尽可能大（<strong>一个节点也可以是它自己的祖先</strong>）。”</p>
+<p>例如，给定如下二叉树: root = [3,5,1,6,2,0,8,null,null,7,4]</p>
+<p><img alt="img" loading="lazy" src="https://assets.leetcode-cn.com/aliyun-lc-upload/uploads/2018/12/15/binarytree.png"></p>
+<p><strong>示例 1:</strong></p>
+<pre tabindex="0"><code>输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 1
+输出: 3
+解释: 节点 5 和节点 1 的最近公共祖先是节点 3。
+</code></pre><p><strong>示例 2:</strong></p>
+<pre tabindex="0"><code>输入: root = [3,5,1,6,2,0,8,null,null,7,4], p = 5, q = 4
+输出: 5
+解释: 节点 5 和节点 4 的最近公共祖先是节点 5。因为根据定义最近公共祖先节点可以为节点本身。
+</code></pre><p><strong>说明:</strong></p>
+<ul>
+<li>所有节点的值都是唯一的。</li>
+<li>p、q 为不同节点且均存在于给定的二叉树中。</li>
+</ul>
+<p><strong>思路</strong></p>
+<p>相较于上一题，本题给定的是普通的二叉树，分类讨论：</p>
+<p><img alt="236.png" loading="lazy" src="https://pic.leetcode.cn/1681546069-BZfraI-236.png"></p>
+<p>其中，<strong>左右子树都找到</strong>指的是 <em>p</em> 和 <em>q</em> 分别在当前根节点的左右子树中；<strong>只有左子树找到</strong>指的是 <em>p</em> 和 <em>q</em> 都在当前根节点的左子树中，右子树同理。对于<strong>左右子树都没有找到</strong>的情况，举个例子：当前递归的是根节点的左子树，但 <em>p</em> 和 <em>q</em> 都在根节点的右子树，所以需要返回空。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Definition for a binary tree node.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * struct TreeNode {
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     int val;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *left;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode *right;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * };
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    TreeNode<span style="color:#f92672">*</span> lowestCommonAncestor(TreeNode<span style="color:#f92672">*</span> root, TreeNode<span style="color:#f92672">*</span> p, TreeNode<span style="color:#f92672">*</span> q) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (root <span style="color:#f92672">==</span> <span style="color:#66d9ef">nullptr</span> <span style="color:#f92672">||</span> root <span style="color:#f92672">==</span> p <span style="color:#f92672">||</span> root <span style="color:#f92672">==</span> q) <span style="color:#66d9ef">return</span> root;
+</span></span><span style="display:flex;"><span>        TreeNode <span style="color:#f92672">*</span>left <span style="color:#f92672">=</span> lowestCommonAncestor(root<span style="color:#f92672">-&gt;</span>left, p, q);
+</span></span><span style="display:flex;"><span>        TreeNode <span style="color:#f92672">*</span>right <span style="color:#f92672">=</span> lowestCommonAncestor(root<span style="color:#f92672">-&gt;</span>right, p, q);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (left <span style="color:#f92672">&amp;&amp;</span> right) <span style="color:#66d9ef">return</span> root;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> left <span style="color:#f92672">?</span> left : right;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

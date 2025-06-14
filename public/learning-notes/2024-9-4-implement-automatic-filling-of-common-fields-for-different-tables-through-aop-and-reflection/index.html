@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>通过AOP和反射实现不同表的公共字段自动填充 | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="记录">
+<meta name="author" content="">
+<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-9-4-implement-automatic-filling-of-common-fields-for-different-tables-through-aop-and-reflection/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-9-4-implement-automatic-filling-of-common-fields-for-different-tables-through-aop-and-reflection/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-9-4-implement-automatic-filling-of-common-fields-for-different-tables-through-aop-and-reflection/">
+  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
+  <meta property="og:title" content="通过AOP和反射实现不同表的公共字段自动填充">
+  <meta property="og:description" content="记录">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="learning-notes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="通过AOP和反射实现不同表的公共字段自动填充">
+<meta name="twitter:description" content="记录">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Learning Notes",
+      "item": "https://yuk1pedia.github.io/learning-notes/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "通过AOP和反射实现不同表的公共字段自动填充",
+      "item": "https://yuk1pedia.github.io/learning-notes/2024-9-4-implement-automatic-filling-of-common-fields-for-different-tables-through-aop-and-reflection/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "通过AOP和反射实现不同表的公共字段自动填充",
+  "name": "通过AOP和反射实现不同表的公共字段自动填充",
+  "description": "记录",
+  "keywords": [
+    
+  ],
+  "articleBody": "项目问题场景 当前端页面涉及到新增或更新数据操作时，在后端数据库中会有更新某些公共字段的需求，比如创建时间、更新时间、创建人等等。\n比如下面的 service 层代码：\n/** * 新增员工 * @param employeeDTO */ public void save(EmployeeDTO employeeDTO) { System.out.println(\"当前线程的 id：\" + Thread.currentThread().getId()); Employee employee = new Employee(); // 对象属性拷贝，将前者的属性拷贝到后者的属性上，前提是两者的属性名一致 BeanUtils.copyProperties(employeeDTO, employee); // 设置账号状态，默认正常状态 1表示正常，0表示锁定 employee.setStatus(StatusConstant.ENABLE); // 用常量类来设置，不用具体的数字（硬编码） // 设置密码，默认为 123456，同样使用常量类来设置 employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes())); // 设置当前记录的创建时间和修改时间 employee.setCreateTime(LocalDateTime.now()); employee.setUpdateTime(LocalDateTime.now()); // 设置当前记录创建人 id 和修改人 id employee.setCreateUser(BaseContext.getCurrentId()); employee.setUpdateUser(BaseContext.getCurrentId()); employeeMapper.insert(employee); } /** * 编辑员工信息 * @param employeeDTO */ public void update(EmployeeDTO employeeDTO) { Employee employee = new Employee(); BeanUtils.copyProperties(employeeDTO, employee); employee.setUpdateTime(LocalDateTime.now()); employee.setUpdateUser(BaseContext.getCurrentId()); // 获取操作人 id，此处是通过拦截器的 thread 获取对应信息 employeeMapper.update(employee); } 其中更新 updateTime 、setUpdateUser 等操作在重复的调用相同的 set 方法，会增加代码的冗余且不便于后期维护。\n于是，这里可以采用 AOP 和反射的方法来实现对于不同表的公共字段的自动填充。\n具体实现 要使用 AOP ，我们需要有一个切入点 cutPoint ，在代码执行到对应的 service 层方法时，将其拦截下来，利用 Java 的反射特性进行公共字段的填充。\n首先自定义一个注解 AutoFill，用于标识某个方法需要进行功能字段自动填充处理（代码中的 OperationType 是枚举类，存放的 UPDATE 和 INSERT） /** * 自定义注解，用于标识某个方法需要进行功能字段自动填充处理 */ @Target(ElementType.METHOD) // 作用在方法上的注解 @Retention(RetentionPolicy.RUNTIME) // 生命周期是程序运行时 public @interface AutoFill { // 数据库操作类型：UPDATE INSERT OperationType value(); } 然后自定义一个切面类，确定切入点并确认通知类型为前置通知（因为要在更新或新增操作之前将表中的公共字段进行填充），最后在该类中实现公共字段自动填充逻辑，具体看注释 /** * 自定义切面，实现公共字段自动填充逻辑 */ @Aspect @Component @Slf4j public class AutoFillAspect { /** * 切入点 */ @Pointcut(\"execution(* com.sky.mapper.*.*(..)) \u0026\u0026 @annotation(com.sky.annotation.AutoFill)\") public void autoFillPointCut() {} /** * 前置通知，在通知中进行公共字段的赋值 */ @Before(\"autoFillPointCut()\") public void autoFill(JoinPoint joinPoint) { log.info(\"开始进行公共字段自动填充...\"); // 获取当前被拦截的方法上的数据库操作类型 MethodSignature signature = (MethodSignature) joinPoint.getSignature(); // 获取方法签名对象 AutoFill autoFill = signature.getMethod().getAnnotation(AutoFill.class); // 获得方法上的注解对象 OperationType operationType = autoFill.value(); // 获取数据库操作类型 // 获取到当前被拦截的方法参数--实体对象 Object[] args = joinPoint.getArgs(); if (args == null || args.length == 0) { // 特判获取的对象是否为空 return; } Object entity = args[0]; // 获取到的实体对象（拦截到的方法可能有多个参数，此处要保证实体参数在第一个位置） // 准备赋值的数据 LocalDateTime now = LocalDateTime.now(); Long currentId = BaseContext.getCurrentId(); // 根据当前不同的操作类型，为对应的属性通过反射来赋值 if (operationType == OperationType.INSERT) { // 为 4 个公共字段赋值 try { Method setCreateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_TIME, LocalDateTime.class); Method setCreateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_CREATE_USER, Long.class); Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class); Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class); // 通过反射为对象属性赋值 setCreateTime.invoke(entity, now); setCreateUser.invoke(entity, currentId); setUpdateTime.invoke(entity, now); setUpdateUser.invoke(entity, currentId); } catch (Exception e) { e.printStackTrace(); } } else if (operationType == OperationType.UPDATE) { // 为 2 个公共字段赋值 try { Method setUpdateTime = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_TIME, LocalDateTime.class); Method setUpdateUser = entity.getClass().getDeclaredMethod(AutoFillConstant.SET_UPDATE_USER, Long.class); // 通过反射为对象属性赋值 setUpdateTime.invoke(entity, now); setUpdateUser.invoke(entity, currentId); } catch (Exception e) { e.printStackTrace(); } } } } 最后在 mapper 层对应的方法上添加自定义的 @AutoFill 注解，确认切入点为当前方法\nEmployeeMapper /** * 插入员工数据 * @param employee */ @Insert(\"insert into employee (name, username, password, phone, sex, id_number, create_time, update_time, create_user, update_user, status) \" + \"value \" + \"(#{name},#{username},#{password},#{phone},#{sex},#{idNumber},#{createTime},#{updateTime},#{createUser},#{updateUser},#{status})\") @AutoFill(value = OperationType.INSERT) void insert(Employee employee); /** * 根据主键动态修改属性 * @param employee */ @AutoFill(value = OperationType.UPDATE) void update(Employee employee); CategoryMapper /** * 插入数据 * @param category */ @Insert(\"insert into category(type, name, sort, status, create_time, update_time, create_user, update_user)\" + \" VALUES\" + \" (#{type}, #{name}, #{sort}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})\") @AutoFill(value = OperationType.INSERT) void insert(Category category); /** * 根据id修改分类 * @param category */ @AutoFill(value = OperationType.UPDATE) void update(Category category); ",
+  "wordCount" : "409",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yuk1pedia.github.io/learning-notes/2024-9-4-implement-automatic-filling-of-common-fields-for-different-tables-through-aop-and-reflection/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YUKIPEDIA's blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yuk1pedia.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                    <span>Learning Notes</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      通过AOP和反射实现不同表的公共字段自动填充
+    </h1>
+    <div class="post-description">
+      记录
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="项目问题场景">项目问题场景<a hidden class="anchor" aria-hidden="true" href="#项目问题场景">#</a></h2>
+<p>当前端页面涉及到<strong>新增或更新</strong>数据操作时，在后端数据库中会有更新某些公共字段的需求，比如创建时间、更新时间、创建人等等。</p>
+<p>比如下面的 <code>service</code> 层代码：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 新增员工
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param employeeDTO
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">save</span>(EmployeeDTO employeeDTO) {
+</span></span><span style="display:flex;"><span>    System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;当前线程的 id：&#34;</span> <span style="color:#f92672">+</span> Thread.<span style="color:#a6e22e">currentThread</span>().<span style="color:#a6e22e">getId</span>());
+</span></span><span style="display:flex;"><span>    Employee employee <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Employee();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 对象属性拷贝，将前者的属性拷贝到后者的属性上，前提是两者的属性名一致</span>
+</span></span><span style="display:flex;"><span>    BeanUtils.<span style="color:#a6e22e">copyProperties</span>(employeeDTO, employee);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 设置账号状态，默认正常状态 1表示正常，0表示锁定</span>
+</span></span><span style="display:flex;"><span>    employee.<span style="color:#a6e22e">setStatus</span>(StatusConstant.<span style="color:#a6e22e">ENABLE</span>); <span style="color:#75715e">// 用常量类来设置，不用具体的数字（硬编码）</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 设置密码，默认为 123456，同样使用常量类来设置</span>
+</span></span><span style="display:flex;"><span>    employee.<span style="color:#a6e22e">setPassword</span>(DigestUtils.<span style="color:#a6e22e">md5DigestAsHex</span>(PasswordConstant.<span style="color:#a6e22e">DEFAULT_PASSWORD</span>.<span style="color:#a6e22e">getBytes</span>()));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 设置当前记录的创建时间和修改时间</span>
+</span></span><span style="display:flex;"><span>    employee.<span style="color:#a6e22e">setCreateTime</span>(LocalDateTime.<span style="color:#a6e22e">now</span>());
+</span></span><span style="display:flex;"><span>    employee.<span style="color:#a6e22e">setUpdateTime</span>(LocalDateTime.<span style="color:#a6e22e">now</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 设置当前记录创建人 id 和修改人 id</span>
+</span></span><span style="display:flex;"><span>    employee.<span style="color:#a6e22e">setCreateUser</span>(BaseContext.<span style="color:#a6e22e">getCurrentId</span>());
+</span></span><span style="display:flex;"><span>    employee.<span style="color:#a6e22e">setUpdateUser</span>(BaseContext.<span style="color:#a6e22e">getCurrentId</span>());
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    employeeMapper.<span style="color:#a6e22e">insert</span>(employee);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 编辑员工信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param employeeDTO
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">update</span>(EmployeeDTO employeeDTO) {
+</span></span><span style="display:flex;"><span>    Employee employee <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Employee();
+</span></span><span style="display:flex;"><span>    BeanUtils.<span style="color:#a6e22e">copyProperties</span>(employeeDTO, employee);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    employee.<span style="color:#a6e22e">setUpdateTime</span>(LocalDateTime.<span style="color:#a6e22e">now</span>());
+</span></span><span style="display:flex;"><span>    employee.<span style="color:#a6e22e">setUpdateUser</span>(BaseContext.<span style="color:#a6e22e">getCurrentId</span>()); <span style="color:#75715e">// 获取操作人 id，此处是通过拦截器的 thread 获取对应信息</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    employeeMapper.<span style="color:#a6e22e">update</span>(employee);
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>其中更新 <code>updateTime</code> 、<code>setUpdateUser</code> 等操作在重复的调用相同的 <code>set</code> 方法</strong>，会增加代码的冗余且不便于后期维护。</p>
+<p>于是，这里可以采用 AOP 和反射的方法来实现对于不同表的公共字段的自动填充。</p>
+<h2 id="具体实现">具体实现<a hidden class="anchor" aria-hidden="true" href="#具体实现">#</a></h2>
+<p>要使用 AOP ，我们需要有一个切入点 <code>cutPoint</code> ，在代码执行到对应的 <code>service</code> 层方法时，将其拦截下来，利用 <code>Java</code> 的反射特性进行公共字段的填充。</p>
+<ul>
+<li>首先自定义一个注解 <code>AutoFill</code>，用于标识某个方法需要进行功能字段自动填充处理（代码中的 <code>OperationType</code> 是枚举类，存放的 <code>UPDATE</code> 和 <code>INSERT</code>）</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 自定义注解，用于标识某个方法需要进行功能字段自动填充处理
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Target</span>(ElementType.<span style="color:#a6e22e">METHOD</span>) <span style="color:#75715e">// 作用在方法上的注解</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Retention</span>(RetentionPolicy.<span style="color:#a6e22e">RUNTIME</span>) <span style="color:#75715e">// 生命周期是程序运行时</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#a6e22e">@interface</span> AutoFill {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 数据库操作类型：UPDATE INSERT</span>
+</span></span><span style="display:flex;"><span>    OperationType <span style="color:#a6e22e">value</span>();
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>然后自定义一个切面类，<strong>确定切入点并确认通知类型为前置通知（因为要在更新或新增操作之前将表中的公共字段进行填充）</strong>，最后在该类中实现公共字段自动填充逻辑，具体看注释</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 自定义切面，实现公共字段自动填充逻辑
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Aspect</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Slf4j</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AutoFillAspect</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 切入点
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Pointcut</span>(<span style="color:#e6db74">&#34;execution(* com.sky.mapper.*.*(..)) &amp;&amp; @annotation(com.sky.annotation.AutoFill)&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">autoFillPointCut</span>() {}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 前置通知，在通知中进行公共字段的赋值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Before</span>(<span style="color:#e6db74">&#34;autoFillPointCut()&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">autoFill</span>(JoinPoint joinPoint) {
+</span></span><span style="display:flex;"><span>        log.<span style="color:#a6e22e">info</span>(<span style="color:#e6db74">&#34;开始进行公共字段自动填充...&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 获取当前被拦截的方法上的数据库操作类型</span>
+</span></span><span style="display:flex;"><span>        MethodSignature signature <span style="color:#f92672">=</span> (MethodSignature) joinPoint.<span style="color:#a6e22e">getSignature</span>(); <span style="color:#75715e">// 获取方法签名对象</span>
+</span></span><span style="display:flex;"><span>        AutoFill autoFill <span style="color:#f92672">=</span> signature.<span style="color:#a6e22e">getMethod</span>().<span style="color:#a6e22e">getAnnotation</span>(AutoFill.<span style="color:#a6e22e">class</span>); <span style="color:#75715e">// 获得方法上的注解对象</span>
+</span></span><span style="display:flex;"><span>        OperationType operationType <span style="color:#f92672">=</span> autoFill.<span style="color:#a6e22e">value</span>(); <span style="color:#75715e">// 获取数据库操作类型</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 获取到当前被拦截的方法参数--实体对象</span>
+</span></span><span style="display:flex;"><span>        Object<span style="color:#f92672">[]</span> args <span style="color:#f92672">=</span> joinPoint.<span style="color:#a6e22e">getArgs</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (args <span style="color:#f92672">==</span> <span style="color:#66d9ef">null</span> <span style="color:#f92672">||</span> args.<span style="color:#a6e22e">length</span> <span style="color:#f92672">==</span> 0) { <span style="color:#75715e">// 特判获取的对象是否为空</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        Object entity <span style="color:#f92672">=</span> args<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span>; <span style="color:#75715e">// 获取到的实体对象（拦截到的方法可能有多个参数，此处要保证实体参数在第一个位置）</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 准备赋值的数据</span>
+</span></span><span style="display:flex;"><span>        LocalDateTime now <span style="color:#f92672">=</span> LocalDateTime.<span style="color:#a6e22e">now</span>();
+</span></span><span style="display:flex;"><span>        Long currentId <span style="color:#f92672">=</span> BaseContext.<span style="color:#a6e22e">getCurrentId</span>();
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 根据当前不同的操作类型，为对应的属性通过反射来赋值</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (operationType <span style="color:#f92672">==</span> OperationType.<span style="color:#a6e22e">INSERT</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 为 4 个公共字段赋值</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>                Method setCreateTime <span style="color:#f92672">=</span> entity.<span style="color:#a6e22e">getClass</span>().<span style="color:#a6e22e">getDeclaredMethod</span>(AutoFillConstant.<span style="color:#a6e22e">SET_CREATE_TIME</span>, LocalDateTime.<span style="color:#a6e22e">class</span>);
+</span></span><span style="display:flex;"><span>                Method setCreateUser <span style="color:#f92672">=</span> entity.<span style="color:#a6e22e">getClass</span>().<span style="color:#a6e22e">getDeclaredMethod</span>(AutoFillConstant.<span style="color:#a6e22e">SET_CREATE_USER</span>, Long.<span style="color:#a6e22e">class</span>);
+</span></span><span style="display:flex;"><span>                Method setUpdateTime <span style="color:#f92672">=</span> entity.<span style="color:#a6e22e">getClass</span>().<span style="color:#a6e22e">getDeclaredMethod</span>(AutoFillConstant.<span style="color:#a6e22e">SET_UPDATE_TIME</span>, LocalDateTime.<span style="color:#a6e22e">class</span>);
+</span></span><span style="display:flex;"><span>                Method setUpdateUser <span style="color:#f92672">=</span> entity.<span style="color:#a6e22e">getClass</span>().<span style="color:#a6e22e">getDeclaredMethod</span>(AutoFillConstant.<span style="color:#a6e22e">SET_UPDATE_USER</span>, Long.<span style="color:#a6e22e">class</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 通过反射为对象属性赋值</span>
+</span></span><span style="display:flex;"><span>                setCreateTime.<span style="color:#a6e22e">invoke</span>(entity, now);
+</span></span><span style="display:flex;"><span>                setCreateUser.<span style="color:#a6e22e">invoke</span>(entity, currentId);
+</span></span><span style="display:flex;"><span>                setUpdateTime.<span style="color:#a6e22e">invoke</span>(entity, now);
+</span></span><span style="display:flex;"><span>                setUpdateUser.<span style="color:#a6e22e">invoke</span>(entity, currentId);
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">catch</span> (Exception e) {
+</span></span><span style="display:flex;"><span>                e.<span style="color:#a6e22e">printStackTrace</span>();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> (operationType <span style="color:#f92672">==</span> OperationType.<span style="color:#a6e22e">UPDATE</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 为 2 个公共字段赋值</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>                Method setUpdateTime <span style="color:#f92672">=</span> entity.<span style="color:#a6e22e">getClass</span>().<span style="color:#a6e22e">getDeclaredMethod</span>(AutoFillConstant.<span style="color:#a6e22e">SET_UPDATE_TIME</span>, LocalDateTime.<span style="color:#a6e22e">class</span>);
+</span></span><span style="display:flex;"><span>                Method setUpdateUser <span style="color:#f92672">=</span> entity.<span style="color:#a6e22e">getClass</span>().<span style="color:#a6e22e">getDeclaredMethod</span>(AutoFillConstant.<span style="color:#a6e22e">SET_UPDATE_USER</span>, Long.<span style="color:#a6e22e">class</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 通过反射为对象属性赋值</span>
+</span></span><span style="display:flex;"><span>                setUpdateTime.<span style="color:#a6e22e">invoke</span>(entity, now);
+</span></span><span style="display:flex;"><span>                setUpdateUser.<span style="color:#a6e22e">invoke</span>(entity, currentId);
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">catch</span> (Exception e) {
+</span></span><span style="display:flex;"><span>                e.<span style="color:#a6e22e">printStackTrace</span>();
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>
+<p>最后在 <code>mapper</code> 层对应的方法上添加自定义的 <code>@AutoFill</code> 注解，确认切入点为当前方法</p>
+<ul>
+<li>EmployeeMapper</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 插入员工数据
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param employee
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Insert</span>(<span style="color:#e6db74">&#34;insert into employee (name, username, password, phone, sex, id_number, create_time, update_time, create_user, update_user, status) &#34;</span> <span style="color:#f92672">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;value &#34;</span> <span style="color:#f92672">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;(#{name},#{username},#{password},#{phone},#{sex},#{idNumber},#{createTime},#{updateTime},#{createUser},#{updateUser},#{status})&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@AutoFill</span>(value <span style="color:#f92672">=</span> OperationType.<span style="color:#a6e22e">INSERT</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">insert</span>(Employee employee);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 根据主键动态修改属性
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param employee
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@AutoFill</span>(value <span style="color:#f92672">=</span> OperationType.<span style="color:#a6e22e">UPDATE</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">update</span>(Employee employee);
+</span></span></code></pre></div><ul>
+<li>CategoryMapper</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 插入数据
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param category
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Insert</span>(<span style="color:#e6db74">&#34;insert into category(type, name, sort, status, create_time, update_time, create_user, update_user)&#34;</span> <span style="color:#f92672">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34; VALUES&#34;</span> <span style="color:#f92672">+</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34; (#{type}, #{name}, #{sort}, #{status}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@AutoFill</span>(value <span style="color:#f92672">=</span> OperationType.<span style="color:#a6e22e">INSERT</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">insert</span>(Category category);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 根据id修改分类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * @param category
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@AutoFill</span>(value <span style="color:#f92672">=</span> OperationType.<span style="color:#a6e22e">UPDATE</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">update</span>(Category category);
+</span></span></code></pre></div></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

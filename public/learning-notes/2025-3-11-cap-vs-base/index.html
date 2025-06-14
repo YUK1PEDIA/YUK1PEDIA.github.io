@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>分布式相关：CAP和BASE | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="记录">
+<meta name="author" content="">
+<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2025-3-11-cap-vs-base/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2025-3-11-cap-vs-base/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2025-3-11-cap-vs-base/">
+  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
+  <meta property="og:title" content="分布式相关：CAP和BASE">
+  <meta property="og:description" content="记录">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="learning-notes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分布式相关：CAP和BASE">
+<meta name="twitter:description" content="记录">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Learning Notes",
+      "item": "https://yuk1pedia.github.io/learning-notes/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "分布式相关：CAP和BASE",
+      "item": "https://yuk1pedia.github.io/learning-notes/2025-3-11-cap-vs-base/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "分布式相关：CAP和BASE",
+  "name": "分布式相关：CAP和BASE",
+  "description": "记录",
+  "keywords": [
+    
+  ],
+  "articleBody": "1.CAP 理论 CAP 原则又称为 CAP 定理，指的是在一个分布式系统中，Consistency（一致性） 、Availability（可用性） 、Partition tolerance（分区容错性） 这三个基本需求，最多只能同时满足其中的两个。\n那么 CAP 分别是什么？\n一致性（C）：数据在多个副本之间能够保持一致的特性 可用性（A）：系统提供的服务一直处于可用的状态，每次请求都能获得正确的响应 分区容错性（P）：分布式系统在遇到任何网络分区故障的时候，仍然能够对外提供满足一致性和可用性的服务 什么是分区？ 在分布式系统中，不同的节点分布在不同的子网络中，由于一些特殊的原因，这些子节点之间出现了网络不通的状态，但他们的内部子网络是正常的。从而导致了整个系统的环境被切分成了若干个孤立的区域，这就是分区。\n为什么 CAP 三者不可兼得？ 首先，在分布式系统中，分区是不可避免的，因此分区容错性（P）是一定要满足的。接下来再看看，在满足分区容错的基础上，能不能同时满足一致性（C）和可用性（A）。\n假如现在有两个分区 N1 和 N2 ，N1 和 N2 分别有不同的分区存储 D1 和 D2 ，以及不同的服务 S1 和 S2 。\n在满足**一致性（C）**时，N1 和 N2 的数据要求值一样，D1 = D2 在满足**可用性（A）**时，无论访问 N1 还是 N2 ，都能获取及时的响应 现在有这样的场景：\n用户访问了 N1 ，修改了 D1 的数据 用户再次访问，但此时请求落在了 N2 ，此时 D1 和 D2 的数据不一致 接下来：\n保证一致性（C）：此时 D1 和 D2 数据不一致，要保证一致性就不能返回不一致的数据，此时**可用性（A）**就无法保证 保证可用性（A）：立即响应，可用性得到了保证，但是此时相应的数据和 D1 不一致，此时**一致性（C）**就无法保证 可以看出，在满足**分区容错性（P）**的前提下，**一致性（C）和可用性（A）**是矛盾的\nCAP 原则权衡 CAP 三者不可兼得，那么就必须做一些权衡取舍\nCA：如果不要求P（不允许分区），则 C（强一致性）和 A（可用性）是可以保证的。但是对于分布式系统，分区是客观存在的，其实分布式系统理论上是不可选 CA 的 CP：如果不要求 A（可用），相当于每个请求都需要在 Server 之间强一致，而 P（分区）会导致同步时间无限延长，如此 CP 也是可以保证的，很多传统的数据库分布式事务都属于这种模式 AP：要高可用并允许分区，则需放弃一致性。一旦分区发生，节点之间可能会失去联系，为了高可用，每个节点只能用本地数据提供服务，而这样会导致全局数据的不一致性，现在众多的 NoSQL 都属于此类 在微服务分布式架构中，常见的可作为注册中心的组件有：zookeeper 、eureka 、nacos\nzookeeper 保证的是 CP， 任何时刻对 zookeeper 的读请求都能得到一致性的结果，但是， zookeeper 不保证每次请求的可用性比如在 leader 选举过程中或者半数以上的机器不可用的时候服务就是不可用的 eureka 保证的则是 AP， eureka 在设计的时候就是优先保证 A （可用性）。在 eureka 中不存在什么 leader 节点，每个节点都是一样的、平等的。因此 eureka 不会像 zookeeper 那样出现选举过程中或者半数以上的机器不可用的时候服务就是不可用的情况。 eureka 保证即使大部分节点挂掉也不会影响正常提供服务，只要有一个节点是可用的就行了。只不过这个节点上的数据可能并不是最新的 nacos 不仅支持 CP 也支持 AP 2.BASE 理论 BASE 是 Basically Available（基本可用） 、Soft-state（软状态） 和 Eventually Consistent（最终一致性） 三个短语的缩写。\nBASE 理论是对 CAP 中一致性 C 和可用性 A 权衡的结果，其来源于对大规模互联网系统分布式实践的总结，是基于 CAP 定理逐步演化而来的，它大大降低了我们对系统的要求。\nBASE 理论的核心思想是：即使无法做到强一致性（Strong consistency），但每个应用都可以根据自身的业务特点，采用适当的方式来使系统达到最终一致性（Eventual consistency）。\nBASE 理论的三个特性 基本可用\n加入系统出现了不可预知的故障，允许损失部分可用性（当然也不能完全不可用）\n损失的这部分可用性指的是什么？\n响应时间上的损失：正常情况下的搜索引擎 0.5 秒即返回给用户结果，而基本可用的搜索引擎可以在 2 秒作用返回结果 功能上的损失：在一个电商网站上，正常情况下，用户可以顺利完成每一笔订单。但是到了大促期间，为了保护购物系统的稳定性，部分消费者可能会被引导到一个降级页面 软状态\n软状态指允许系统中的数据存在中间状态（CAP 理论中的数据不一致），并认为该中间状态的存在不会影响系统的整体可用性，即允许系统在不同节点的数据副本之间进行数据同步的过程存在延时。\n最终一致性\n最终一致性强调的是系统中所有的数据副本，在经过一段时间的同步后，最终能够达到一个一致的状态。因此，最终一致性的本质是需要系统保证最终数据能够达到一致，而不需要实时保证系统数据的强一致性。\n3.CAP vs BASE：什么时候用哪个？ 涉及支付交易等业务，比如银行系统，需要保证数据的强一致性，选用 CP 模型。例如 mysql 和 zk 都是选用的 CP 模型 设计社交媒体，比如微博、朋友圈点赞，可以采用 BASE 理论，保证高可用性和最终一致性。一些 NoSQL 数据库采用的就是 BASE 理论 其实 CAP 理论更像是一个原则，而 BASE 理论更偏向于实际工程应用。现代分布式系统大多基于 CAP 和 BASE 做出合理权衡，以实现最优的性能与体验。\n参考：https://www.cnblogs.com/three-fighter/p/15293310.html\n",
+  "wordCount" : "196",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yuk1pedia.github.io/learning-notes/2025-3-11-cap-vs-base/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YUKIPEDIA's blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yuk1pedia.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                    <span>Learning Notes</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      分布式相关：CAP和BASE
+    </h1>
+    <div class="post-description">
+      记录
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="1cap-理论">1.CAP 理论<a hidden class="anchor" aria-hidden="true" href="#1cap-理论">#</a></h2>
+<p>CAP 原则又称为 CAP 定理，指的是在一个分布式系统中，<code>Consistency（一致性）</code> 、<code>Availability（可用性）</code> 、<code>Partition tolerance（分区容错性）</code> 这三个基本需求，<strong>最多只能同时满足其中的两个</strong>。</p>
+<p><img alt="image.png" loading="lazy" src="https://s2.loli.net/2025/03/11/fyvT7HMSN4GuqK8.png"></p>
+<p>那么 CAP 分别是什么？</p>
+<ul>
+<li><strong>一致性（C）</strong>：数据在多个副本之间能够保持一致的特性</li>
+<li><strong>可用性（A）</strong>：系统提供的服务一直处于可用的状态，每次请求都能获得正确的响应</li>
+<li><strong>分区容错性（P）</strong>：分布式系统在遇到任何网络分区故障的时候，仍然能够对外提供满足一致性和可用性的服务</li>
+</ul>
+<h3 id="什么是分区">什么是分区？<a hidden class="anchor" aria-hidden="true" href="#什么是分区">#</a></h3>
+<p>在分布式系统中，不同的节点分布在不同的子网络中，由于一些特殊的原因，这些子节点之间出现了网络不通的状态，但他们的内部子网络是正常的。从而导致了整个系统的环境被切分成了若干个孤立的区域，这就是分区。</p>
+<h3 id="为什么-cap-三者不可兼得">为什么 CAP 三者不可兼得？<a hidden class="anchor" aria-hidden="true" href="#为什么-cap-三者不可兼得">#</a></h3>
+<p>首先，在分布式系统中，<strong>分区是不可避免的</strong>，因此<strong>分区容错性（P）<strong>是一定要满足的。接下来再看看，在满足分区容错的基础上，能不能同时满足</strong>一致性（C）<strong>和</strong>可用性（A）</strong>。</p>
+<p>假如现在有两个分区 <code>N1</code> 和 <code>N2</code> ，<code>N1</code> 和 <code>N2</code> 分别有不同的分区存储 <code>D1</code> 和 <code>D2</code> ，以及不同的服务 <code>S1</code> 和 <code>S2</code> 。</p>
+<ul>
+<li>在满足**一致性（C）**时，<code>N1</code> 和 <code>N2</code> 的数据要求值一样，<code>D1 = D2</code></li>
+<li>在满足**可用性（A）**时，无论访问 <code>N1</code> 还是 <code>N2</code> ，都能获取及时的响应</li>
+</ul>
+<p><img alt="image.png" loading="lazy" src="https://s2.loli.net/2025/03/11/ezyUVdZl9JBAfs8.png"></p>
+<p>现在有这样的场景：</p>
+<ul>
+<li>用户访问了 <code>N1</code> ，修改了 <code>D1</code> 的数据</li>
+<li>用户再次访问，但此时请求落在了 <code>N2</code> ，此时 <code>D1</code> 和 <code>D2</code> 的数据不一致</li>
+</ul>
+<p>接下来：</p>
+<ul>
+<li>保证<strong>一致性（C）</strong>：此时 <code>D1</code> 和 <code>D2</code> 数据不一致，要保证一致性就不能返回不一致的数据，此时**可用性（A）**就无法保证</li>
+<li>保证<strong>可用性（A）</strong>：立即响应，可用性得到了保证，但是此时相应的数据和 <code>D1</code> 不一致，此时**一致性（C）**就无法保证</li>
+</ul>
+<p>可以看出，在满足**分区容错性（P）**的前提下，**一致性（C）<strong>和</strong>可用性（A）**是矛盾的</p>
+<h3 id="cap-原则权衡">CAP 原则权衡<a hidden class="anchor" aria-hidden="true" href="#cap-原则权衡">#</a></h3>
+<p>CAP 三者不可兼得，那么就必须做一些权衡取舍</p>
+<ol>
+<li><strong>CA</strong>：如果不要求P（不允许分区），则 C（强一致性）和 A（可用性）是可以保证的。但是对于分布式系统，分区是客观存在的，其实分布式系统理论上是不可选 CA 的</li>
+<li><strong>CP</strong>：如果不要求 A（可用），相当于每个请求都需要在 Server 之间强一致，而 P（分区）会导致同步时间无限延长，如此 CP 也是可以保证的，很多传统的数据库分布式事务都属于这种模式</li>
+<li><strong>AP</strong>：要高可用并允许分区，则需放弃一致性。一旦分区发生，节点之间可能会失去联系，为了高可用，每个节点只能用本地数据提供服务，而这样会导致全局数据的不一致性，现在众多的 NoSQL 都属于此类</li>
+</ol>
+<p>在微服务分布式架构中，常见的可作为注册中心的组件有：<code>zookeeper</code> 、<code>eureka</code> 、<code>nacos</code></p>
+<ul>
+<li><strong>zookeeper 保证的是 CP</strong>， 任何时刻对 zookeeper 的读请求都能得到一致性的结果，但是， zookeeper 不保证每次请求的可用性比如在 leader 选举过程中或者半数以上的机器不可用的时候服务就是不可用的</li>
+<li><strong>eureka 保证的则是 AP</strong>， eureka 在设计的时候就是优先保证 A （可用性）。在 eureka 中不存在什么 leader 节点，每个节点都是一样的、平等的。因此 eureka 不会像 zookeeper 那样出现选举过程中或者半数以上的机器不可用的时候服务就是不可用的情况。 eureka 保证即使大部分节点挂掉也不会影响正常提供服务，只要有一个节点是可用的就行了。<strong>只不过这个节点上的数据可能并不是最新的</strong></li>
+<li><strong>nacos 不仅支持 CP 也支持 AP</strong></li>
+</ul>
+<h2 id="2base-理论">2.BASE 理论<a hidden class="anchor" aria-hidden="true" href="#2base-理论">#</a></h2>
+<p><strong>BASE</strong> 是 <strong>Basically Available（基本可用）</strong> 、<strong>Soft-state（软状态）</strong> 和 <strong>Eventually Consistent（最终一致性）</strong> 三个短语的缩写。</p>
+<p><strong>BASE 理论是对 CAP 中一致性 C 和可用性 A 权衡的结果</strong>，其来源于对大规模互联网系统分布式实践的总结，是基于 CAP 定理逐步演化而来的，它大大降低了我们对系统的要求。</p>
+<p>BASE 理论的核心思想是：即使无法做到<strong>强一致性（Strong consistency）</strong>，但每个应用都可以根据自身的业务特点，采用适当的方式来使系统达到<strong>最终一致性（Eventual consistency）</strong>。</p>
+<h3 id="base-理论的三个特性">BASE 理论的三个特性<a hidden class="anchor" aria-hidden="true" href="#base-理论的三个特性">#</a></h3>
+<p><strong>基本可用</strong></p>
+<p>加入系统出现了不可预知的故障，允许损失部分可用性（当然也不能完全不可用）</p>
+<p>损失的这部分可用性指的是什么？</p>
+<ul>
+<li><strong>响应时间上的损失</strong>：正常情况下的搜索引擎 0.5 秒即返回给用户结果，而基本可用的搜索引擎可以在 2 秒作用返回结果</li>
+<li><strong>功能上的损失</strong>：在一个电商网站上，正常情况下，用户可以顺利完成每一笔订单。但是到了大促期间，为了保护购物系统的稳定性，部分消费者可能会被引导到一个降级页面</li>
+</ul>
+<p><strong>软状态</strong></p>
+<p>软状态指允许系统中的数据存在中间状态（<strong>CAP 理论中的数据不一致</strong>），并认为该中间状态的存在不会影响系统的整体可用性，即允许系统在不同节点的数据副本之间进行数据同步的过程存在延时。</p>
+<p><strong>最终一致性</strong></p>
+<p>最终一致性强调的是系统中所有的数据副本，在经过一段时间的同步后，最终能够达到一个一致的状态。因此，最终一致性的本质是需要系统保证最终数据能够达到一致，<strong>而不需要实时保证系统数据的强一致性</strong>。</p>
+<h2 id="3cap-vs-base什么时候用哪个">3.CAP vs BASE：什么时候用哪个？<a hidden class="anchor" aria-hidden="true" href="#3cap-vs-base什么时候用哪个">#</a></h2>
+<ul>
+<li>涉及支付交易等业务，比如银行系统，需要保证数据的强一致性，选用 CP 模型。例如 mysql 和 zk 都是选用的 CP 模型</li>
+<li>设计社交媒体，比如微博、朋友圈点赞，可以采用 BASE 理论，<strong>保证高可用性和最终一致性</strong>。一些 NoSQL 数据库采用的就是 BASE 理论</li>
+</ul>
+<p>其实 CAP 理论更像是一个原则，而 BASE 理论更偏向于实际工程应用。现代分布式系统大多基于 CAP 和 BASE 做出合理权衡，以实现最优的性能与体验。</p>
+<p>参考：https://www.cnblogs.com/three-fighter/p/15293310.html</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
