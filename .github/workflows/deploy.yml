@@ -9,13 +9,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # 授予写入仓库的权限
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          submodules: true  # 拉取主题子模块（如果有）
-          fetch-depth: 0    # 获取所有历史记录（可选）
+          submodules: true  # 拉取主题子模块
+          fetch-depth: 0    # 获取所有历史记录
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
