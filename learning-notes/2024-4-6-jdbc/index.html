@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>JDBC学习笔记 | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="记录">
+<meta name="author" content="">
+<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-4-6-jdbc/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-4-6-jdbc/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-4-6-jdbc/">
+  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
+  <meta property="og:title" content="JDBC学习笔记">
+  <meta property="og:description" content="记录">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="learning-notes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JDBC学习笔记">
+<meta name="twitter:description" content="记录">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Learning Notes",
+      "item": "https://yuk1pedia.github.io/learning-notes/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "JDBC学习笔记",
+      "item": "https://yuk1pedia.github.io/learning-notes/2024-4-6-jdbc/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "JDBC学习笔记",
+  "name": "JDBC学习笔记",
+  "description": "记录",
+  "keywords": [
+    
+  ],
+  "articleBody": "JDBC-API详解 一、DriverManager 1.DriverManager(驱动管理类)作用 (1).注册驱动\n(2).获取数据库连接\n二、Connection 1.Connection(数据库连接对象)作用 (1).获取执行SQL的对象\n(2).管理事务\n什么是事务？数据库中的事务是指对数据库执行一批操作，在同一个事务当中，这些操作最终要么全部执行成功，要么全部失败，不会存在部分成功的情况。\n2.具体操作 获取执行SQL对象 (1).普通执行SQL对象\nStatement createStatement() (2).预编译SQL的执行SQL对象：防止SQL注入\nPreparedStatement prepareStatement(sql) (3).执行存储过程的对象(不常用)\nCallableStatement prepareCall(sql) 事务管理 (1).MySQL事务管理\n开启事务：BEGIN;/START TRANSACTION;\n提交事务：COMMIT;\n回滚事务：ROLLBACK;\n注：MySQL默认自动提交事务\n(2).JDBC事务管理：Connection接口中定义了3个对应的方法\n开启事务：setAutoCommit(bollean autoCommit)：true为自动提交事务；false为手动提交事务，即为开启事务\n提交事务：commit()\n回滚事务：rollback()\n三、Statement 1.Statement作用 执行SQL语句 int executeUpdate(sql) 执行DML、DDL语句，返回值：(1).DML语句影响的行数；(2).DDL语句执行后，执行成功也可能返回0\nResultSet executeQuery(sql) 执行DQL语句，返回值：ResultSet结果集对象\n四、ResultSet 1.ResultSet(结果集对象)作用 封装了DQL查询语句的结果\nResultSet stmt.executeQuery(sql); 以上语句执行DQL语句，返回一个ResultSet对象\n2.获取查询结果 boolean next(); (1).将光标从当前位置向前移动一位；(2).判断当前行是否为有效行\n返回值：(1).true：有效行，当前行有数据；(2).false：无效行，当前行无数据\nxxx getXxx(参数); 上述语句用于获取数据，其中xxx表示数据类型，如：int getInt(参数)；String getString(参数)\n参数：(1).对于int，参数是列的编号（从1开始）；(2).对于String，参数是列的名称\n3.使用步骤 (1).游标向下移动一行，并判断该行是否有数据：next()\n(2).获取数据：getXxx(参数)\n// 循环判断游标是否是最后一行末尾\rwhile (rs.next()) {\r// 获取数据\rrs.getXxx(参数);\r} 五、PreparedStatement 作用：预编译SQL语句并执行，预防SQL注入问题\n什么是SQL注入：SQL注入是通过操作输入来修改事先定义好的SQL语句，用以达到执行代码对服务器进行攻击的方法\n1.获取PreparedStatement对象 // SQL语句中的参数值使用? 占位符替代\rString sql = \"select * from user where username = ? and password = ?\";\r// 通过Connection对象获取并传入对应的SQL语句\rPreparedStatement pstmt = conn.prepareStatement(sql); 2.设置参数值 PreparedStatement对象：setXxx(参数1，参数2)：给？赋值\r(1)Xxx：数据类型；如setInt(参数1,参数2)\r(2)参数：\r参数1：？的位置编号，从1开始\r参数2：？的值 3.执行SQL executeUpdate();/executeQuery(); 由于创建PreparedStatement对象时已经传入了SQL语句，所以此处不用再传入SQL语句\n六、数据库连接池 1.数据库连接池简介 ​\t(1).数据库连接池是个容器，负责分配、管理数据库连接(Connection)；\n​\t(2).它允许应用程序重复使用一个现有的数据库连接，而不是再重新建立一个；\n​\t(3).释放空闲时间超过最大空闲时间的数据库连接来避免因为没有释放数据库连接而引起的数据库连接遗漏\n好处：资源重用；提升系统响应速度；避免数据库连接遗漏\n上图中蓝色部分为数据库连接池\n2.数据库连接池实现 标准接口：DataSource\n官方(SUN)提供的数据库连接池标准接口，由第三方组织实现此接口\n功能：获取连接\nConnection getConnection() ",
+  "wordCount" : "124",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yuk1pedia.github.io/learning-notes/2024-4-6-jdbc/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YUKIPEDIA's blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yuk1pedia.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                    <span>Learning Notes</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      JDBC学习笔记
+    </h1>
+    <div class="post-description">
+      记录
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="jdbc-api详解">JDBC-API详解<a hidden class="anchor" aria-hidden="true" href="#jdbc-api详解">#</a></h2>
+<h3 id="一drivermanager">一、DriverManager<a hidden class="anchor" aria-hidden="true" href="#一drivermanager">#</a></h3>
+<h4 id="1drivermanager驱动管理类作用">1.DriverManager(驱动管理类)作用<a hidden class="anchor" aria-hidden="true" href="#1drivermanager驱动管理类作用">#</a></h4>
+<p>(1).注册驱动</p>
+<p>(2).获取数据库连接</p>
+<h3 id="二connection">二、Connection<a hidden class="anchor" aria-hidden="true" href="#二connection">#</a></h3>
+<h4 id="1connection数据库连接对象作用">1.Connection(数据库连接对象)作用<a hidden class="anchor" aria-hidden="true" href="#1connection数据库连接对象作用">#</a></h4>
+<p>(1).获取执行SQL的对象</p>
+<p>(2).管理事务</p>
+<p><strong>什么是事务？数据库中的事务是指对数据库执行一批操作，在同一个事务当中，这些操作最终要么全部执行成功，要么全部失败，不会存在部分成功的情况。</strong></p>
+<h4 id="2具体操作">2.具体操作<a hidden class="anchor" aria-hidden="true" href="#2具体操作">#</a></h4>
+<h5 id="获取执行sql对象"><strong>获取执行SQL对象</strong><a hidden class="anchor" aria-hidden="true" href="#获取执行sql对象">#</a></h5>
+<p>(1).普通执行SQL对象</p>
+<pre tabindex="0"><code>Statement createStatement()
+</code></pre><p>(2).预编译SQL的执行SQL对象：防止SQL注入</p>
+<pre tabindex="0"><code>PreparedStatement prepareStatement(sql)
+</code></pre><p>(3).执行存储过程的对象(不常用)</p>
+<pre tabindex="0"><code>CallableStatement prepareCall(sql)
+</code></pre><h5 id="事务管理"><strong>事务管理</strong><a hidden class="anchor" aria-hidden="true" href="#事务管理">#</a></h5>
+<p>(1).MySQL事务管理</p>
+<p>开启事务：BEGIN;/START TRANSACTION;</p>
+<p>提交事务：COMMIT;</p>
+<p>回滚事务：ROLLBACK;</p>
+<p>注：MySQL默认自动提交事务</p>
+<p>(2).JDBC事务管理：Connection接口中定义了3个对应的方法</p>
+<p>开启事务：setAutoCommit(bollean autoCommit)：true为自动提交事务；<strong>false为手动提交事务，即为开启事务</strong></p>
+<p>提交事务：commit()</p>
+<p>回滚事务：rollback()</p>
+<h3 id="三statement">三、Statement<a hidden class="anchor" aria-hidden="true" href="#三statement">#</a></h3>
+<h4 id="1statement作用">1.Statement作用<a hidden class="anchor" aria-hidden="true" href="#1statement作用">#</a></h4>
+<h5 id="执行sql语句">执行SQL语句<a hidden class="anchor" aria-hidden="true" href="#执行sql语句">#</a></h5>
+<pre tabindex="0"><code>int executeUpdate(sql)
+</code></pre><p>执行DML、DDL语句，返回值：(1).DML语句影响的行数；(2).<strong>DDL语句执行后，执行成功也可能返回0</strong></p>
+<pre tabindex="0"><code>ResultSet executeQuery(sql)
+</code></pre><p>执行DQL语句，返回值：ResultSet<strong>结果集对象</strong></p>
+<h3 id="四resultset">四、ResultSet<a hidden class="anchor" aria-hidden="true" href="#四resultset">#</a></h3>
+<h4 id="1resultset结果集对象作用">1.ResultSet(结果集对象)作用<a hidden class="anchor" aria-hidden="true" href="#1resultset结果集对象作用">#</a></h4>
+<p>封装了DQL查询语句的结果</p>
+<pre tabindex="0"><code>ResultSet stmt.executeQuery(sql);
+</code></pre><p>以上语句执行DQL语句，返回一个ResultSet对象</p>
+<h4 id="2获取查询结果">2.获取查询结果<a hidden class="anchor" aria-hidden="true" href="#2获取查询结果">#</a></h4>
+<pre tabindex="0"><code>boolean next();
+</code></pre><p>(1).将光标从当前位置向前移动一位；(2).判断当前行是否为有效行</p>
+<p><strong>返回值：</strong>(1).true：有效行，当前行有数据；(2).false：无效行，当前行无数据</p>
+<pre tabindex="0"><code>xxx getXxx(参数);
+</code></pre><p>上述语句用于获取数据，其中xxx表示数据类型，如：int getInt(参数)；String getString(参数)</p>
+<p>参数：(1).对于int，参数是列的编号（从1开始）；(2).对于String，参数是列的名称</p>
+<h4 id="3使用步骤">3.使用步骤<a hidden class="anchor" aria-hidden="true" href="#3使用步骤">#</a></h4>
+<p>(1).游标向下移动一行，并判断该行是否有数据：next()</p>
+<p>(2).获取数据：getXxx(参数)</p>
+<pre tabindex="0"><code>// 循环判断游标是否是最后一行末尾
+while (rs.next()) {
+	// 获取数据
+	rs.getXxx(参数);
+}
+</code></pre><h3 id="五preparedstatement">五、PreparedStatement<a hidden class="anchor" aria-hidden="true" href="#五preparedstatement">#</a></h3>
+<p>作用：预编译SQL语句并执行，预防SQL注入问题</p>
+<p>什么是SQL注入：SQL注入是通过操作输入来修改事先定义好的SQL语句，用以达到执行代码对服务器进行攻击的方法</p>
+<h4 id="1获取preparedstatement对象">1.获取PreparedStatement对象<a hidden class="anchor" aria-hidden="true" href="#1获取preparedstatement对象">#</a></h4>
+<pre tabindex="0"><code>// SQL语句中的参数值使用? 占位符替代
+String sql = &#34;select * from user where username = ? and password = ?&#34;;
+// 通过Connection对象获取并传入对应的SQL语句
+PreparedStatement pstmt = conn.prepareStatement(sql);
+</code></pre><h4 id="2设置参数值">2.设置参数值<a hidden class="anchor" aria-hidden="true" href="#2设置参数值">#</a></h4>
+<pre tabindex="0"><code>PreparedStatement对象：setXxx(参数1，参数2)：给？赋值
+(1)Xxx：数据类型；如setInt(参数1,参数2)
+(2)参数：
+	参数1：？的位置编号，从1开始
+	参数2：？的值
+</code></pre><h4 id="3执行sql">3.执行SQL<a hidden class="anchor" aria-hidden="true" href="#3执行sql">#</a></h4>
+<pre tabindex="0"><code>executeUpdate();/executeQuery();
+</code></pre><p>由于创建PreparedStatement对象时已经传入了SQL语句，所以此处不用再传入SQL语句</p>
+<h3 id="六数据库连接池">六、数据库连接池<a hidden class="anchor" aria-hidden="true" href="#六数据库连接池">#</a></h3>
+<h4 id="1数据库连接池简介">1.数据库连接池简介<a hidden class="anchor" aria-hidden="true" href="#1数据库连接池简介">#</a></h4>
+<p>​	(1).数据库连接池是个容器，负责分配、管理数据库连接(Connection)；</p>
+<p>​	(2).它允许应用程序重复使用一个现有的数据库连接，而不是再重新建立一个；</p>
+<p>​	(3).释放空闲时间超过最大空闲时间的数据库连接来避免因为没有释放数据库连接而引起的数据库连接遗漏</p>
+<p><strong>好处：资源重用；提升系统响应速度；避免数据库连接遗漏</strong></p>
+<p><img alt="image-20240406151853542" loading="lazy" src="c:\\Users\\MI\\AppData\\Roaming\\Typora\\typora-user-images\\image-20240406151853542.png"></p>
+<p><strong>上图中蓝色部分为数据库连接池</strong></p>
+<h4 id="2数据库连接池实现">2.数据库连接池实现<a hidden class="anchor" aria-hidden="true" href="#2数据库连接池实现">#</a></h4>
+<ul>
+<li>
+<p>标准接口：DataSource</p>
+<ul>
+<li>
+<p>官方(SUN)提供的数据库连接池标准接口，由第三方组织实现此接口</p>
+</li>
+<li>
+<p>功能：获取连接</p>
+<pre tabindex="0"><code>Connection getConnection()
+</code></pre></li>
+</ul>
+</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

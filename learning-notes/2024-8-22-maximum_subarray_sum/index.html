@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>最大子数组和 | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="记录">
+<meta name="author" content="">
+<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-8-22-maximum_subarray_sum/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-8-22-maximum_subarray_sum/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-8-22-maximum_subarray_sum/">
+  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
+  <meta property="og:title" content="最大子数组和">
+  <meta property="og:description" content="记录">
+  <meta property="og:locale" content="zh-cn">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="learning-notes">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="最大子数组和">
+<meta name="twitter:description" content="记录">
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Learning Notes",
+      "item": "https://yuk1pedia.github.io/learning-notes/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "最大子数组和",
+      "item": "https://yuk1pedia.github.io/learning-notes/2024-8-22-maximum_subarray_sum/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "最大子数组和",
+  "name": "最大子数组和",
+  "description": "记录",
+  "keywords": [
+    
+  ],
+  "articleBody": "对于最大子数组和的动态规划问题，一般这样思考：\n定义状态 f[i] 表示以 a[i] 结尾的最大子数组和，不和 i 左边拼起来就是 f[i] = a[i] ，和 i 左边拼起来就是 f[i] = f[i-1] + a[i] ，取最大值就得到了状态转移方程 f[i] = max(f[i-1], 0) + a[i] ，答案为 max(f) 。这种做法也称为 Kadane 算法。\n1.最大子数组和 给你一个整数数组 nums ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。\n子数组\n是数组中的一个连续部分。\n示例 1：\n输入：nums = [-2,1,-3,4,-1,2,1,-5,4]\r输出：6\r解释：连续子数组 [4,-1,2,1] 的和最大，为 6 。 示例 2：\n输入：nums = [1]\r输出：1 示例 3：\n输入：nums = [5,4,-1,7,8]\r输出：23 提示：\n1 \u003c= nums.length \u003c= 10^5 -10^4 \u003c= nums[i] \u003c= 10^4 思路 按照前面说的进行状态转移即可\nCode class Solution { public: int maxSubArray(vector\u003cint\u003e\u0026 nums) { int n = nums.size(); vector\u003cint\u003e dp(n, 0); dp[0] = nums[0]; for (int i = 1; i \u003c n; ++i) { dp[i] = max(dp[i-1], 0) + nums[i]; } return ranges::max(dp); } }; 2.找到最大开销的子字符串 给你一个字符串 s ，一个字符 互不相同 的字符串 chars 和一个长度与 chars 相同的整数数组 vals 。\n子字符串的开销 是一个子字符串中所有字符对应价值之和。空字符串的开销是 0 。\n字符的价值 定义如下：\n如果字符不在字符串\nchars 中，那么它的价值是它在字母表中的位置（下标从\n1\n开始）。\n比方说，'a' 的价值为 1 ，'b' 的价值为 2 ，以此类推，'z' 的价值为 26 。 否则，如果这个字符在 chars 中的位置为 i ，那么它的价值就是 vals[i] 。\n请你返回字符串 s 的所有子字符串中的最大开销。\n示例 1：\n输入：s = \"adaa\", chars = \"d\", vals = [-1000]\r输出：2\r解释：字符 \"a\" 和 \"d\" 的价值分别为 1 和 -1000 。\r最大开销子字符串是 \"aa\" ，它的开销为 1 + 1 = 2 。\r2 是最大开销。 示例 2：\n输入：s = \"abc\", chars = \"abc\", vals = [-1,-1,-1]\r输出：0\r解释：字符 \"a\" ，\"b\" 和 \"c\" 的价值分别为 -1 ，-1 和 -1 。\r最大开销子字符串是 \"\" ，它的开销为 0 。\r0 是最大开销。 提示：\n1 \u003c= s.length \u003c= 10^5 s 只包含小写英文字母。 1 \u003c= chars.length \u003c= 26 chars 只包含小写英文字母，且 互不相同 。 vals.length == chars.length -1000 \u003c= vals[i] \u003c= 1000 思路 和 T1 比，多了个计算字符串开销的操作，大体思路几乎一样\nCode class Solution { public: int maximumCostSubstring(string s, string chars, vector\u003cint\u003e\u0026 vals) { int len = s.length(), res = 0; vector\u003cint\u003e dp(len, 0); auto first = chars.find(s[0]); if (first != string::npos) { dp[0] = max(0, vals[first]); } else { dp[0] = s[0] - 'a' + 1; } for (int i = 1; i \u003c len; ++i) { auto index = chars.find(s[i]); if (index != string::npos) { dp[i] = max(dp[i-1], 0) + vals[index]; } else { dp[i] = max(dp[i-1], 0) + s[i] - 'a' + 1; } } return ranges::max(dp); } }; 3.任意子数组和的绝对值的最大值 给你一个整数数组 nums 。一个子数组 [numsl, numsl+1, ..., numsr-1, numsr] 的 和的绝对值 为 abs(numsl + numsl+1 + ... + numsr-1 + numsr) 。\n请你找出 nums 中 和的绝对值 最大的任意子数组（可能为空），并返回该 最大值 。\nabs(x) 定义如下：\n如果 x 是负整数，那么 abs(x) = -x 。 如果 x 是非负整数，那么 abs(x) = x 。 示例 1：\n输入：nums = [1,-3,2,3,-4]\r输出：5\r解释：子数组 [2,3] 和的绝对值最大，为 abs(2+3) = abs(5) = 5 。 示例 2：\n输入：nums = [2,-5,1,-4,3,-2]\r输出：8\r解释：子数组 [-5,1,-4] 和的绝对值最大，为 abs(-5+1-4) = abs(-8) = 8 。 提示：\n1 \u003c= nums.length \u003c= 10^5 -10^4 \u003c= nums[i] \u003c= 10^4 思路 要求数组中任意子数组和的绝对值的最大值，要么正值尽可能大，要么负值尽可能小，所以我们分别计算最大子数组和 f_max 与最小子数组和 f_min ，取它们绝对值的较大值即可\nCode class Solution { public: int maxAbsoluteSum(vector\u003cint\u003e\u0026 nums) { int res = 0, f_max = 0, f_min = 0; for (auto x: nums) { f_max = max(f_max, 0) + x; f_min = min(f_min, 0) + x; res = max({res, f_max, -f_min}); } return res; } }; 4. K 次串联后最大子数组之和 给定一个整数数组 arr 和一个整数 k ，通过重复 k 次来修改数组。\n例如，如果 arr = [1, 2] ， k = 3 ，那么修改后的数组将是 [1, 2, 1, 2, 1, 2] 。\n返回修改后的数组中的最大的子数组之和。注意，子数组长度可以是 0，在这种情况下它的总和也是 0。\n由于 结果可能会很大，需要返回的 109 + 7 的 模 。\n示例 1：\n输入：arr = [1,2], k = 3\r输出：9 示例 2：\n输入：arr = [1,-2,1], k = 5\r输出：2 示例 3：\n输入：arr = [-1,-2], k = 7\r输出：0 提示：\n1 \u003c= arr.length \u003c= 10^5 1 \u003c= k \u003c= 10^5 -10^4 \u003c= arr[i] \u003c= 10^4 思路 首先，不能直接拼接 k 次给定的数组，数据范围是 k * length = 10^10 ，会爆内存。\n我们分下面两种情况考虑：\nk == 1 时，就是求最大子数组和，直接 dp 即可 k \u003e= 2 时，因为数组 arr 是不断重复的，我们要考虑的是：“最大子数组和是出现在一个 arr 中还是在两个 arr 的交界处”， 所以我们只需要考虑整个重复数组的头尾两个数组**（理解成给定的 arr 重复 k 次，只考虑第 1 次出现的 arr 和第 k 次出现的 arr ，这两个 arr 之间还有 k-2 个 arr ，如果理解不了就多想几次）**，之后我们计算单个 arr 的所有元素之和 sum ，对于 sum 又有下面两种情况： sum \u003e= 0 时，我们就可以在第 1 个 arr 和第 k 个 arr 之间插入 k-2 个 sum 来构成更大的子数组和（因为 k 次串联后的数组是连续的） sum \u003c 0 时，我们就直接不要插入 sum ，直接返回即可 Code class Solution { public: int kConcatenationMaxSum(vector\u003cint\u003e\u0026 arr, int k) { int ans = 0, f = 0; if (k == 1) { for (auto x: arr) { f = max(f, 0) + x; ans = max(ans, f); } } else { int n = arr.size(); for (int i = 0; i \u003c 2 * n; ++i) { f = max(f, 0) + arr[i%n]; ans = max(ans, f); } int sum = 0, mod = 1e9 + 7; for (auto x: arr) sum += x; if (sum \u003e 0) ans = (ans + (k - 2ll) * sum) % mod; } return ans; } }; 5.环形子数组的最大和 给定一个长度为 n 的环形整数数组 nums ，返回 nums 的非空 子数组 的最大可能和 。\n环形数组 意味着数组的末端将会与开头相连呈环状。形式上， nums[i] 的下一个元素是 nums[(i + 1) % n] ， nums[i] 的前一个元素是 nums[(i - 1 + n) % n] 。\n子数组 最多只能包含固定缓冲区 nums 中的每个元素一次。形式上，对于子数组 nums[i], nums[i + 1], ..., nums[j] ，不存在 i \u003c= k1, k2 \u003c= j 其中 k1 % n == k2 % n 。\n示例 1：\n输入：nums = [1,-2,3,-2]\r输出：3\r解释：从子数组 [3] 得到最大和 3 示例 2：\n输入：nums = [5,-3,5]\r输出：10\r解释：从子数组 [5,5] 得到最大和 5 + 5 = 10 示例 3：\n输入：nums = [3,-2,2,-3]\r输出：3\r解释：从子数组 [3] 和 [3,-2,2] 都可以得到最大和 3 提示：\nn == nums.length 1 \u003c= n \u003c= 3 * 10^4 -3 * 10^4 \u003c= nums[i] \u003c= 3 * 10^4 思路 Code class Solution { public: int maxSubarraySumCircular(vector\u003cint\u003e\u0026 nums) { int max_s = INT_MIN; // 最大子数组和 int min_s = 0; // 最小子数组和 int max_f = 0, min_f = 0, sum = 0; for (auto x: nums) { max_f = max(max_f, 0) + x; max_s = max(max_s, max_f); min_f = min(min_f, 0) + x; min_s = min(min_s, min_f); sum += x; } // sum - min_s 表示跨界的最大子数组和 return sum == min_s ? max_s : max(max_s, sum - min_s); } }; 6.拼接数组的最大分数 给你两个下标从 0 开始的整数数组 nums1 和 nums2 ，长度都是 n 。\n你可以选择两个整数 left 和 right ，其中 0 \u003c= left \u003c= right \u003c n ，接着 交换 两个子数组 nums1[left...right] 和 nums2[left...right] 。\n例如，设 nums1 = [1,2,3,4,5] 和 nums2 = [11,12,13,14,15] ，整数选择 left = 1 和 right = 2，那么 nums1 会变为 [1,***12\\*,\\*13\\***,4,5] 而 nums2 会变为 [11,***2,3***,14,15] 。 你可以选择执行上述操作 一次 或不执行任何操作。\n数组的 分数 取 sum(nums1) 和 sum(nums2) 中的最大值，其中 sum(arr) 是数组 arr 中所有元素之和。\n返回 可能的最大分数 。\n子数组 是数组中连续的一个元素序列。arr[left...right] 表示子数组包含 nums 中下标 left 和 right 之间的元素**（含** 下标 left 和 right 对应元素**）**。\n示例 1：\n输入：nums1 = [60,60,60], nums2 = [10,90,10]\r输出：210\r解释：选择 left = 1 和 right = 1 ，得到 nums1 = [60,90,60] 和 nums2 = [10,60,10] 。\r分数为 max(sum(nums1), sum(nums2)) = max(210, 80) = 210 。 示例 2：\n输入：nums1 = [20,40,20,70,30], nums2 = [50,20,50,40,20]\r输出：220\r解释：选择 left = 3 和 right = 4 ，得到 nums1 = [20,40,20,40,20] 和 nums2 = [50,20,50,70,30] 。\r分数为 max(sum(nums1), sum(nums2)) = max(140, 220) = 220 。 示例 3：\n输入：nums1 = [7,11,13], nums2 = [1,1,1]\r输出：31\r解释：选择不交换任何子数组。\r分数为 max(sum(nums1), sum(nums2)) = max(31, 3) = 31 。 提示：\nn == nums1.length == nums2.length 1 \u003c= n \u003c= 10^5 1 \u003c= nums1[i], nums2[i] \u003c= 10^4 思路 设： $$ s_1 = \\Sigma nums_1[i] $$ 交换 [left, right] 范围内的元素后，对于 nums1' 有 $$ \\Sigma nums_1’[i] = s_1 - (nums_1[left] + … + nums_1[right]) + (nums_2[left] + … + nums_2[right]) $$ 合并相同下标，等号右侧变形为： $$ s_1 + (nums_2[left] - nums_1[left]) + … + (nums_2[right] - nums_1[right]) $$ 设：diff[i] = nums2[i] - nums1[i] ，上式变为： $$ s_1 + diff[left] + … + diff[right] $$ 为了最大化上式，我们需要最大化 diff 数组的最大子数组和（子数组可为空）\n对于 nums2 也同理，求这两者的最大值即为答案。\nCode class Solution { int solve(vector\u003cint\u003e\u0026 nums1, vector\u003cint\u003e\u0026 nums2) { int s1 = 0, maxSum = 0; for (int i = 0, s = 0; i \u003c nums1.size(); ++i) { s1 += nums1[i]; s = max(s + nums2[i] - nums1[i], 0); maxSum = max(maxSum, s); } return s1 + maxSum; } public: int maximumsSplicedArray(vector\u003cint\u003e\u0026 nums1, vector\u003cint\u003e\u0026 nums2) { return max(solve(nums1, nums2), solve(nums2, nums1)); } }; ",
+  "wordCount" : "1252",
+  "inLanguage": "en",
+  "datePublished": "0001-01-01T00:00:00Z",
+  "dateModified": "0001-01-01T00:00:00Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://yuk1pedia.github.io/learning-notes/2024-8-22-maximum_subarray_sum/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "YUKIPEDIA's blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://yuk1pedia.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                    <span>Learning Notes</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      最大子数组和
+    </h1>
+    <div class="post-description">
+      记录
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><p>对于最大子数组和的动态规划问题，一般这样思考：</p>
+<p>定义状态 <code>f[i]</code> 表示以 <code>a[i]</code> 结尾的最大子数组和，不和 <code>i</code> 左边拼起来就是 <code>f[i] = a[i]</code> ，和 <code>i</code> 左边拼起来就是 <code>f[i] = f[i-1] + a[i]</code> ，取最大值就得到了状态转移方程 <code>f[i] = max(f[i-1], 0) + a[i]</code> ，答案为 <code>max(f)</code> 。这种做法也称为 Kadane 算法。</p>
+<h2 id="1最大子数组和">1.最大子数组和<a hidden class="anchor" aria-hidden="true" href="#1最大子数组和">#</a></h2>
+<p>给你一个整数数组 <code>nums</code> ，请你找出一个具有最大和的连续子数组（子数组最少包含一个元素），返回其最大和。</p>
+<p><strong>子数组</strong></p>
+<p>是数组中的一个连续部分。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：nums = [-2,1,-3,4,-1,2,1,-5,4]
+输出：6
+解释：连续子数组 [4,-1,2,1] 的和最大，为 6 。
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：nums = [1]
+输出：1
+</code></pre><p><strong>示例 3：</strong></p>
+<pre tabindex="0"><code>输入：nums = [5,4,-1,7,8]
+输出：23
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= nums.length &lt;= 10^5</code></li>
+<li><code>-10^4 &lt;= nums[i] &lt;= 10^4</code></li>
+</ul>
+<h3 id="思路">思路<a hidden class="anchor" aria-hidden="true" href="#思路">#</a></h3>
+<p>按照前面说的进行状态转移即可</p>
+<h3 id="code">Code<a hidden class="anchor" aria-hidden="true" href="#code">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maxSubArray(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> nums.size();
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> dp(n, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>        dp[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> nums[<span style="color:#ae81ff">0</span>];
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>            dp[i] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>], <span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> nums[i];
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ranges<span style="color:#f92672">::</span>max(dp);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="2找到最大开销的子字符串">2.找到最大开销的子字符串<a hidden class="anchor" aria-hidden="true" href="#2找到最大开销的子字符串">#</a></h2>
+<p>给你一个字符串 <code>s</code> ，一个字符 <strong>互不相同</strong> 的字符串 <code>chars</code> 和一个长度与 <code>chars</code> 相同的整数数组 <code>vals</code> 。</p>
+<p><strong>子字符串的开销</strong> 是一个子字符串中所有字符对应价值之和。空字符串的开销是 <code>0</code> 。</p>
+<p><strong>字符的价值</strong> 定义如下：</p>
+<ul>
+<li>
+<p>如果字符不在字符串</p>
+<pre tabindex="0"><code>chars
+</code></pre><p>中，那么它的价值是它在字母表中的位置（下标从</p>
+<p>1</p>
+<p>开始）。</p>
+<ul>
+<li>比方说，<code>'a'</code> 的价值为 <code>1</code> ，<code>'b'</code> 的价值为 <code>2</code> ，以此类推，<code>'z'</code> 的价值为 <code>26</code> 。</li>
+</ul>
+</li>
+<li>
+<p>否则，如果这个字符在 <code>chars</code> 中的位置为 <code>i</code> ，那么它的价值就是 <code>vals[i]</code> 。</p>
+</li>
+</ul>
+<p>请你返回字符串 <code>s</code> 的所有子字符串中的最大开销。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：s = &#34;adaa&#34;, chars = &#34;d&#34;, vals = [-1000]
+输出：2
+解释：字符 &#34;a&#34; 和 &#34;d&#34; 的价值分别为 1 和 -1000 。
+最大开销子字符串是 &#34;aa&#34; ，它的开销为 1 + 1 = 2 。
+2 是最大开销。
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：s = &#34;abc&#34;, chars = &#34;abc&#34;, vals = [-1,-1,-1]
+输出：0
+解释：字符 &#34;a&#34; ，&#34;b&#34; 和 &#34;c&#34; 的价值分别为 -1 ，-1 和 -1 。
+最大开销子字符串是 &#34;&#34; ，它的开销为 0 。
+0 是最大开销。
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= s.length &lt;= 10^5</code></li>
+<li><code>s</code> 只包含小写英文字母。</li>
+<li><code>1 &lt;= chars.length &lt;= 26</code></li>
+<li><code>chars</code> 只包含小写英文字母，且 <strong>互不相同</strong> 。</li>
+<li><code>vals.length == chars.length</code></li>
+<li><code>-1000 &lt;= vals[i] &lt;= 1000</code></li>
+</ul>
+<h3 id="思路-1">思路<a hidden class="anchor" aria-hidden="true" href="#思路-1">#</a></h3>
+<p>和 T1 比，多了个计算字符串开销的操作，大体思路几乎一样</p>
+<h3 id="code-1">Code<a hidden class="anchor" aria-hidden="true" href="#code-1">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maximumCostSubstring(string s, string chars, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> vals) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> len <span style="color:#f92672">=</span> s.length(), res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> dp(len, <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">auto</span> first <span style="color:#f92672">=</span> chars.find(s[<span style="color:#ae81ff">0</span>]);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (first <span style="color:#f92672">!=</span> string<span style="color:#f92672">::</span>npos) {
+</span></span><span style="display:flex;"><span>            dp[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> max(<span style="color:#ae81ff">0</span>, vals[first]);
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            dp[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> s[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;a&#39;</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> len; <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">auto</span> index <span style="color:#f92672">=</span> chars.find(s[i]);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (index <span style="color:#f92672">!=</span> string<span style="color:#f92672">::</span>npos) {
+</span></span><span style="display:flex;"><span>                dp[i] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>], <span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> vals[index];
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                dp[i] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>], <span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> s[i] <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;a&#39;</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ranges<span style="color:#f92672">::</span>max(dp);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="3任意子数组和的绝对值的最大值">3.任意子数组和的绝对值的最大值<a hidden class="anchor" aria-hidden="true" href="#3任意子数组和的绝对值的最大值">#</a></h2>
+<p>给你一个整数数组 <code>nums</code> 。一个子数组 <code>[numsl, numsl+1, ..., numsr-1, numsr]</code> 的 <strong>和的绝对值</strong> 为 <code>abs(numsl + numsl+1 + ... + numsr-1 + numsr)</code> 。</p>
+<p>请你找出 <code>nums</code> 中 <strong>和的绝对值</strong> 最大的任意子数组（<strong>可能为空</strong>），并返回该 <strong>最大值</strong> 。</p>
+<p><code>abs(x)</code> 定义如下：</p>
+<ul>
+<li>如果 <code>x</code> 是负整数，那么 <code>abs(x) = -x</code> 。</li>
+<li>如果 <code>x</code> 是非负整数，那么 <code>abs(x) = x</code> 。</li>
+</ul>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：nums = [1,-3,2,3,-4]
+输出：5
+解释：子数组 [2,3] 和的绝对值最大，为 abs(2+3) = abs(5) = 5 。
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：nums = [2,-5,1,-4,3,-2]
+输出：8
+解释：子数组 [-5,1,-4] 和的绝对值最大，为 abs(-5+1-4) = abs(-8) = 8 。
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= nums.length &lt;= 10^5</code></li>
+<li><code>-10^4 &lt;= nums[i] &lt;= 10^4</code></li>
+</ul>
+<h3 id="思路-2">思路<a hidden class="anchor" aria-hidden="true" href="#思路-2">#</a></h3>
+<p>要求数组中<strong>任意子数组和的绝对值</strong>的最大值，要么正值尽可能大，要么负值尽可能小，所以我们分别计算最大子数组和 <code>f_max</code> 与最小子数组和 <code>f_min</code> ，取它们绝对值的较大值即可</p>
+<h3 id="code-2">Code<a hidden class="anchor" aria-hidden="true" href="#code-2">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maxAbsoluteSum(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, f_max <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, f_min <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span> x: nums) {
+</span></span><span style="display:flex;"><span>            f_max <span style="color:#f92672">=</span> max(f_max, <span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> x;
+</span></span><span style="display:flex;"><span>            f_min <span style="color:#f92672">=</span> min(f_min, <span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> x;
+</span></span><span style="display:flex;"><span>            res <span style="color:#f92672">=</span> max({res, f_max, <span style="color:#f92672">-</span>f_min});
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="4-k-次串联后最大子数组之和">4. K 次串联后最大子数组之和<a hidden class="anchor" aria-hidden="true" href="#4-k-次串联后最大子数组之和">#</a></h2>
+<p>给定一个整数数组 <code>arr</code> 和一个整数 <code>k</code> ，通过重复 <code>k</code> 次来修改数组。</p>
+<p>例如，如果 <code>arr = [1, 2]</code> ， <code>k = 3</code> ，那么修改后的数组将是 <code>[1, 2, 1, 2, 1, 2]</code> 。</p>
+<p>返回修改后的数组中的最大的子数组之和。注意，子数组长度可以是 <code>0</code>，在这种情况下它的总和也是 <code>0</code>。</p>
+<p>由于 <strong>结果可能会很大</strong>，需要返回的 <code>109 + 7</code> 的 <strong>模</strong> 。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：arr = [1,2], k = 3
+输出：9
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：arr = [1,-2,1], k = 5
+输出：2
+</code></pre><p><strong>示例 3：</strong></p>
+<pre tabindex="0"><code>输入：arr = [-1,-2], k = 7
+输出：0
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= arr.length &lt;= 10^5</code></li>
+<li><code>1 &lt;= k &lt;= 10^5</code></li>
+<li><code>-10^4 &lt;= arr[i] &lt;= 10^4</code></li>
+</ul>
+<h3 id="思路-3">思路<a hidden class="anchor" aria-hidden="true" href="#思路-3">#</a></h3>
+<p>首先，不能直接拼接 k 次给定的数组，数据范围是 <code>k * length = 10^10</code> ，会爆内存。</p>
+<p>我们分下面两种情况考虑：</p>
+<ul>
+<li><code>k == 1</code> 时，就是求最大子数组和，直接 dp 即可</li>
+<li><code>k &gt;= 2</code> 时，<strong>因为数组 <code>arr</code> 是不断重复的</strong>，我们要考虑的是：“<strong>最大子数组和是出现在一个 <code>arr</code> 中还是在两个 <code>arr</code> 的交界处</strong>”， 所以我们只需要考虑整个重复数组的头尾两个数组**（理解成给定的 <code>arr</code> 重复 <code>k</code> 次，只考虑第 <code>1</code> 次出现的 <code>arr</code> 和第 <code>k</code> 次出现的 <code>arr</code> ，这两个 <code>arr</code> 之间还有 <code>k-2</code> 个 <code>arr</code> ，如果理解不了就多想几次）**，之后我们计算单个 <code>arr</code> 的所有元素之和 <code>sum</code> ，对于 <code>sum</code> 又有下面两种情况：
+<ul>
+<li><code>sum &gt;= 0</code> 时，我们就可以在第 <code>1</code> 个 <code>arr</code> 和第  <code>k</code> 个 <code>arr</code> 之间插入 <code>k-2</code> 个 <code>sum</code> 来构成更大的子数组和（因为 <code>k</code> 次串联后的数组是连续的）</li>
+<li><code>sum &lt; 0</code> 时，我们就直接不要插入 <code>sum</code> ，直接返回即可</li>
+</ul>
+</li>
+</ul>
+<h3 id="code-3">Code<a hidden class="anchor" aria-hidden="true" href="#code-3">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> kConcatenationMaxSum(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> arr, <span style="color:#66d9ef">int</span> k) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> ans <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, f <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (k <span style="color:#f92672">==</span> <span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span> x: arr) {
+</span></span><span style="display:flex;"><span>                f <span style="color:#f92672">=</span> max(f, <span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> x;
+</span></span><span style="display:flex;"><span>                ans <span style="color:#f92672">=</span> max(ans, f);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> arr.size();
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">*</span> n; <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>                f <span style="color:#f92672">=</span> max(f, <span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> arr[i<span style="color:#f92672">%</span>n];
+</span></span><span style="display:flex;"><span>                ans <span style="color:#f92672">=</span> max(ans, f);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> sum <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, mod <span style="color:#f92672">=</span> <span style="color:#ae81ff">1e9</span> <span style="color:#f92672">+</span> <span style="color:#ae81ff">7</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span> x: arr) sum <span style="color:#f92672">+=</span> x;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (sum <span style="color:#f92672">&gt;</span> <span style="color:#ae81ff">0</span>) ans <span style="color:#f92672">=</span> (ans <span style="color:#f92672">+</span> (k <span style="color:#f92672">-</span> <span style="color:#ae81ff">2ll</span>) <span style="color:#f92672">*</span> sum) <span style="color:#f92672">%</span> mod;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ans;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="5环形子数组的最大和">5.环形子数组的最大和<a hidden class="anchor" aria-hidden="true" href="#5环形子数组的最大和">#</a></h2>
+<p>给定一个长度为 <code>n</code> 的<strong>环形整数数组</strong> <code>nums</code> ，返回 <em><code>nums</code> 的非空 <strong>子数组</strong> 的最大可能和</em> 。</p>
+<p><strong>环形数组</strong> 意味着数组的末端将会与开头相连呈环状。形式上， <code>nums[i]</code> 的下一个元素是 <code>nums[(i + 1) % n]</code> ， <code>nums[i]</code> 的前一个元素是 <code>nums[(i - 1 + n) % n]</code> 。</p>
+<p><strong>子数组</strong> 最多只能包含固定缓冲区 <code>nums</code> 中的每个元素一次。形式上，对于子数组 <code>nums[i], nums[i + 1], ..., nums[j]</code> ，不存在 <code>i &lt;= k1, k2 &lt;= j</code> 其中 <code>k1 % n == k2 % n</code> 。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：nums = [1,-2,3,-2]
+输出：3
+解释：从子数组 [3] 得到最大和 3
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：nums = [5,-3,5]
+输出：10
+解释：从子数组 [5,5] 得到最大和 5 + 5 = 10
+</code></pre><p><strong>示例 3：</strong></p>
+<pre tabindex="0"><code>输入：nums = [3,-2,2,-3]
+输出：3
+解释：从子数组 [3] 和 [3,-2,2] 都可以得到最大和 3
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>n == nums.length</code></li>
+<li><code>1 &lt;= n &lt;= 3 * 10^4</code></li>
+<li><code>-3 * 10^4 &lt;= nums[i] &lt;= 3 * 10^4</code></li>
+</ul>
+<h3 id="思路-4">思路<a hidden class="anchor" aria-hidden="true" href="#思路-4">#</a></h3>
+<p><img alt="lc918-c.png" loading="lazy" src="https://pic.leetcode.cn/1689750394-drKSAI-lc918-c.png"></p>
+<h3 id="code-4">Code<a hidden class="anchor" aria-hidden="true" href="#code-4">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maxSubarraySumCircular(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> max_s <span style="color:#f92672">=</span> INT_MIN; <span style="color:#75715e">// 最大子数组和
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> min_s <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; <span style="color:#75715e">// 最小子数组和
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">int</span> max_f <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, min_f <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, sum <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span> x: nums) {
+</span></span><span style="display:flex;"><span>            max_f <span style="color:#f92672">=</span> max(max_f, <span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> x;
+</span></span><span style="display:flex;"><span>            max_s <span style="color:#f92672">=</span> max(max_s, max_f);
+</span></span><span style="display:flex;"><span>            min_f <span style="color:#f92672">=</span> min(min_f, <span style="color:#ae81ff">0</span>) <span style="color:#f92672">+</span> x;
+</span></span><span style="display:flex;"><span>            min_s <span style="color:#f92672">=</span> min(min_s, min_f);
+</span></span><span style="display:flex;"><span>            sum <span style="color:#f92672">+=</span> x;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// sum - min_s 表示跨界的最大子数组和
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> sum <span style="color:#f92672">==</span> min_s <span style="color:#f92672">?</span> max_s : max(max_s, sum <span style="color:#f92672">-</span> min_s);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="6拼接数组的最大分数">6.拼接数组的最大分数<a hidden class="anchor" aria-hidden="true" href="#6拼接数组的最大分数">#</a></h2>
+<p>给你两个下标从 <strong>0</strong> 开始的整数数组 <code>nums1</code> 和 <code>nums2</code> ，长度都是 <code>n</code> 。</p>
+<p>你可以选择两个整数 <code>left</code> 和 <code>right</code> ，其中 <code>0 &lt;= left &lt;= right &lt; n</code> ，接着 <strong>交换</strong> 两个子数组 <code>nums1[left...right]</code> 和 <code>nums2[left...right]</code> 。</p>
+<ul>
+<li>例如，设 <code>nums1 = [1,2,3,4,5]</code> 和 <code>nums2 = [11,12,13,14,15]</code> ，整数选择 <code>left = 1</code> 和 <code>right = 2</code>，那么 <code>nums1</code> 会变为 <code>[1,***12\*,\*13\***,4,5]</code> 而 <code>nums2</code> 会变为 <code>[11,***2,3***,14,15]</code> 。</li>
+</ul>
+<p>你可以选择执行上述操作 <strong>一次</strong> 或不执行任何操作。</p>
+<p>数组的 <strong>分数</strong> 取 <code>sum(nums1)</code> 和 <code>sum(nums2)</code> 中的最大值，其中 <code>sum(arr)</code> 是数组 <code>arr</code> 中所有元素之和。</p>
+<p>返回 <strong>可能的最大分数</strong> 。</p>
+<p><strong>子数组</strong> 是数组中连续的一个元素序列。<code>arr[left...right]</code> 表示子数组包含 <code>nums</code> 中下标 <code>left</code> 和 <code>right</code> 之间的元素**（含** 下标 <code>left</code> 和 <code>right</code> 对应元素**）**。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：nums1 = [60,60,60], nums2 = [10,90,10]
+输出：210
+解释：选择 left = 1 和 right = 1 ，得到 nums1 = [60,90,60] 和 nums2 = [10,60,10] 。
+分数为 max(sum(nums1), sum(nums2)) = max(210, 80) = 210 。
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：nums1 = [20,40,20,70,30], nums2 = [50,20,50,40,20]
+输出：220
+解释：选择 left = 3 和 right = 4 ，得到 nums1 = [20,40,20,40,20] 和 nums2 = [50,20,50,70,30] 。
+分数为 max(sum(nums1), sum(nums2)) = max(140, 220) = 220 。
+</code></pre><p><strong>示例 3：</strong></p>
+<pre tabindex="0"><code>输入：nums1 = [7,11,13], nums2 = [1,1,1]
+输出：31
+解释：选择不交换任何子数组。
+分数为 max(sum(nums1), sum(nums2)) = max(31, 3) = 31 。
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>n == nums1.length == nums2.length</code></li>
+<li><code>1 &lt;= n &lt;= 10^5</code></li>
+<li><code>1 &lt;= nums1[i], nums2[i] &lt;= 10^4</code></li>
+</ul>
+<h3 id="思路-5">思路<a hidden class="anchor" aria-hidden="true" href="#思路-5">#</a></h3>
+<p>设：
+$$
+s_1 = \Sigma nums_1[i]
+$$
+交换 <code>[left, right]</code> 范围内的元素后，对于 <code>nums1'</code>  有
+$$
+\Sigma nums_1&rsquo;[i] = s_1 - (nums_1[left] + &hellip; + nums_1[right]) + (nums_2[left] + &hellip; + nums_2[right])
+$$
+合并相同下标，等号右侧变形为：
+$$
+s_1 + (nums_2[left] - nums_1[left]) + &hellip; + (nums_2[right] - nums_1[right])
+$$
+设：<code>diff[i] = nums2[i] - nums1[i]</code> ，上式变为：
+$$
+s_1 + diff[left] + &hellip; + diff[right]
+$$
+为了最大化上式，我们需要最大化 <code>diff</code> 数组的<strong>最大子数组和（子数组可为空）</strong></p>
+<p>对于 <code>nums2</code> 也同理，求这两者的最大值即为答案。</p>
+<h3 id="code-5">Code<a hidden class="anchor" aria-hidden="true" href="#code-5">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">solve</span>(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums1, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums2) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> s1 <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, maxSum <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, s <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> nums1.size(); <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>            s1 <span style="color:#f92672">+=</span> nums1[i];
+</span></span><span style="display:flex;"><span>            s <span style="color:#f92672">=</span> max(s <span style="color:#f92672">+</span> nums2[i] <span style="color:#f92672">-</span> nums1[i], <span style="color:#ae81ff">0</span>);
+</span></span><span style="display:flex;"><span>            maxSum <span style="color:#f92672">=</span> max(maxSum, s);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> s1 <span style="color:#f92672">+</span> maxSum;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maximumsSplicedArray(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums1, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums2) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">max</span>(solve(nums1, nums2), solve(nums2, nums1));
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
