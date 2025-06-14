@@ -8,10 +8,14 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: write  # 授予写入仓库的权限
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          submodules: true  # 拉取主题子模块（如果有）
+          fetch-depth: 0    # 获取所有历史记录（可选）
 
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
@@ -27,3 +31,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./public
+          publish_branch: gh-pages  # 指定发布分支为 gh-pages
+          cname: yuk1pedia.github.io
