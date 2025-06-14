@@ -1,360 +1,85 @@
-<!DOCTYPE html>
-<html lang="en" dir="auto">
-
-<head><meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
-<title>LCR-位运算 | YUKIPEDIA&#39;s blog</title>
-<meta name="keywords" content="">
-<meta name="description" content="记录">
-<meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-10-22-bit-operation/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
-<meta name="theme-color" content="#2e2e33">
-<meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-10-22-bit-operation/">
-<noscript>
-    <style>
-        #theme-toggle,
-        .top-link {
-            display: none;
-        }
-
-    </style>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --theme: rgb(29, 30, 32);
-                --entry: rgb(46, 46, 51);
-                --primary: rgb(218, 218, 219);
-                --secondary: rgb(155, 156, 157);
-                --tertiary: rgb(65, 66, 68);
-                --content: rgb(196, 196, 197);
-                --code-block-bg: rgb(46, 46, 51);
-                --code-bg: rgb(55, 56, 62);
-                --border: rgb(51, 51, 51);
-            }
-
-            .list {
-                background: var(--theme);
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-track {
-                background: 0 0;
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-thumb {
-                border-color: var(--theme);
-            }
-        }
-
-    </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-10-22-bit-operation/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="LCR-位运算">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="LCR-位运算">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "LCR-位运算",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-10-22-bit-operation/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "LCR-位运算",
-  "name": "LCR-位运算",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "1.位1的个数 编写一个函数，输入是一个无符号整数（以二进制串的形式），返回其二进制表达式中数字位数为 ‘1’ 的个数（也被称为 汉明重量).）。\n提示：\n请注意，在某些语言（如 Java）中，没有无符号整数类型。在这种情况下，输入和输出都将被指定为有符号整数类型，并且不应影响您的实现，因为无论整数是有符号的还是无符号的，其内部的二进制表示形式都是相同的。 在 Java 中，编译器使用 二进制补码 记法来表示有符号整数。因此，在上面的 示例 3 中，输入表示有符号整数 -3。 示例 1：\n输入：n = 11 (控制台输入 00000000000000000000000000001011)\r输出：3\r解释：输入的二进制串 00000000000000000000000000001011 中，共有三位为 '1'。 示例 2：\n输入：n = 128 (控制台输入 00000000000000000000000010000000)\r输出：1\r解释：输入的二进制串 00000000000000000000000010000000 中，共有一位为 '1'。 示例 3：\n输入：n = 4294967293 (控制台输入 11111111111111111111111111111101，部分语言中 n = -3）\r输出：31\r解释：输入的二进制串 11111111111111111111111111111101 中，共有 31 位为 '1'。 提示：\n输入必须是长度为 32 的 二进制串 。 方法一：逐位判断\n由于要求给定无符号整数的二进制 1 的个数，这里可以直接对 2 取模，拿到当前整数 n 的二进制最右边的数字，判断是否为 1 ，然后将 n 右移 1 位 ，逐位判断即可。\nCode\nclass Solution { public: int hammingWeight(uint32_t n) { int res = 0; while (n) { res += n % 2; n \u003e\u003e= 1; } return res; } }; 拿到二进制最右一位也可以通过位运算得到：\n若 n \u0026 1 == 0 ，则 n 二进制最右一位为 0； 若 n \u0026 1 == 1 ，则 n 二进制最右一位为 1。 Code\nclass Solution { public: int hammingWeight(uint32_t n) { int res = 0; while (n) { res += n \u0026 1; n \u003e\u003e= 1; } return res; } }; 方法二：巧用 n \u0026 (n - 1)\n(n - 1) 解析：二进制数字 n 最右边的 1 变成 0，此 1 右边的 0 都变成 1； n \u0026 (n - 1) ：解析：二进制数字 n 最右边的 1 变成 0，其余不变。 当 n 的二进制中还存在 1 时，不停的将 n 与 (n - 1) 做与运算，每一轮能够消除掉 n 中的一个 1，而不用遍历整个 n 的二进制串。\nCode\nclass Solution { public: int hammingWeight(uint32_t n) { int res = 0; while (n) { ++res; n \u0026= n - 1; } return res; } }; 2.Pow(x, n) 实现 pow(x, n) ，即计算 x 的 n 次幂函数（即，xn）。\n示例 1：\n输入：x = 2.00000, n = 10\r输出：1024.00000 示例 2：\n输入：x = 2.10000, n = 3\r输出：9.26100 示例 3：\n输入：x = 2.00000, n = -2\r输出：0.25000\r解释：2-2 = 1/22 = 1/4 = 0.25 提示：\n-100.0 \u003c x \u003c 100.0 -2^31 \u003c= n \u003c= 2^31-1 -10^4 \u003c= xn \u003c= 10^4 思路\n快速幂算法：快速幂\nCode\nclass Solution { public: double myPow(double x, int N) { double ans = 1; long long n = N; // 处理负数次幂的情况 if (n \u003c 0) { // x^-n = (1/x)^n n = -n; x = 1 / x; } while (n) { // 从低到高枚举 n 的每个比特位 if (n \u0026 1) { // 当前比特位是 1 ans *= x; // 把 x 乘到 ans 中 } x *= x; // x 自身平方 n \u003e\u003e= 1; // n 右移，继续枚举下一个比特位 } return ans; } }; 3.撞色搭配 整数数组 sockets 记录了一个袜子礼盒的颜色分布情况，其中 sockets[i] 表示该袜子的颜色编号。礼盒中除了一款撞色搭配的袜子，每种颜色的袜子均有两只。请设计一个程序，在时间复杂度 O(n)，空间复杂度O(1) 内找到这双撞色搭配袜子的两个颜色编号。\n示例 1：\n输入：sockets = [4, 5, 2, 4, 6, 6]\r输出：[2,5] 或 [5,2] 示例 2：\n输入：sockets = [1, 2, 4, 1, 4, 3, 12, 3]\r输出：[2,12] 或 [12,2] 提示：\n2 \u003c= sockets.length \u003c= 10000 思路\n翻译题面：给定一个数组，该数组中有两个元素只出现了一次，其他元素均出现了两次。请设计时间复杂度 O(n)，空间复杂度O(1)的算法找到这两个元素。\n我们首先考虑一个更简单的问题：给定一个数组，该数组中有一个元素只出现了一次，其他元素均出现了两次，请设计时间复杂度 O(n)，空间复杂度O(1)的算法找到这个元素。\n当需要在重复出现的数字数组中找到没有重复出现的数字时，我们可以使用位运算中的异或运算来解决。\n异或运算有个重要的性质：\n两个相同数字异或，结果为 0； 所有整数和 0 异或，结果为自身。 对于上面的问题，我们可以对所有的数组元素进行异或操作，假设 sockets = [a,a,b,b,...,x] 那么就有：\n因为异或运算满足交换律，所以以上运算结果与 sockets 的元素顺序无关。\nvector\u003cint\u003e singleNumber(vector\u003cint\u003e\u0026 sockets) { int x = 0; for(int num : sockets) // 1. 遍历 sockets 执行异或运算 x ^= num; return x; // 2. 返回出现一次的数字 x } 那么回到原来的问题，我们现在要找的不是一个只出现一次的数字，而是两个只出现一次的数字，如何解决呢？\n设两个只出现一次的数字为 x，y ，由于 x != y ，则 x 和 y 的二进制至少有一位不同，根据此位可以将 sockets 拆分为分别包含 x 和 y 的两个子数组。然后分别对两个子数组遍历执行异或操作，就可以得到答案。\n算法流程：\n遍历 sockets 执行异或：对 sockets 中所有数字执行异或，得到的结果为 x ^ y\n循环左移计算 m ：\n根据异或运算定义，若 x ^ y 的某二进制位为 1，则 x 和 y 的此二进制位一定不同。当我们找到 x ^ y 某个为 1 的二进制位，即可将 sockets 拆分为上述的两个子数组。根据与运算特点，可知对于任意整数 a 有： 若 a \u0026 0001 != 0 ，则 a 的第一位为 1； 若 a \u0026 0010 != 0 ，则 a 的第二位为 1； 以此类推… 因此，初始化一个辅助变量 m = 1 ，通过与运算从右往左循环判断，便可获取整数 x ^ y 首位 1，记录在 m 中。 拆分 sockets 为两个子数组\n分别遍历两个子数组执行异或，返回两个子数组异或的结果即可\n以下面的例子来解释为什么分组：\n例子： 1 4 6 4 如果全员异或，相同的4肯定没了，留下1 和 6异或的结果，但是光异或我没法返回啊\r那这里进行一下分组\r1 和 6 肯定是不同的吧，异或结果有一位肯定是 1，比如说第2位异或为1\r=\u003e 也就是说 1 和 6 ，第二位一个为1一个为0\r那么我就分组，将第二位为1的分一组，全员异或\r将第二位为0的分一组，全员异或\r这就是最终结果了\r你可能还有疑问，哪相同的元素怎么办，不会干扰结果吗？\r当然不会，比如4 和 4，第二位都为0，肯定都被分到一组，最后异或为0，不影响结果 Code\nclass Solution { public: vector\u003cint\u003e sockCollocation(vector\u003cint\u003e\u0026 sockets) { int x = 0, y = 0, n = 0, m = 1; for (int num: sockets) n ^= num; // 1.遍历异或 while ((n \u0026 m) == 0) m \u003c\u003c= 1; // 2.循环左移，计算 m for (int num: sockets) { // 3.遍历 sockets 分组 if (num \u0026 m) x ^= num; // 4.当 num \u0026 m != 0 else y ^= num; // 4.当 num \u0026 m == 0 } return {x, y}; } }; 4.训练计划Ⅵ 教学过程中，教练示范一次，学员跟做三次。该过程被混乱剪辑后，记录于数组 actions，其中 actions[i] 表示做出该动作的人员编号。请返回教练的编号。\n示例 1：\n输入：actions = [5, 7, 5, 5]\r输出：7 示例 2：\n输入：actions = [12, 1, 6, 12, 6, 12, 6]\r输出：1 提示：\n1 \u003c= actions.length \u003c= 10000 1 \u003c= actions[i] \u003c 2^31 思路\n考虑数字的二进制形式，对于出现三次的数字，各二进制位的出现次数都是 3 的倍数。\n因此，统计所有数字的各二进制位中 1 的出现次数，并对 3 求余，结果则为只出现一次的数字。\n因此，我们可以根据上面的思路进行遍历统计：\n使用与运算，可获取二进制数字 action 的最右一位 n1 ：n1 = action \u0026 i 配合右移操作，可从低位到高位，获取 action 所有位的值：action = action \u003e\u003e 1 于是我们可以建立一个长度为 32 的数组 counts ，\n通过以上方法记录所有数字的各二进制位的 1 的出现次数之和； 将 counts 各元素对 3 求余，则结果为只出现一次的数字的各二进制位。 之后我们要做的就是通过这个 counts 数组恢复出结果 res：\n通过左移操作和或运算，可以将各二进制位的值恢复到数字 res 上。 Code\nclass Solution { public: int trainingPlan(vector\u003cint\u003e\u0026 actions) { int counts[32] = {0}; for (int action: actions) { for (int i = 0; i \u003c 32; ++i) { counts[i] += action \u0026 1; action \u003e\u003e= 1; } } int res = 0, m = 3; for (int i = 31; i \u003e= 0; --i) { res \u003c\u003c= 1; res |= counts[i] % m; } return res; } }; 5.加密运算 计算机安全专家正在开发一款高度安全的加密通信软件，需要在进行数据传输时对数据进行加密和解密操作。假定 dataA 和 dataB 分别为随机抽样的两次通信的数据量：\n正数为发送量 负数为接受量 0 为数据遗失 请不使用四则运算符的情况下实现一个函数计算两次通信的数据量之和（三种情况均需被统计），以确保在数据传输过程中的高安全性和保密性。\n示例 1:\n输入：dataA = 5, dataB = -1\r输出：4 提示：\ndataA 和 dataB 均可能是负数或 0 结果不会溢出 32 位整数 思路\n本题需要用位运算实现加法操作。\n设两数字的二进制形式 dataA、dataB，其求和 s = dataA + dataB ，dataA(i) 代表 dataA 的二进制第 i 位，则分为以下四种情况：\ndataA(i) dataB(i) 无进位和 n(i) 进位 c(i+1) 0 0 0 0 0 1 1 0 1 0 1 0 1 1 0 1 可以发现，无进位和与异或运算规律相同，进位和与运算规律相同（并需要左移一位）。\n同时，有：（和 s ）=（非进位和 n ）+（进位 c ）。\n循环求 n 和 c ，直至进位 c = 0；此时 s = n ，返回 n 即可。\n注：负数在计算机系统中用补码表示，加减法可以和正数一样统一处理，因此以上方法适用于正数和负数的加法。\nCode\nclass Solution { public: int encryptionCalculate(int dataA, int dataB) { while (dataB != 0) { // 进位不存在负的情况，unsigned int 是修饰进位 int c = (unsigned int) (dataA \u0026 dataB) \u003c\u003c 1; dataA ^= dataB; dataB = c; } return dataA; } }; ",
-  "wordCount" : "944",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-10-22-bit-operation/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
-</head>
-
-<body class="" id="top">
-<script>
-    if (localStorage.getItem("pref-theme") === "dark") {
-        document.body.classList.add('dark');
-    } else if (localStorage.getItem("pref-theme") === "light") {
-        document.body.classList.remove('dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark');
-    }
-
-</script>
-
-<header class="header">
-    <nav class="nav">
-        <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
-            <div class="logo-switches">
-                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
-                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <ul id="menu">
-            <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
-                    <span>Learning Notes</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</header>
-<main class="main">
-
-<article class="post-single">
-  <header class="post-header">
-    
-    <h1 class="post-title entry-hint-parent">
-      LCR-位运算
-    </h1>
-    <div class="post-description">
-      记录
-    </div>
-    <div class="post-meta">
-
-</div>
-  </header> 
-  <div class="post-content"><h2 id="1位1的个数">1.位1的个数<a hidden class="anchor" aria-hidden="true" href="#1位1的个数">#</a></h2>
-<p>编写一个函数，输入是一个无符号整数（以二进制串的形式），返回其二进制表达式中数字位数为 &lsquo;1&rsquo; 的个数（也被称为 <a href="http://en.wikipedia.org/wiki/Hamming_weight">汉明重量</a>).）。</p>
-<p><strong>提示：</strong></p>
-<ul>
-<li>请注意，在某些语言（如 Java）中，没有无符号整数类型。在这种情况下，输入和输出都将被指定为有符号整数类型，并且不应影响您的实现，因为无论整数是有符号的还是无符号的，其内部的二进制表示形式都是相同的。</li>
-<li>在 Java 中，编译器使用 <a href="https://baike.baidu.com/item/%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%A1%A5%E7%A0%81/5295284">二进制补码</a> 记法来表示有符号整数。因此，在上面的 <strong>示例 3</strong> 中，输入表示有符号整数 <code>-3</code>。</li>
-</ul>
-<p><strong>示例 1：</strong></p>
-<pre tabindex="0"><code>输入：n = 11 (控制台输入 00000000000000000000000000001011)
+<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>LCR-位运算 | YUKIPEDIA's blog</title><meta name=keywords content><meta name=description content="记录"><meta name=author content><link rel=canonical href=https://yuk1pedia.github.io/learning-notes/2024-10-22-bit-operation/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://yuk1pedia.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://yuk1pedia.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://yuk1pedia.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://yuk1pedia.github.io/apple-touch-icon.png><link rel=mask-icon href=https://yuk1pedia.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://yuk1pedia.github.io/learning-notes/2024-10-22-bit-operation/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-10-22-bit-operation/"><meta property="og:site_name" content="YUKIPEDIA's blog"><meta property="og:title" content="LCR-位运算"><meta property="og:description" content="记录"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="learning-notes"><meta name=twitter:card content="summary"><meta name=twitter:title content="LCR-位运算"><meta name=twitter:description content="记录"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Learning Notes","item":"https://yuk1pedia.github.io/learning-notes/"},{"@type":"ListItem","position":2,"name":"LCR-位运算","item":"https://yuk1pedia.github.io/learning-notes/2024-10-22-bit-operation/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"LCR-位运算","name":"LCR-位运算","description":"记录","keywords":[],"articleBody":"1.位1的个数 编写一个函数，输入是一个无符号整数（以二进制串的形式），返回其二进制表达式中数字位数为 ‘1’ 的个数（也被称为 汉明重量).）。\n提示：\n请注意，在某些语言（如 Java）中，没有无符号整数类型。在这种情况下，输入和输出都将被指定为有符号整数类型，并且不应影响您的实现，因为无论整数是有符号的还是无符号的，其内部的二进制表示形式都是相同的。 在 Java 中，编译器使用 二进制补码 记法来表示有符号整数。因此，在上面的 示例 3 中，输入表示有符号整数 -3。 示例 1：\n输入：n = 11 (控制台输入 00000000000000000000000000001011) 输出：3 解释：输入的二进制串 00000000000000000000000000001011 中，共有三位为 '1'。 示例 2：\n输入：n = 128 (控制台输入 00000000000000000000000010000000) 输出：1 解释：输入的二进制串 00000000000000000000000010000000 中，共有一位为 '1'。 示例 3：\n输入：n = 4294967293 (控制台输入 11111111111111111111111111111101，部分语言中 n = -3） 输出：31 解释：输入的二进制串 11111111111111111111111111111101 中，共有 31 位为 '1'。 提示：\n输入必须是长度为 32 的 二进制串 。 方法一：逐位判断\n由于要求给定无符号整数的二进制 1 的个数，这里可以直接对 2 取模，拿到当前整数 n 的二进制最右边的数字，判断是否为 1 ，然后将 n 右移 1 位 ，逐位判断即可。\nCode\nclass Solution { public: int hammingWeight(uint32_t n) { int res = 0; while (n) { res += n % 2; n \u003e\u003e= 1; } return res; } }; 拿到二进制最右一位也可以通过位运算得到：\n若 n \u0026 1 == 0 ，则 n 二进制最右一位为 0； 若 n \u0026 1 == 1 ，则 n 二进制最右一位为 1。 Code\nclass Solution { public: int hammingWeight(uint32_t n) { int res = 0; while (n) { res += n \u0026 1; n \u003e\u003e= 1; } return res; } }; 方法二：巧用 n \u0026 (n - 1)\n(n - 1) 解析：二进制数字 n 最右边的 1 变成 0，此 1 右边的 0 都变成 1； n \u0026 (n - 1) ：解析：二进制数字 n 最右边的 1 变成 0，其余不变。 当 n 的二进制中还存在 1 时，不停的将 n 与 (n - 1) 做与运算，每一轮能够消除掉 n 中的一个 1，而不用遍历整个 n 的二进制串。\nCode\nclass Solution { public: int hammingWeight(uint32_t n) { int res = 0; while (n) { ++res; n \u0026= n - 1; } return res; } }; 2.Pow(x, n) 实现 pow(x, n) ，即计算 x 的 n 次幂函数（即，xn）。\n示例 1：\n输入：x = 2.00000, n = 10 输出：1024.00000 示例 2：\n输入：x = 2.10000, n = 3 输出：9.26100 示例 3：\n输入：x = 2.00000, n = -2 输出：0.25000 解释：2-2 = 1/22 = 1/4 = 0.25 提示：\n-100.0 \u003c x \u003c 100.0 -2^31 \u003c= n \u003c= 2^31-1 -10^4 \u003c= xn \u003c= 10^4 思路\n快速幂算法：快速幂\nCode\nclass Solution { public: double myPow(double x, int N) { double ans = 1; long long n = N; // 处理负数次幂的情况 if (n \u003c 0) { // x^-n = (1/x)^n n = -n; x = 1 / x; } while (n) { // 从低到高枚举 n 的每个比特位 if (n \u0026 1) { // 当前比特位是 1 ans *= x; // 把 x 乘到 ans 中 } x *= x; // x 自身平方 n \u003e\u003e= 1; // n 右移，继续枚举下一个比特位 } return ans; } }; 3.撞色搭配 整数数组 sockets 记录了一个袜子礼盒的颜色分布情况，其中 sockets[i] 表示该袜子的颜色编号。礼盒中除了一款撞色搭配的袜子，每种颜色的袜子均有两只。请设计一个程序，在时间复杂度 O(n)，空间复杂度O(1) 内找到这双撞色搭配袜子的两个颜色编号。\n示例 1：\n输入：sockets = [4, 5, 2, 4, 6, 6] 输出：[2,5] 或 [5,2] 示例 2：\n输入：sockets = [1, 2, 4, 1, 4, 3, 12, 3] 输出：[2,12] 或 [12,2] 提示：\n2 \u003c= sockets.length \u003c= 10000 思路\n翻译题面：给定一个数组，该数组中有两个元素只出现了一次，其他元素均出现了两次。请设计时间复杂度 O(n)，空间复杂度O(1)的算法找到这两个元素。\n我们首先考虑一个更简单的问题：给定一个数组，该数组中有一个元素只出现了一次，其他元素均出现了两次，请设计时间复杂度 O(n)，空间复杂度O(1)的算法找到这个元素。\n当需要在重复出现的数字数组中找到没有重复出现的数字时，我们可以使用位运算中的异或运算来解决。\n异或运算有个重要的性质：\n两个相同数字异或，结果为 0； 所有整数和 0 异或，结果为自身。 对于上面的问题，我们可以对所有的数组元素进行异或操作，假设 sockets = [a,a,b,b,...,x] 那么就有：\n因为异或运算满足交换律，所以以上运算结果与 sockets 的元素顺序无关。\nvector\u003cint\u003e singleNumber(vector\u003cint\u003e\u0026 sockets) { int x = 0; for(int num : sockets) // 1. 遍历 sockets 执行异或运算 x ^= num; return x; // 2. 返回出现一次的数字 x } 那么回到原来的问题，我们现在要找的不是一个只出现一次的数字，而是两个只出现一次的数字，如何解决呢？\n设两个只出现一次的数字为 x，y ，由于 x != y ，则 x 和 y 的二进制至少有一位不同，根据此位可以将 sockets 拆分为分别包含 x 和 y 的两个子数组。然后分别对两个子数组遍历执行异或操作，就可以得到答案。\n算法流程：\n遍历 sockets 执行异或：对 sockets 中所有数字执行异或，得到的结果为 x ^ y\n循环左移计算 m ：\n根据异或运算定义，若 x ^ y 的某二进制位为 1，则 x 和 y 的此二进制位一定不同。当我们找到 x ^ y 某个为 1 的二进制位，即可将 sockets 拆分为上述的两个子数组。根据与运算特点，可知对于任意整数 a 有： 若 a \u0026 0001 != 0 ，则 a 的第一位为 1； 若 a \u0026 0010 != 0 ，则 a 的第二位为 1； 以此类推… 因此，初始化一个辅助变量 m = 1 ，通过与运算从右往左循环判断，便可获取整数 x ^ y 首位 1，记录在 m 中。 拆分 sockets 为两个子数组\n分别遍历两个子数组执行异或，返回两个子数组异或的结果即可\n以下面的例子来解释为什么分组：\n例子： 1 4 6 4 如果全员异或，相同的4肯定没了，留下1 和 6异或的结果，但是光异或我没法返回啊 那这里进行一下分组 1 和 6 肯定是不同的吧，异或结果有一位肯定是 1，比如说第2位异或为1 =\u003e 也就是说 1 和 6 ，第二位一个为1一个为0 那么我就分组，将第二位为1的分一组，全员异或 将第二位为0的分一组，全员异或 这就是最终结果了 你可能还有疑问，哪相同的元素怎么办，不会干扰结果吗？ 当然不会，比如4 和 4，第二位都为0，肯定都被分到一组，最后异或为0，不影响结果 Code\nclass Solution { public: vector\u003cint\u003e sockCollocation(vector\u003cint\u003e\u0026 sockets) { int x = 0, y = 0, n = 0, m = 1; for (int num: sockets) n ^= num; // 1.遍历异或 while ((n \u0026 m) == 0) m \u003c\u003c= 1; // 2.循环左移，计算 m for (int num: sockets) { // 3.遍历 sockets 分组 if (num \u0026 m) x ^= num; // 4.当 num \u0026 m != 0 else y ^= num; // 4.当 num \u0026 m == 0 } return {x, y}; } }; 4.训练计划Ⅵ 教学过程中，教练示范一次，学员跟做三次。该过程被混乱剪辑后，记录于数组 actions，其中 actions[i] 表示做出该动作的人员编号。请返回教练的编号。\n示例 1：\n输入：actions = [5, 7, 5, 5] 输出：7 示例 2：\n输入：actions = [12, 1, 6, 12, 6, 12, 6] 输出：1 提示：\n1 \u003c= actions.length \u003c= 10000 1 \u003c= actions[i] \u003c 2^31 思路\n考虑数字的二进制形式，对于出现三次的数字，各二进制位的出现次数都是 3 的倍数。\n因此，统计所有数字的各二进制位中 1 的出现次数，并对 3 求余，结果则为只出现一次的数字。\n因此，我们可以根据上面的思路进行遍历统计：\n使用与运算，可获取二进制数字 action 的最右一位 n1 ：n1 = action \u0026 i 配合右移操作，可从低位到高位，获取 action 所有位的值：action = action \u003e\u003e 1 于是我们可以建立一个长度为 32 的数组 counts ，\n通过以上方法记录所有数字的各二进制位的 1 的出现次数之和； 将 counts 各元素对 3 求余，则结果为只出现一次的数字的各二进制位。 之后我们要做的就是通过这个 counts 数组恢复出结果 res：\n通过左移操作和或运算，可以将各二进制位的值恢复到数字 res 上。 Code\nclass Solution { public: int trainingPlan(vector\u003cint\u003e\u0026 actions) { int counts[32] = {0}; for (int action: actions) { for (int i = 0; i \u003c 32; ++i) { counts[i] += action \u0026 1; action \u003e\u003e= 1; } } int res = 0, m = 3; for (int i = 31; i \u003e= 0; --i) { res \u003c\u003c= 1; res |= counts[i] % m; } return res; } }; 5.加密运算 计算机安全专家正在开发一款高度安全的加密通信软件，需要在进行数据传输时对数据进行加密和解密操作。假定 dataA 和 dataB 分别为随机抽样的两次通信的数据量：\n正数为发送量 负数为接受量 0 为数据遗失 请不使用四则运算符的情况下实现一个函数计算两次通信的数据量之和（三种情况均需被统计），以确保在数据传输过程中的高安全性和保密性。\n示例 1:\n输入：dataA = 5, dataB = -1 输出：4 提示：\ndataA 和 dataB 均可能是负数或 0 结果不会溢出 32 位整数 思路\n本题需要用位运算实现加法操作。\n设两数字的二进制形式 dataA、dataB，其求和 s = dataA + dataB ，dataA(i) 代表 dataA 的二进制第 i 位，则分为以下四种情况：\ndataA(i) dataB(i) 无进位和 n(i) 进位 c(i+1) 0 0 0 0 0 1 1 0 1 0 1 0 1 1 0 1 可以发现，无进位和与异或运算规律相同，进位和与运算规律相同（并需要左移一位）。\n同时，有：（和 s ）=（非进位和 n ）+（进位 c ）。\n循环求 n 和 c ，直至进位 c = 0；此时 s = n ，返回 n 即可。\n注：负数在计算机系统中用补码表示，加减法可以和正数一样统一处理，因此以上方法适用于正数和负数的加法。\nCode\nclass Solution { public: int encryptionCalculate(int dataA, int dataB) { while (dataB != 0) { // 进位不存在负的情况，unsigned int 是修饰进位 int c = (unsigned int) (dataA \u0026 dataB) \u003c\u003c 1; dataA ^= dataB; dataB = c; } return dataA; } }; ","wordCount":"944","inLanguage":"en","datePublished":"0001-01-01T00:00:00Z","dateModified":"0001-01-01T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://yuk1pedia.github.io/learning-notes/2024-10-22-bit-operation/"},"publisher":{"@type":"Organization","name":"YUKIPEDIA's blog","logo":{"@type":"ImageObject","url":"https://yuk1pedia.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://yuk1pedia.github.io/ accesskey=h title="YUKIPEDIA's blog (Alt + H)">YUKIPEDIA's blog</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://yuk1pedia.github.io/learning-notes title="Learning Notes"><span>Learning Notes</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">LCR-位运算</h1><div class=post-description>记录</div><div class=post-meta></div></header><div class=post-content><h2 id=1位1的个数>1.位1的个数<a hidden class=anchor aria-hidden=true href=#1位1的个数>#</a></h2><p>编写一个函数，输入是一个无符号整数（以二进制串的形式），返回其二进制表达式中数字位数为 &lsquo;1&rsquo; 的个数（也被称为 <a href=http://en.wikipedia.org/wiki/Hamming_weight>汉明重量</a>).）。</p><p><strong>提示：</strong></p><ul><li>请注意，在某些语言（如 Java）中，没有无符号整数类型。在这种情况下，输入和输出都将被指定为有符号整数类型，并且不应影响您的实现，因为无论整数是有符号的还是无符号的，其内部的二进制表示形式都是相同的。</li><li>在 Java 中，编译器使用 <a href=https://baike.baidu.com/item/%E4%BA%8C%E8%BF%9B%E5%88%B6%E8%A1%A5%E7%A0%81/5295284>二进制补码</a> 记法来表示有符号整数。因此，在上面的 <strong>示例 3</strong> 中，输入表示有符号整数 <code>-3</code>。</li></ul><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：n = 11 (控制台输入 00000000000000000000000000001011)
 输出：3
 解释：输入的二进制串 00000000000000000000000000001011 中，共有三位为 &#39;1&#39;。
-</code></pre><p><strong>示例 2：</strong></p>
-<pre tabindex="0"><code>输入：n = 128 (控制台输入 00000000000000000000000010000000)
+</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：n = 128 (控制台输入 00000000000000000000000010000000)
 输出：1
 解释：输入的二进制串 00000000000000000000000010000000 中，共有一位为 &#39;1&#39;。
-</code></pre><p><strong>示例 3：</strong></p>
-<pre tabindex="0"><code>输入：n = 4294967293 (控制台输入 11111111111111111111111111111101，部分语言中 n = -3）
+</code></pre><p><strong>示例 3：</strong></p><pre tabindex=0><code>输入：n = 4294967293 (控制台输入 11111111111111111111111111111101，部分语言中 n = -3）
 输出：31
 解释：输入的二进制串 11111111111111111111111111111101 中，共有 31 位为 &#39;1&#39;。
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li>输入必须是长度为 <code>32</code> 的 <strong>二进制串</strong> 。</li>
-</ul>
-<p><strong>方法一：逐位判断</strong></p>
-<p>由于要求给定无符号整数的二进制 1 的个数，这里可以直接对 2 取模，拿到当前整数 <em>n</em> 的二进制最右边的数字，判断是否为 1 ，然后将 <em>n</em> 右移 1 位 ，逐位判断即可。</p>
-<p><strong>Code</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> hammingWeight(<span style="color:#66d9ef">uint32_t</span> n) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> (n) {
-</span></span><span style="display:flex;"><span>            res <span style="color:#f92672">+=</span> n <span style="color:#f92672">%</span> <span style="color:#ae81ff">2</span>;
-</span></span><span style="display:flex;"><span>            n <span style="color:#f92672">&gt;&gt;=</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><p>拿到二进制最右一位也可以通过位运算得到：</p>
-<ul>
-<li>若 <code>n &amp; 1 == 0</code> ，则 <em>n</em> 二进制最右一位为 0；</li>
-<li>若 <code>n &amp; 1 == 1</code> ，则 <em>n</em> 二进制最右一位为 1。</li>
-</ul>
-<p><strong>Code</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> hammingWeight(<span style="color:#66d9ef">uint32_t</span> n) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> (n) {
-</span></span><span style="display:flex;"><span>            res <span style="color:#f92672">+=</span> n <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>            n <span style="color:#f92672">&gt;&gt;=</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><p><strong>方法二：巧用 <code>n &amp; (n - 1)</code></strong></p>
-<ul>
-<li><code>(n - 1)</code> 解析：二进制数字 <em>n</em> 最右边的 1 变成 0，<strong>此 1 右边的 0 都变成 1</strong>；</li>
-<li><code>n &amp; (n - 1)</code> ：解析：二进制数字 <em>n</em> 最右边的 1 变成 0，其余不变。</li>
-</ul>
-<p>当 <em>n</em> 的二进制中还存在 1 时，不停的将 <em>n</em> 与 <em>(n - 1)</em> 做与运算，<strong>每一轮能够消除掉 <em>n</em> 中的一个 1</strong>，而不用遍历整个 <em>n</em> 的二进制串。</p>
-<p><img alt="Picture1.png" loading="lazy" src="https://pic.leetcode-cn.com/f23d9ef4fcfd65d7fbe29e477cbf36110b2f34558020e8cff09a1e13c0275c43-Picture1.png"></p>
-<p><strong>Code</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> hammingWeight(<span style="color:#66d9ef">uint32_t</span> n) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> (n) {
-</span></span><span style="display:flex;"><span>            <span style="color:#f92672">++</span>res;
-</span></span><span style="display:flex;"><span>            n <span style="color:#f92672">&amp;=</span> n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><h2 id="2powx-n">2.Pow(x, n)<a hidden class="anchor" aria-hidden="true" href="#2powx-n">#</a></h2>
-<p>实现 <a href="https://www.cplusplus.com/reference/valarray/pow/">pow(<em>x</em>, <em>n</em>)</a> ，即计算 x 的 n 次幂函数（即，xn）。</p>
-<p><strong>示例 1：</strong></p>
-<pre tabindex="0"><code>输入：x = 2.00000, n = 10
+</code></pre><p><strong>提示：</strong></p><ul><li>输入必须是长度为 <code>32</code> 的 <strong>二进制串</strong> 。</li></ul><p><strong>方法一：逐位判断</strong></p><p>由于要求给定无符号整数的二进制 1 的个数，这里可以直接对 2 取模，拿到当前整数 <em>n</em> 的二进制最右边的数字，判断是否为 1 ，然后将 <em>n</em> 右移 1 位 ，逐位判断即可。</p><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> hammingWeight(<span style=color:#66d9ef>uint32_t</span> n) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> res <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>while</span> (n) {
+</span></span><span style=display:flex><span>            res <span style=color:#f92672>+=</span> n <span style=color:#f92672>%</span> <span style=color:#ae81ff>2</span>;
+</span></span><span style=display:flex><span>            n <span style=color:#f92672>&gt;&gt;=</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> res;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><p>拿到二进制最右一位也可以通过位运算得到：</p><ul><li>若 <code>n & 1 == 0</code> ，则 <em>n</em> 二进制最右一位为 0；</li><li>若 <code>n & 1 == 1</code> ，则 <em>n</em> 二进制最右一位为 1。</li></ul><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> hammingWeight(<span style=color:#66d9ef>uint32_t</span> n) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> res <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>while</span> (n) {
+</span></span><span style=display:flex><span>            res <span style=color:#f92672>+=</span> n <span style=color:#f92672>&amp;</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>            n <span style=color:#f92672>&gt;&gt;=</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> res;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><p><strong>方法二：巧用 <code>n & (n - 1)</code></strong></p><ul><li><code>(n - 1)</code> 解析：二进制数字 <em>n</em> 最右边的 1 变成 0，<strong>此 1 右边的 0 都变成 1</strong>；</li><li><code>n & (n - 1)</code> ：解析：二进制数字 <em>n</em> 最右边的 1 变成 0，其余不变。</li></ul><p>当 <em>n</em> 的二进制中还存在 1 时，不停的将 <em>n</em> 与 <em>(n - 1)</em> 做与运算，<strong>每一轮能够消除掉 <em>n</em> 中的一个 1</strong>，而不用遍历整个 <em>n</em> 的二进制串。</p><p><img alt=Picture1.png loading=lazy src=https://pic.leetcode-cn.com/f23d9ef4fcfd65d7fbe29e477cbf36110b2f34558020e8cff09a1e13c0275c43-Picture1.png></p><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> hammingWeight(<span style=color:#66d9ef>uint32_t</span> n) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> res <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>while</span> (n) {
+</span></span><span style=display:flex><span>            <span style=color:#f92672>++</span>res;
+</span></span><span style=display:flex><span>            n <span style=color:#f92672>&amp;=</span> n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> res;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><h2 id=2powx-n>2.Pow(x, n)<a hidden class=anchor aria-hidden=true href=#2powx-n>#</a></h2><p>实现 <a href=https://www.cplusplus.com/reference/valarray/pow/>pow(<em>x</em>, <em>n</em>)</a> ，即计算 x 的 n 次幂函数（即，xn）。</p><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：x = 2.00000, n = 10
 输出：1024.00000
-</code></pre><p><strong>示例 2：</strong></p>
-<pre tabindex="0"><code>输入：x = 2.10000, n = 3
+</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：x = 2.10000, n = 3
 输出：9.26100
-</code></pre><p><strong>示例 3：</strong></p>
-<pre tabindex="0"><code>输入：x = 2.00000, n = -2
+</code></pre><p><strong>示例 3：</strong></p><pre tabindex=0><code>输入：x = 2.00000, n = -2
 输出：0.25000
 解释：2-2 = 1/22 = 1/4 = 0.25
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>-100.0 &lt; x &lt; 100.0</code></li>
-<li><code>-2^31 &lt;= n &lt;= 2^31-1</code></li>
-<li><code>-10^4 &lt;= xn &lt;= 10^4</code></li>
-</ul>
-<p><strong>思路</strong></p>
-<p>快速幂算法：<a href="https://yuk1pedia.github.io/2024/08/Fast_Exponentiation/">快速幂</a></p>
-<p><strong>Code</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">double</span> myPow(<span style="color:#66d9ef">double</span> x, <span style="color:#66d9ef">int</span> N) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">double</span> ans <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> n <span style="color:#f92672">=</span> N;
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 处理负数次幂的情况
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (n <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) { <span style="color:#75715e">// x^-n = (1/x)^n
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            n <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>n;
-</span></span><span style="display:flex;"><span>            x <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> x;
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> (n) { <span style="color:#75715e">// 从低到高枚举 n 的每个比特位
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (n <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">1</span>) { <span style="color:#75715e">// 当前比特位是 1
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                ans <span style="color:#f92672">*=</span> x; <span style="color:#75715e">// 把 x 乘到 ans 中
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            }
-</span></span><span style="display:flex;"><span>            x <span style="color:#f92672">*=</span> x; <span style="color:#75715e">// x 自身平方
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            n <span style="color:#f92672">&gt;&gt;=</span> <span style="color:#ae81ff">1</span>; <span style="color:#75715e">// n 右移，继续枚举下一个比特位
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ans;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><h2 id="3撞色搭配">3.撞色搭配<a hidden class="anchor" aria-hidden="true" href="#3撞色搭配">#</a></h2>
-<p>整数数组 <code>sockets</code> 记录了一个袜子礼盒的颜色分布情况，其中 <code>sockets[i]</code> 表示该袜子的颜色编号。礼盒中除了一款撞色搭配的袜子，每种颜色的袜子均有两只。请设计一个程序，在时间复杂度 O(n)，空间复杂度O(1) 内找到这双撞色搭配袜子的两个颜色编号。</p>
-<p><strong>示例 1：</strong></p>
-<pre tabindex="0"><code>输入：sockets = [4, 5, 2, 4, 6, 6]
+</code></pre><p><strong>提示：</strong></p><ul><li><code>-100.0 &lt; x &lt; 100.0</code></li><li><code>-2^31 &lt;= n &lt;= 2^31-1</code></li><li><code>-10^4 &lt;= xn &lt;= 10^4</code></li></ul><p><strong>思路</strong></p><p>快速幂算法：<a href=https://yuk1pedia.github.io/2024/08/Fast_Exponentiation/>快速幂</a></p><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>double</span> myPow(<span style=color:#66d9ef>double</span> x, <span style=color:#66d9ef>int</span> N) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>double</span> ans <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> n <span style=color:#f92672>=</span> N;
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 处理负数次幂的情况
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>if</span> (n <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0</span>) { <span style=color:#75715e>// x^-n = (1/x)^n
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            n <span style=color:#f92672>=</span> <span style=color:#f92672>-</span>n;
+</span></span><span style=display:flex><span>            x <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span> <span style=color:#f92672>/</span> x;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>while</span> (n) { <span style=color:#75715e>// 从低到高枚举 n 的每个比特位
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#66d9ef>if</span> (n <span style=color:#f92672>&amp;</span> <span style=color:#ae81ff>1</span>) { <span style=color:#75715e>// 当前比特位是 1
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                ans <span style=color:#f92672>*=</span> x; <span style=color:#75715e>// 把 x 乘到 ans 中
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            }
+</span></span><span style=display:flex><span>            x <span style=color:#f92672>*=</span> x; <span style=color:#75715e>// x 自身平方
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            n <span style=color:#f92672>&gt;&gt;=</span> <span style=color:#ae81ff>1</span>; <span style=color:#75715e>// n 右移，继续枚举下一个比特位
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> ans;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><h2 id=3撞色搭配>3.撞色搭配<a hidden class=anchor aria-hidden=true href=#3撞色搭配>#</a></h2><p>整数数组 <code>sockets</code> 记录了一个袜子礼盒的颜色分布情况，其中 <code>sockets[i]</code> 表示该袜子的颜色编号。礼盒中除了一款撞色搭配的袜子，每种颜色的袜子均有两只。请设计一个程序，在时间复杂度 O(n)，空间复杂度O(1) 内找到这双撞色搭配袜子的两个颜色编号。</p><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：sockets = [4, 5, 2, 4, 6, 6]
 输出：[2,5] 或 [5,2]
-</code></pre><p><strong>示例 2：</strong></p>
-<pre tabindex="0"><code>输入：sockets = [1, 2, 4, 1, 4, 3, 12, 3]
+</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：sockets = [1, 2, 4, 1, 4, 3, 12, 3]
 输出：[2,12] 或 [12,2]
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>2 &lt;= sockets.length &lt;= 10000</code></li>
-</ul>
-<p><strong>思路</strong></p>
-<p>翻译题面：给定一个数组，<strong>该数组中有两个元素只出现了一次</strong>，其他元素均出现了两次。请设计时间复杂度 O(n)，空间复杂度O(1)的算法找到这两个元素。</p>
-<p>我们首先考虑一个更简单的问题：给定一个数组，<strong>该数组中有一个元素只出现了一次</strong>，其他元素均出现了两次，请设计时间复杂度 O(n)，空间复杂度O(1)的算法找到这个元素。</p>
-<p>当需要在重复出现的数字数组中找到没有重复出现的数字时，我们可以使用位运算中的<strong>异或</strong>运算来解决。</p>
-<p>异或运算有个重要的性质：</p>
-<ul>
-<li>两个相同数字异或，结果为 0；</li>
-<li>所有整数和 0 异或，结果为自身。</li>
-</ul>
-<p>对于上面的问题，我们可以对所有的数组元素进行异或操作，假设 <code>sockets = [a,a,b,b,...,x]</code> 那么就有：</p>
-<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/10/22/wV8Ab3X5hUuIdPo.png"></p>
-<p>因为异或运算满足交换律，所以以上运算结果与 <em>sockets</em> 的元素顺序无关。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> singleNumber(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> sockets) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span>(<span style="color:#66d9ef">int</span> num : sockets)  <span style="color:#75715e">// 1. 遍历 sockets 执行异或运算
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        x <span style="color:#f92672">^=</span> num;
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> x;            <span style="color:#75715e">// 2. 返回出现一次的数字 x
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><p>那么回到原来的问题，我们现在要找的不是一个只出现一次的数字，而是两个只出现一次的数字，如何解决呢？</p>
-<p>设两个只出现一次的数字为 <em>x</em>，<em>y</em> ，由于 <code>x != y</code> ，则 <em>x</em> 和 <em>y</em> 的二进制至少有一位不同，<strong>根据此位可以将 <code>sockets</code> 拆分为分别包含 <em>x</em> 和 <em>y</em> 的两个子数组</strong>。然后分别对两个子数组遍历执行异或操作，就可以得到答案。</p>
-<p><strong>算法流程：</strong></p>
-<ol>
-<li>
-<p>遍历 <code>sockets</code> 执行异或：对 <code>sockets</code> 中所有数字执行异或，得到的结果为 <code>x ^ y</code></p>
-</li>
-<li>
-<p>循环左移计算 <em>m</em> ：</p>
-<ul>
-<li>根据异或运算定义，若 <code>x ^ y</code> 的某二进制位为 1，则 <em>x</em> 和 <em>y</em> 的此二进制位一定不同。当我们找到 <code>x ^ y</code> 某个为 1 的二进制位，即可将 <code>sockets</code> 拆分为上述的两个子数组。<strong>根据与运算特点，可知对于任意整数 <em>a</em> 有</strong>：
-<ul>
-<li>若 <code>a &amp; 0001 != 0</code> ，则 <em>a</em> 的第一位为 1；</li>
-<li>若 <code>a &amp; 0010 != 0</code> ，则 <em>a</em> 的第二位为 1；</li>
-<li>以此类推&hellip;</li>
-</ul>
-</li>
-<li>因此，初始化一个辅助变量 <code>m = 1</code> ，通过与运算从右往左循环判断，便可获取整数 <code>x ^ y</code> 首位 1，记录在 <em>m</em> 中。</li>
-</ul>
-</li>
-<li>
-<p>拆分 <code>sockets</code> 为两个子数组</p>
-</li>
-<li>
-<p>分别遍历两个子数组执行异或，返回两个子数组异或的结果即可</p>
-</li>
-</ol>
-<p><img alt="Picture2.png" loading="lazy" src="https://pic.leetcode-cn.com/1614836837-oygHyk-Picture2.png"></p>
-<p><strong>以下面的例子来解释为什么分组：</strong></p>
-<pre tabindex="0"><code>例子： 1 4 6 4 如果全员异或，相同的4肯定没了，留下1 和 6异或的结果，但是光异或我没法返回啊
+</code></pre><p><strong>提示：</strong></p><ul><li><code>2 &lt;= sockets.length &lt;= 10000</code></li></ul><p><strong>思路</strong></p><p>翻译题面：给定一个数组，<strong>该数组中有两个元素只出现了一次</strong>，其他元素均出现了两次。请设计时间复杂度 O(n)，空间复杂度O(1)的算法找到这两个元素。</p><p>我们首先考虑一个更简单的问题：给定一个数组，<strong>该数组中有一个元素只出现了一次</strong>，其他元素均出现了两次，请设计时间复杂度 O(n)，空间复杂度O(1)的算法找到这个元素。</p><p>当需要在重复出现的数字数组中找到没有重复出现的数字时，我们可以使用位运算中的<strong>异或</strong>运算来解决。</p><p>异或运算有个重要的性质：</p><ul><li>两个相同数字异或，结果为 0；</li><li>所有整数和 0 异或，结果为自身。</li></ul><p>对于上面的问题，我们可以对所有的数组元素进行异或操作，假设 <code>sockets = [a,a,b,b,...,x]</code> 那么就有：</p><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/10/22/wV8Ab3X5hUuIdPo.png></p><p>因为异或运算满足交换律，所以以上运算结果与 <em>sockets</em> 的元素顺序无关。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> singleNumber(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> sockets) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span>(<span style=color:#66d9ef>int</span> num : sockets)  <span style=color:#75715e>// 1. 遍历 sockets 执行异或运算
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        x <span style=color:#f92672>^=</span> num;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> x;            <span style=color:#75715e>// 2. 返回出现一次的数字 x
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>}
+</span></span></code></pre></div><p>那么回到原来的问题，我们现在要找的不是一个只出现一次的数字，而是两个只出现一次的数字，如何解决呢？</p><p>设两个只出现一次的数字为 <em>x</em>，<em>y</em> ，由于 <code>x != y</code> ，则 <em>x</em> 和 <em>y</em> 的二进制至少有一位不同，<strong>根据此位可以将 <code>sockets</code> 拆分为分别包含 <em>x</em> 和 <em>y</em> 的两个子数组</strong>。然后分别对两个子数组遍历执行异或操作，就可以得到答案。</p><p><strong>算法流程：</strong></p><ol><li><p>遍历 <code>sockets</code> 执行异或：对 <code>sockets</code> 中所有数字执行异或，得到的结果为 <code>x ^ y</code></p></li><li><p>循环左移计算 <em>m</em> ：</p><ul><li>根据异或运算定义，若 <code>x ^ y</code> 的某二进制位为 1，则 <em>x</em> 和 <em>y</em> 的此二进制位一定不同。当我们找到 <code>x ^ y</code> 某个为 1 的二进制位，即可将 <code>sockets</code> 拆分为上述的两个子数组。<strong>根据与运算特点，可知对于任意整数 <em>a</em> 有</strong>：<ul><li>若 <code>a & 0001 != 0</code> ，则 <em>a</em> 的第一位为 1；</li><li>若 <code>a & 0010 != 0</code> ，则 <em>a</em> 的第二位为 1；</li><li>以此类推&mldr;</li></ul></li><li>因此，初始化一个辅助变量 <code>m = 1</code> ，通过与运算从右往左循环判断，便可获取整数 <code>x ^ y</code> 首位 1，记录在 <em>m</em> 中。</li></ul></li><li><p>拆分 <code>sockets</code> 为两个子数组</p></li><li><p>分别遍历两个子数组执行异或，返回两个子数组异或的结果即可</p></li></ol><p><img alt=Picture2.png loading=lazy src=https://pic.leetcode-cn.com/1614836837-oygHyk-Picture2.png></p><p><strong>以下面的例子来解释为什么分组：</strong></p><pre tabindex=0><code>例子： 1 4 6 4 如果全员异或，相同的4肯定没了，留下1 和 6异或的结果，但是光异或我没法返回啊
 	  那这里进行一下分组
       1 和 6 肯定是不同的吧，异或结果有一位肯定是 1，比如说第2位异或为1
                   =&gt; 也就是说 1 和 6 ，第二位一个为1一个为0
@@ -363,223 +88,57 @@
       这就是最终结果了
       你可能还有疑问，哪相同的元素怎么办，不会干扰结果吗？
          当然不会，比如4 和 4，第二位都为0，肯定都被分到一组，最后异或为0，不影响结果
-</code></pre><p><strong>Code</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> sockCollocation(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> sockets) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, y <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, n <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, m <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> num: sockets) n <span style="color:#f92672">^=</span> num; <span style="color:#75715e">// 1.遍历异或
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span> ((n <span style="color:#f92672">&amp;</span> m) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) m <span style="color:#f92672">&lt;&lt;=</span> <span style="color:#ae81ff">1</span>;   <span style="color:#75715e">// 2.循环左移，计算 m
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> num: sockets) {        <span style="color:#75715e">// 3.遍历 sockets 分组
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (num <span style="color:#f92672">&amp;</span> m) x <span style="color:#f92672">^=</span> num;      <span style="color:#75715e">// 4.当 num &amp; m != 0
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">else</span> y <span style="color:#f92672">^=</span> num;              <span style="color:#75715e">// 4.当 num &amp; m == 0
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> {x, y};
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><h2 id="4训练计划">4.训练计划Ⅵ<a hidden class="anchor" aria-hidden="true" href="#4训练计划">#</a></h2>
-<p>教学过程中，教练示范一次，学员跟做三次。该过程被混乱剪辑后，记录于数组 <code>actions</code>，其中 <code>actions[i]</code> 表示做出该动作的人员编号。请返回教练的编号。</p>
-<p><strong>示例 1：</strong></p>
-<pre tabindex="0"><code>输入：actions = [5, 7, 5, 5]
+</code></pre><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> sockCollocation(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> sockets) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> x <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, y <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, n <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, m <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> num: sockets) n <span style=color:#f92672>^=</span> num; <span style=color:#75715e>// 1.遍历异或
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>while</span> ((n <span style=color:#f92672>&amp;</span> m) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>) m <span style=color:#f92672>&lt;&lt;=</span> <span style=color:#ae81ff>1</span>;   <span style=color:#75715e>// 2.循环左移，计算 m
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> num: sockets) {        <span style=color:#75715e>// 3.遍历 sockets 分组
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#66d9ef>if</span> (num <span style=color:#f92672>&amp;</span> m) x <span style=color:#f92672>^=</span> num;      <span style=color:#75715e>// 4.当 num &amp; m != 0
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#66d9ef>else</span> y <span style=color:#f92672>^=</span> num;              <span style=color:#75715e>// 4.当 num &amp; m == 0
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> {x, y};
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><h2 id=4训练计划>4.训练计划Ⅵ<a hidden class=anchor aria-hidden=true href=#4训练计划>#</a></h2><p>教学过程中，教练示范一次，学员跟做三次。该过程被混乱剪辑后，记录于数组 <code>actions</code>，其中 <code>actions[i]</code> 表示做出该动作的人员编号。请返回教练的编号。</p><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：actions = [5, 7, 5, 5]
 输出：7
-</code></pre><p><strong>示例 2：</strong></p>
-<pre tabindex="0"><code>输入：actions = [12, 1, 6, 12, 6, 12, 6]
+</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：actions = [12, 1, 6, 12, 6, 12, 6]
 输出：1
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>1 &lt;= actions.length &lt;= 10000</code></li>
-<li><code>1 &lt;= actions[i] &lt; 2^31</code></li>
-</ul>
-<p><strong>思路</strong></p>
-<p>考虑数字的二进制形式，对于出现三次的数字，各<strong>二进制位</strong>的出现次数都是 3 的倍数。</p>
-<p>因此，统计所有数字的各二进制位中 1 的出现次数，并对 3 求余，结果则为只出现一次的数字。</p>
-<p><img alt="Picture1.png" loading="lazy" src="https://pic.leetcode-cn.com/1603022900-quEtJr-Picture1.png"></p>
-<p>因此，我们可以根据上面的思路进行遍历统计：</p>
-<ul>
-<li>使用与运算，可获取二进制数字 <em>action</em> 的最右一位 <em>n1</em> ：<code>n1 = action &amp; i</code></li>
-<li>配合右移操作，可从低位到高位，获取 <em>action</em> 所有位的值：<code>action = action &gt;&gt; 1</code></li>
-</ul>
-<p>于是我们可以建立一个长度为 32 的数组 <em>counts</em> ，</p>
-<ol>
-<li>通过以上方法记录所有数字的<strong>各二进制位</strong>的 1 的出现次数之和；</li>
-<li>将 <em>counts</em> 各元素对 3 求余，则结果为<strong>只出现一次的数字</strong>的各二进制位。</li>
-</ol>
-<p>之后我们要做的就是通过这个 <em>counts</em> 数组恢复出结果 <em>res</em>：</p>
-<ul>
-<li>通过<strong>左移操作</strong>和<strong>或运算</strong>，可以将各二进制位的值恢复到数字 <em>res</em> 上。</li>
-</ul>
-<p><strong>Code</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> trainingPlan(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> actions) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> counts[<span style="color:#ae81ff">32</span>] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">0</span>};
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> action: actions) {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">32</span>; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>                counts[i] <span style="color:#f92672">+=</span> action <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>                action <span style="color:#f92672">&gt;&gt;=</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, m <span style="color:#f92672">=</span> <span style="color:#ae81ff">3</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">31</span>; i <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">--</span>i) {
-</span></span><span style="display:flex;"><span>            res <span style="color:#f92672">&lt;&lt;=</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>            res <span style="color:#f92672">|=</span> counts[i] <span style="color:#f92672">%</span> m;
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><h2 id="5加密运算">5.加密运算<a hidden class="anchor" aria-hidden="true" href="#5加密运算">#</a></h2>
-<p>计算机安全专家正在开发一款高度安全的加密通信软件，需要在进行数据传输时对数据进行加密和解密操作。假定 <code>dataA</code> 和 <code>dataB</code> 分别为随机抽样的两次通信的数据量：</p>
-<ul>
-<li>正数为发送量</li>
-<li>负数为接受量</li>
-<li>0 为数据遗失</li>
-</ul>
-<p>请不使用四则运算符的情况下实现一个函数计算两次通信的数据量之和（三种情况均需被统计），以确保在数据传输过程中的高安全性和保密性。</p>
-<p><strong>示例 1:</strong></p>
-<pre tabindex="0"><code>输入：dataA = 5, dataB = -1
+</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= actions.length &lt;= 10000</code></li><li><code>1 &lt;= actions[i] &lt; 2^31</code></li></ul><p><strong>思路</strong></p><p>考虑数字的二进制形式，对于出现三次的数字，各<strong>二进制位</strong>的出现次数都是 3 的倍数。</p><p>因此，统计所有数字的各二进制位中 1 的出现次数，并对 3 求余，结果则为只出现一次的数字。</p><p><img alt=Picture1.png loading=lazy src=https://pic.leetcode-cn.com/1603022900-quEtJr-Picture1.png></p><p>因此，我们可以根据上面的思路进行遍历统计：</p><ul><li>使用与运算，可获取二进制数字 <em>action</em> 的最右一位 <em>n1</em> ：<code>n1 = action & i</code></li><li>配合右移操作，可从低位到高位，获取 <em>action</em> 所有位的值：<code>action = action >> 1</code></li></ul><p>于是我们可以建立一个长度为 32 的数组 <em>counts</em> ，</p><ol><li>通过以上方法记录所有数字的<strong>各二进制位</strong>的 1 的出现次数之和；</li><li>将 <em>counts</em> 各元素对 3 求余，则结果为<strong>只出现一次的数字</strong>的各二进制位。</li></ol><p>之后我们要做的就是通过这个 <em>counts</em> 数组恢复出结果 <em>res</em>：</p><ul><li>通过<strong>左移操作</strong>和<strong>或运算</strong>，可以将各二进制位的值恢复到数字 <em>res</em> 上。</li></ul><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> trainingPlan(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> actions) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> counts[<span style=color:#ae81ff>32</span>] <span style=color:#f92672>=</span> {<span style=color:#ae81ff>0</span>};
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> action: actions) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>32</span>; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>                counts[i] <span style=color:#f92672>+=</span> action <span style=color:#f92672>&amp;</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>                action <span style=color:#f92672>&gt;&gt;=</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> res <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, m <span style=color:#f92672>=</span> <span style=color:#ae81ff>3</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>31</span>; i <span style=color:#f92672>&gt;=</span> <span style=color:#ae81ff>0</span>; <span style=color:#f92672>--</span>i) {
+</span></span><span style=display:flex><span>            res <span style=color:#f92672>&lt;&lt;=</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>            res <span style=color:#f92672>|=</span> counts[i] <span style=color:#f92672>%</span> m;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> res;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><h2 id=5加密运算>5.加密运算<a hidden class=anchor aria-hidden=true href=#5加密运算>#</a></h2><p>计算机安全专家正在开发一款高度安全的加密通信软件，需要在进行数据传输时对数据进行加密和解密操作。假定 <code>dataA</code> 和 <code>dataB</code> 分别为随机抽样的两次通信的数据量：</p><ul><li>正数为发送量</li><li>负数为接受量</li><li>0 为数据遗失</li></ul><p>请不使用四则运算符的情况下实现一个函数计算两次通信的数据量之和（三种情况均需被统计），以确保在数据传输过程中的高安全性和保密性。</p><p><strong>示例 1:</strong></p><pre tabindex=0><code>输入：dataA = 5, dataB = -1
 输出：4
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>dataA</code> 和 <code>dataB</code> 均可能是负数或 0</li>
-<li>结果不会溢出 32 位整数</li>
-</ul>
-<p><strong>思路</strong></p>
-<p>本题需要用位运算实现加法操作。</p>
-<p>设两数字的二进制形式 <em>dataA</em>、<em>dataB</em>，其求和 <code>s = dataA + dataB</code> ，<em>dataA(i)</em> 代表 <em>dataA</em> 的二进制第 <em>i</em> 位，则分为以下四种情况：</p>
-<table>
-  <thead>
-      <tr>
-          <th style="text-align: center"><em>d<strong>a</strong>t<strong>a</strong>A</em>(<em>i</em>)</th>
-          <th style="text-align: center"><em>d<strong>a</strong>t<strong>a</strong>B</em>(<em>i</em>)</th>
-          <th style="text-align: center">无进位和 <em>n</em>(<em>i</em>)</th>
-          <th style="text-align: center">进位 <em>c</em>(<em>i</em>+1)</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td style="text-align: center">0</td>
-          <td style="text-align: center">0</td>
-          <td style="text-align: center">0</td>
-          <td style="text-align: center">0</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">0</td>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">0</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">0</td>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">0</td>
-      </tr>
-      <tr>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">1</td>
-          <td style="text-align: center">0</td>
-          <td style="text-align: center">1</td>
-      </tr>
-  </tbody>
-</table>
-<p>可以发现，<strong>无进位和</strong>与<strong>异或运算</strong>规律相同，<strong>进位</strong>和<strong>与运算</strong>规律相同（并需要左移一位）。</p>
-<p>同时，有：（和 <em>s</em> ）=（非进位和 <em>n</em> ）+（进位 <em>c</em> ）。</p>
-<p>循环求 <em>n</em> 和 <em>c</em> ，直至进位 <em>c = 0</em>；此时 <em>s = n</em> ，返回 <em>n</em> 即可。</p>
-<p><img alt="Picture1.png" loading="lazy" src="https://pic.leetcode-cn.com/9716b1a1ead21824b8216c7d54910bee4d838c011581f4e3d82a14f71cb392a1-Picture1.png"></p>
-<p>注：负数在计算机系统中用补码表示，加减法可以和正数一样统一处理，因此以上方法适用于正数和负数的加法。</p>
-<p><strong>Code</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> encryptionCalculate(<span style="color:#66d9ef">int</span> dataA, <span style="color:#66d9ef">int</span> dataB) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> (dataB <span style="color:#f92672">!=</span> <span style="color:#ae81ff">0</span>) {
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 进位不存在负的情况，unsigned int 是修饰进位
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> c <span style="color:#f92672">=</span> (<span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">int</span>) (dataA <span style="color:#f92672">&amp;</span> dataB) <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>            dataA <span style="color:#f92672">^=</span> dataB;
-</span></span><span style="display:flex;"><span>            dataB <span style="color:#f92672">=</span> c;
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> dataA;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div>
-
-  </div>
-
-  <footer class="post-footer">
-    <ul class="post-tags">
-    </ul>
-  </footer>
-</article>
-    </main>
-    
-<footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
-
-    <span>
-        Powered by
-        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
-        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
-    </span>
-</footer>
-<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
-        <path d="M12 6H0l6-6z" />
-    </svg>
-</a>
-
-<script>
-    let menu = document.getElementById('menu')
-    if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
-        menu.onscroll = function () {
-            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
-        }
-    }
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            var id = this.getAttribute("href").substr(1);
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
-                    behavior: "smooth"
-                });
-            } else {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
-            }
-            if (id === "top") {
-                history.replaceState(null, null, " ");
-            } else {
-                history.pushState(null, null, `#${id}`);
-            }
-        });
-    });
-
-</script>
-<script>
-    var mybutton = document.getElementById("top-link");
-    window.onscroll = function () {
-        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
-            mybutton.style.visibility = "visible";
-            mybutton.style.opacity = "1";
-        } else {
-            mybutton.style.visibility = "hidden";
-            mybutton.style.opacity = "0";
-        }
-    };
-
-</script>
-<script>
-    document.getElementById("theme-toggle").addEventListener("click", () => {
-        if (document.body.className.includes("dark")) {
-            document.body.classList.remove('dark');
-            localStorage.setItem("pref-theme", 'light');
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem("pref-theme", 'dark');
-        }
-    })
-
-</script>
-</body>
-
-</html>
+</code></pre><p><strong>提示：</strong></p><ul><li><code>dataA</code> 和 <code>dataB</code> 均可能是负数或 0</li><li>结果不会溢出 32 位整数</li></ul><p><strong>思路</strong></p><p>本题需要用位运算实现加法操作。</p><p>设两数字的二进制形式 <em>dataA</em>、<em>dataB</em>，其求和 <code>s = dataA + dataB</code> ，<em>dataA(i)</em> 代表 <em>dataA</em> 的二进制第 <em>i</em> 位，则分为以下四种情况：</p><table><thead><tr><th style=text-align:center><em>d<strong>a</strong>t<strong>a</strong>A</em>(<em>i</em>)</th><th style=text-align:center><em>d<strong>a</strong>t<strong>a</strong>B</em>(<em>i</em>)</th><th style=text-align:center>无进位和 <em>n</em>(<em>i</em>)</th><th style=text-align:center>进位 <em>c</em>(<em>i</em>+1)</th></tr></thead><tbody><tr><td style=text-align:center>0</td><td style=text-align:center>0</td><td style=text-align:center>0</td><td style=text-align:center>0</td></tr><tr><td style=text-align:center>0</td><td style=text-align:center>1</td><td style=text-align:center>1</td><td style=text-align:center>0</td></tr><tr><td style=text-align:center>1</td><td style=text-align:center>0</td><td style=text-align:center>1</td><td style=text-align:center>0</td></tr><tr><td style=text-align:center>1</td><td style=text-align:center>1</td><td style=text-align:center>0</td><td style=text-align:center>1</td></tr></tbody></table><p>可以发现，<strong>无进位和</strong>与<strong>异或运算</strong>规律相同，<strong>进位</strong>和<strong>与运算</strong>规律相同（并需要左移一位）。</p><p>同时，有：（和 <em>s</em> ）=（非进位和 <em>n</em> ）+（进位 <em>c</em> ）。</p><p>循环求 <em>n</em> 和 <em>c</em> ，直至进位 <em>c = 0</em>；此时 <em>s = n</em> ，返回 <em>n</em> 即可。</p><p><img alt=Picture1.png loading=lazy src=https://pic.leetcode-cn.com/9716b1a1ead21824b8216c7d54910bee4d838c011581f4e3d82a14f71cb392a1-Picture1.png></p><p>注：负数在计算机系统中用补码表示，加减法可以和正数一样统一处理，因此以上方法适用于正数和负数的加法。</p><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> encryptionCalculate(<span style=color:#66d9ef>int</span> dataA, <span style=color:#66d9ef>int</span> dataB) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>while</span> (dataB <span style=color:#f92672>!=</span> <span style=color:#ae81ff>0</span>) {
+</span></span><span style=display:flex><span>            <span style=color:#75715e>// 进位不存在负的情况，unsigned int 是修饰进位
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#66d9ef>int</span> c <span style=color:#f92672>=</span> (<span style=color:#66d9ef>unsigned</span> <span style=color:#66d9ef>int</span>) (dataA <span style=color:#f92672>&amp;</span> dataB) <span style=color:#f92672>&lt;&lt;</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>            dataA <span style=color:#f92672>^=</span> dataB;
+</span></span><span style=display:flex><span>            dataB <span style=color:#f92672>=</span> c;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> dataA;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div></div><footer class=post-footer><ul class=post-tags></ul></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://yuk1pedia.github.io/>YUKIPEDIA's blog</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>

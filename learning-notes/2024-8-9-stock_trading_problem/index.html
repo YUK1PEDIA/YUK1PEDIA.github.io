@@ -1,474 +1,152 @@
-<!DOCTYPE html>
-<html lang="en" dir="auto">
-
-<head><meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
-<title>动态规划-买卖股票问题 | YUKIPEDIA&#39;s blog</title>
-<meta name="keywords" content="">
-<meta name="description" content="记录">
-<meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-8-9-stock_trading_problem/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
-<meta name="theme-color" content="#2e2e33">
-<meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-8-9-stock_trading_problem/">
-<noscript>
-    <style>
-        #theme-toggle,
-        .top-link {
-            display: none;
-        }
-
-    </style>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --theme: rgb(29, 30, 32);
-                --entry: rgb(46, 46, 51);
-                --primary: rgb(218, 218, 219);
-                --secondary: rgb(155, 156, 157);
-                --tertiary: rgb(65, 66, 68);
-                --content: rgb(196, 196, 197);
-                --code-block-bg: rgb(46, 46, 51);
-                --code-bg: rgb(55, 56, 62);
-                --border: rgb(51, 51, 51);
-            }
-
-            .list {
-                background: var(--theme);
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-track {
-                background: 0 0;
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-thumb {
-                border-color: var(--theme);
-            }
-        }
-
-    </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-8-9-stock_trading_problem/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="动态规划-买卖股票问题">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="动态规划-买卖股票问题">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "动态规划-买卖股票问题",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-8-9-stock_trading_problem/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "动态规划-买卖股票问题",
-  "name": "动态规划-买卖股票问题",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "买卖股票的最佳时机 给定一个数组 prices ，它的第 i 个元素 prices[i] 表示一支给定股票第 i 天的价格。\n你只能选择 某一天 买入这只股票，并选择在 未来的某一个不同的日子 卖出该股票。设计一个算法来计算你所能获取的最大利润。\n返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 0 。\n示例 1：\n输入：[7,1,5,3,6,4]\r输出：5\r解释：在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。\r注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。 示例 2：\n输入：prices = [7,6,4,3,1]\r输出：0\r解释：在这种情况下, 没有交易完成, 所以最大利润为 0。 提示：\n1 \u003c= prices.length \u003c= 10^5 0 \u003c= prices[i] \u003c= 10^4 思路 两个思路，可以用 dp 也可以用贪心。\ndp 做法 定义状态： dp[i][0] 表示第 i 天持有股票的最大利润，dp[i][1] 表示第 i 天不持有股票的最大利润（注意此处持有表示拥有股票，并不一定指当天买入股票） 状态转移 如果当天持有股票，就有两种情况： 前一天就持有了股票，直接由前一天转移过来：dp[i][0] = dp[i-1][0] 前一天并不持有股票，我们需要在当天购买股票：dp[i][0] = -prices[i] （因为只能买卖一次股票，买入股票就一定是 -prices[i] 的利润） 在以上两种情况取最大值即可： dp[i][0] = max(dp[i-1][0], -prices[i]); 如果当天不持有股票，也有两种情况： 前一天就不持有股票：dp[i][1] = dp[i-1][1] 前一天持有股票，这一天卖出：dp[i][1] = dp[i-1][0] + prices[i] 两种情况取最大：dp[i][1] = max(dp[i-1][1], dp[i-1][0]+prices[i]); 边界定义 初始化第 0 天即可 代码如下：\nclass Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices) { int n = prices.size(); int dp[n][2]; // dp[i][0]表示第 i 天持有的最大利润，dp[i][1]表示第 i 天不持有的最大利润 dp[0][0] = -prices[0], dp[0][1] = 0; for (int i = 1; i \u003c n; ++i) { dp[i][0] = max(dp[i-1][0], -prices[i]); dp[i][1] = max(dp[i-1][1], dp[i-1][0]+prices[i]); } return max(dp[n-1][0], dp[n-1][1]); } }; 贪心做法 遍历一次，实时更新最小值与答案 代码如下：\nclass Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices) { int n = prices.size(); int minn =INT_MAX, ans = 0; for (int i = 0; i \u003c n; ++i) { minn = min(minn, prices[i]); ans = max(prices[i] - minn, ans); } return ans; } }; 买卖股票的最佳时机Ⅱ 给你一个整数数组 prices ，其中 prices[i] 表示某支股票第 i 天的价格。\n在每一天，你可以决定是否购买和/或出售股票。你在任何时候 最多 只能持有 一股 股票。你也可以先购买，然后在 同一天 出售。\n返回 你能获得的 最大 利润 。\n示例 1：\n输入：prices = [7,1,5,3,6,4]\r输出：7\r解释：在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4。\r随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6 - 3 = 3。\r最大总利润为 4 + 3 = 7 。 示例 2：\n输入：prices = [1,2,3,4,5]\r输出：4\r解释：在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4。\r最大总利润为 4 。 示例 3：\n输入：prices = [7,6,4,3,1]\r输出：0\r解释：在这种情况下, 交易无法获得正利润，所以不参与交易可以获得最大利润，最大利润为 0。 提示：\n1 \u003c= prices.length \u003c= 3 * 10^4 0 \u003c= prices[i] \u003c= 10^4 思路 本题的状态转移方程其实和上一题基本一致，唯一区别就在于本题的股票可以买卖多次，所以买入股票的时候，第 i 天持有股票的利润就是：dp[i][0] = dp[i-1][1] - prices[i]\n代码如下：\nclass Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices) { int n = prices.size(); // dp[i][0]表示第 i 天持有股票，dp[i][1]表示第 i 天不持有股票 auto dp = vector\u003cvector\u003cint\u003e\u003e (n, vector\u003cint\u003e(2)); dp[0][0] = -prices[0]; dp[0][1] = 0; for (int i = 1; i \u003c n; ++i) { dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]); dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]); } return max(dp[n-1][0], dp[n-1][1]); } }; 买卖股票的最佳时机Ⅲ 给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。\n设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。\n**注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。\n示例 1:\n输入：prices = [3,3,5,0,0,3,1,4]\r输出：6\r解释：在第 4 天（股票价格 = 0）的时候买入，在第 6 天（股票价格 = 3）的时候卖出，这笔交易所能获得利润 = 3-0 = 3 。\r随后，在第 7 天（股票价格 = 1）的时候买入，在第 8 天 （股票价格 = 4）的时候卖出，这笔交易所能获得利润 = 4-1 = 3 。 示例 2：\n输入：prices = [1,2,3,4,5]\r输出：4\r解释：在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。 注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。 因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。 示例 3：\n输入：prices = [7,6,4,3,1] 输出：0 解释：在这个情况下, 没有交易完成, 所以最大利润为 0。 示例 4：\n输入：prices = [1]\r输出：0 提示：\n1 \u003c= prices.length \u003c= 10^5 0 \u003c= prices[i] \u003c= 10^5 思路 这里加了个最多完成两笔交易的限制，意味着可以买卖一次、买卖两次，也可以不买卖。我们可以增加两个状态来区分第一次买卖和第二次买卖，具体可以看下面的代码。\nclass Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices) { int n = prices.size(); if (!n) return 0; // dp[i][0]表示第 i 天第一次持有，1 表示第一次不持有，2表示第二次持有，3表示第二次不持有 auto dp = vector\u003cvector\u003cint\u003e\u003e(n, vector\u003cint\u003e(4)); dp[0][0] = dp[0][2] = -prices[0]; for (int i = 1; i \u003c n; ++i) { dp[i][0] = max(dp[i-1][0], -prices[i]); dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]); dp[i][2] = max(dp[i-1][2], dp[i-1][1] - prices[i]); dp[i][3] = max(dp[i-1][3], dp[i-1][2] + prices[i]); } return dp[n-1][3]; } }; 需要注意：dp[i][1] ，表示的是第 i 天，买入股票的状态，并不是说⼀定要第 i 天买⼊股票。例如 dp[i][1] ，并不是说 第 i 天⼀定买入股票，有可能 第 i-1天 就买入了，那么 dp[i][1] 延续买入股票的这个状态。\n买卖股票的最佳时机Ⅳ 给你一个整数数组 prices 和一个整数 k ，其中 prices[i] 是某支给定的股票在第 i 天的价格。\n设计一个算法来计算你所能获取的最大利润。你最多可以完成 k 笔交易。也就是说，你最多可以买 k 次，卖 k 次。\n**注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。\n示例 1：\n输入：k = 2, prices = [2,4,1]\r输出：2\r解释：在第 1 天 (股票价格 = 2) 的时候买入，在第 2 天 (股票价格 = 4) 的时候卖出，这笔交易所能获得利润 = 4-2 = 2 。 示例 2：\n输入：k = 2, prices = [3,2,6,5,0,3]\r输出：7\r解释：在第 2 天 (股票价格 = 2) 的时候买入，在第 3 天 (股票价格 = 6) 的时候卖出, 这笔交易所能获得利润 = 6-2 = 4 。\r随后，在第 5 天 (股票价格 = 0) 的时候买入，在第 6 天 (股票价格 = 3) 的时候卖出, 这笔交易所能获得利润 = 3-0 = 3 。 提示：\n1 \u003c= k \u003c= 100 1 \u003c= prices.length \u003c= 1000 0 \u003c= prices[i] \u003c= 1000 思路 和买卖股票的最佳时机Ⅲ类似，这里要求最多进行 k 次交易，那么我们就定义相应 2*k+1 个状态就可以了，这里多出来一个状态表示的**“不操作”**这个状态，这样的话，除了 0 以外，偶数就是卖出，奇数就是买入， dp 数组的定义和母题是一样的。\nclass Solution { public: int maxProfit(int k, vector\u003cint\u003e\u0026 prices) { int n = prices.size(); if (!n) return 0; auto dp = vector\u003cvector\u003cint\u003e\u003e(n, vector\u003cint\u003e(2*k+1, 0)); // 第 0 天买入一定是初始化为 -prices[0] （当天买当天卖） for (int j = 1; j \u003c 2*k; j += 2) dp[0][j] = -prices[0]; // 遍历每一天 for (int i = 1; i \u003c n; ++i) for (int j = 0; j \u003c 2*k-1; j += 2) { // j+1 为奇数，表示买，j 为偶数，表示卖 dp[i][j+1] = max(dp[i-1][j+1], dp[i-1][j] - prices[i]); dp[i][j+2] = max(dp[i-1][j+2], dp[i-1][j+1] + prices[i]); } return dp[n-1][2*k]; } }; 最佳买卖股票时机含冷冻期 给定一个整数数组prices，其中第 prices[i] 表示第 *i* 天的股票价格 。\n设计一个算法计算出最大利润。在满足以下约束条件下，你可以尽可能地完成更多的交易（多次买卖一支股票）:\n卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。 **注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。\n示例 1:\n输入: prices = [1,2,3,0,2]\r输出: 3 解释: 对应的交易状态为: [买入, 卖出, 冷冻期, 买入, 卖出] 示例 2:\n输入: prices = [1]\r输出: 0 提示：\n1 \u003c= prices.length \u003c= 5000 0 \u003c= prices[i] \u003c= 1000 思路 出现冷冻期后，状态的定义就比较复杂了，例如今天买⼊股票、今天卖出股票、今天是冷冻期，都是不能操作股票的。\n具体可以区分出四种状态：\n状态⼀：持有股票状态（今天买⼊股票，或者是之前就买⼊了股票然后没有操作，⼀直持有）\n不持有股票状态，这⾥就有两种卖出股票状态\n状态⼆：保持卖出股票的状态（两天前就卖出了股票，度过⼀天冷冻期。或者是前⼀天就是卖出股票状\n态，⼀直没操作）\n状态三：今天卖出股票\n状态四：今天为冷冻期状态\n明确状态后就可以开始找状态转移了，具体看如下代码：\n/** 总共四种状态：0 表示今天保持持有、1 表示今天保持卖出、2 表示今天卖出、3表示今天冷冻期 **/ class Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices) { int n = prices.size(); if (!n) return 0; auto dp =vector\u003cvector\u003cint\u003e\u003e(n, vector\u003cint\u003e(4)); // 定义四种状态 dp[0][0] = -prices[0]; // 初始化 // 遍历每一天 for (int i = 1; i \u003c n; ++i) { // 当天持有状态可以从：1.前一天持有；2.前一天冷冻期，当天买入； // 3.前一天保持卖出（注意是保持卖出，不是卖出），今天买入这几种情况推导过来 dp[i][0] = max({dp[i-1][0], dp[i-1][3] - prices[i], dp[i-1][1] - prices[i]}); // 当天保持卖出可以从：1.前一天保持卖出；2.前一天冷冻期（大前天卖出）这两种情况推导过来 dp[i][1] = max(dp[i-1][1], dp[i-1][3]); // 当天卖出前一天必须持有 dp[i][2] = dp[i-1][0] + prices[i]; // 当天冷冻期前一天必须卖出 dp[i][3] = dp[i-1][2]; } // 想要最大利润，最后一天必不能持有，返回最后一天剩余三种情况的最大值即可 return max({dp[n-1][3], dp[n-1][2], dp[n-1][1]}); } }; 买卖股票的最佳时机含手续费 给定一个整数数组 prices，其中 prices[i]表示第 i 天的股票价格 ；整数 fee 代表了交易股票的手续费用。\n你可以无限次地完成交易，但是你每笔交易都需要付手续费。如果你已经购买了一个股票，在卖出它之前你就不能再继续购买股票了。\n返回获得利润的最大值。\n**注意：**这里的一笔交易指买入持有并卖出股票的整个过程，每笔交易你只需要为支付一次手续费。\n示例 1：\n输入：prices = [1, 3, 2, 8, 4, 9], fee = 2\r输出：8\r解释：能够达到的最大利润: 在此处买入 prices[0] = 1\r在此处卖出 prices[3] = 8\r在此处买入 prices[4] = 4\r在此处卖出 prices[5] = 9\r总利润: ((8 - 1) - 2) + ((9 - 4) - 2) = 8 示例 2：\n输入：prices = [1,3,7,5,10,3], fee = 3\r输出：6 提示：\n1 \u003c= prices.length \u003c= 5 * 10^4 1 \u003c= prices[i] \u003c 5 * 10^4 0 \u003c= fee \u003c 5 * 10^4 思路 本题和买卖股票的最佳时机Ⅱ就是多了个减去手续费的操作\nclass Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices, int fee) { int n = prices.size(); // dp[i][0]表示第 i 天持有股票，dp[i][1]表示第 i 天不持有股票 auto dp = vector\u003cvector\u003cint\u003e\u003e (n, vector\u003cint\u003e(2)); dp[0][0] = -prices[0]; dp[0][1] = 0; for (int i = 1; i \u003c n; ++i) { dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]); dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i] - fee); } return max(dp[n-1][0], dp[n-1][1]); } }; ",
-  "wordCount" : "1072",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-8-9-stock_trading_problem/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
-</head>
-
-<body class="" id="top">
-<script>
-    if (localStorage.getItem("pref-theme") === "dark") {
-        document.body.classList.add('dark');
-    } else if (localStorage.getItem("pref-theme") === "light") {
-        document.body.classList.remove('dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark');
-    }
-
-</script>
-
-<header class="header">
-    <nav class="nav">
-        <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
-            <div class="logo-switches">
-                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
-                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <ul id="menu">
-            <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
-                    <span>Learning Notes</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</header>
-<main class="main">
-
-<article class="post-single">
-  <header class="post-header">
-    
-    <h1 class="post-title entry-hint-parent">
-      动态规划-买卖股票问题
-    </h1>
-    <div class="post-description">
-      记录
-    </div>
-    <div class="post-meta">
-
-</div>
-  </header> 
-  <div class="post-content"><h2 id="买卖股票的最佳时机">买卖股票的最佳时机<a hidden class="anchor" aria-hidden="true" href="#买卖股票的最佳时机">#</a></h2>
-<p>给定一个数组 <code>prices</code> ，它的第 <code>i</code> 个元素 <code>prices[i]</code> 表示一支给定股票第 <code>i</code> 天的价格。</p>
-<p>你只能选择 <strong>某一天</strong> 买入这只股票，并选择在 <strong>未来的某一个不同的日子</strong> 卖出该股票。设计一个算法来计算你所能获取的最大利润。</p>
-<p>返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 <code>0</code> 。</p>
-<p><strong>示例 1：</strong></p>
-<pre tabindex="0"><code>输入：[7,1,5,3,6,4]
+<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>动态规划-买卖股票问题 | YUKIPEDIA's blog</title><meta name=keywords content><meta name=description content="记录"><meta name=author content><link rel=canonical href=https://yuk1pedia.github.io/learning-notes/2024-8-9-stock_trading_problem/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://yuk1pedia.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://yuk1pedia.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://yuk1pedia.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://yuk1pedia.github.io/apple-touch-icon.png><link rel=mask-icon href=https://yuk1pedia.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://yuk1pedia.github.io/learning-notes/2024-8-9-stock_trading_problem/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-8-9-stock_trading_problem/"><meta property="og:site_name" content="YUKIPEDIA's blog"><meta property="og:title" content="动态规划-买卖股票问题"><meta property="og:description" content="记录"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="learning-notes"><meta name=twitter:card content="summary"><meta name=twitter:title content="动态规划-买卖股票问题"><meta name=twitter:description content="记录"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Learning Notes","item":"https://yuk1pedia.github.io/learning-notes/"},{"@type":"ListItem","position":2,"name":"动态规划-买卖股票问题","item":"https://yuk1pedia.github.io/learning-notes/2024-8-9-stock_trading_problem/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"动态规划-买卖股票问题","name":"动态规划-买卖股票问题","description":"记录","keywords":[],"articleBody":"买卖股票的最佳时机 给定一个数组 prices ，它的第 i 个元素 prices[i] 表示一支给定股票第 i 天的价格。\n你只能选择 某一天 买入这只股票，并选择在 未来的某一个不同的日子 卖出该股票。设计一个算法来计算你所能获取的最大利润。\n返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 0 。\n示例 1：\n输入：[7,1,5,3,6,4] 输出：5 解释：在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。 注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。 示例 2：\n输入：prices = [7,6,4,3,1] 输出：0 解释：在这种情况下, 没有交易完成, 所以最大利润为 0。 提示：\n1 \u003c= prices.length \u003c= 10^5 0 \u003c= prices[i] \u003c= 10^4 思路 两个思路，可以用 dp 也可以用贪心。\ndp 做法 定义状态： dp[i][0] 表示第 i 天持有股票的最大利润，dp[i][1] 表示第 i 天不持有股票的最大利润（注意此处持有表示拥有股票，并不一定指当天买入股票） 状态转移 如果当天持有股票，就有两种情况： 前一天就持有了股票，直接由前一天转移过来：dp[i][0] = dp[i-1][0] 前一天并不持有股票，我们需要在当天购买股票：dp[i][0] = -prices[i] （因为只能买卖一次股票，买入股票就一定是 -prices[i] 的利润） 在以上两种情况取最大值即可： dp[i][0] = max(dp[i-1][0], -prices[i]); 如果当天不持有股票，也有两种情况： 前一天就不持有股票：dp[i][1] = dp[i-1][1] 前一天持有股票，这一天卖出：dp[i][1] = dp[i-1][0] + prices[i] 两种情况取最大：dp[i][1] = max(dp[i-1][1], dp[i-1][0]+prices[i]); 边界定义 初始化第 0 天即可 代码如下：\nclass Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices) { int n = prices.size(); int dp[n][2]; // dp[i][0]表示第 i 天持有的最大利润，dp[i][1]表示第 i 天不持有的最大利润 dp[0][0] = -prices[0], dp[0][1] = 0; for (int i = 1; i \u003c n; ++i) { dp[i][0] = max(dp[i-1][0], -prices[i]); dp[i][1] = max(dp[i-1][1], dp[i-1][0]+prices[i]); } return max(dp[n-1][0], dp[n-1][1]); } }; 贪心做法 遍历一次，实时更新最小值与答案 代码如下：\nclass Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices) { int n = prices.size(); int minn =INT_MAX, ans = 0; for (int i = 0; i \u003c n; ++i) { minn = min(minn, prices[i]); ans = max(prices[i] - minn, ans); } return ans; } }; 买卖股票的最佳时机Ⅱ 给你一个整数数组 prices ，其中 prices[i] 表示某支股票第 i 天的价格。\n在每一天，你可以决定是否购买和/或出售股票。你在任何时候 最多 只能持有 一股 股票。你也可以先购买，然后在 同一天 出售。\n返回 你能获得的 最大 利润 。\n示例 1：\n输入：prices = [7,1,5,3,6,4] 输出：7 解释：在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4。 随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6 - 3 = 3。 最大总利润为 4 + 3 = 7 。 示例 2：\n输入：prices = [1,2,3,4,5] 输出：4 解释：在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4。 最大总利润为 4 。 示例 3：\n输入：prices = [7,6,4,3,1] 输出：0 解释：在这种情况下, 交易无法获得正利润，所以不参与交易可以获得最大利润，最大利润为 0。 提示：\n1 \u003c= prices.length \u003c= 3 * 10^4 0 \u003c= prices[i] \u003c= 10^4 思路 本题的状态转移方程其实和上一题基本一致，唯一区别就在于本题的股票可以买卖多次，所以买入股票的时候，第 i 天持有股票的利润就是：dp[i][0] = dp[i-1][1] - prices[i]\n代码如下：\nclass Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices) { int n = prices.size(); // dp[i][0]表示第 i 天持有股票，dp[i][1]表示第 i 天不持有股票 auto dp = vector\u003cvector\u003cint\u003e\u003e (n, vector\u003cint\u003e(2)); dp[0][0] = -prices[0]; dp[0][1] = 0; for (int i = 1; i \u003c n; ++i) { dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]); dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]); } return max(dp[n-1][0], dp[n-1][1]); } }; 买卖股票的最佳时机Ⅲ 给定一个数组，它的第 i 个元素是一支给定的股票在第 i 天的价格。\n设计一个算法来计算你所能获取的最大利润。你最多可以完成 两笔 交易。\n**注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。\n示例 1:\n输入：prices = [3,3,5,0,0,3,1,4] 输出：6 解释：在第 4 天（股票价格 = 0）的时候买入，在第 6 天（股票价格 = 3）的时候卖出，这笔交易所能获得利润 = 3-0 = 3 。 随后，在第 7 天（股票价格 = 1）的时候买入，在第 8 天 （股票价格 = 4）的时候卖出，这笔交易所能获得利润 = 4-1 = 3 。 示例 2：\n输入：prices = [1,2,3,4,5] 输出：4 解释：在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。 注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。 因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。 示例 3：\n输入：prices = [7,6,4,3,1] 输出：0 解释：在这个情况下, 没有交易完成, 所以最大利润为 0。 示例 4：\n输入：prices = [1] 输出：0 提示：\n1 \u003c= prices.length \u003c= 10^5 0 \u003c= prices[i] \u003c= 10^5 思路 这里加了个最多完成两笔交易的限制，意味着可以买卖一次、买卖两次，也可以不买卖。我们可以增加两个状态来区分第一次买卖和第二次买卖，具体可以看下面的代码。\nclass Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices) { int n = prices.size(); if (!n) return 0; // dp[i][0]表示第 i 天第一次持有，1 表示第一次不持有，2表示第二次持有，3表示第二次不持有 auto dp = vector\u003cvector\u003cint\u003e\u003e(n, vector\u003cint\u003e(4)); dp[0][0] = dp[0][2] = -prices[0]; for (int i = 1; i \u003c n; ++i) { dp[i][0] = max(dp[i-1][0], -prices[i]); dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i]); dp[i][2] = max(dp[i-1][2], dp[i-1][1] - prices[i]); dp[i][3] = max(dp[i-1][3], dp[i-1][2] + prices[i]); } return dp[n-1][3]; } }; 需要注意：dp[i][1] ，表示的是第 i 天，买入股票的状态，并不是说⼀定要第 i 天买⼊股票。例如 dp[i][1] ，并不是说 第 i 天⼀定买入股票，有可能 第 i-1天 就买入了，那么 dp[i][1] 延续买入股票的这个状态。\n买卖股票的最佳时机Ⅳ 给你一个整数数组 prices 和一个整数 k ，其中 prices[i] 是某支给定的股票在第 i 天的价格。\n设计一个算法来计算你所能获取的最大利润。你最多可以完成 k 笔交易。也就是说，你最多可以买 k 次，卖 k 次。\n**注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。\n示例 1：\n输入：k = 2, prices = [2,4,1] 输出：2 解释：在第 1 天 (股票价格 = 2) 的时候买入，在第 2 天 (股票价格 = 4) 的时候卖出，这笔交易所能获得利润 = 4-2 = 2 。 示例 2：\n输入：k = 2, prices = [3,2,6,5,0,3] 输出：7 解释：在第 2 天 (股票价格 = 2) 的时候买入，在第 3 天 (股票价格 = 6) 的时候卖出, 这笔交易所能获得利润 = 6-2 = 4 。 随后，在第 5 天 (股票价格 = 0) 的时候买入，在第 6 天 (股票价格 = 3) 的时候卖出, 这笔交易所能获得利润 = 3-0 = 3 。 提示：\n1 \u003c= k \u003c= 100 1 \u003c= prices.length \u003c= 1000 0 \u003c= prices[i] \u003c= 1000 思路 和买卖股票的最佳时机Ⅲ类似，这里要求最多进行 k 次交易，那么我们就定义相应 2*k+1 个状态就可以了，这里多出来一个状态表示的**“不操作”**这个状态，这样的话，除了 0 以外，偶数就是卖出，奇数就是买入， dp 数组的定义和母题是一样的。\nclass Solution { public: int maxProfit(int k, vector\u003cint\u003e\u0026 prices) { int n = prices.size(); if (!n) return 0; auto dp = vector\u003cvector\u003cint\u003e\u003e(n, vector\u003cint\u003e(2*k+1, 0)); // 第 0 天买入一定是初始化为 -prices[0] （当天买当天卖） for (int j = 1; j \u003c 2*k; j += 2) dp[0][j] = -prices[0]; // 遍历每一天 for (int i = 1; i \u003c n; ++i) for (int j = 0; j \u003c 2*k-1; j += 2) { // j+1 为奇数，表示买，j 为偶数，表示卖 dp[i][j+1] = max(dp[i-1][j+1], dp[i-1][j] - prices[i]); dp[i][j+2] = max(dp[i-1][j+2], dp[i-1][j+1] + prices[i]); } return dp[n-1][2*k]; } }; 最佳买卖股票时机含冷冻期 给定一个整数数组prices，其中第 prices[i] 表示第 *i* 天的股票价格 。\n设计一个算法计算出最大利润。在满足以下约束条件下，你可以尽可能地完成更多的交易（多次买卖一支股票）:\n卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。 **注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。\n示例 1:\n输入: prices = [1,2,3,0,2] 输出: 3 解释: 对应的交易状态为: [买入, 卖出, 冷冻期, 买入, 卖出] 示例 2:\n输入: prices = [1] 输出: 0 提示：\n1 \u003c= prices.length \u003c= 5000 0 \u003c= prices[i] \u003c= 1000 思路 出现冷冻期后，状态的定义就比较复杂了，例如今天买⼊股票、今天卖出股票、今天是冷冻期，都是不能操作股票的。\n具体可以区分出四种状态：\n状态⼀：持有股票状态（今天买⼊股票，或者是之前就买⼊了股票然后没有操作，⼀直持有）\n不持有股票状态，这⾥就有两种卖出股票状态\n状态⼆：保持卖出股票的状态（两天前就卖出了股票，度过⼀天冷冻期。或者是前⼀天就是卖出股票状\n态，⼀直没操作）\n状态三：今天卖出股票\n状态四：今天为冷冻期状态\n明确状态后就可以开始找状态转移了，具体看如下代码：\n/** 总共四种状态：0 表示今天保持持有、1 表示今天保持卖出、2 表示今天卖出、3表示今天冷冻期 **/ class Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices) { int n = prices.size(); if (!n) return 0; auto dp =vector\u003cvector\u003cint\u003e\u003e(n, vector\u003cint\u003e(4)); // 定义四种状态 dp[0][0] = -prices[0]; // 初始化 // 遍历每一天 for (int i = 1; i \u003c n; ++i) { // 当天持有状态可以从：1.前一天持有；2.前一天冷冻期，当天买入； // 3.前一天保持卖出（注意是保持卖出，不是卖出），今天买入这几种情况推导过来 dp[i][0] = max({dp[i-1][0], dp[i-1][3] - prices[i], dp[i-1][1] - prices[i]}); // 当天保持卖出可以从：1.前一天保持卖出；2.前一天冷冻期（大前天卖出）这两种情况推导过来 dp[i][1] = max(dp[i-1][1], dp[i-1][3]); // 当天卖出前一天必须持有 dp[i][2] = dp[i-1][0] + prices[i]; // 当天冷冻期前一天必须卖出 dp[i][3] = dp[i-1][2]; } // 想要最大利润，最后一天必不能持有，返回最后一天剩余三种情况的最大值即可 return max({dp[n-1][3], dp[n-1][2], dp[n-1][1]}); } }; 买卖股票的最佳时机含手续费 给定一个整数数组 prices，其中 prices[i]表示第 i 天的股票价格 ；整数 fee 代表了交易股票的手续费用。\n你可以无限次地完成交易，但是你每笔交易都需要付手续费。如果你已经购买了一个股票，在卖出它之前你就不能再继续购买股票了。\n返回获得利润的最大值。\n**注意：**这里的一笔交易指买入持有并卖出股票的整个过程，每笔交易你只需要为支付一次手续费。\n示例 1：\n输入：prices = [1, 3, 2, 8, 4, 9], fee = 2 输出：8 解释：能够达到的最大利润: 在此处买入 prices[0] = 1 在此处卖出 prices[3] = 8 在此处买入 prices[4] = 4 在此处卖出 prices[5] = 9 总利润: ((8 - 1) - 2) + ((9 - 4) - 2) = 8 示例 2：\n输入：prices = [1,3,7,5,10,3], fee = 3 输出：6 提示：\n1 \u003c= prices.length \u003c= 5 * 10^4 1 \u003c= prices[i] \u003c 5 * 10^4 0 \u003c= fee \u003c 5 * 10^4 思路 本题和买卖股票的最佳时机Ⅱ就是多了个减去手续费的操作\nclass Solution { public: int maxProfit(vector\u003cint\u003e\u0026 prices, int fee) { int n = prices.size(); // dp[i][0]表示第 i 天持有股票，dp[i][1]表示第 i 天不持有股票 auto dp = vector\u003cvector\u003cint\u003e\u003e (n, vector\u003cint\u003e(2)); dp[0][0] = -prices[0]; dp[0][1] = 0; for (int i = 1; i \u003c n; ++i) { dp[i][0] = max(dp[i-1][0], dp[i-1][1] - prices[i]); dp[i][1] = max(dp[i-1][1], dp[i-1][0] + prices[i] - fee); } return max(dp[n-1][0], dp[n-1][1]); } }; ","wordCount":"1072","inLanguage":"en","datePublished":"0001-01-01T00:00:00Z","dateModified":"0001-01-01T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://yuk1pedia.github.io/learning-notes/2024-8-9-stock_trading_problem/"},"publisher":{"@type":"Organization","name":"YUKIPEDIA's blog","logo":{"@type":"ImageObject","url":"https://yuk1pedia.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://yuk1pedia.github.io/ accesskey=h title="YUKIPEDIA's blog (Alt + H)">YUKIPEDIA's blog</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://yuk1pedia.github.io/learning-notes title="Learning Notes"><span>Learning Notes</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">动态规划-买卖股票问题</h1><div class=post-description>记录</div><div class=post-meta></div></header><div class=post-content><h2 id=买卖股票的最佳时机>买卖股票的最佳时机<a hidden class=anchor aria-hidden=true href=#买卖股票的最佳时机>#</a></h2><p>给定一个数组 <code>prices</code> ，它的第 <code>i</code> 个元素 <code>prices[i]</code> 表示一支给定股票第 <code>i</code> 天的价格。</p><p>你只能选择 <strong>某一天</strong> 买入这只股票，并选择在 <strong>未来的某一个不同的日子</strong> 卖出该股票。设计一个算法来计算你所能获取的最大利润。</p><p>返回你可以从这笔交易中获取的最大利润。如果你不能获取任何利润，返回 <code>0</code> 。</p><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：[7,1,5,3,6,4]
 输出：5
 解释：在第 2 天（股票价格 = 1）的时候买入，在第 5 天（股票价格 = 6）的时候卖出，最大利润 = 6-1 = 5 。
      注意利润不能是 7-1 = 6, 因为卖出价格需要大于买入价格；同时，你不能在买入前卖出股票。
-</code></pre><p><strong>示例 2：</strong></p>
-<pre tabindex="0"><code>输入：prices = [7,6,4,3,1]
+</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：prices = [7,6,4,3,1]
 输出：0
 解释：在这种情况下, 没有交易完成, 所以最大利润为 0。
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>1 &lt;= prices.length &lt;= 10^5</code></li>
-<li><code>0 &lt;= prices[i] &lt;= 10^4</code></li>
-</ul>
-<h3 id="思路">思路<a hidden class="anchor" aria-hidden="true" href="#思路">#</a></h3>
-<p>两个思路，可以用 dp 也可以用贪心。</p>
-<ul>
-<li>dp 做法
-<ul>
-<li>定义状态： <code>dp[i][0]</code> 表示第 <code>i</code> 天持有股票的最大利润，<code>dp[i][1]</code> 表示第 <code>i</code> 天不持有股票的最大利润（<strong>注意此处持有表示拥有股票，并不一定指当天买入股票</strong>）</li>
-<li>状态转移
-<ul>
-<li>如果当天持有股票，就有两种情况：
-<ul>
-<li>前一天就持有了股票，直接由前一天转移过来：<code>dp[i][0] = dp[i-1][0]</code></li>
-<li>前一天并不持有股票，我们需要在当天购买股票：<code>dp[i][0] = -prices[i]</code> （<strong>因为只能买卖一次股票，买入股票就一定是 <code>-prices[i]</code> 的利润</strong>）</li>
-<li>在以上两种情况取最大值即可：<code> dp[i][0] = max(dp[i-1][0], -prices[i]);</code></li>
-</ul>
-</li>
-<li>如果当天不持有股票，也有两种情况：
-<ul>
-<li>前一天就不持有股票：<code>dp[i][1] = dp[i-1][1]</code></li>
-<li>前一天持有股票，这一天卖出：<code>dp[i][1] = dp[i-1][0] + prices[i]</code></li>
-<li>两种情况取最大：<code>dp[i][1] = max(dp[i-1][1], dp[i-1][0]+prices[i]);</code></li>
-</ul>
-</li>
-</ul>
-</li>
-<li>边界定义
-<ul>
-<li>初始化第 0 天即可</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>代码如下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maxProfit(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> prices) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> prices.size();
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> dp[n][<span style="color:#ae81ff">2</span>]; <span style="color:#75715e">// dp[i][0]表示第 i 天持有的最大利润，dp[i][1]表示第 i 天不持有的最大利润
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        dp[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>prices[<span style="color:#ae81ff">0</span>], dp[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>            dp[i][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>], <span style="color:#f92672">-</span>prices[i]);
-</span></span><span style="display:flex;"><span>            dp[i][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>]<span style="color:#f92672">+</span>prices[i]);
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">max</span>(dp[n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>], dp[n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>]);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><ul>
-<li>贪心做法
-<ul>
-<li>遍历一次，实时更新最小值与答案</li>
-</ul>
-</li>
-</ul>
-<p>代码如下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maxProfit(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> prices) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> prices.size();
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> minn <span style="color:#f92672">=</span>INT_MAX, ans <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>            minn <span style="color:#f92672">=</span> min(minn, prices[i]);
-</span></span><span style="display:flex;"><span>            ans <span style="color:#f92672">=</span> max(prices[i] <span style="color:#f92672">-</span> minn, ans);
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ans;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><h2 id="买卖股票的最佳时机-1">买卖股票的最佳时机Ⅱ<a hidden class="anchor" aria-hidden="true" href="#买卖股票的最佳时机-1">#</a></h2>
-<p>给你一个整数数组 <code>prices</code> ，其中 <code>prices[i]</code> 表示某支股票第 <code>i</code> 天的价格。</p>
-<p>在每一天，你可以决定是否购买和/或出售股票。你在任何时候 <strong>最多</strong> 只能持有 <strong>一股</strong> 股票。你也可以先购买，然后在 <strong>同一天</strong> 出售。</p>
-<p>返回 <em>你能获得的 <strong>最大</strong> 利润</em> 。</p>
-<p><strong>示例 1：</strong></p>
-<pre tabindex="0"><code>输入：prices = [7,1,5,3,6,4]
+</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= prices.length &lt;= 10^5</code></li><li><code>0 &lt;= prices[i] &lt;= 10^4</code></li></ul><h3 id=思路>思路<a hidden class=anchor aria-hidden=true href=#思路>#</a></h3><p>两个思路，可以用 dp 也可以用贪心。</p><ul><li>dp 做法<ul><li>定义状态： <code>dp[i][0]</code> 表示第 <code>i</code> 天持有股票的最大利润，<code>dp[i][1]</code> 表示第 <code>i</code> 天不持有股票的最大利润（<strong>注意此处持有表示拥有股票，并不一定指当天买入股票</strong>）</li><li>状态转移<ul><li>如果当天持有股票，就有两种情况：<ul><li>前一天就持有了股票，直接由前一天转移过来：<code>dp[i][0] = dp[i-1][0]</code></li><li>前一天并不持有股票，我们需要在当天购买股票：<code>dp[i][0] = -prices[i]</code> （<strong>因为只能买卖一次股票，买入股票就一定是 <code>-prices[i]</code> 的利润</strong>）</li><li>在以上两种情况取最大值即可：<code> dp[i][0] = max(dp[i-1][0], -prices[i]);</code></li></ul></li><li>如果当天不持有股票，也有两种情况：<ul><li>前一天就不持有股票：<code>dp[i][1] = dp[i-1][1]</code></li><li>前一天持有股票，这一天卖出：<code>dp[i][1] = dp[i-1][0] + prices[i]</code></li><li>两种情况取最大：<code>dp[i][1] = max(dp[i-1][1], dp[i-1][0]+prices[i]);</code></li></ul></li></ul></li><li>边界定义<ul><li>初始化第 0 天即可</li></ul></li></ul></li></ul><p>代码如下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> maxProfit(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> prices) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> prices.size();
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> dp[n][<span style=color:#ae81ff>2</span>]; <span style=color:#75715e>// dp[i][0]表示第 i 天持有的最大利润，dp[i][1]表示第 i 天不持有的最大利润
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        dp[<span style=color:#ae81ff>0</span>][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> <span style=color:#f92672>-</span>prices[<span style=color:#ae81ff>0</span>], dp[<span style=color:#ae81ff>0</span>][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>            dp[i][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>], <span style=color:#f92672>-</span>prices[i]);
+</span></span><span style=display:flex><span>            dp[i][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>]<span style=color:#f92672>+</span>prices[i]);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>max</span>(dp[n<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>], dp[n<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>]);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><ul><li>贪心做法<ul><li>遍历一次，实时更新最小值与答案</li></ul></li></ul><p>代码如下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> maxProfit(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> prices) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> prices.size();
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> minn <span style=color:#f92672>=</span>INT_MAX, ans <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>            minn <span style=color:#f92672>=</span> min(minn, prices[i]);
+</span></span><span style=display:flex><span>            ans <span style=color:#f92672>=</span> max(prices[i] <span style=color:#f92672>-</span> minn, ans);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> ans;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><h2 id=买卖股票的最佳时机-1>买卖股票的最佳时机Ⅱ<a hidden class=anchor aria-hidden=true href=#买卖股票的最佳时机-1>#</a></h2><p>给你一个整数数组 <code>prices</code> ，其中 <code>prices[i]</code> 表示某支股票第 <code>i</code> 天的价格。</p><p>在每一天，你可以决定是否购买和/或出售股票。你在任何时候 <strong>最多</strong> 只能持有 <strong>一股</strong> 股票。你也可以先购买，然后在 <strong>同一天</strong> 出售。</p><p>返回 <em>你能获得的 <strong>最大</strong> 利润</em> 。</p><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：prices = [7,1,5,3,6,4]
 输出：7
 解释：在第 2 天（股票价格 = 1）的时候买入，在第 3 天（股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4。
 随后，在第 4 天（股票价格 = 3）的时候买入，在第 5 天（股票价格 = 6）的时候卖出, 这笔交易所能获得利润 = 6 - 3 = 3。
 最大总利润为 4 + 3 = 7 。
-</code></pre><p><strong>示例 2：</strong></p>
-<pre tabindex="0"><code>输入：prices = [1,2,3,4,5]
+</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：prices = [1,2,3,4,5]
 输出：4
 解释：在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5 - 1 = 4。
 最大总利润为 4 。
-</code></pre><p><strong>示例 3：</strong></p>
-<pre tabindex="0"><code>输入：prices = [7,6,4,3,1]
+</code></pre><p><strong>示例 3：</strong></p><pre tabindex=0><code>输入：prices = [7,6,4,3,1]
 输出：0
 解释：在这种情况下, 交易无法获得正利润，所以不参与交易可以获得最大利润，最大利润为 0。
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>1 &lt;= prices.length &lt;= 3 * 10^4</code></li>
-<li><code>0 &lt;= prices[i] &lt;= 10^4</code></li>
-</ul>
-<h3 id="思路-1">思路<a hidden class="anchor" aria-hidden="true" href="#思路-1">#</a></h3>
-<p>本题的状态转移方程其实和上一题基本一致，唯一区别就在于本题的股票可以买卖多次，所以买入股票的时候，第 <code>i</code> 天持有股票的利润就是：<code>dp[i][0] = dp[i-1][1] - prices[i]</code></p>
-<p>代码如下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maxProfit(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> prices) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> prices.size();
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// dp[i][0]表示第 i 天持有股票，dp[i][1]表示第 i 天不持有股票
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">auto</span> dp <span style="color:#f92672">=</span> vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> (n, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>(<span style="color:#ae81ff">2</span>));
-</span></span><span style="display:flex;"><span>        dp[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>prices[<span style="color:#ae81ff">0</span>];
-</span></span><span style="display:flex;"><span>        dp[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>            dp[i][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> prices[i]);
-</span></span><span style="display:flex;"><span>            dp[i][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">+</span> prices[i]);
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">max</span>(dp[n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>], dp[n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>]);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><h2 id="买卖股票的最佳时机-2">买卖股票的最佳时机Ⅲ<a hidden class="anchor" aria-hidden="true" href="#买卖股票的最佳时机-2">#</a></h2>
-<p>给定一个数组，它的第 <code>i</code> 个元素是一支给定的股票在第 <code>i</code> 天的价格。</p>
-<p>设计一个算法来计算你所能获取的最大利润。你最多可以完成 <strong>两笔</strong> 交易。</p>
-<p>**注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
-<p><strong>示例 1:</strong></p>
-<pre tabindex="0"><code>输入：prices = [3,3,5,0,0,3,1,4]
+</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= prices.length &lt;= 3 * 10^4</code></li><li><code>0 &lt;= prices[i] &lt;= 10^4</code></li></ul><h3 id=思路-1>思路<a hidden class=anchor aria-hidden=true href=#思路-1>#</a></h3><p>本题的状态转移方程其实和上一题基本一致，唯一区别就在于本题的股票可以买卖多次，所以买入股票的时候，第 <code>i</code> 天持有股票的利润就是：<code>dp[i][0] = dp[i-1][1] - prices[i]</code></p><p>代码如下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> maxProfit(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> prices) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> prices.size();
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// dp[i][0]表示第 i 天持有股票，dp[i][1]表示第 i 天不持有股票
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>auto</span> dp <span style=color:#f92672>=</span> vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> (n, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>(<span style=color:#ae81ff>2</span>));
+</span></span><span style=display:flex><span>        dp[<span style=color:#ae81ff>0</span>][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> <span style=color:#f92672>-</span>prices[<span style=color:#ae81ff>0</span>];
+</span></span><span style=display:flex><span>        dp[<span style=color:#ae81ff>0</span>][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>            dp[i][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>-</span> prices[i]);
+</span></span><span style=display:flex><span>            dp[i][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>+</span> prices[i]);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>max</span>(dp[n<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>], dp[n<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>]);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><h2 id=买卖股票的最佳时机-2>买卖股票的最佳时机Ⅲ<a hidden class=anchor aria-hidden=true href=#买卖股票的最佳时机-2>#</a></h2><p>给定一个数组，它的第 <code>i</code> 个元素是一支给定的股票在第 <code>i</code> 天的价格。</p><p>设计一个算法来计算你所能获取的最大利润。你最多可以完成 <strong>两笔</strong> 交易。</p><p>**注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p><p><strong>示例 1:</strong></p><pre tabindex=0><code>输入：prices = [3,3,5,0,0,3,1,4]
 输出：6
 解释：在第 4 天（股票价格 = 0）的时候买入，在第 6 天（股票价格 = 3）的时候卖出，这笔交易所能获得利润 = 3-0 = 3 。
      随后，在第 7 天（股票价格 = 1）的时候买入，在第 8 天 （股票价格 = 4）的时候卖出，这笔交易所能获得利润 = 4-1 = 3 。
-</code></pre><p><strong>示例 2：</strong></p>
-<pre tabindex="0"><code>输入：prices = [1,2,3,4,5]
+</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：prices = [1,2,3,4,5]
 输出：4
 解释：在第 1 天（股票价格 = 1）的时候买入，在第 5 天 （股票价格 = 5）的时候卖出, 这笔交易所能获得利润 = 5-1 = 4 。   
      注意你不能在第 1 天和第 2 天接连购买股票，之后再将它们卖出。   
      因为这样属于同时参与了多笔交易，你必须在再次购买前出售掉之前的股票。
-</code></pre><p><strong>示例 3：</strong></p>
-<pre tabindex="0"><code>输入：prices = [7,6,4,3,1] 
+</code></pre><p><strong>示例 3：</strong></p><pre tabindex=0><code>输入：prices = [7,6,4,3,1] 
 输出：0 
 解释：在这个情况下, 没有交易完成, 所以最大利润为 0。
-</code></pre><p><strong>示例 4：</strong></p>
-<pre tabindex="0"><code>输入：prices = [1]
+</code></pre><p><strong>示例 4：</strong></p><pre tabindex=0><code>输入：prices = [1]
 输出：0
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>1 &lt;= prices.length &lt;= 10^5</code></li>
-<li><code>0 &lt;= prices[i] &lt;= 10^5</code></li>
-</ul>
-<h3 id="思路-2">思路<a hidden class="anchor" aria-hidden="true" href="#思路-2">#</a></h3>
-<p>这里加了个<strong>最多完成两笔交易</strong>的限制，意味着可以买卖一次、买卖两次，也可以不买卖。我们可以增加两个状态来区分第一次买卖和第二次买卖，具体可以看下面的代码。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maxProfit(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> prices) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> prices.size();
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>n) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// dp[i][0]表示第 i 天第一次持有，1 表示第一次不持有，2表示第二次持有，3表示第二次不持有
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">auto</span> dp <span style="color:#f92672">=</span> vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span>(n, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>(<span style="color:#ae81ff">4</span>));
-</span></span><span style="display:flex;"><span>        dp[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> dp[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">2</span>] <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>prices[<span style="color:#ae81ff">0</span>];
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>            dp[i][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>], <span style="color:#f92672">-</span>prices[i]);
-</span></span><span style="display:flex;"><span>            dp[i][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">+</span> prices[i]);
-</span></span><span style="display:flex;"><span>            dp[i][<span style="color:#ae81ff">2</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">2</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> prices[i]);
-</span></span><span style="display:flex;"><span>            dp[i][<span style="color:#ae81ff">3</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">3</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">2</span>] <span style="color:#f92672">+</span> prices[i]);
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> dp[n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">3</span>];
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><p><strong>需要注意：<code>dp[i][1]</code> ，表示的是第 <code>i</code> 天，买入股票的状态，并不是说⼀定要第 <code>i</code> 天买⼊股票。例如 <code>dp[i][1]</code> ，并不是说 第 <code>i</code> 天⼀定买入股票，有可能 第 i-1天 就买入了，那么 <code>dp[i][1]</code> 延续买入股票的这个状态。</strong></p>
-<h2 id="买卖股票的最佳时机-3">买卖股票的最佳时机Ⅳ<a hidden class="anchor" aria-hidden="true" href="#买卖股票的最佳时机-3">#</a></h2>
-<p>给你一个整数数组 <code>prices</code> 和一个整数 <code>k</code> ，其中 <code>prices[i]</code> 是某支给定的股票在第 <code>i</code> 天的价格。</p>
-<p>设计一个算法来计算你所能获取的最大利润。你最多可以完成 <code>k</code> 笔交易。也就是说，你最多可以买 <code>k</code> 次，卖 <code>k</code> 次。</p>
-<p>**注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
-<p><strong>示例 1：</strong></p>
-<pre tabindex="0"><code>输入：k = 2, prices = [2,4,1]
+</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= prices.length &lt;= 10^5</code></li><li><code>0 &lt;= prices[i] &lt;= 10^5</code></li></ul><h3 id=思路-2>思路<a hidden class=anchor aria-hidden=true href=#思路-2>#</a></h3><p>这里加了个<strong>最多完成两笔交易</strong>的限制，意味着可以买卖一次、买卖两次，也可以不买卖。我们可以增加两个状态来区分第一次买卖和第二次买卖，具体可以看下面的代码。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> maxProfit(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> prices) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> prices.size();
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>n) <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// dp[i][0]表示第 i 天第一次持有，1 表示第一次不持有，2表示第二次持有，3表示第二次不持有
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>auto</span> dp <span style=color:#f92672>=</span> vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span>(n, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>(<span style=color:#ae81ff>4</span>));
+</span></span><span style=display:flex><span>        dp[<span style=color:#ae81ff>0</span>][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> dp[<span style=color:#ae81ff>0</span>][<span style=color:#ae81ff>2</span>] <span style=color:#f92672>=</span> <span style=color:#f92672>-</span>prices[<span style=color:#ae81ff>0</span>];
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>            dp[i][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>], <span style=color:#f92672>-</span>prices[i]);
+</span></span><span style=display:flex><span>            dp[i][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>+</span> prices[i]);
+</span></span><span style=display:flex><span>            dp[i][<span style=color:#ae81ff>2</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>2</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>-</span> prices[i]);
+</span></span><span style=display:flex><span>            dp[i][<span style=color:#ae81ff>3</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>3</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>2</span>] <span style=color:#f92672>+</span> prices[i]);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> dp[n<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>3</span>];
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><p><strong>需要注意：<code>dp[i][1]</code> ，表示的是第 <code>i</code> 天，买入股票的状态，并不是说⼀定要第 <code>i</code> 天买⼊股票。例如 <code>dp[i][1]</code> ，并不是说 第 <code>i</code> 天⼀定买入股票，有可能 第 i-1天 就买入了，那么 <code>dp[i][1]</code> 延续买入股票的这个状态。</strong></p><h2 id=买卖股票的最佳时机-3>买卖股票的最佳时机Ⅳ<a hidden class=anchor aria-hidden=true href=#买卖股票的最佳时机-3>#</a></h2><p>给你一个整数数组 <code>prices</code> 和一个整数 <code>k</code> ，其中 <code>prices[i]</code> 是某支给定的股票在第 <code>i</code> 天的价格。</p><p>设计一个算法来计算你所能获取的最大利润。你最多可以完成 <code>k</code> 笔交易。也就是说，你最多可以买 <code>k</code> 次，卖 <code>k</code> 次。</p><p>**注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：k = 2, prices = [2,4,1]
 输出：2
 解释：在第 1 天 (股票价格 = 2) 的时候买入，在第 2 天 (股票价格 = 4) 的时候卖出，这笔交易所能获得利润 = 4-2 = 2 。
-</code></pre><p><strong>示例 2：</strong></p>
-<pre tabindex="0"><code>输入：k = 2, prices = [3,2,6,5,0,3]
+</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：k = 2, prices = [3,2,6,5,0,3]
 输出：7
 解释：在第 2 天 (股票价格 = 2) 的时候买入，在第 3 天 (股票价格 = 6) 的时候卖出, 这笔交易所能获得利润 = 6-2 = 4 。
      随后，在第 5 天 (股票价格 = 0) 的时候买入，在第 6 天 (股票价格 = 3) 的时候卖出, 这笔交易所能获得利润 = 3-0 = 3 。
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>1 &lt;= k &lt;= 100</code></li>
-<li><code>1 &lt;= prices.length &lt;= 1000</code></li>
-<li><code>0 &lt;= prices[i] &lt;= 1000</code></li>
-</ul>
-<h3 id="思路-3">思路<a hidden class="anchor" aria-hidden="true" href="#思路-3">#</a></h3>
-<p>和<strong>买卖股票的最佳时机Ⅲ</strong>类似，这里要求最多进行 <code>k</code> 次交易，那么我们就定义相应 <code>2*k+1</code> 个状态就可以了，这里多出来一个状态表示的**“不操作”**这个状态，这样的话，除了 <code>0</code> 以外，<strong>偶数就是卖出，奇数就是买入</strong>， <code>dp</code> 数组的定义和母题是一样的。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maxProfit(<span style="color:#66d9ef">int</span> k, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> prices) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> prices.size();
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>n) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">auto</span> dp <span style="color:#f92672">=</span> vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span>(n, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>(<span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>k<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>, <span style="color:#ae81ff">0</span>));
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 第 0 天买入一定是初始化为 -prices[0] （当天买当天卖）
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; j <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>k; j <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>) dp[<span style="color:#ae81ff">0</span>][j] <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>prices[<span style="color:#ae81ff">0</span>];
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 遍历每一天
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i)
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; j <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>; j <span style="color:#f92672">+=</span> <span style="color:#ae81ff">2</span>) {
-</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// j+1 为奇数，表示买，j 为偶数，表示卖
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                dp[i][j<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][j<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][j] <span style="color:#f92672">-</span> prices[i]);
-</span></span><span style="display:flex;"><span>                dp[i][j<span style="color:#f92672">+</span><span style="color:#ae81ff">2</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][j<span style="color:#f92672">+</span><span style="color:#ae81ff">2</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][j<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">+</span> prices[i]);
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> dp[n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>k];
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><h2 id="最佳买卖股票时机含冷冻期">最佳买卖股票时机含冷冻期<a hidden class="anchor" aria-hidden="true" href="#最佳买卖股票时机含冷冻期">#</a></h2>
-<p>给定一个整数数组<code>prices</code>，其中第 <code>prices[i]</code> 表示第 <code>*i*</code> 天的股票价格 。</p>
-<p>设计一个算法计算出最大利润。在满足以下约束条件下，你可以尽可能地完成更多的交易（多次买卖一支股票）:</p>
-<ul>
-<li>卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。</li>
-</ul>
-<p>**注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p>
-<p><strong>示例 1:</strong></p>
-<pre tabindex="0"><code>输入: prices = [1,2,3,0,2]
+</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= k &lt;= 100</code></li><li><code>1 &lt;= prices.length &lt;= 1000</code></li><li><code>0 &lt;= prices[i] &lt;= 1000</code></li></ul><h3 id=思路-3>思路<a hidden class=anchor aria-hidden=true href=#思路-3>#</a></h3><p>和<strong>买卖股票的最佳时机Ⅲ</strong>类似，这里要求最多进行 <code>k</code> 次交易，那么我们就定义相应 <code>2*k+1</code> 个状态就可以了，这里多出来一个状态表示的**“不操作”**这个状态，这样的话，除了 <code>0</code> 以外，<strong>偶数就是卖出，奇数就是买入</strong>， <code>dp</code> 数组的定义和母题是一样的。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> maxProfit(<span style=color:#66d9ef>int</span> k, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> prices) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> prices.size();
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>n) <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>auto</span> dp <span style=color:#f92672>=</span> vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span>(n, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>(<span style=color:#ae81ff>2</span><span style=color:#f92672>*</span>k<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>, <span style=color:#ae81ff>0</span>));
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 第 0 天买入一定是初始化为 -prices[0] （当天买当天卖）
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; j <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>2</span><span style=color:#f92672>*</span>k; j <span style=color:#f92672>+=</span> <span style=color:#ae81ff>2</span>) dp[<span style=color:#ae81ff>0</span>][j] <span style=color:#f92672>=</span> <span style=color:#f92672>-</span>prices[<span style=color:#ae81ff>0</span>];
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 遍历每一天
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i)
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; j <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>2</span><span style=color:#f92672>*</span>k<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>; j <span style=color:#f92672>+=</span> <span style=color:#ae81ff>2</span>) {
+</span></span><span style=display:flex><span>                <span style=color:#75715e>// j+1 为奇数，表示买，j 为偶数，表示卖
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                dp[i][j<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][j<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][j] <span style=color:#f92672>-</span> prices[i]);
+</span></span><span style=display:flex><span>                dp[i][j<span style=color:#f92672>+</span><span style=color:#ae81ff>2</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][j<span style=color:#f92672>+</span><span style=color:#ae81ff>2</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][j<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>+</span> prices[i]);
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> dp[n<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>2</span><span style=color:#f92672>*</span>k];
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><h2 id=最佳买卖股票时机含冷冻期>最佳买卖股票时机含冷冻期<a hidden class=anchor aria-hidden=true href=#最佳买卖股票时机含冷冻期>#</a></h2><p>给定一个整数数组<code>prices</code>，其中第 <code>prices[i]</code> 表示第 <code>*i*</code> 天的股票价格 。</p><p>设计一个算法计算出最大利润。在满足以下约束条件下，你可以尽可能地完成更多的交易（多次买卖一支股票）:</p><ul><li>卖出股票后，你无法在第二天买入股票 (即冷冻期为 1 天)。</li></ul><p>**注意：**你不能同时参与多笔交易（你必须在再次购买前出售掉之前的股票）。</p><p><strong>示例 1:</strong></p><pre tabindex=0><code>输入: prices = [1,2,3,0,2]
 输出: 3 
 解释: 对应的交易状态为: [买入, 卖出, 冷冻期, 买入, 卖出]
-</code></pre><p><strong>示例 2:</strong></p>
-<pre tabindex="0"><code>输入: prices = [1]
+</code></pre><p><strong>示例 2:</strong></p><pre tabindex=0><code>输入: prices = [1]
 输出: 0
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>1 &lt;= prices.length &lt;= 5000</code></li>
-<li><code>0 &lt;= prices[i] &lt;= 1000</code></li>
-</ul>
-<h3 id="思路-4">思路<a hidden class="anchor" aria-hidden="true" href="#思路-4">#</a></h3>
-<p>出现<strong>冷冻期</strong>后，状态的定义就比较复杂了，例如今天买⼊股票、今天卖出股票、今天是冷冻期，都是不能操作股票的。</p>
-<p>具体可以区分出四种状态：</p>
-<ul>
-<li>
-<p><strong>状态⼀</strong>：持有股票状态（今天买⼊股票，或者是之前就买⼊了股票然后没有操作，⼀直持有）</p>
-</li>
-<li>
-<p>不持有股票状态，这⾥就有两种卖出股票状态</p>
-<ul>
-<li>
-<p><strong>状态⼆</strong>：保持卖出股票的状态（两天前就卖出了股票，度过⼀天冷冻期。或者是前⼀天就是卖出股票状</p>
-<p>态，⼀直没操作）</p>
-</li>
-<li>
-<p><strong>状态三</strong>：今天卖出股票</p>
-</li>
-</ul>
-</li>
-<li>
-<p><strong>状态四</strong>：今天为冷冻期状态</p>
-</li>
-</ul>
-<p>明确状态后就可以开始找状态转移了，具体看如下代码：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">/**
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">总共四种状态：0 表示今天保持持有、1 表示今天保持卖出、2 表示今天卖出、3表示今天冷冻期
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e">**/</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maxProfit(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> prices) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> prices.size();
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>n) <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">auto</span> dp <span style="color:#f92672">=</span>vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span>(n, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>(<span style="color:#ae81ff">4</span>)); <span style="color:#75715e">// 定义四种状态
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        dp[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>prices[<span style="color:#ae81ff">0</span>]; <span style="color:#75715e">// 初始化
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// 遍历每一天
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 当天持有状态可以从：1.前一天持有；2.前一天冷冻期，当天买入；
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">// 3.前一天保持卖出（注意是保持卖出，不是卖出），今天买入这几种情况推导过来
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            dp[i][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> max({dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">3</span>] <span style="color:#f92672">-</span> prices[i], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> prices[i]});
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 当天保持卖出可以从：1.前一天保持卖出；2.前一天冷冻期（大前天卖出）这两种情况推导过来
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            dp[i][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">3</span>]);
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 当天卖出前一天必须持有
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            dp[i][<span style="color:#ae81ff">2</span>] <span style="color:#f92672">=</span> dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">+</span> prices[i];
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 当天冷冻期前一天必须卖出
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            dp[i][<span style="color:#ae81ff">3</span>] <span style="color:#f92672">=</span> dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">2</span>];
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 想要最大利润，最后一天必不能持有，返回最后一天剩余三种情况的最大值即可
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">max</span>({dp[n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">3</span>], dp[n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">2</span>], dp[n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>]});
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><h2 id="买卖股票的最佳时机含手续费">买卖股票的最佳时机含手续费<a hidden class="anchor" aria-hidden="true" href="#买卖股票的最佳时机含手续费">#</a></h2>
-<p>给定一个整数数组 <code>prices</code>，其中 <code>prices[i]</code>表示第 <code>i</code> 天的股票价格 ；整数 <code>fee</code> 代表了交易股票的手续费用。</p>
-<p>你可以无限次地完成交易，但是你每笔交易都需要付手续费。如果你已经购买了一个股票，在卖出它之前你就不能再继续购买股票了。</p>
-<p>返回获得利润的最大值。</p>
-<p>**注意：**这里的一笔交易指买入持有并卖出股票的整个过程，每笔交易你只需要为支付一次手续费。</p>
-<p><strong>示例 1：</strong></p>
-<pre tabindex="0"><code>输入：prices = [1, 3, 2, 8, 4, 9], fee = 2
+</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= prices.length &lt;= 5000</code></li><li><code>0 &lt;= prices[i] &lt;= 1000</code></li></ul><h3 id=思路-4>思路<a hidden class=anchor aria-hidden=true href=#思路-4>#</a></h3><p>出现<strong>冷冻期</strong>后，状态的定义就比较复杂了，例如今天买⼊股票、今天卖出股票、今天是冷冻期，都是不能操作股票的。</p><p>具体可以区分出四种状态：</p><ul><li><p><strong>状态⼀</strong>：持有股票状态（今天买⼊股票，或者是之前就买⼊了股票然后没有操作，⼀直持有）</p></li><li><p>不持有股票状态，这⾥就有两种卖出股票状态</p><ul><li><p><strong>状态⼆</strong>：保持卖出股票的状态（两天前就卖出了股票，度过⼀天冷冻期。或者是前⼀天就是卖出股票状</p><p>态，⼀直没操作）</p></li><li><p><strong>状态三</strong>：今天卖出股票</p></li></ul></li><li><p><strong>状态四</strong>：今天为冷冻期状态</p></li></ul><p>明确状态后就可以开始找状态转移了，具体看如下代码：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#75715e>/**
+</span></span></span><span style=display:flex><span><span style=color:#75715e>总共四种状态：0 表示今天保持持有、1 表示今天保持卖出、2 表示今天卖出、3表示今天冷冻期
+</span></span></span><span style=display:flex><span><span style=color:#75715e>**/</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> maxProfit(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> prices) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> prices.size();
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>n) <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>auto</span> dp <span style=color:#f92672>=</span>vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span>(n, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>(<span style=color:#ae81ff>4</span>)); <span style=color:#75715e>// 定义四种状态
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        dp[<span style=color:#ae81ff>0</span>][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> <span style=color:#f92672>-</span>prices[<span style=color:#ae81ff>0</span>]; <span style=color:#75715e>// 初始化
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#75715e>// 遍历每一天
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>            <span style=color:#75715e>// 当天持有状态可以从：1.前一天持有；2.前一天冷冻期，当天买入；
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#75715e>// 3.前一天保持卖出（注意是保持卖出，不是卖出），今天买入这几种情况推导过来
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            dp[i][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> max({dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>3</span>] <span style=color:#f92672>-</span> prices[i], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>-</span> prices[i]});
+</span></span><span style=display:flex><span>            <span style=color:#75715e>// 当天保持卖出可以从：1.前一天保持卖出；2.前一天冷冻期（大前天卖出）这两种情况推导过来
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            dp[i][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>3</span>]);
+</span></span><span style=display:flex><span>            <span style=color:#75715e>// 当天卖出前一天必须持有
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            dp[i][<span style=color:#ae81ff>2</span>] <span style=color:#f92672>=</span> dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>+</span> prices[i];
+</span></span><span style=display:flex><span>            <span style=color:#75715e>// 当天冷冻期前一天必须卖出
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            dp[i][<span style=color:#ae81ff>3</span>] <span style=color:#f92672>=</span> dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>2</span>];
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 想要最大利润，最后一天必不能持有，返回最后一天剩余三种情况的最大值即可
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>max</span>({dp[n<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>3</span>], dp[n<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>2</span>], dp[n<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>]});
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><h2 id=买卖股票的最佳时机含手续费>买卖股票的最佳时机含手续费<a hidden class=anchor aria-hidden=true href=#买卖股票的最佳时机含手续费>#</a></h2><p>给定一个整数数组 <code>prices</code>，其中 <code>prices[i]</code>表示第 <code>i</code> 天的股票价格 ；整数 <code>fee</code> 代表了交易股票的手续费用。</p><p>你可以无限次地完成交易，但是你每笔交易都需要付手续费。如果你已经购买了一个股票，在卖出它之前你就不能再继续购买股票了。</p><p>返回获得利润的最大值。</p><p>**注意：**这里的一笔交易指买入持有并卖出股票的整个过程，每笔交易你只需要为支付一次手续费。</p><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：prices = [1, 3, 2, 8, 4, 9], fee = 2
 输出：8
 解释：能够达到的最大利润:  
 在此处买入 prices[0] = 1
@@ -476,112 +154,25 @@
 在此处买入 prices[4] = 4
 在此处卖出 prices[5] = 9
 总利润: ((8 - 1) - 2) + ((9 - 4) - 2) = 8
-</code></pre><p><strong>示例 2：</strong></p>
-<pre tabindex="0"><code>输入：prices = [1,3,7,5,10,3], fee = 3
+</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：prices = [1,3,7,5,10,3], fee = 3
 输出：6
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>1 &lt;= prices.length &lt;= 5 * 10^4</code></li>
-<li><code>1 &lt;= prices[i] &lt; 5 * 10^4</code></li>
-<li><code>0 &lt;= fee &lt; 5 * 10^4</code></li>
-</ul>
-<h3 id="思路-5">思路<a hidden class="anchor" aria-hidden="true" href="#思路-5">#</a></h3>
-<p>本题和<strong>买卖股票的最佳时机Ⅱ</strong>就是多了个减去手续费的操作</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> maxProfit(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> prices, <span style="color:#66d9ef">int</span> fee) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> prices.size();
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// dp[i][0]表示第 i 天持有股票，dp[i][1]表示第 i 天不持有股票
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">auto</span> dp <span style="color:#f92672">=</span> vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> (n, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>(<span style="color:#ae81ff">2</span>));
-</span></span><span style="display:flex;"><span>        dp[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> <span style="color:#f92672">-</span>prices[<span style="color:#ae81ff">0</span>];
-</span></span><span style="display:flex;"><span>        dp[<span style="color:#ae81ff">0</span>][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>            dp[i][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> prices[i]);
-</span></span><span style="display:flex;"><span>            dp[i][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> max(dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>], dp[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>] <span style="color:#f92672">+</span> prices[i] <span style="color:#f92672">-</span> fee);
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">max</span>(dp[n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">0</span>], dp[n<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][<span style="color:#ae81ff">1</span>]);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div>
-
-  </div>
-
-  <footer class="post-footer">
-    <ul class="post-tags">
-    </ul>
-  </footer>
-</article>
-    </main>
-    
-<footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
-
-    <span>
-        Powered by
-        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
-        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
-    </span>
-</footer>
-<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
-        <path d="M12 6H0l6-6z" />
-    </svg>
-</a>
-
-<script>
-    let menu = document.getElementById('menu')
-    if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
-        menu.onscroll = function () {
-            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
-        }
-    }
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            var id = this.getAttribute("href").substr(1);
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
-                    behavior: "smooth"
-                });
-            } else {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
-            }
-            if (id === "top") {
-                history.replaceState(null, null, " ");
-            } else {
-                history.pushState(null, null, `#${id}`);
-            }
-        });
-    });
-
-</script>
-<script>
-    var mybutton = document.getElementById("top-link");
-    window.onscroll = function () {
-        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
-            mybutton.style.visibility = "visible";
-            mybutton.style.opacity = "1";
-        } else {
-            mybutton.style.visibility = "hidden";
-            mybutton.style.opacity = "0";
-        }
-    };
-
-</script>
-<script>
-    document.getElementById("theme-toggle").addEventListener("click", () => {
-        if (document.body.className.includes("dark")) {
-            document.body.classList.remove('dark');
-            localStorage.setItem("pref-theme", 'light');
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem("pref-theme", 'dark');
-        }
-    })
-
-</script>
-</body>
-
-</html>
+</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= prices.length &lt;= 5 * 10^4</code></li><li><code>1 &lt;= prices[i] &lt; 5 * 10^4</code></li><li><code>0 &lt;= fee &lt; 5 * 10^4</code></li></ul><h3 id=思路-5>思路<a hidden class=anchor aria-hidden=true href=#思路-5>#</a></h3><p>本题和<strong>买卖股票的最佳时机Ⅱ</strong>就是多了个减去手续费的操作</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> maxProfit(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> prices, <span style=color:#66d9ef>int</span> fee) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> prices.size();
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// dp[i][0]表示第 i 天持有股票，dp[i][1]表示第 i 天不持有股票
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>auto</span> dp <span style=color:#f92672>=</span> vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> (n, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>(<span style=color:#ae81ff>2</span>));
+</span></span><span style=display:flex><span>        dp[<span style=color:#ae81ff>0</span>][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> <span style=color:#f92672>-</span>prices[<span style=color:#ae81ff>0</span>];
+</span></span><span style=display:flex><span>        dp[<span style=color:#ae81ff>0</span>][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>            dp[i][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>-</span> prices[i]);
+</span></span><span style=display:flex><span>            dp[i][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> max(dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>], dp[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>] <span style=color:#f92672>+</span> prices[i] <span style=color:#f92672>-</span> fee);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>max</span>(dp[n<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>0</span>], dp[n<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][<span style=color:#ae81ff>1</span>]);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div></div><footer class=post-footer><ul class=post-tags></ul></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://yuk1pedia.github.io/>YUKIPEDIA's blog</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>

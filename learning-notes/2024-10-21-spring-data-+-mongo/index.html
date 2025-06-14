@@ -1,487 +1,93 @@
-<!DOCTYPE html>
-<html lang="en" dir="auto">
-
-<head><meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
-<title>Spring Data &#43; Mongo | YUKIPEDIA&#39;s blog</title>
-<meta name="keywords" content="">
-<meta name="description" content="记录">
-<meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-10-21-spring-data-&#43;-mongo/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
-<meta name="theme-color" content="#2e2e33">
-<meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-10-21-spring-data-&#43;-mongo/">
-<noscript>
-    <style>
-        #theme-toggle,
-        .top-link {
-            display: none;
-        }
-
-    </style>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --theme: rgb(29, 30, 32);
-                --entry: rgb(46, 46, 51);
-                --primary: rgb(218, 218, 219);
-                --secondary: rgb(155, 156, 157);
-                --tertiary: rgb(65, 66, 68);
-                --content: rgb(196, 196, 197);
-                --code-block-bg: rgb(46, 46, 51);
-                --code-bg: rgb(55, 56, 62);
-                --border: rgb(51, 51, 51);
-            }
-
-            .list {
-                background: var(--theme);
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-track {
-                background: 0 0;
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-thumb {
-                border-color: var(--theme);
-            }
-        }
-
-    </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-10-21-spring-data-&#43;-mongo/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="Spring Data &#43; Mongo">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Spring Data &#43; Mongo">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Spring Data + Mongo",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-10-21-spring-data-+-mongo/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Spring Data + Mongo",
-  "name": "Spring Data \u002b Mongo",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "1.什么是 Spring Data？ Spring Data 是 Spring 框架中的一部分，专注于简化数据访问层的开发。其核心目标是减少开发人员编写的数据访问层代码，并为常见的数据访问模式提供开箱即用的解决方案。Spring Data 支持多种数据存储技术，如关系数据库（通过 JPA）、NoSQL 数据库（如 MongoDB、Cassandra 等）。\n主要功能如下：\n简化的 CRUD 操作：通过 Spring Data，开发者可以轻松实现基本的 CRUD（增删查改）操作，无需编写复杂的 SQL 语句。\nRepository 接口：定义简单的 Repository 接口，并通过 Spring Data 自动提供实现。例如，可以定义一个继承 JpaRepository 的接口，Spring Data JPA 会自动生成常见的 CRUD 方法。\n自定义查询方法：通过方法名称来定义查询，Spring Data 会自动解析方法名并生成相应的 SQL。例如，方法名为 findByName 会自动生成一个按 name 字段查询的 SQL 语句。\n分页和排序：通过 Pageable 接口，轻松实现分页查询和结果排序。\n支持事务管理：Spring Data 与 Spring 的事务管理无缝集成，开发者可以使用注解来管理事务，确保数据的安全性和一致性。\n2.什么是 JPA？ JPA 是 Java 中的一个标准规范，用于管理 Java 对象与关系数据库之间的映射。JPA 规范本身并不是具体的实现，而是定义了一套用于**对象-关系映射（ORM）**的 API。\nJPA 核心概念：\n实体（Entity）：一个被映射到数据库表的普通 Java 类。通过 @Entity 注解将类声明为一个 JPA 实体，并通过其他注解指定其与数据库表之间的关系。\n实体管理器（EntityManager）：JPA 的核心接口，负责实体的生命周期管理，如持久化、更新、删除、查询等操作。\nJPQL（Java Persistence Query Language）：一种面向对象的查询语言，类似于 SQL，但操作的是 Java 对象而不是数据库表。\n注解映射：\n@Entity：标识一个类为实体类。\n@Table：定义实体类对应的数据库表。\n@Id：定义实体类的主键。\n@GeneratedValue：定义主键的生成策略。\n@ManyToOne，@OneToMany，@ManyToMany，@OneToOne：定义实体类之间的关系。\n3.Spring Data JPA Spring Data JPA 是 Spring Data 项目的一部分，它是对 JPA 的进一步封装和扩展。它简化了 JPA 的使用，开发者可以通过 Repository 接口的方式直接与数据库交互，而无需手动编写 EntityManager 相关的代码。\nSpring Data JPA 核心特点：\n简化的 Repository 模型：通过继承 JpaRepository 或 CrudRepository，可以轻松获取基本的 CRUD 操作和分页、排序功能。\n动态查询：使用方法名称查询，可以通过定义以 findBy 开头的方法，并指定实体类的字段来实现动态查询。\n自定义查询：通过 @Query 注解，可以编写 JPQL 或原生 SQL 来进行自定义查询。\n与事务的集成：通过 @Transactional 注解，开发者可以对方法的事务行为进行管理。\n以下面的代码为例：\n定义实体类 @Entity public class User { @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id; private String name; private String email; // getters and setters } 定义 Repository 接口 public interface UserRepository extends JpaRepository\u003cUser, Long\u003e { List\u003cUser\u003e findByName(String name); } 在服务中使用 @Service public class UserService { @Autowired private UserRepository userRepository; public List\u003cUser\u003e getUsersByName(String name) { return userRepository.findByName(name); } public void saveUser(User user) { userRepository.save(user); } } 4.什么是 Mongo？ MongoDB 是一个 NoSQL 数据库，具有高性能、灵活的数据模型和高可用性，适用于存储海量、半结构化或非结构化数据。MongoDB 采用 BSON（二进制 JSON）格式存储数据，支持丰富的查询功能、内嵌文档和多种索引方式。MongoDB 写入数据的速度相较于 MySQL要快非常多。\nMongo 主要特点\n无模式（Schema-less）：MongoDB 不要求预先定义数据模式，数据的结构可以随着应用需求变化。\n文档存储：MongoDB 以 BSON 文档的形式存储数据，每条记录相当于一个 JSON 对象，非常灵活且支持嵌套数据。\n高扩展性：支持水平扩展，容易进行数据分片（Sharding），使其可以轻松处理海量数据和高并发请求。\n内嵌文档和数组：允许文档内嵌其他文档或数组，减少了跨集合查询和联表查询的需求。\n丰富的查询功能：支持复杂的查询、过滤、排序、分页等操作，还支持地理空间查询和全文搜索。\n强大的索引功能：支持创建多种索引，如单字段索引、复合索引、地理空间索引、全文索引等。\n5.Spring Data Mongo Spring Data MongoDB 是 Spring Data 项目的一部分，专门为 MongoDB 提供数据访问的支持。它封装了对 MongoDB 数据库的访问，使得开发者可以使用类似 JPA 的方式与 MongoDB 交互。\nSpring Data MongoDB 的主要功能:\nRepository 支持：通过定义 Repository 接口，Spring Data MongoDB 会自动生成常见的 CRUD 方法，类似于 Spring Data JPA 的 JpaRepository。 MongoTemplate：提供了灵活的模板类，可以执行自定义的查询、更新、删除等操作。与 Repository 的自动生成方式不同，MongoTemplate 更加灵活，可以编写复杂的查询逻辑。 方法查询派生：通过方法名派生查询功能，开发者可以定义以 findBy 开头的方法，Spring Data MongoDB 会自动根据方法名生成查询语句。例如，findByUsername 会自动生成查询 username 字段的 MongoDB 查询。 自定义查询：可以通过 @Query 注解编写自定义的 MongoDB 查询，支持使用 JSON 格式或者 Spring 的查询表达式来构建查询。 分页与排序：通过 Pageable 接口，Spring Data MongoDB 提供了分页和排序功能，简化了处理大量数据的场景。 聚合查询：Spring Data MongoDB 支持 MongoDB 的聚合查询功能，可以执行复杂的数据统计和汇总操作。 事务支持：在 MongoDB 4.x 及以上版本，Spring Data MongoDB 支持多文档的事务操作，确保数据的一致性。 Spring Data MongoDB 主要组件 Repository 接口：类似于 Spring Data JPA，开发者只需要定义接口，并继承 MongoRepository，就可以自动生成 CRUD 操作。 MongoTemplate：提供了对 MongoDB 的底层操作，如插入、更新、删除、查询等。适用于需要更复杂查询逻辑或自定义操作的场景。 @Document 注解：将 Java 对象映射为 MongoDB 文档，类似于 JPA 的 @Entity 注解。 以下面的代码为例：\n定义实体类 import org.springframework.data.annotation.Id; import org.springframework.data.mongodb.core.mapping.Document; @Document(collection = \"users\") // 指定 MongoDB 中的集合名称 public class User { @Id private String id; private String username; private String email; // Getters and setters } 定义 Repository 接口 import org.springframework.data.mongodb.repository.MongoRepository; import java.util.List; public interface UserRepository extends MongoRepository\u003cUser, String\u003e { List\u003cUser\u003e findByUsername(String username); // 方法名派生查询 } 使用 MongoRepository 的服务类 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.stereotype.Service; import java.util.List; @Service public class UserService { @Autowired private UserRepository userRepository; public List\u003cUser\u003e getUsersByUsername(String username) { return userRepository.findByUsername(username); } public void saveUser(User user) { userRepository.save(user); } public void deleteUser(String id) { userRepository.deleteById(id); } } 使用 MongoTemplate 进行复杂查询 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.data.mongodb.core.MongoTemplate; import org.springframework.data.mongodb.core.query.Criteria; import org.springframework.data.mongodb.core.query.Query; import org.springframework.stereotype.Service; @Service public class UserCustomService { @Autowired private MongoTemplate mongoTemplate; public User getUserByEmail(String email) { Query query = new Query(); query.addCriteria(Criteria.where(\"email\").is(email)); return mongoTemplate.findOne(query, User.class); } } ",
-  "wordCount" : "457",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-10-21-spring-data-+-mongo/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
-</head>
-
-<body class="" id="top">
-<script>
-    if (localStorage.getItem("pref-theme") === "dark") {
-        document.body.classList.add('dark');
-    } else if (localStorage.getItem("pref-theme") === "light") {
-        document.body.classList.remove('dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark');
-    }
-
-</script>
-
-<header class="header">
-    <nav class="nav">
-        <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
-            <div class="logo-switches">
-                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
-                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <ul id="menu">
-            <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
-                    <span>Learning Notes</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</header>
-<main class="main">
-
-<article class="post-single">
-  <header class="post-header">
-    
-    <h1 class="post-title entry-hint-parent">
-      Spring Data &#43; Mongo
-    </h1>
-    <div class="post-description">
-      记录
-    </div>
-    <div class="post-meta">
-
-</div>
-  </header> 
-  <div class="post-content"><h2 id="1什么是-spring-data">1.什么是 Spring Data？<a hidden class="anchor" aria-hidden="true" href="#1什么是-spring-data">#</a></h2>
-<p>Spring Data 是 Spring 框架中的一部分，专注于简化数据访问层的开发。其核心目标是减少开发人员编写的数据访问层代码，并为常见的数据访问模式提供开箱即用的解决方案。Spring Data 支持多种数据存储技术，如关系数据库（通过 JPA）、NoSQL 数据库（如 MongoDB、Cassandra 等）。</p>
-<p><strong>主要功能如下：</strong></p>
-<ol>
-<li>
-<p><strong>简化的 CRUD 操作</strong>：通过 Spring Data，开发者可以轻松实现基本的 CRUD（增删查改）操作，无需编写复杂的 SQL 语句。</p>
-</li>
-<li>
-<p><strong>Repository 接口</strong>：定义简单的 Repository 接口，并通过 Spring Data 自动提供实现。例如，可以定义一个继承 <code>JpaRepository</code> 的接口，Spring Data JPA 会自动生成常见的 CRUD 方法。</p>
-</li>
-<li>
-<p><strong>自定义查询方法</strong>：通过方法名称来定义查询，Spring Data 会自动解析方法名并生成相应的 SQL。例如，方法名为 <code>findByName</code> 会自动生成一个按 <code>name</code> 字段查询的 SQL 语句。</p>
-</li>
-<li>
-<p><strong>分页和排序</strong>：通过 <code>Pageable</code> 接口，轻松实现分页查询和结果排序。</p>
-</li>
-<li>
-<p><strong>支持事务管理</strong>：Spring Data 与 Spring 的事务管理无缝集成，开发者可以使用注解来管理事务，确保数据的安全性和一致性。</p>
-</li>
-</ol>
-<h2 id="2什么是-jpa">2.什么是 JPA？<a hidden class="anchor" aria-hidden="true" href="#2什么是-jpa">#</a></h2>
-<p>JPA 是 Java 中的一个标准规范，用于<strong>管理 Java 对象与关系数据库之间的映射</strong>。JPA 规范本身并不是具体的实现，而是定义了一套用于**对象-关系映射（ORM）**的 API。</p>
-<p><strong>JPA 核心概念：</strong></p>
-<ol>
-<li>
-<p><strong>实体（Entity）</strong>：一个被映射到数据库表的普通 Java 类。通过 <code>@Entity</code> 注解将类声明为一个 JPA 实体，并通过其他注解指定其与数据库表之间的关系。</p>
-</li>
-<li>
-<p><strong>实体管理器（EntityManager）</strong>：JPA 的核心接口，负责实体的生命周期管理，如持久化、更新、删除、查询等操作。</p>
-</li>
-<li>
-<p><strong>JPQL（Java Persistence Query Language）</strong>：一种面向对象的查询语言，类似于 SQL，但操作的是 Java 对象而不是数据库表。</p>
-</li>
-<li>
-<p><strong>注解映射</strong>：</p>
-<ul>
-<li>
-<p><code>@Entity</code>：标识一个类为实体类。</p>
-</li>
-<li>
-<p><code>@Table</code>：定义实体类对应的数据库表。</p>
-</li>
-<li>
-<p><code>@Id</code>：定义实体类的主键。</p>
-</li>
-<li>
-<p><code>@GeneratedValue</code>：定义主键的生成策略。</p>
-</li>
-<li>
-<p><code>@ManyToOne</code>，<code>@OneToMany</code>，<code>@ManyToMany</code>，<code>@OneToOne</code>：定义实体类之间的关系。</p>
-</li>
-</ul>
-</li>
-</ol>
-<h2 id="3spring-data-jpa">3.Spring Data JPA<a hidden class="anchor" aria-hidden="true" href="#3spring-data-jpa">#</a></h2>
-<p>Spring Data JPA 是 Spring Data 项目的一部分，它是对 JPA 的进一步封装和扩展。它简化了 JPA 的使用，开发者可以通过 Repository 接口的方式直接与数据库交互，而无需手动编写 EntityManager 相关的代码。</p>
-<p><strong>Spring Data JPA 核心特点：</strong></p>
-<ol>
-<li>
-<p><strong>简化的 Repository 模型</strong>：通过继承 <code>JpaRepository</code> 或 <code>CrudRepository</code>，可以轻松获取基本的 CRUD 操作和分页、排序功能。</p>
-</li>
-<li>
-<p><strong>动态查询</strong>：使用<strong>方法名称</strong>查询，可以通过定义以 <code>findBy</code> 开头的方法，并指定实体类的字段来实现动态查询。</p>
-</li>
-<li>
-<p><strong>自定义查询</strong>：通过 <code>@Query</code> 注解，可以编写 JPQL 或原生 SQL 来进行自定义查询。</p>
-</li>
-<li>
-<p><strong>与事务的集成</strong>：通过 <code>@Transactional</code> 注解，开发者可以对方法的事务行为进行管理。</p>
-</li>
-</ol>
-<p>以下面的代码为例：</p>
-<ul>
-<li>定义实体类</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Entity</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Id</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@GeneratedValue</span>(strategy <span style="color:#f92672">=</span> GenerationType.<span style="color:#a6e22e">IDENTITY</span>)
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> Long id;
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String name;
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String email;
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// getters and setters</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ul>
-<li>定义 Repository 接口</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">UserRepository</span> <span style="color:#66d9ef">extends</span> JpaRepository<span style="color:#f92672">&lt;</span>User, Long<span style="color:#f92672">&gt;</span> {
-</span></span><span style="display:flex;"><span>    List<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">findByName</span>(String name);
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ul>
-<li>在服务中使用</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Service</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserService</span> {
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> UserRepository userRepository;
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getUsersByName</span>(String name) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> userRepository.<span style="color:#a6e22e">findByName</span>(name);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">saveUser</span>(User user) {
-</span></span><span style="display:flex;"><span>        userRepository.<span style="color:#a6e22e">save</span>(user);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h2 id="4什么是-mongo">4.什么是 Mongo？<a hidden class="anchor" aria-hidden="true" href="#4什么是-mongo">#</a></h2>
-<p>MongoDB 是一个 NoSQL 数据库，具有高性能、灵活的数据模型和高可用性，适用于存储海量、半结构化或非结构化数据。MongoDB 采用 BSON（二进制 JSON）格式存储数据，支持丰富的查询功能、内嵌文档和多种索引方式。<strong>MongoDB 写入数据的速度相较于 MySQL要快非常多。</strong></p>
-<p><strong>Mongo 主要特点</strong></p>
-<ol>
-<li>
-<p><strong>无模式（Schema-less）</strong>：MongoDB 不要求预先定义数据模式，数据的结构可以随着应用需求变化。</p>
-</li>
-<li>
-<p><strong>文档存储</strong>：MongoDB 以 BSON 文档的形式存储数据，每条记录相当于一个 JSON 对象，非常灵活且支持嵌套数据。</p>
-</li>
-<li>
-<p><strong>高扩展性</strong>：支持水平扩展，容易进行数据分片（Sharding），使其可以轻松处理海量数据和高并发请求。</p>
-</li>
-<li>
-<p><strong>内嵌文档和数组</strong>：允许文档内嵌其他文档或数组，减少了跨集合查询和联表查询的需求。</p>
-</li>
-<li>
-<p><strong>丰富的查询功能</strong>：支持复杂的查询、过滤、排序、分页等操作，还支持地理空间查询和全文搜索。</p>
-</li>
-<li>
-<p><strong>强大的索引功能</strong>：支持创建多种索引，如单字段索引、复合索引、地理空间索引、全文索引等。</p>
-</li>
-</ol>
-<h2 id="5spring-data-mongo">5.Spring Data Mongo<a hidden class="anchor" aria-hidden="true" href="#5spring-data-mongo">#</a></h2>
-<p>Spring Data MongoDB 是 Spring Data 项目的一部分，专门为 MongoDB 提供数据访问的支持。它封装了对 MongoDB 数据库的访问，使得开发者可以使用类似 JPA 的方式与 MongoDB 交互。</p>
-<p><strong>Spring Data MongoDB 的主要功能:</strong></p>
-<ol>
-<li><strong>Repository 支持</strong>：通过定义 Repository 接口，Spring Data MongoDB 会自动生成常见的 CRUD 方法，类似于 Spring Data JPA 的 <code>JpaRepository</code>。</li>
-<li><strong>MongoTemplate</strong>：提供了灵活的模板类，可以执行自定义的查询、更新、删除等操作。与 Repository 的自动生成方式不同，<code>MongoTemplate</code> 更加灵活，可以编写复杂的查询逻辑。</li>
-<li><strong>方法查询派生</strong>：通过方法名派生查询功能，开发者可以定义以 <code>findBy</code> 开头的方法，Spring Data MongoDB 会自动根据方法名生成查询语句。例如，<code>findByUsername</code> 会自动生成查询 <code>username</code> 字段的 MongoDB 查询。</li>
-<li><strong>自定义查询</strong>：可以通过 <code>@Query</code> 注解编写自定义的 MongoDB 查询，支持使用 JSON 格式或者 Spring 的查询表达式来构建查询。</li>
-<li><strong>分页与排序</strong>：通过 <code>Pageable</code> 接口，Spring Data MongoDB 提供了分页和排序功能，简化了处理大量数据的场景。</li>
-<li><strong>聚合查询</strong>：Spring Data MongoDB 支持 MongoDB 的聚合查询功能，可以执行复杂的数据统计和汇总操作。</li>
-<li><strong>事务支持</strong>：在 MongoDB 4.x 及以上版本，Spring Data MongoDB 支持多文档的事务操作，确保数据的一致性。</li>
-</ol>
-<h4 id="spring-data-mongodb-主要组件">Spring Data MongoDB 主要组件<a hidden class="anchor" aria-hidden="true" href="#spring-data-mongodb-主要组件">#</a></h4>
-<ol>
-<li><strong>Repository 接口</strong>：类似于 Spring Data JPA，开发者只需要定义接口，并继承 <code>MongoRepository</code>，就可以自动生成 CRUD 操作。</li>
-<li><strong>MongoTemplate</strong>：提供了对 MongoDB 的底层操作，如插入、更新、删除、查询等。适用于需要更复杂查询逻辑或自定义操作的场景。</li>
-<li><strong>@Document</strong> 注解：将 Java 对象映射为 MongoDB 文档，类似于 JPA 的 <code>@Entity</code> 注解。</li>
-</ol>
-<p>以下面的代码为例：</p>
-<ul>
-<li>定义实体类</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.data.annotation.Id;
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.data.mongodb.core.mapping.Document;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Document</span>(collection <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;users&#34;</span>)  <span style="color:#75715e">// 指定 MongoDB 中的集合名称</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">User</span> {
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Id</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String id;
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String username;
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String email;
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// Getters and setters</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ul>
-<li>定义 Repository 接口</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.data.mongodb.repository.MongoRepository;
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.util.List;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">interface</span> <span style="color:#a6e22e">UserRepository</span> <span style="color:#66d9ef">extends</span> MongoRepository<span style="color:#f92672">&lt;</span>User, String<span style="color:#f92672">&gt;</span> {
-</span></span><span style="display:flex;"><span>    List<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">findByUsername</span>(String username);  <span style="color:#75715e">// 方法名派生查询</span>
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ul>
-<li>使用 MongoRepository 的服务类</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.beans.factory.annotation.Autowired;
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.stereotype.Service;
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.util.List;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Service</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserService</span> {
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> UserRepository userRepository;
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> List<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">getUsersByUsername</span>(String username) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> userRepository.<span style="color:#a6e22e">findByUsername</span>(username);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">saveUser</span>(User user) {
-</span></span><span style="display:flex;"><span>        userRepository.<span style="color:#a6e22e">save</span>(user);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">deleteUser</span>(String id) {
-</span></span><span style="display:flex;"><span>        userRepository.<span style="color:#a6e22e">deleteById</span>(id);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><ul>
-<li>使用 MongoTemplate 进行复杂查询</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.beans.factory.annotation.Autowired;
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.data.mongodb.core.MongoTemplate;
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.data.mongodb.core.query.Criteria;
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.data.mongodb.core.query.Query;
-</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.stereotype.Service;
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Service</span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserCustomService</span> {
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> MongoTemplate mongoTemplate;
-</span></span><span style="display:flex;"><span>    
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> User <span style="color:#a6e22e">getUserByEmail</span>(String email) {
-</span></span><span style="display:flex;"><span>        Query query <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Query();
-</span></span><span style="display:flex;"><span>        query.<span style="color:#a6e22e">addCriteria</span>(Criteria.<span style="color:#a6e22e">where</span>(<span style="color:#e6db74">&#34;email&#34;</span>).<span style="color:#a6e22e">is</span>(email));
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> mongoTemplate.<span style="color:#a6e22e">findOne</span>(query, User.<span style="color:#a6e22e">class</span>);
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div>
-
-  </div>
-
-  <footer class="post-footer">
-    <ul class="post-tags">
-    </ul>
-  </footer>
-</article>
-    </main>
-    
-<footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
-
-    <span>
-        Powered by
-        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
-        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
-    </span>
-</footer>
-<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
-        <path d="M12 6H0l6-6z" />
-    </svg>
-</a>
-
-<script>
-    let menu = document.getElementById('menu')
-    if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
-        menu.onscroll = function () {
-            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
-        }
-    }
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            var id = this.getAttribute("href").substr(1);
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
-                    behavior: "smooth"
-                });
-            } else {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
-            }
-            if (id === "top") {
-                history.replaceState(null, null, " ");
-            } else {
-                history.pushState(null, null, `#${id}`);
-            }
-        });
-    });
-
-</script>
-<script>
-    var mybutton = document.getElementById("top-link");
-    window.onscroll = function () {
-        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
-            mybutton.style.visibility = "visible";
-            mybutton.style.opacity = "1";
-        } else {
-            mybutton.style.visibility = "hidden";
-            mybutton.style.opacity = "0";
-        }
-    };
-
-</script>
-<script>
-    document.getElementById("theme-toggle").addEventListener("click", () => {
-        if (document.body.className.includes("dark")) {
-            document.body.classList.remove('dark');
-            localStorage.setItem("pref-theme", 'light');
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem("pref-theme", 'dark');
-        }
-    })
-
-</script>
-</body>
-
-</html>
+<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Spring Data + Mongo | YUKIPEDIA's blog</title><meta name=keywords content><meta name=description content="记录"><meta name=author content><link rel=canonical href=https://yuk1pedia.github.io/learning-notes/2024-10-21-spring-data-+-mongo/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://yuk1pedia.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://yuk1pedia.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://yuk1pedia.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://yuk1pedia.github.io/apple-touch-icon.png><link rel=mask-icon href=https://yuk1pedia.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://yuk1pedia.github.io/learning-notes/2024-10-21-spring-data-+-mongo/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-10-21-spring-data-+-mongo/"><meta property="og:site_name" content="YUKIPEDIA's blog"><meta property="og:title" content="Spring Data + Mongo"><meta property="og:description" content="记录"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="learning-notes"><meta name=twitter:card content="summary"><meta name=twitter:title content="Spring Data + Mongo"><meta name=twitter:description content="记录"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Learning Notes","item":"https://yuk1pedia.github.io/learning-notes/"},{"@type":"ListItem","position":2,"name":"Spring Data + Mongo","item":"https://yuk1pedia.github.io/learning-notes/2024-10-21-spring-data-+-mongo/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Spring Data + Mongo","name":"Spring Data \u002b Mongo","description":"记录","keywords":[],"articleBody":"1.什么是 Spring Data？ Spring Data 是 Spring 框架中的一部分，专注于简化数据访问层的开发。其核心目标是减少开发人员编写的数据访问层代码，并为常见的数据访问模式提供开箱即用的解决方案。Spring Data 支持多种数据存储技术，如关系数据库（通过 JPA）、NoSQL 数据库（如 MongoDB、Cassandra 等）。\n主要功能如下：\n简化的 CRUD 操作：通过 Spring Data，开发者可以轻松实现基本的 CRUD（增删查改）操作，无需编写复杂的 SQL 语句。\nRepository 接口：定义简单的 Repository 接口，并通过 Spring Data 自动提供实现。例如，可以定义一个继承 JpaRepository 的接口，Spring Data JPA 会自动生成常见的 CRUD 方法。\n自定义查询方法：通过方法名称来定义查询，Spring Data 会自动解析方法名并生成相应的 SQL。例如，方法名为 findByName 会自动生成一个按 name 字段查询的 SQL 语句。\n分页和排序：通过 Pageable 接口，轻松实现分页查询和结果排序。\n支持事务管理：Spring Data 与 Spring 的事务管理无缝集成，开发者可以使用注解来管理事务，确保数据的安全性和一致性。\n2.什么是 JPA？ JPA 是 Java 中的一个标准规范，用于管理 Java 对象与关系数据库之间的映射。JPA 规范本身并不是具体的实现，而是定义了一套用于**对象-关系映射（ORM）**的 API。\nJPA 核心概念：\n实体（Entity）：一个被映射到数据库表的普通 Java 类。通过 @Entity 注解将类声明为一个 JPA 实体，并通过其他注解指定其与数据库表之间的关系。\n实体管理器（EntityManager）：JPA 的核心接口，负责实体的生命周期管理，如持久化、更新、删除、查询等操作。\nJPQL（Java Persistence Query Language）：一种面向对象的查询语言，类似于 SQL，但操作的是 Java 对象而不是数据库表。\n注解映射：\n@Entity：标识一个类为实体类。\n@Table：定义实体类对应的数据库表。\n@Id：定义实体类的主键。\n@GeneratedValue：定义主键的生成策略。\n@ManyToOne，@OneToMany，@ManyToMany，@OneToOne：定义实体类之间的关系。\n3.Spring Data JPA Spring Data JPA 是 Spring Data 项目的一部分，它是对 JPA 的进一步封装和扩展。它简化了 JPA 的使用，开发者可以通过 Repository 接口的方式直接与数据库交互，而无需手动编写 EntityManager 相关的代码。\nSpring Data JPA 核心特点：\n简化的 Repository 模型：通过继承 JpaRepository 或 CrudRepository，可以轻松获取基本的 CRUD 操作和分页、排序功能。\n动态查询：使用方法名称查询，可以通过定义以 findBy 开头的方法，并指定实体类的字段来实现动态查询。\n自定义查询：通过 @Query 注解，可以编写 JPQL 或原生 SQL 来进行自定义查询。\n与事务的集成：通过 @Transactional 注解，开发者可以对方法的事务行为进行管理。\n以下面的代码为例：\n定义实体类 @Entity public class User { @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id; private String name; private String email; // getters and setters } 定义 Repository 接口 public interface UserRepository extends JpaRepository\u003cUser, Long\u003e { List\u003cUser\u003e findByName(String name); } 在服务中使用 @Service public class UserService { @Autowired private UserRepository userRepository; public List\u003cUser\u003e getUsersByName(String name) { return userRepository.findByName(name); } public void saveUser(User user) { userRepository.save(user); } } 4.什么是 Mongo？ MongoDB 是一个 NoSQL 数据库，具有高性能、灵活的数据模型和高可用性，适用于存储海量、半结构化或非结构化数据。MongoDB 采用 BSON（二进制 JSON）格式存储数据，支持丰富的查询功能、内嵌文档和多种索引方式。MongoDB 写入数据的速度相较于 MySQL要快非常多。\nMongo 主要特点\n无模式（Schema-less）：MongoDB 不要求预先定义数据模式，数据的结构可以随着应用需求变化。\n文档存储：MongoDB 以 BSON 文档的形式存储数据，每条记录相当于一个 JSON 对象，非常灵活且支持嵌套数据。\n高扩展性：支持水平扩展，容易进行数据分片（Sharding），使其可以轻松处理海量数据和高并发请求。\n内嵌文档和数组：允许文档内嵌其他文档或数组，减少了跨集合查询和联表查询的需求。\n丰富的查询功能：支持复杂的查询、过滤、排序、分页等操作，还支持地理空间查询和全文搜索。\n强大的索引功能：支持创建多种索引，如单字段索引、复合索引、地理空间索引、全文索引等。\n5.Spring Data Mongo Spring Data MongoDB 是 Spring Data 项目的一部分，专门为 MongoDB 提供数据访问的支持。它封装了对 MongoDB 数据库的访问，使得开发者可以使用类似 JPA 的方式与 MongoDB 交互。\nSpring Data MongoDB 的主要功能:\nRepository 支持：通过定义 Repository 接口，Spring Data MongoDB 会自动生成常见的 CRUD 方法，类似于 Spring Data JPA 的 JpaRepository。 MongoTemplate：提供了灵活的模板类，可以执行自定义的查询、更新、删除等操作。与 Repository 的自动生成方式不同，MongoTemplate 更加灵活，可以编写复杂的查询逻辑。 方法查询派生：通过方法名派生查询功能，开发者可以定义以 findBy 开头的方法，Spring Data MongoDB 会自动根据方法名生成查询语句。例如，findByUsername 会自动生成查询 username 字段的 MongoDB 查询。 自定义查询：可以通过 @Query 注解编写自定义的 MongoDB 查询，支持使用 JSON 格式或者 Spring 的查询表达式来构建查询。 分页与排序：通过 Pageable 接口，Spring Data MongoDB 提供了分页和排序功能，简化了处理大量数据的场景。 聚合查询：Spring Data MongoDB 支持 MongoDB 的聚合查询功能，可以执行复杂的数据统计和汇总操作。 事务支持：在 MongoDB 4.x 及以上版本，Spring Data MongoDB 支持多文档的事务操作，确保数据的一致性。 Spring Data MongoDB 主要组件 Repository 接口：类似于 Spring Data JPA，开发者只需要定义接口，并继承 MongoRepository，就可以自动生成 CRUD 操作。 MongoTemplate：提供了对 MongoDB 的底层操作，如插入、更新、删除、查询等。适用于需要更复杂查询逻辑或自定义操作的场景。 @Document 注解：将 Java 对象映射为 MongoDB 文档，类似于 JPA 的 @Entity 注解。 以下面的代码为例：\n定义实体类 import org.springframework.data.annotation.Id; import org.springframework.data.mongodb.core.mapping.Document; @Document(collection = \"users\") // 指定 MongoDB 中的集合名称 public class User { @Id private String id; private String username; private String email; // Getters and setters } 定义 Repository 接口 import org.springframework.data.mongodb.repository.MongoRepository; import java.util.List; public interface UserRepository extends MongoRepository\u003cUser, String\u003e { List\u003cUser\u003e findByUsername(String username); // 方法名派生查询 } 使用 MongoRepository 的服务类 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.stereotype.Service; import java.util.List; @Service public class UserService { @Autowired private UserRepository userRepository; public List\u003cUser\u003e getUsersByUsername(String username) { return userRepository.findByUsername(username); } public void saveUser(User user) { userRepository.save(user); } public void deleteUser(String id) { userRepository.deleteById(id); } } 使用 MongoTemplate 进行复杂查询 import org.springframework.beans.factory.annotation.Autowired; import org.springframework.data.mongodb.core.MongoTemplate; import org.springframework.data.mongodb.core.query.Criteria; import org.springframework.data.mongodb.core.query.Query; import org.springframework.stereotype.Service; @Service public class UserCustomService { @Autowired private MongoTemplate mongoTemplate; public User getUserByEmail(String email) { Query query = new Query(); query.addCriteria(Criteria.where(\"email\").is(email)); return mongoTemplate.findOne(query, User.class); } } ","wordCount":"457","inLanguage":"en","datePublished":"0001-01-01T00:00:00Z","dateModified":"0001-01-01T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://yuk1pedia.github.io/learning-notes/2024-10-21-spring-data-+-mongo/"},"publisher":{"@type":"Organization","name":"YUKIPEDIA's blog","logo":{"@type":"ImageObject","url":"https://yuk1pedia.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://yuk1pedia.github.io/ accesskey=h title="YUKIPEDIA's blog (Alt + H)">YUKIPEDIA's blog</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://yuk1pedia.github.io/learning-notes title="Learning Notes"><span>Learning Notes</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">Spring Data + Mongo</h1><div class=post-description>记录</div><div class=post-meta></div></header><div class=post-content><h2 id=1什么是-spring-data>1.什么是 Spring Data？<a hidden class=anchor aria-hidden=true href=#1什么是-spring-data>#</a></h2><p>Spring Data 是 Spring 框架中的一部分，专注于简化数据访问层的开发。其核心目标是减少开发人员编写的数据访问层代码，并为常见的数据访问模式提供开箱即用的解决方案。Spring Data 支持多种数据存储技术，如关系数据库（通过 JPA）、NoSQL 数据库（如 MongoDB、Cassandra 等）。</p><p><strong>主要功能如下：</strong></p><ol><li><p><strong>简化的 CRUD 操作</strong>：通过 Spring Data，开发者可以轻松实现基本的 CRUD（增删查改）操作，无需编写复杂的 SQL 语句。</p></li><li><p><strong>Repository 接口</strong>：定义简单的 Repository 接口，并通过 Spring Data 自动提供实现。例如，可以定义一个继承 <code>JpaRepository</code> 的接口，Spring Data JPA 会自动生成常见的 CRUD 方法。</p></li><li><p><strong>自定义查询方法</strong>：通过方法名称来定义查询，Spring Data 会自动解析方法名并生成相应的 SQL。例如，方法名为 <code>findByName</code> 会自动生成一个按 <code>name</code> 字段查询的 SQL 语句。</p></li><li><p><strong>分页和排序</strong>：通过 <code>Pageable</code> 接口，轻松实现分页查询和结果排序。</p></li><li><p><strong>支持事务管理</strong>：Spring Data 与 Spring 的事务管理无缝集成，开发者可以使用注解来管理事务，确保数据的安全性和一致性。</p></li></ol><h2 id=2什么是-jpa>2.什么是 JPA？<a hidden class=anchor aria-hidden=true href=#2什么是-jpa>#</a></h2><p>JPA 是 Java 中的一个标准规范，用于<strong>管理 Java 对象与关系数据库之间的映射</strong>。JPA 规范本身并不是具体的实现，而是定义了一套用于**对象-关系映射（ORM）**的 API。</p><p><strong>JPA 核心概念：</strong></p><ol><li><p><strong>实体（Entity）</strong>：一个被映射到数据库表的普通 Java 类。通过 <code>@Entity</code> 注解将类声明为一个 JPA 实体，并通过其他注解指定其与数据库表之间的关系。</p></li><li><p><strong>实体管理器（EntityManager）</strong>：JPA 的核心接口，负责实体的生命周期管理，如持久化、更新、删除、查询等操作。</p></li><li><p><strong>JPQL（Java Persistence Query Language）</strong>：一种面向对象的查询语言，类似于 SQL，但操作的是 Java 对象而不是数据库表。</p></li><li><p><strong>注解映射</strong>：</p><ul><li><p><code>@Entity</code>：标识一个类为实体类。</p></li><li><p><code>@Table</code>：定义实体类对应的数据库表。</p></li><li><p><code>@Id</code>：定义实体类的主键。</p></li><li><p><code>@GeneratedValue</code>：定义主键的生成策略。</p></li><li><p><code>@ManyToOne</code>，<code>@OneToMany</code>，<code>@ManyToMany</code>，<code>@OneToOne</code>：定义实体类之间的关系。</p></li></ul></li></ol><h2 id=3spring-data-jpa>3.Spring Data JPA<a hidden class=anchor aria-hidden=true href=#3spring-data-jpa>#</a></h2><p>Spring Data JPA 是 Spring Data 项目的一部分，它是对 JPA 的进一步封装和扩展。它简化了 JPA 的使用，开发者可以通过 Repository 接口的方式直接与数据库交互，而无需手动编写 EntityManager 相关的代码。</p><p><strong>Spring Data JPA 核心特点：</strong></p><ol><li><p><strong>简化的 Repository 模型</strong>：通过继承 <code>JpaRepository</code> 或 <code>CrudRepository</code>，可以轻松获取基本的 CRUD 操作和分页、排序功能。</p></li><li><p><strong>动态查询</strong>：使用<strong>方法名称</strong>查询，可以通过定义以 <code>findBy</code> 开头的方法，并指定实体类的字段来实现动态查询。</p></li><li><p><strong>自定义查询</strong>：通过 <code>@Query</code> 注解，可以编写 JPQL 或原生 SQL 来进行自定义查询。</p></li><li><p><strong>与事务的集成</strong>：通过 <code>@Transactional</code> 注解，开发者可以对方法的事务行为进行管理。</p></li></ol><p>以下面的代码为例：</p><ul><li>定义实体类</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a6e22e>@Entity</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>User</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Id</span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@GeneratedValue</span>(strategy <span style=color:#f92672>=</span> GenerationType.<span style=color:#a6e22e>IDENTITY</span>)
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> Long id;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> String name;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> String email;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// getters and setters</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><ul><li>定义 Repository 接口</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>UserRepository</span> <span style=color:#66d9ef>extends</span> JpaRepository<span style=color:#f92672>&lt;</span>User, Long<span style=color:#f92672>&gt;</span> {
+</span></span><span style=display:flex><span>    List<span style=color:#f92672>&lt;</span>User<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>findByName</span>(String name);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><ul><li>在服务中使用</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#a6e22e>@Service</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>UserService</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Autowired</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> UserRepository userRepository;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> List<span style=color:#f92672>&lt;</span>User<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getUsersByName</span>(String name) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> userRepository.<span style=color:#a6e22e>findByName</span>(name);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>saveUser</span>(User user) {
+</span></span><span style=display:flex><span>        userRepository.<span style=color:#a6e22e>save</span>(user);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=4什么是-mongo>4.什么是 Mongo？<a hidden class=anchor aria-hidden=true href=#4什么是-mongo>#</a></h2><p>MongoDB 是一个 NoSQL 数据库，具有高性能、灵活的数据模型和高可用性，适用于存储海量、半结构化或非结构化数据。MongoDB 采用 BSON（二进制 JSON）格式存储数据，支持丰富的查询功能、内嵌文档和多种索引方式。<strong>MongoDB 写入数据的速度相较于 MySQL要快非常多。</strong></p><p><strong>Mongo 主要特点</strong></p><ol><li><p><strong>无模式（Schema-less）</strong>：MongoDB 不要求预先定义数据模式，数据的结构可以随着应用需求变化。</p></li><li><p><strong>文档存储</strong>：MongoDB 以 BSON 文档的形式存储数据，每条记录相当于一个 JSON 对象，非常灵活且支持嵌套数据。</p></li><li><p><strong>高扩展性</strong>：支持水平扩展，容易进行数据分片（Sharding），使其可以轻松处理海量数据和高并发请求。</p></li><li><p><strong>内嵌文档和数组</strong>：允许文档内嵌其他文档或数组，减少了跨集合查询和联表查询的需求。</p></li><li><p><strong>丰富的查询功能</strong>：支持复杂的查询、过滤、排序、分页等操作，还支持地理空间查询和全文搜索。</p></li><li><p><strong>强大的索引功能</strong>：支持创建多种索引，如单字段索引、复合索引、地理空间索引、全文索引等。</p></li></ol><h2 id=5spring-data-mongo>5.Spring Data Mongo<a hidden class=anchor aria-hidden=true href=#5spring-data-mongo>#</a></h2><p>Spring Data MongoDB 是 Spring Data 项目的一部分，专门为 MongoDB 提供数据访问的支持。它封装了对 MongoDB 数据库的访问，使得开发者可以使用类似 JPA 的方式与 MongoDB 交互。</p><p><strong>Spring Data MongoDB 的主要功能:</strong></p><ol><li><strong>Repository 支持</strong>：通过定义 Repository 接口，Spring Data MongoDB 会自动生成常见的 CRUD 方法，类似于 Spring Data JPA 的 <code>JpaRepository</code>。</li><li><strong>MongoTemplate</strong>：提供了灵活的模板类，可以执行自定义的查询、更新、删除等操作。与 Repository 的自动生成方式不同，<code>MongoTemplate</code> 更加灵活，可以编写复杂的查询逻辑。</li><li><strong>方法查询派生</strong>：通过方法名派生查询功能，开发者可以定义以 <code>findBy</code> 开头的方法，Spring Data MongoDB 会自动根据方法名生成查询语句。例如，<code>findByUsername</code> 会自动生成查询 <code>username</code> 字段的 MongoDB 查询。</li><li><strong>自定义查询</strong>：可以通过 <code>@Query</code> 注解编写自定义的 MongoDB 查询，支持使用 JSON 格式或者 Spring 的查询表达式来构建查询。</li><li><strong>分页与排序</strong>：通过 <code>Pageable</code> 接口，Spring Data MongoDB 提供了分页和排序功能，简化了处理大量数据的场景。</li><li><strong>聚合查询</strong>：Spring Data MongoDB 支持 MongoDB 的聚合查询功能，可以执行复杂的数据统计和汇总操作。</li><li><strong>事务支持</strong>：在 MongoDB 4.x 及以上版本，Spring Data MongoDB 支持多文档的事务操作，确保数据的一致性。</li></ol><h4 id=spring-data-mongodb-主要组件>Spring Data MongoDB 主要组件<a hidden class=anchor aria-hidden=true href=#spring-data-mongodb-主要组件>#</a></h4><ol><li><strong>Repository 接口</strong>：类似于 Spring Data JPA，开发者只需要定义接口，并继承 <code>MongoRepository</code>，就可以自动生成 CRUD 操作。</li><li><strong>MongoTemplate</strong>：提供了对 MongoDB 的底层操作，如插入、更新、删除、查询等。适用于需要更复杂查询逻辑或自定义操作的场景。</li><li><strong>@Document</strong> 注解：将 Java 对象映射为 MongoDB 文档，类似于 JPA 的 <code>@Entity</code> 注解。</li></ol><p>以下面的代码为例：</p><ul><li>定义实体类</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.data.annotation.Id;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.data.mongodb.core.mapping.Document;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>@Document</span>(collection <span style=color:#f92672>=</span> <span style=color:#e6db74>&#34;users&#34;</span>)  <span style=color:#75715e>// 指定 MongoDB 中的集合名称</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>User</span> {
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Id</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> String id;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> String username;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> String email;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// Getters and setters</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><ul><li>定义 Repository 接口</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.data.mongodb.repository.MongoRepository;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.util.List;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>interface</span> <span style=color:#a6e22e>UserRepository</span> <span style=color:#66d9ef>extends</span> MongoRepository<span style=color:#f92672>&lt;</span>User, String<span style=color:#f92672>&gt;</span> {
+</span></span><span style=display:flex><span>    List<span style=color:#f92672>&lt;</span>User<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>findByUsername</span>(String username);  <span style=color:#75715e>// 方法名派生查询</span>
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><ul><li>使用 MongoRepository 的服务类</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.beans.factory.annotation.Autowired;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.stereotype.Service;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> java.util.List;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>@Service</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>UserService</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Autowired</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> UserRepository userRepository;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> List<span style=color:#f92672>&lt;</span>User<span style=color:#f92672>&gt;</span> <span style=color:#a6e22e>getUsersByUsername</span>(String username) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> userRepository.<span style=color:#a6e22e>findByUsername</span>(username);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>saveUser</span>(User user) {
+</span></span><span style=display:flex><span>        userRepository.<span style=color:#a6e22e>save</span>(user);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>deleteUser</span>(String id) {
+</span></span><span style=display:flex><span>        userRepository.<span style=color:#a6e22e>deleteById</span>(id);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><ul><li>使用 MongoTemplate 进行复杂查询</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.beans.factory.annotation.Autowired;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.data.mongodb.core.MongoTemplate;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.data.mongodb.core.query.Criteria;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.data.mongodb.core.query.Query;
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> org.springframework.stereotype.Service;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>@Service</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>UserCustomService</span> {
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#a6e22e>@Autowired</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>private</span> MongoTemplate mongoTemplate;
+</span></span><span style=display:flex><span>    
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> User <span style=color:#a6e22e>getUserByEmail</span>(String email) {
+</span></span><span style=display:flex><span>        Query query <span style=color:#f92672>=</span> <span style=color:#66d9ef>new</span> Query();
+</span></span><span style=display:flex><span>        query.<span style=color:#a6e22e>addCriteria</span>(Criteria.<span style=color:#a6e22e>where</span>(<span style=color:#e6db74>&#34;email&#34;</span>).<span style=color:#a6e22e>is</span>(email));
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> mongoTemplate.<span style=color:#a6e22e>findOne</span>(query, User.<span style=color:#a6e22e>class</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div></div><footer class=post-footer><ul class=post-tags></ul></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://yuk1pedia.github.io/>YUKIPEDIA's blog</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>

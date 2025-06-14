@@ -1,519 +1,81 @@
-<!DOCTYPE html>
-<html lang="en" dir="auto">
-
-<head><meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
-<title>Java Stream | YUKIPEDIA&#39;s blog</title>
-<meta name="keywords" content="">
-<meta name="description" content="记录">
-<meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-11-21-java_stream/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
-<meta name="theme-color" content="#2e2e33">
-<meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-11-21-java_stream/">
-<noscript>
-    <style>
-        #theme-toggle,
-        .top-link {
-            display: none;
-        }
-
-    </style>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --theme: rgb(29, 30, 32);
-                --entry: rgb(46, 46, 51);
-                --primary: rgb(218, 218, 219);
-                --secondary: rgb(155, 156, 157);
-                --tertiary: rgb(65, 66, 68);
-                --content: rgb(196, 196, 197);
-                --code-block-bg: rgb(46, 46, 51);
-                --code-bg: rgb(55, 56, 62);
-                --border: rgb(51, 51, 51);
-            }
-
-            .list {
-                background: var(--theme);
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-track {
-                background: 0 0;
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-thumb {
-                border-color: var(--theme);
-            }
-        }
-
-    </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-11-21-java_stream/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="Java Stream">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java Stream">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Java Stream",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-11-21-java_stream/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Java Stream",
-  "name": "Java Stream",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "简介 Java 的 Stream API 是 Java 8 引入的一项功能，它主要用于处理集合类（如 List、Set、Map 等）中的元素，提供了一种声明性的方法来进行数据处理。Stream API 提供了许多可以连缀使用的操作，支持高效的顺序和并行流处理。\nStream 并不是存储数据的结构，而是对集合、数组或其他数据源进行操作的一种方式。Stream 对象可以从集合、数组、文件等多种数据源获取。\nStream 的基本特征 惰性求值（Lazy Evaluation）：Stream 的操作是懒惰求值的，只有在最终操作被触发时，Stream 才会进行计算。 可以组合操作：Stream 允许将多个操作链式组合，从而形成一条清晰的流水线。 支持并行处理：Stream 支持通过并行流（parallelStream()）来并发处理数据，能够充分利用多核 CPU，提高处理效率。 无副作用：Stream 的操作通常是无副作用的，即不会改变原始数据源。 Stream 的操作分类 Stream 的操作分为两种类型：\n中间操作：如 map()、filter()、sorted()、distinct() 等。中间操作是惰性求值的，只有在终结操作（如 collect()、forEach()）触发时，才会开始执行。 终结操作：如 collect()、forEach()、reduce()、count() 等。终结操作触发整个流水线的执行，并且一次执行后，Stream 就会被消费掉，不能再重新使用。 常用的中间操作 filter()\n功能：通过给定的条件过滤流中的元素，返回符合条件的元素\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5, 6); List\u003cInteger\u003e evenNumbers = numbers.stream() .filter(n -\u003e n % 2 == 0) .collect(Collectors.toList()); System.out.println(evenNumbers); // [2, 4, 6] map()\n功能：对流中的每个元素执行一个函数，返回一个新的流（元素类型可以改变）\n示例：\nList\u003cString\u003e words = Arrays.asList(\"apple\", \"banana\", \"cherry\"); List\u003cString\u003e upperWords = words.stream() .map(String::toUpperCase) .collect(Collectors.toList()); System.out.println(upperWords); // [APPLE, BANANA, CHERRY] flatMap()\n功能：将每个元素转换为一个流，并将所有的流扁平化为一个单一的流**（可以用于处理嵌套集合）**\n示例：\nList\u003cList\u003cInteger\u003e\u003e lists = Arrays.asList(Arrays.asList(1, 2), Arrays.asList(3, 4), Arrays.asList(5, 6)); List\u003cInteger\u003e flatList = lists.stream() .flatMap(List::stream) .collect(Collectors.toList()); System.out.println(flatList); // [1, 2, 3, 4, 5, 6] distinct()\n功能：去重，返回一个新的流，包含不重复的元素\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 2, 3, 3, 4); List\u003cInteger\u003e distinctNumbers = numbers.stream() .distinct() .collect(Collectors.toList()); System.out.println(distinctNumbers); // [1, 2, 3, 4] sorted()\n功能：对流中的元素进行排序，返回一个新的排序后的流\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(5, 3, 8, 1, 2); List\u003cInteger\u003e sortedNumbers = numbers.stream() .sorted() .collect(Collectors.toList()); System.out.println(sortedNumbers); // [1, 2, 3, 5, 8] 如果不传入任何 Comparator ，默认是升序排序。想要降序排序的话，可以传入 Java 提供的 Comparator.reverseOrder() 来简化降序排序。\nList\u003cInteger\u003e numbers = Arrays.asList(5, 2, 8, 1, 3); // 使用 sorted() 和 Comparator.reverseOrder() 进行降序排序 List\u003cInteger\u003e sortedNumbersDesc = numbers.stream() .sorted(Comparator.reverseOrder()) .collect(Collectors.toList()); System.out.println(sortedNumbersDesc); // 输出：[8, 5, 3, 2, 1] peek()\n功能：对流中的每个元素进行操作，通常用于调试（例如输出元素），并返回一个新的流。注意：peek() 是一个中间操作，它不会修改流中的元素，而是返回原始流\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); numbers.stream() .peek(n -\u003e System.out.println(\"Processing: \" + n)) .map(n -\u003e n * 2) .collect(Collectors.toList()); // 输出： // Processing: 1 // Processing: 2 // Processing: 3 // Processing: 4 // Processing: 5 limit()\n功能：返回流中前 n 个元素，常用于分页或只处理前几个元素\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); List\u003cInteger\u003e limitedNumbers = numbers.stream() .limit(3) .collect(Collectors.toList()); System.out.println(limitedNumbers); // [1, 2, 3] skip()\n功能：跳过流中的前 n 个元素，返回剩余的元素\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); List\u003cInteger\u003e skippedNumbers = numbers.stream() .skip(2) .collect(Collectors.toList()); System.out.println(skippedNumbers); // [3, 4, 5] 常用的终结操作 collect()\n功能：将流中的元素收集到集合或其他形式的容器中，最常用来将流转换为 List、Set 或 Map\n示例：\nList\u003cString\u003e words = Arrays.asList(\"apple\", \"banana\", \"cherry\"); Set\u003cString\u003e wordSet = words.stream() .collect(Collectors.toSet()); System.out.println(wordSet); // [apple, banana, cherry] forEach()\n功能：对流中的每个元素执行一个操作，常用于打印或遍历\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); numbers.stream().forEach(System.out::println); // 打印每个元素 reduce()\n功能：通过累积操作将流中的元素合并为一个结果，常用于求和、求最大值、求最小值等操作\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); int sum = numbers.stream() .reduce(0, (a, b) -\u003e a + b); // 求和 System.out.println(sum); // 15 count()\n功能：返回流中元素的数量\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); long count = numbers.stream() .count(); System.out.println(count); // 5 anyMatch() / allMatch() / noneMatch()\n功能：用于检查流中的元素是否满足某个条件\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); boolean hasEven = numbers.stream().anyMatch(n -\u003e n % 2 == 0); System.out.println(hasEven); // true findFirst() / findAny()\n功能：返回流中的第一个元素（findFirst()）或任意一个元素（findAny()）\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); Optional\u003cInteger\u003e first = numbers.stream().findFirst(); System.out.println(first.orElse(-1)); // 1 ",
-  "wordCount" : "420",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-11-21-java_stream/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
-</head>
-
-<body class="" id="top">
-<script>
-    if (localStorage.getItem("pref-theme") === "dark") {
-        document.body.classList.add('dark');
-    } else if (localStorage.getItem("pref-theme") === "light") {
-        document.body.classList.remove('dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark');
-    }
-
-</script>
-
-<header class="header">
-    <nav class="nav">
-        <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
-            <div class="logo-switches">
-                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
-                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <ul id="menu">
-            <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
-                    <span>Learning Notes</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</header>
-<main class="main">
-
-<article class="post-single">
-  <header class="post-header">
-    
-    <h1 class="post-title entry-hint-parent">
-      Java Stream
-    </h1>
-    <div class="post-description">
-      记录
-    </div>
-    <div class="post-meta">
-
-</div>
-  </header> 
-  <div class="post-content"><h2 id="简介">简介<a hidden class="anchor" aria-hidden="true" href="#简介">#</a></h2>
-<p>Java 的 <code>Stream</code> API 是 Java 8 引入的一项功能，它主要用于处理集合类（如 <code>List</code>、<code>Set</code>、<code>Map</code> 等）中的元素，提供了一种声明性的方法来进行数据处理。<code>Stream</code> API 提供了许多可以连缀使用的操作，支持高效的顺序和并行流处理。</p>
-<p><strong>Stream</strong> 并不是存储数据的结构，而是对集合、数组或其他数据源进行操作的一种方式。Stream 对象可以从集合、数组、文件等多种数据源获取。</p>
-<h2 id="stream-的基本特征">Stream 的基本特征<a hidden class="anchor" aria-hidden="true" href="#stream-的基本特征">#</a></h2>
-<ol>
-<li><strong>惰性求值</strong>（Lazy Evaluation）：Stream 的操作是懒惰求值的，只有在最终操作被触发时，Stream 才会进行计算。</li>
-<li><strong>可以组合操作</strong>：Stream 允许将多个操作链式组合，从而形成一条清晰的流水线。</li>
-<li><strong>支持并行处理</strong>：Stream 支持通过并行流（<code>parallelStream()</code>）来并发处理数据，能够充分利用多核 CPU，提高处理效率。</li>
-<li><strong>无副作用</strong>：Stream 的操作通常是无副作用的，即不会改变原始数据源。</li>
-</ol>
-<h2 id="stream-的操作分类">Stream 的操作分类<a hidden class="anchor" aria-hidden="true" href="#stream-的操作分类">#</a></h2>
-<p>Stream 的操作分为两种类型：</p>
-<ul>
-<li><strong>中间操作</strong>：如 <code>map()</code>、<code>filter()</code>、<code>sorted()</code>、<code>distinct()</code> 等。中间操作是惰性求值的，只有在终结操作（如 <code>collect()</code>、<code>forEach()</code>）触发时，才会开始执行。</li>
-<li><strong>终结操作</strong>：如 <code>collect()</code>、<code>forEach()</code>、<code>reduce()</code>、<code>count()</code> 等。终结操作触发整个流水线的执行，并且一次执行后，Stream 就会被消费掉，<strong>不能再重新使用</strong>。</li>
-</ul>
-<h3 id="常用的中间操作">常用的中间操作<a hidden class="anchor" aria-hidden="true" href="#常用的中间操作">#</a></h3>
-<ol>
-<li>
-<p><code>filter()</code></p>
-<ul>
-<li>
-<p>功能：通过给定的条件过滤流中的元素，返回符合条件的元素</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(1, 2, 3, 4, 5, 6);
-</span></span><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> evenNumbers <span style="color:#f92672">=</span> numbers.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>                                   .<span style="color:#a6e22e">filter</span>(n <span style="color:#f92672">-&gt;</span> n <span style="color:#f92672">%</span> 2 <span style="color:#f92672">==</span> 0)
-</span></span><span style="display:flex;"><span>                                   .<span style="color:#a6e22e">collect</span>(Collectors.<span style="color:#a6e22e">toList</span>());
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(evenNumbers); <span style="color:#75715e">// [2, 4, 6]</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>map()</code></p>
-<ul>
-<li>
-<p>功能：对流中的<strong>每个元素</strong>执行一个函数，返回一个新的流（元素类型可以改变）</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> words <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(<span style="color:#e6db74">&#34;apple&#34;</span>, <span style="color:#e6db74">&#34;banana&#34;</span>, <span style="color:#e6db74">&#34;cherry&#34;</span>);
-</span></span><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> upperWords <span style="color:#f92672">=</span> words.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>                               .<span style="color:#a6e22e">map</span>(String::toUpperCase)
-</span></span><span style="display:flex;"><span>                               .<span style="color:#a6e22e">collect</span>(Collectors.<span style="color:#a6e22e">toList</span>());
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(upperWords); <span style="color:#75715e">// [APPLE, BANANA, CHERRY]</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>flatMap()</code></p>
-<ul>
-<li>
-<p>功能：将每个元素转换为一个流，并将所有的流扁平化为一个单一的流**（可以用于处理嵌套集合）**</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;&gt;</span> lists <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(Arrays.<span style="color:#a6e22e">asList</span>(1, 2), Arrays.<span style="color:#a6e22e">asList</span>(3, 4), Arrays.<span style="color:#a6e22e">asList</span>(5, 6));
-</span></span><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> flatList <span style="color:#f92672">=</span> lists.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>                             .<span style="color:#a6e22e">flatMap</span>(List::stream)
-</span></span><span style="display:flex;"><span>                             .<span style="color:#a6e22e">collect</span>(Collectors.<span style="color:#a6e22e">toList</span>());
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(flatList); <span style="color:#75715e">// [1, 2, 3, 4, 5, 6]</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>distinct()</code></p>
-<ul>
-<li>
-<p>功能：去重，返回一个新的流，包含不重复的元素</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(1, 2, 2, 3, 3, 4);
-</span></span><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> distinctNumbers <span style="color:#f92672">=</span> numbers.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>                                       .<span style="color:#a6e22e">distinct</span>()
-</span></span><span style="display:flex;"><span>                                       .<span style="color:#a6e22e">collect</span>(Collectors.<span style="color:#a6e22e">toList</span>());
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(distinctNumbers); <span style="color:#75715e">// [1, 2, 3, 4]</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>sorted()</code></p>
-<ul>
-<li>
-<p>功能：对流中的元素进行排序，返回一个新的排序后的流</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(5, 3, 8, 1, 2);
-</span></span><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> sortedNumbers <span style="color:#f92672">=</span> numbers.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>                                     .<span style="color:#a6e22e">sorted</span>()
-</span></span><span style="display:flex;"><span>                                     .<span style="color:#a6e22e">collect</span>(Collectors.<span style="color:#a6e22e">toList</span>());
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(sortedNumbers); <span style="color:#75715e">// [1, 2, 3, 5, 8]</span>
-</span></span></code></pre></div></li>
-<li>
-<p>如果不传入任何 <code>Comparator</code> ，默认是升序排序。想要降序排序的话，可以传入 Java 提供的 <code>Comparator.reverseOrder()</code> 来简化降序排序。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(5, 2, 8, 1, 3);
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 使用 sorted() 和 Comparator.reverseOrder() 进行降序排序</span>
-</span></span><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> sortedNumbersDesc <span style="color:#f92672">=</span> numbers.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>                                    .<span style="color:#a6e22e">sorted</span>(Comparator.<span style="color:#a6e22e">reverseOrder</span>())
-</span></span><span style="display:flex;"><span>                                    .<span style="color:#a6e22e">collect</span>(Collectors.<span style="color:#a6e22e">toList</span>());
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(sortedNumbersDesc); <span style="color:#75715e">// 输出：[8, 5, 3, 2, 1]</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>peek()</code></p>
-<ul>
-<li>
-<p>功能：对流中的每个元素进行操作，<strong>通常用于调试</strong>（例如输出元素），并返回一个新的流。<strong>注意</strong>：<code>peek()</code> 是一个中间操作，它不会修改流中的元素，而是返回原始流</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(1, 2, 3, 4, 5);
-</span></span><span style="display:flex;"><span>numbers.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>       .<span style="color:#a6e22e">peek</span>(n <span style="color:#f92672">-&gt;</span> System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;Processing: &#34;</span> <span style="color:#f92672">+</span> n))
-</span></span><span style="display:flex;"><span>       .<span style="color:#a6e22e">map</span>(n <span style="color:#f92672">-&gt;</span> n <span style="color:#f92672">*</span> 2)
-</span></span><span style="display:flex;"><span>       .<span style="color:#a6e22e">collect</span>(Collectors.<span style="color:#a6e22e">toList</span>());
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 输出：</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Processing: 1</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Processing: 2</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Processing: 3</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Processing: 4</span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Processing: 5</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>limit()</code></p>
-<ul>
-<li>
-<p>功能：返回流中前 n 个元素，常用于分页或只处理前几个元素</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(1, 2, 3, 4, 5);
-</span></span><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> limitedNumbers <span style="color:#f92672">=</span> numbers.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>                                      .<span style="color:#a6e22e">limit</span>(3)
-</span></span><span style="display:flex;"><span>                                      .<span style="color:#a6e22e">collect</span>(Collectors.<span style="color:#a6e22e">toList</span>());
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(limitedNumbers); <span style="color:#75715e">// [1, 2, 3]</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>skip()</code></p>
-<ul>
-<li>
-<p>功能：跳过流中的前 n 个元素，返回剩余的元素</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(1, 2, 3, 4, 5);
-</span></span><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> skippedNumbers <span style="color:#f92672">=</span> numbers.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>                                      .<span style="color:#a6e22e">skip</span>(2)
-</span></span><span style="display:flex;"><span>                                      .<span style="color:#a6e22e">collect</span>(Collectors.<span style="color:#a6e22e">toList</span>());
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(skippedNumbers); <span style="color:#75715e">// [3, 4, 5]</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-</ol>
-<h3 id="常用的终结操作">常用的终结操作<a hidden class="anchor" aria-hidden="true" href="#常用的终结操作">#</a></h3>
-<ol>
-<li>
-<p><code>collect()</code></p>
-<ul>
-<li>
-<p>功能：将流中的元素收集到集合或其他形式的容器中，最常用来将流转换为 <code>List</code>、<code>Set</code> 或 <code>Map</code></p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> words <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(<span style="color:#e6db74">&#34;apple&#34;</span>, <span style="color:#e6db74">&#34;banana&#34;</span>, <span style="color:#e6db74">&#34;cherry&#34;</span>);
-</span></span><span style="display:flex;"><span>Set<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> wordSet <span style="color:#f92672">=</span> words.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>                           .<span style="color:#a6e22e">collect</span>(Collectors.<span style="color:#a6e22e">toSet</span>());
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(wordSet); <span style="color:#75715e">// [apple, banana, cherry]</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>forEach()</code></p>
-<ul>
-<li>
-<p>功能：对流中的每个元素执行一个操作，常用于打印或遍历</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(1, 2, 3, 4, 5);
-</span></span><span style="display:flex;"><span>numbers.<span style="color:#a6e22e">stream</span>().<span style="color:#a6e22e">forEach</span>(System.<span style="color:#a6e22e">out</span>::println); <span style="color:#75715e">// 打印每个元素</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>reduce()</code></p>
-<ul>
-<li>
-<p>功能：通过累积操作将流中的元素合并为一个结果，常用于求和、求最大值、求最小值等操作</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(1, 2, 3, 4, 5);
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> sum <span style="color:#f92672">=</span> numbers.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>                 .<span style="color:#a6e22e">reduce</span>(0, (a, b) <span style="color:#f92672">-&gt;</span> a <span style="color:#f92672">+</span> b); <span style="color:#75715e">// 求和</span>
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(sum); <span style="color:#75715e">// 15</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>count()</code></p>
-<ul>
-<li>
-<p>功能：返回流中元素的数量</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(1, 2, 3, 4, 5);
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">long</span> count <span style="color:#f92672">=</span> numbers.<span style="color:#a6e22e">stream</span>()
-</span></span><span style="display:flex;"><span>                    .<span style="color:#a6e22e">count</span>();
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(count); <span style="color:#75715e">// 5</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>anyMatch()</code> / <code>allMatch()</code> / <code>noneMatch()</code></p>
-<ul>
-<li>
-<p>功能：用于检查流中的元素是否满足某个条件</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(1, 2, 3, 4, 5);
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">boolean</span> hasEven <span style="color:#f92672">=</span> numbers.<span style="color:#a6e22e">stream</span>().<span style="color:#a6e22e">anyMatch</span>(n <span style="color:#f92672">-&gt;</span> n <span style="color:#f92672">%</span> 2 <span style="color:#f92672">==</span> 0);
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(hasEven); <span style="color:#75715e">// true</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-<li>
-<p><code>findFirst()</code> / <code>findAny()</code></p>
-<ul>
-<li>
-<p>功能：返回流中的第一个元素（<code>findFirst()</code>）或任意一个元素（<code>findAny()</code>）</p>
-</li>
-<li>
-<p>示例：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> numbers <span style="color:#f92672">=</span> Arrays.<span style="color:#a6e22e">asList</span>(1, 2, 3, 4, 5);
-</span></span><span style="display:flex;"><span>Optional<span style="color:#f92672">&lt;</span>Integer<span style="color:#f92672">&gt;</span> first <span style="color:#f92672">=</span> numbers.<span style="color:#a6e22e">stream</span>().<span style="color:#a6e22e">findFirst</span>();
-</span></span><span style="display:flex;"><span>System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(first.<span style="color:#a6e22e">orElse</span>(<span style="color:#f92672">-</span>1)); <span style="color:#75715e">// 1</span>
-</span></span></code></pre></div></li>
-</ul>
-</li>
-</ol>
-
-
-  </div>
-
-  <footer class="post-footer">
-    <ul class="post-tags">
-    </ul>
-  </footer>
-</article>
-    </main>
-    
-<footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
-
-    <span>
-        Powered by
-        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
-        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
-    </span>
-</footer>
-<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
-        <path d="M12 6H0l6-6z" />
-    </svg>
-</a>
-
-<script>
-    let menu = document.getElementById('menu')
-    if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
-        menu.onscroll = function () {
-            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
-        }
-    }
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            var id = this.getAttribute("href").substr(1);
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
-                    behavior: "smooth"
-                });
-            } else {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
-            }
-            if (id === "top") {
-                history.replaceState(null, null, " ");
-            } else {
-                history.pushState(null, null, `#${id}`);
-            }
-        });
-    });
-
-</script>
-<script>
-    var mybutton = document.getElementById("top-link");
-    window.onscroll = function () {
-        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
-            mybutton.style.visibility = "visible";
-            mybutton.style.opacity = "1";
-        } else {
-            mybutton.style.visibility = "hidden";
-            mybutton.style.opacity = "0";
-        }
-    };
-
-</script>
-<script>
-    document.getElementById("theme-toggle").addEventListener("click", () => {
-        if (document.body.className.includes("dark")) {
-            document.body.classList.remove('dark');
-            localStorage.setItem("pref-theme", 'light');
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem("pref-theme", 'dark');
-        }
-    })
-
-</script>
-</body>
-
-</html>
+<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Java Stream | YUKIPEDIA's blog</title><meta name=keywords content><meta name=description content="记录"><meta name=author content><link rel=canonical href=https://yuk1pedia.github.io/learning-notes/2024-11-21-java_stream/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://yuk1pedia.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://yuk1pedia.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://yuk1pedia.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://yuk1pedia.github.io/apple-touch-icon.png><link rel=mask-icon href=https://yuk1pedia.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://yuk1pedia.github.io/learning-notes/2024-11-21-java_stream/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-11-21-java_stream/"><meta property="og:site_name" content="YUKIPEDIA's blog"><meta property="og:title" content="Java Stream"><meta property="og:description" content="记录"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="learning-notes"><meta name=twitter:card content="summary"><meta name=twitter:title content="Java Stream"><meta name=twitter:description content="记录"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Learning Notes","item":"https://yuk1pedia.github.io/learning-notes/"},{"@type":"ListItem","position":2,"name":"Java Stream","item":"https://yuk1pedia.github.io/learning-notes/2024-11-21-java_stream/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Java Stream","name":"Java Stream","description":"记录","keywords":[],"articleBody":"简介 Java 的 Stream API 是 Java 8 引入的一项功能，它主要用于处理集合类（如 List、Set、Map 等）中的元素，提供了一种声明性的方法来进行数据处理。Stream API 提供了许多可以连缀使用的操作，支持高效的顺序和并行流处理。\nStream 并不是存储数据的结构，而是对集合、数组或其他数据源进行操作的一种方式。Stream 对象可以从集合、数组、文件等多种数据源获取。\nStream 的基本特征 惰性求值（Lazy Evaluation）：Stream 的操作是懒惰求值的，只有在最终操作被触发时，Stream 才会进行计算。 可以组合操作：Stream 允许将多个操作链式组合，从而形成一条清晰的流水线。 支持并行处理：Stream 支持通过并行流（parallelStream()）来并发处理数据，能够充分利用多核 CPU，提高处理效率。 无副作用：Stream 的操作通常是无副作用的，即不会改变原始数据源。 Stream 的操作分类 Stream 的操作分为两种类型：\n中间操作：如 map()、filter()、sorted()、distinct() 等。中间操作是惰性求值的，只有在终结操作（如 collect()、forEach()）触发时，才会开始执行。 终结操作：如 collect()、forEach()、reduce()、count() 等。终结操作触发整个流水线的执行，并且一次执行后，Stream 就会被消费掉，不能再重新使用。 常用的中间操作 filter()\n功能：通过给定的条件过滤流中的元素，返回符合条件的元素\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5, 6); List\u003cInteger\u003e evenNumbers = numbers.stream() .filter(n -\u003e n % 2 == 0) .collect(Collectors.toList()); System.out.println(evenNumbers); // [2, 4, 6] map()\n功能：对流中的每个元素执行一个函数，返回一个新的流（元素类型可以改变）\n示例：\nList\u003cString\u003e words = Arrays.asList(\"apple\", \"banana\", \"cherry\"); List\u003cString\u003e upperWords = words.stream() .map(String::toUpperCase) .collect(Collectors.toList()); System.out.println(upperWords); // [APPLE, BANANA, CHERRY] flatMap()\n功能：将每个元素转换为一个流，并将所有的流扁平化为一个单一的流**（可以用于处理嵌套集合）**\n示例：\nList\u003cList\u003cInteger\u003e\u003e lists = Arrays.asList(Arrays.asList(1, 2), Arrays.asList(3, 4), Arrays.asList(5, 6)); List\u003cInteger\u003e flatList = lists.stream() .flatMap(List::stream) .collect(Collectors.toList()); System.out.println(flatList); // [1, 2, 3, 4, 5, 6] distinct()\n功能：去重，返回一个新的流，包含不重复的元素\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 2, 3, 3, 4); List\u003cInteger\u003e distinctNumbers = numbers.stream() .distinct() .collect(Collectors.toList()); System.out.println(distinctNumbers); // [1, 2, 3, 4] sorted()\n功能：对流中的元素进行排序，返回一个新的排序后的流\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(5, 3, 8, 1, 2); List\u003cInteger\u003e sortedNumbers = numbers.stream() .sorted() .collect(Collectors.toList()); System.out.println(sortedNumbers); // [1, 2, 3, 5, 8] 如果不传入任何 Comparator ，默认是升序排序。想要降序排序的话，可以传入 Java 提供的 Comparator.reverseOrder() 来简化降序排序。\nList\u003cInteger\u003e numbers = Arrays.asList(5, 2, 8, 1, 3); // 使用 sorted() 和 Comparator.reverseOrder() 进行降序排序 List\u003cInteger\u003e sortedNumbersDesc = numbers.stream() .sorted(Comparator.reverseOrder()) .collect(Collectors.toList()); System.out.println(sortedNumbersDesc); // 输出：[8, 5, 3, 2, 1] peek()\n功能：对流中的每个元素进行操作，通常用于调试（例如输出元素），并返回一个新的流。注意：peek() 是一个中间操作，它不会修改流中的元素，而是返回原始流\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); numbers.stream() .peek(n -\u003e System.out.println(\"Processing: \" + n)) .map(n -\u003e n * 2) .collect(Collectors.toList()); // 输出： // Processing: 1 // Processing: 2 // Processing: 3 // Processing: 4 // Processing: 5 limit()\n功能：返回流中前 n 个元素，常用于分页或只处理前几个元素\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); List\u003cInteger\u003e limitedNumbers = numbers.stream() .limit(3) .collect(Collectors.toList()); System.out.println(limitedNumbers); // [1, 2, 3] skip()\n功能：跳过流中的前 n 个元素，返回剩余的元素\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); List\u003cInteger\u003e skippedNumbers = numbers.stream() .skip(2) .collect(Collectors.toList()); System.out.println(skippedNumbers); // [3, 4, 5] 常用的终结操作 collect()\n功能：将流中的元素收集到集合或其他形式的容器中，最常用来将流转换为 List、Set 或 Map\n示例：\nList\u003cString\u003e words = Arrays.asList(\"apple\", \"banana\", \"cherry\"); Set\u003cString\u003e wordSet = words.stream() .collect(Collectors.toSet()); System.out.println(wordSet); // [apple, banana, cherry] forEach()\n功能：对流中的每个元素执行一个操作，常用于打印或遍历\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); numbers.stream().forEach(System.out::println); // 打印每个元素 reduce()\n功能：通过累积操作将流中的元素合并为一个结果，常用于求和、求最大值、求最小值等操作\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); int sum = numbers.stream() .reduce(0, (a, b) -\u003e a + b); // 求和 System.out.println(sum); // 15 count()\n功能：返回流中元素的数量\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); long count = numbers.stream() .count(); System.out.println(count); // 5 anyMatch() / allMatch() / noneMatch()\n功能：用于检查流中的元素是否满足某个条件\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); boolean hasEven = numbers.stream().anyMatch(n -\u003e n % 2 == 0); System.out.println(hasEven); // true findFirst() / findAny()\n功能：返回流中的第一个元素（findFirst()）或任意一个元素（findAny()）\n示例：\nList\u003cInteger\u003e numbers = Arrays.asList(1, 2, 3, 4, 5); Optional\u003cInteger\u003e first = numbers.stream().findFirst(); System.out.println(first.orElse(-1)); // 1 ","wordCount":"420","inLanguage":"en","datePublished":"0001-01-01T00:00:00Z","dateModified":"0001-01-01T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://yuk1pedia.github.io/learning-notes/2024-11-21-java_stream/"},"publisher":{"@type":"Organization","name":"YUKIPEDIA's blog","logo":{"@type":"ImageObject","url":"https://yuk1pedia.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://yuk1pedia.github.io/ accesskey=h title="YUKIPEDIA's blog (Alt + H)">YUKIPEDIA's blog</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://yuk1pedia.github.io/learning-notes title="Learning Notes"><span>Learning Notes</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">Java Stream</h1><div class=post-description>记录</div><div class=post-meta></div></header><div class=post-content><h2 id=简介>简介<a hidden class=anchor aria-hidden=true href=#简介>#</a></h2><p>Java 的 <code>Stream</code> API 是 Java 8 引入的一项功能，它主要用于处理集合类（如 <code>List</code>、<code>Set</code>、<code>Map</code> 等）中的元素，提供了一种声明性的方法来进行数据处理。<code>Stream</code> API 提供了许多可以连缀使用的操作，支持高效的顺序和并行流处理。</p><p><strong>Stream</strong> 并不是存储数据的结构，而是对集合、数组或其他数据源进行操作的一种方式。Stream 对象可以从集合、数组、文件等多种数据源获取。</p><h2 id=stream-的基本特征>Stream 的基本特征<a hidden class=anchor aria-hidden=true href=#stream-的基本特征>#</a></h2><ol><li><strong>惰性求值</strong>（Lazy Evaluation）：Stream 的操作是懒惰求值的，只有在最终操作被触发时，Stream 才会进行计算。</li><li><strong>可以组合操作</strong>：Stream 允许将多个操作链式组合，从而形成一条清晰的流水线。</li><li><strong>支持并行处理</strong>：Stream 支持通过并行流（<code>parallelStream()</code>）来并发处理数据，能够充分利用多核 CPU，提高处理效率。</li><li><strong>无副作用</strong>：Stream 的操作通常是无副作用的，即不会改变原始数据源。</li></ol><h2 id=stream-的操作分类>Stream 的操作分类<a hidden class=anchor aria-hidden=true href=#stream-的操作分类>#</a></h2><p>Stream 的操作分为两种类型：</p><ul><li><strong>中间操作</strong>：如 <code>map()</code>、<code>filter()</code>、<code>sorted()</code>、<code>distinct()</code> 等。中间操作是惰性求值的，只有在终结操作（如 <code>collect()</code>、<code>forEach()</code>）触发时，才会开始执行。</li><li><strong>终结操作</strong>：如 <code>collect()</code>、<code>forEach()</code>、<code>reduce()</code>、<code>count()</code> 等。终结操作触发整个流水线的执行，并且一次执行后，Stream 就会被消费掉，<strong>不能再重新使用</strong>。</li></ul><h3 id=常用的中间操作>常用的中间操作<a hidden class=anchor aria-hidden=true href=#常用的中间操作>#</a></h3><ol><li><p><code>filter()</code></p><ul><li><p>功能：通过给定的条件过滤流中的元素，返回符合条件的元素</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(1, 2, 3, 4, 5, 6);
+</span></span><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> evenNumbers <span style=color:#f92672>=</span> numbers.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>                                   .<span style=color:#a6e22e>filter</span>(n <span style=color:#f92672>-&gt;</span> n <span style=color:#f92672>%</span> 2 <span style=color:#f92672>==</span> 0)
+</span></span><span style=display:flex><span>                                   .<span style=color:#a6e22e>collect</span>(Collectors.<span style=color:#a6e22e>toList</span>());
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(evenNumbers); <span style=color:#75715e>// [2, 4, 6]</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>map()</code></p><ul><li><p>功能：对流中的<strong>每个元素</strong>执行一个函数，返回一个新的流（元素类型可以改变）</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> words <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(<span style=color:#e6db74>&#34;apple&#34;</span>, <span style=color:#e6db74>&#34;banana&#34;</span>, <span style=color:#e6db74>&#34;cherry&#34;</span>);
+</span></span><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> upperWords <span style=color:#f92672>=</span> words.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>                               .<span style=color:#a6e22e>map</span>(String::toUpperCase)
+</span></span><span style=display:flex><span>                               .<span style=color:#a6e22e>collect</span>(Collectors.<span style=color:#a6e22e>toList</span>());
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(upperWords); <span style=color:#75715e>// [APPLE, BANANA, CHERRY]</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>flatMap()</code></p><ul><li><p>功能：将每个元素转换为一个流，并将所有的流扁平化为一个单一的流**（可以用于处理嵌套集合）**</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;&gt;</span> lists <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(Arrays.<span style=color:#a6e22e>asList</span>(1, 2), Arrays.<span style=color:#a6e22e>asList</span>(3, 4), Arrays.<span style=color:#a6e22e>asList</span>(5, 6));
+</span></span><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> flatList <span style=color:#f92672>=</span> lists.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>                             .<span style=color:#a6e22e>flatMap</span>(List::stream)
+</span></span><span style=display:flex><span>                             .<span style=color:#a6e22e>collect</span>(Collectors.<span style=color:#a6e22e>toList</span>());
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(flatList); <span style=color:#75715e>// [1, 2, 3, 4, 5, 6]</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>distinct()</code></p><ul><li><p>功能：去重，返回一个新的流，包含不重复的元素</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(1, 2, 2, 3, 3, 4);
+</span></span><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> distinctNumbers <span style=color:#f92672>=</span> numbers.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>                                       .<span style=color:#a6e22e>distinct</span>()
+</span></span><span style=display:flex><span>                                       .<span style=color:#a6e22e>collect</span>(Collectors.<span style=color:#a6e22e>toList</span>());
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(distinctNumbers); <span style=color:#75715e>// [1, 2, 3, 4]</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>sorted()</code></p><ul><li><p>功能：对流中的元素进行排序，返回一个新的排序后的流</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(5, 3, 8, 1, 2);
+</span></span><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> sortedNumbers <span style=color:#f92672>=</span> numbers.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>                                     .<span style=color:#a6e22e>sorted</span>()
+</span></span><span style=display:flex><span>                                     .<span style=color:#a6e22e>collect</span>(Collectors.<span style=color:#a6e22e>toList</span>());
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(sortedNumbers); <span style=color:#75715e>// [1, 2, 3, 5, 8]</span>
+</span></span></code></pre></div></li><li><p>如果不传入任何 <code>Comparator</code> ，默认是升序排序。想要降序排序的话，可以传入 Java 提供的 <code>Comparator.reverseOrder()</code> 来简化降序排序。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(5, 2, 8, 1, 3);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 使用 sorted() 和 Comparator.reverseOrder() 进行降序排序</span>
+</span></span><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> sortedNumbersDesc <span style=color:#f92672>=</span> numbers.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>                                    .<span style=color:#a6e22e>sorted</span>(Comparator.<span style=color:#a6e22e>reverseOrder</span>())
+</span></span><span style=display:flex><span>                                    .<span style=color:#a6e22e>collect</span>(Collectors.<span style=color:#a6e22e>toList</span>());
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(sortedNumbersDesc); <span style=color:#75715e>// 输出：[8, 5, 3, 2, 1]</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>peek()</code></p><ul><li><p>功能：对流中的每个元素进行操作，<strong>通常用于调试</strong>（例如输出元素），并返回一个新的流。<strong>注意</strong>：<code>peek()</code> 是一个中间操作，它不会修改流中的元素，而是返回原始流</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(1, 2, 3, 4, 5);
+</span></span><span style=display:flex><span>numbers.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>       .<span style=color:#a6e22e>peek</span>(n <span style=color:#f92672>-&gt;</span> System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(<span style=color:#e6db74>&#34;Processing: &#34;</span> <span style=color:#f92672>+</span> n))
+</span></span><span style=display:flex><span>       .<span style=color:#a6e22e>map</span>(n <span style=color:#f92672>-&gt;</span> n <span style=color:#f92672>*</span> 2)
+</span></span><span style=display:flex><span>       .<span style=color:#a6e22e>collect</span>(Collectors.<span style=color:#a6e22e>toList</span>());
+</span></span><span style=display:flex><span><span style=color:#75715e>// 输出：</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// Processing: 1</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// Processing: 2</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// Processing: 3</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// Processing: 4</span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// Processing: 5</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>limit()</code></p><ul><li><p>功能：返回流中前 n 个元素，常用于分页或只处理前几个元素</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(1, 2, 3, 4, 5);
+</span></span><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> limitedNumbers <span style=color:#f92672>=</span> numbers.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>                                      .<span style=color:#a6e22e>limit</span>(3)
+</span></span><span style=display:flex><span>                                      .<span style=color:#a6e22e>collect</span>(Collectors.<span style=color:#a6e22e>toList</span>());
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(limitedNumbers); <span style=color:#75715e>// [1, 2, 3]</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>skip()</code></p><ul><li><p>功能：跳过流中的前 n 个元素，返回剩余的元素</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(1, 2, 3, 4, 5);
+</span></span><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> skippedNumbers <span style=color:#f92672>=</span> numbers.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>                                      .<span style=color:#a6e22e>skip</span>(2)
+</span></span><span style=display:flex><span>                                      .<span style=color:#a6e22e>collect</span>(Collectors.<span style=color:#a6e22e>toList</span>());
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(skippedNumbers); <span style=color:#75715e>// [3, 4, 5]</span>
+</span></span></code></pre></div></li></ul></li></ol><h3 id=常用的终结操作>常用的终结操作<a hidden class=anchor aria-hidden=true href=#常用的终结操作>#</a></h3><ol><li><p><code>collect()</code></p><ul><li><p>功能：将流中的元素收集到集合或其他形式的容器中，最常用来将流转换为 <code>List</code>、<code>Set</code> 或 <code>Map</code></p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> words <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(<span style=color:#e6db74>&#34;apple&#34;</span>, <span style=color:#e6db74>&#34;banana&#34;</span>, <span style=color:#e6db74>&#34;cherry&#34;</span>);
+</span></span><span style=display:flex><span>Set<span style=color:#f92672>&lt;</span>String<span style=color:#f92672>&gt;</span> wordSet <span style=color:#f92672>=</span> words.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>                           .<span style=color:#a6e22e>collect</span>(Collectors.<span style=color:#a6e22e>toSet</span>());
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(wordSet); <span style=color:#75715e>// [apple, banana, cherry]</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>forEach()</code></p><ul><li><p>功能：对流中的每个元素执行一个操作，常用于打印或遍历</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(1, 2, 3, 4, 5);
+</span></span><span style=display:flex><span>numbers.<span style=color:#a6e22e>stream</span>().<span style=color:#a6e22e>forEach</span>(System.<span style=color:#a6e22e>out</span>::println); <span style=color:#75715e>// 打印每个元素</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>reduce()</code></p><ul><li><p>功能：通过累积操作将流中的元素合并为一个结果，常用于求和、求最大值、求最小值等操作</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(1, 2, 3, 4, 5);
+</span></span><span style=display:flex><span><span style=color:#66d9ef>int</span> sum <span style=color:#f92672>=</span> numbers.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>                 .<span style=color:#a6e22e>reduce</span>(0, (a, b) <span style=color:#f92672>-&gt;</span> a <span style=color:#f92672>+</span> b); <span style=color:#75715e>// 求和</span>
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(sum); <span style=color:#75715e>// 15</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>count()</code></p><ul><li><p>功能：返回流中元素的数量</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(1, 2, 3, 4, 5);
+</span></span><span style=display:flex><span><span style=color:#66d9ef>long</span> count <span style=color:#f92672>=</span> numbers.<span style=color:#a6e22e>stream</span>()
+</span></span><span style=display:flex><span>                    .<span style=color:#a6e22e>count</span>();
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(count); <span style=color:#75715e>// 5</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>anyMatch()</code> / <code>allMatch()</code> / <code>noneMatch()</code></p><ul><li><p>功能：用于检查流中的元素是否满足某个条件</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(1, 2, 3, 4, 5);
+</span></span><span style=display:flex><span><span style=color:#66d9ef>boolean</span> hasEven <span style=color:#f92672>=</span> numbers.<span style=color:#a6e22e>stream</span>().<span style=color:#a6e22e>anyMatch</span>(n <span style=color:#f92672>-&gt;</span> n <span style=color:#f92672>%</span> 2 <span style=color:#f92672>==</span> 0);
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(hasEven); <span style=color:#75715e>// true</span>
+</span></span></code></pre></div></li></ul></li><li><p><code>findFirst()</code> / <code>findAny()</code></p><ul><li><p>功能：返回流中的第一个元素（<code>findFirst()</code>）或任意一个元素（<code>findAny()</code>）</p></li><li><p>示例：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-java data-lang=java><span style=display:flex><span>List<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> numbers <span style=color:#f92672>=</span> Arrays.<span style=color:#a6e22e>asList</span>(1, 2, 3, 4, 5);
+</span></span><span style=display:flex><span>Optional<span style=color:#f92672>&lt;</span>Integer<span style=color:#f92672>&gt;</span> first <span style=color:#f92672>=</span> numbers.<span style=color:#a6e22e>stream</span>().<span style=color:#a6e22e>findFirst</span>();
+</span></span><span style=display:flex><span>System.<span style=color:#a6e22e>out</span>.<span style=color:#a6e22e>println</span>(first.<span style=color:#a6e22e>orElse</span>(<span style=color:#f92672>-</span>1)); <span style=color:#75715e>// 1</span>
+</span></span></code></pre></div></li></ul></li></ol></div><footer class=post-footer><ul class=post-tags></ul></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://yuk1pedia.github.io/>YUKIPEDIA's blog</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>

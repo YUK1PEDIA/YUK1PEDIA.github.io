@@ -1,873 +1,295 @@
-<!DOCTYPE html>
-<html lang="en" dir="auto">
-
-<head><meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
-<title>图论 | YUKIPEDIA&#39;s blog</title>
-<meta name="keywords" content="">
-<meta name="description" content="记录">
-<meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
-<meta name="theme-color" content="#2e2e33">
-<meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/">
-<noscript>
-    <style>
-        #theme-toggle,
-        .top-link {
-            display: none;
-        }
-
-    </style>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --theme: rgb(29, 30, 32);
-                --entry: rgb(46, 46, 51);
-                --primary: rgb(218, 218, 219);
-                --secondary: rgb(155, 156, 157);
-                --tertiary: rgb(65, 66, 68);
-                --content: rgb(196, 196, 197);
-                --code-block-bg: rgb(46, 46, 51);
-                --code-bg: rgb(55, 56, 62);
-                --border: rgb(51, 51, 51);
-            }
-
-            .list {
-                background: var(--theme);
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-track {
-                background: 0 0;
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-thumb {
-                border-color: var(--theme);
-            }
-        }
-
-    </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="图论">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="图论">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "图论",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "图论",
-  "name": "图论",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "前言 整理自：https://algo.itcharge.cn/和代码随想录：https://www.programmercarl.com/qita/tulunfabu.html\n1.图的基础知识 (1).图的定义 图（Graph）：由顶点的非空有限集合 V （由 n\u003e0 个顶点组成）与边的集合 E（顶点之间的关系）构成的结构。其形式化定义为 G=(V,E)。\n顶点（Vertex）：图中的数据元素通常称为顶点，在下面的示意图中我们使用圆圈来表示顶点。 边（Edge）：图中两个数据元素之间的关联关系通常称为边，在下面的示意图中我们使用连接两个顶点之间的线段来表示边。边的形式化定义为：e=，表示从 u 到 v 的一条边，其中 u 称为起始点，v 称为终止点。 子图（Sub Graph）：对于图 G*=(V,E) 与 G*′=(V′,E′)，如果存在 V*′⊆V，E′⊆E，则称图 ′G′ 是图 G* 的一个子图。在下面的示意图中我们给出了一个图 G 及其一个子图 G。特别的，根据定义，G 也是其自身的子图。 (2).图的分类 2.1无向图和有向图 按照边是否有方向，我们可以将图分为两种类型：「无向图」和「有向图」。\n无向图（Undirected Graph）：如果图中的每条边都没有指向性，则称为无向图。例如朋友关系图、路线图都是无向图。 有向图（Directed Graph）：如果图中的每条边都具有指向性，则称为有向图。例如流程图是有向图。 如果无向图中有 n 个顶点，则无向图中最多有 n×(n−1)/2 条边。而具有 n×(n−1)/2 条边的无向图称为 「完全无向图（Completed Undirected Graph）」。\n如果有向图中有 n 个顶点，则有向图中最多有 n×(n−1) 条弧。而具有 n×(n−1) 条弧的有向图称为 「完全有向图（Completed Directed Graph）」。\n2.2环形图和无环图 路径：简单来说，如果顶点 vi0 可以通过一系列的顶点和边，到达顶点 vim，则称顶点 vi0 和顶点 vim 之间有一条路径，其中经过的顶点序列则称为两个顶点之间的路径。 环（Circle）：如果一条路径的起始点和终止点相同（即 vi0*==vi*m ），则称这条路径为「回路」或者「环」。 简单路径：顶点序列中顶点不重复出现的路径称为「简单路径」。 而根据图中是否有环，我们可以将图分为「环形图」和「无环图」。\n环形图（Circular Graph）：如果图中存在至少一条环路，则该图称为「环形图」。 无环图（Acyclic Graph）：如果图中不存在环路，则该图称为「无环图」。 特别的，在有向图中，如果不存在环路，则将该图称为「有向无环图（Directed Acyclic Graph）」，缩写为 DAG。\n如下图所示，分别为：无向无环图、无向环形图、有向无环图和有向环形图。\n2.3连通图和非连通图 2.3.1连通无向图和连通分量\n在无向图中，如果从顶点 vi 到顶点 vj 有路径，则称顶点 vi和 vj 是连通的。\n连通无向图：在无向图中，如果图中任意两个顶点之间都是连通的，则称该图为连通无向图。 非连通无向图：在无向图中，如果图中至少存在一对顶点之间不存在任何路径，则该图称为非连通无向图。 下面介绍一下无向图的「连通分量」概念。有些无向图可能不是连通无向图，但是其子图可能是连通的。这些子图称为原图的连通子图。而无向图的一个极大连通子图（不存在包含它的更大的连通子图）则称为该图的「连通分量」。\n连通子图：如果无向图的子图是连通无向图，则该子图称为原图的连通子图。 连通分量：无向图中的一个极大连通子图（不存在包含它的更大的连通子图）称为该图的连通分量。 极大连通子图：无向图中的一个连通子图，并且不存在包含它的更大的连通子图。 比如上图中右边的图是非连通无向图，但是它由 v1、v2、v3、v4 这四个顶点构成的子图是一个连通子图，并且是原图的极大连通子图。所以，这个子图就是原图的一个连通分量。同理，v5、v6 构成的子图也是原图的极大连通子图。\n2.3.2强连通有向图和强连通分量\n在有向图中，如果从顶点 vi 到 vj 有路径，并且从顶点 vj 到 vi 也有路径，则称顶点 vi 与 vj 是连通的。\n强连通有向图：如果图中任意两个顶点 vi 和 vj，从 vi 到 vj 和从 vj 到 vi 都有路径，则称该图为强连通有向图。 非强连通有向图：如果图中至少存在一对顶点之间不存在任何路径，则该图称为非强连通有向图。 与无向图类似，有向图的一个极大强连通子图称为该图的 强连通分量。\n强连通子图：如果有向图的子图是连通有向图，则该子图称为原图的强连通子图。 强连通分量：有向图中的一个极大强连通子图，称为该图的强连通分量。 极大强连通子图：有向图中的一个强连通子图，并且不存在包含它的更大的强连通子图。 如上图所示，左侧的强连通有向图是右侧的非强连通有向图的子图，所以左侧图是右侧图的一个强连通分量。同理，右侧图单独的 v7 也是原图的一个强连通分量\n2.4带权图 有时，图不仅需要表示顶点之间是否存在某种关系，还需要表示这一关系的具体细节。这时候我们需要在边上带一些数据信息，这些数据信息被称为 权。在具体应用中，权值可以具有某种具体意义，比如权值可以代表距离、时间以及价格等不同属性。\n带权图：如果图的每条边都被赋以⼀个权值，这种图称为带权图。 网络：带权的连通无向图称为网络。 (3)图的存储结构 具体可看原网站：https://algo.itcharge.cn/08.Graph/01.Graph-Basic/02.Graph-Structure/\n(4)图论问题应用 常见的图论问题应用大概可以分为以下几类：图的遍历问题、图的连通性问题、图的生成树问题、图的最短路径问题 等等。\n4.1图的遍历问题 图的遍历：与树的遍历类似，图的遍历指的是从图的某一个顶点出发，按照某种搜索方式对图中的所有节点都仅访问一次。\n图的遍历是求解图的连通性问题、拓扑排序和求关键路径等算法的基础。\n根据搜索方式的不同，可以将图的遍历分为「深度优先搜索」和「广度优先搜索」。\n深度优先搜索：从某一顶点出发，沿着⼀条路径⼀直搜索下去，在⽆法搜索时，回退到刚刚访问过的节点。 广度优先搜索：从某个顶点出发，⼀次性访问所有未被访问的邻接点，再依次从这些已访问过的邻接点出发，⼀层⼀层地访问。 4.2图的连通性问题 在无向图中，图的连通性问题主要包括：求无向图的连通分量、求点双连通分量（找割点）、求边双连通分量（找桥）、全局最小割问题 等等。\n在有向图中，图的连通性问题主要包括：求有向图的强连通分量、最小点基、最小权点基、2-SAT 问题 等等。\n4.3图的生成树问题 图的生成树（Spanning Tree）：如果连通图 G 的一个子图是一棵包含图 G 所有顶点的树，则称该子图为 G 的生成树。生成树是连通图的包含图中的所有顶点的极小连通子图。图的生成树不惟一。从不同的顶点出发进行遍历，可以得到不同的生成树。\n图的生成树问题主要包括：最小生成树问题、次小生成树问题 和 有向图的最小树形图问题 等等。\n无向图的最小生成树：如果连通图 G 是一个带权无向图，则生成树的边也带权，则称该带权图中所有带权生成树中权值总和最小的生成树为最小生成树（也称为最小代价生成树）。 无向图的次小生成树：如果连通图 G 是一个带权无向图，生成树 T 是图 G 的一个最小生成树，如果有另一棵生成树 T1，T1≠T，满足不存在树 T′，T′≠T，且 w(T′)",
-  "wordCount" : "2085",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
-</head>
-
-<body class="" id="top">
-<script>
-    if (localStorage.getItem("pref-theme") === "dark") {
-        document.body.classList.add('dark');
-    } else if (localStorage.getItem("pref-theme") === "light") {
-        document.body.classList.remove('dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark');
-    }
-
-</script>
-
-<header class="header">
-    <nav class="nav">
-        <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
-            <div class="logo-switches">
-                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
-                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <ul id="menu">
-            <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
-                    <span>Learning Notes</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</header>
-<main class="main">
-
-<article class="post-single">
-  <header class="post-header">
-    
-    <h1 class="post-title entry-hint-parent">
-      图论
-    </h1>
-    <div class="post-description">
-      记录
-    </div>
-    <div class="post-meta">
-
-</div>
-  </header> 
-  <div class="post-content"><h2 id="前言">前言<a hidden class="anchor" aria-hidden="true" href="#前言">#</a></h2>
-<p>整理自：https://algo.itcharge.cn/和代码随想录：https://www.programmercarl.com/qita/tulunfabu.html</p>
-<h2 id="1图的基础知识">1.图的基础知识<a hidden class="anchor" aria-hidden="true" href="#1图的基础知识">#</a></h2>
-<h3 id="1图的定义">(1).图的定义<a hidden class="anchor" aria-hidden="true" href="#1图的定义">#</a></h3>
-<p><strong>图（Graph）</strong>：由顶点的非空有限集合 <em>V</em> （由 <em>n</em>&gt;0 个顶点组成）与边的集合 <em>E</em>（顶点之间的关系）构成的结构。其形式化定义为 <em>G</em>=(<em>V</em>,<em>E</em>)。</p>
-<ul>
-<li><strong>顶点（Vertex）</strong>：图中的数据元素通常称为顶点，在下面的示意图中我们使用圆圈来表示顶点。</li>
-<li><strong>边（Edge）</strong>：图中两个数据元素之间的关联关系通常称为边，在下面的示意图中我们使用连接两个顶点之间的线段来表示边。边的形式化定义为：e=&lt;u,v&gt;，表示从 <em>u</em> 到 <em>v</em> 的一条边，其中 <em>u</em> 称为起始点，<em>v</em> 称为终止点。</li>
-</ul>
-<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/10/03/SeAons6h3kL5Mgx.png"></p>
-<ul>
-<li><strong>子图（Sub Graph）</strong>：对于图 G*=(<em>V</em>,<em>E</em>) 与 G*′=(<em>V</em>′,<em>E</em>′)，如果存在 V*′⊆<em>V</em>，<em>E</em>′⊆<em>E</em>，则称图 ′<em>G</em>′ 是图 G* 的一个子图。在下面的示意图中我们给出了一个图 G 及其一个子图 <em>G</em>。特别的，根据定义，<em>G</em> 也是其自身的子图。</li>
-</ul>
-<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/10/03/k7DXBHvwWabslfY.png"></p>
-<h3 id="2图的分类">(2).图的分类<a hidden class="anchor" aria-hidden="true" href="#2图的分类">#</a></h3>
-<h4 id="21无向图和有向图">2.1无向图和有向图<a hidden class="anchor" aria-hidden="true" href="#21无向图和有向图">#</a></h4>
-<p>按照边是否有方向，我们可以将图分为两种类型：「无向图」和「有向图」。</p>
-<ul>
-<li><strong>无向图（Undirected Graph）</strong>：如果图中的每条边都没有指向性，则称为无向图。例如朋友关系图、路线图都是无向图。</li>
-<li><strong>有向图（Directed Graph）</strong>：如果图中的每条边都具有指向性，则称为有向图。例如流程图是有向图。</li>
-</ul>
-<p>如果无向图中有 <em>n</em> 个顶点，则无向图中最多有 <em>n</em>×(<em>n</em>−1)/2 条边。而具有 <em>n</em>×(<em>n</em>−1)/2 条边的无向图称为 <strong>「完全无向图（Completed Undirected Graph）」</strong>。</p>
-<p>如果有向图中有 <em>n</em> 个顶点，则有向图中最多有 <em>n</em>×(<em>n</em>−1) 条弧。而具有 <em>n</em>×(<em>n</em>−1) 条弧的有向图称为 <strong>「完全有向图（Completed Directed Graph）」</strong>。</p>
-<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/10/03/M7KNtfZQwmGIL4V.png"></p>
-<h4 id="22环形图和无环图">2.2环形图和无环图<a hidden class="anchor" aria-hidden="true" href="#22环形图和无环图">#</a></h4>
-<ul>
-<li><strong>路径</strong>：简单来说，如果顶点 <em>v</em>i<em>0</em> 可以通过一系列的顶点和边，到达顶点 <em>v</em>i<em>m</em>，则称顶点 <em>v</em>i<em>0</em> 和顶点 <em>v</em>i<em>m</em> 之间有一条路径，其中经过的顶点序列则称为两个顶点之间的路径。</li>
-<li><strong>环（Circle）</strong>：如果一条路径的起始点和终止点相同（即 v<em>i</em>0*==<em>v</em>i*m ），则称这条路径为「回路」或者「环」。</li>
-<li><strong>简单路径</strong>：顶点序列中<strong>顶点不重复出现</strong>的路径称为「简单路径」。</li>
-</ul>
-<p>而根据图中是否有环，我们可以将图分为「环形图」和「无环图」。</p>
-<ul>
-<li><strong>环形图（Circular Graph）</strong>：如果图中存在至少一条环路，则该图称为「环形图」。</li>
-<li><strong>无环图（Acyclic Graph）</strong>：如果图中不存在环路，则该图称为「无环图」。</li>
-</ul>
-<p>特别的，在有向图中，如果不存在环路，则将该图称为「有向无环图（Directed Acyclic Graph）」，缩写为 DAG。</p>
-<p>如下图所示，分别为：无向无环图、无向环形图、有向无环图和有向环形图。</p>
-<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/10/03/Dti5Pcslxv3Vhru.png"></p>
-<h4 id="23连通图和非连通图">2.3连通图和非连通图<a hidden class="anchor" aria-hidden="true" href="#23连通图和非连通图">#</a></h4>
-<p><strong>2.3.1连通无向图和连通分量</strong></p>
-<p>在无向图中，如果从顶点 vi 到顶点 vj 有路径，则称顶点 vi和 vj 是连通的。</p>
-<ul>
-<li><strong>连通无向图</strong>：在无向图中，如果图中任意两个顶点之间都是连通的，则称该图为连通无向图。</li>
-<li><strong>非连通无向图</strong>：在无向图中，如果图中至少存在一对顶点之间不存在任何路径，则该图称为非连通无向图。</li>
-</ul>
-<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/10/03/tEyGMkvNXAFJf7o.png"></p>
-<p>下面介绍一下无向图的「连通分量」概念。有些无向图可能不是连通无向图，但是其子图可能是连通的。这些子图称为原图的连通子图。而<strong>无向图的一个极大连通子图（不存在包含它的更大的连通子图）则称为该图的「连通分量」</strong>。</p>
-<ul>
-<li><strong>连通子图</strong>：如果无向图的子图是连通无向图，则该子图称为原图的连通子图。</li>
-<li><strong>连通分量</strong>：无向图中的一个极大连通子图（不存在包含它的更大的连通子图）称为该图的连通分量。</li>
-<li><strong>极大连通子图</strong>：无向图中的一个连通子图，并且不存在包含它的更大的连通子图。</li>
-</ul>
-<p>比如上图中右边的图是<strong>非连通无向图</strong>，但是它由 v1、v2、v3、v4 这四个顶点构成的子图是一个连通子图，并且是原图的极大连通子图。所以，这个子图就是原图的一个连通分量。<strong>同理，v5、v6 构成的子图也是原图的极大连通子图</strong>。</p>
-<p><strong>2.3.2强连通有向图和强连通分量</strong></p>
-<p>在有向图中，如果从顶点 vi 到 vj 有路径，并且从顶点 vj 到 vi 也有路径，则称<strong>顶点 vi 与 vj 是连通的</strong>。</p>
-<ul>
-<li><strong>强连通有向图</strong>：如果图中任意两个顶点 vi 和 vj，从 vi 到 vj 和从 vj 到 vi 都有路径，则称该图为<strong>强连通有向图</strong>。</li>
-<li><strong>非强连通有向图</strong>：如果图中至少存在一对顶点之间不存在任何路径，则该图称为非强连通有向图。</li>
-</ul>
-<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/10/03/aw6sYyEc8J9WoQz.png"></p>
-<p>与无向图类似，有向图的一个极大强连通子图称为该图的 <strong>强连通分量</strong>。</p>
-<ul>
-<li><strong>强连通子图</strong>：如果有向图的子图是连通有向图，则该子图称为原图的强连通子图。</li>
-<li><strong>强连通分量</strong>：有向图中的一个极大强连通子图，称为该图的强连通分量。</li>
-<li><strong>极大强连通子图</strong>：有向图中的一个强连通子图，并且不存在包含它的更大的强连通子图。</li>
-</ul>
-<p>如上图所示，左侧的强连通有向图是右侧的非强连通有向图的<strong>子图</strong>，所以左侧图是右侧图的一个<strong>强连通分量</strong>。同理，右侧图单独的 v7 也是原图的一个强连通分量</p>
-<h4 id="24带权图">2.4带权图<a hidden class="anchor" aria-hidden="true" href="#24带权图">#</a></h4>
-<p>有时，图不仅需要表示顶点之间是否存在某种关系，还需要表示这一关系的具体细节。这时候我们需要在边上带一些数据信息，这些数据信息被称为 <strong>权</strong>。在具体应用中，权值可以具有某种具体意义，比如权值可以代表距离、时间以及价格等不同属性。</p>
-<ul>
-<li><strong>带权图</strong>：如果图的每条边都被赋以⼀个权值，这种图称为带权图。</li>
-<li><strong>网络</strong>：带权的连通无向图称为网络。</li>
-</ul>
-<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/10/03/6XHgkzt4flNU2hc.png"></p>
-<h3 id="3图的存储结构">(3)图的存储结构<a hidden class="anchor" aria-hidden="true" href="#3图的存储结构">#</a></h3>
-<p>具体可看原网站：https://algo.itcharge.cn/08.Graph/01.Graph-Basic/02.Graph-Structure/</p>
-<h3 id="4图论问题应用">(4)图论问题应用<a hidden class="anchor" aria-hidden="true" href="#4图论问题应用">#</a></h3>
-<p>常见的图论问题应用大概可以分为以下几类：<strong>图的遍历问题</strong>、<strong>图的连通性问题</strong>、<strong>图的生成树问题</strong>、<strong>图的最短路径问题</strong> 等等。</p>
-<h4 id="41图的遍历问题">4.1图的遍历问题<a hidden class="anchor" aria-hidden="true" href="#41图的遍历问题">#</a></h4>
-<p><strong>图的遍历</strong>：与树的遍历类似，图的遍历指的是从图的某一个顶点出发，按照某种搜索方式对图中的所有节点都仅访问一次。</p>
-<p>图的遍历是求解图的连通性问题、拓扑排序和求关键路径等算法的基础。</p>
-<p>根据搜索方式的不同，可以将图的遍历分为「深度优先搜索」和「广度优先搜索」。</p>
-<ul>
-<li><strong>深度优先搜索</strong>：从某一顶点出发，沿着⼀条路径⼀直搜索下去，在⽆法搜索时，回退到刚刚访问过的节点。</li>
-<li><strong>广度优先搜索</strong>：从某个顶点出发，⼀次性访问所有未被访问的邻接点，再依次从这些已访问过的邻接点出发，⼀层⼀层地访问。</li>
-</ul>
-<h4 id="42图的连通性问题">4.2图的连通性问题<a hidden class="anchor" aria-hidden="true" href="#42图的连通性问题">#</a></h4>
-<p>在无向图中，图的连通性问题主要包括：<strong>求无向图的连通分量</strong>、<strong>求点双连通分量（找割点）</strong>、<strong>求边双连通分量（找桥）</strong>、<strong>全局最小割问题</strong> 等等。</p>
-<p>在有向图中，图的连通性问题主要包括：<strong>求有向图的强连通分量</strong>、<strong>最小点基</strong>、<strong>最小权点基</strong>、<strong>2-SAT 问题</strong> 等等。</p>
-<h4 id="43图的生成树问题">4.3图的生成树问题<a hidden class="anchor" aria-hidden="true" href="#43图的生成树问题">#</a></h4>
-<p><strong>图的生成树（Spanning Tree）</strong>：如果连通图 G 的一个子图是一棵包含图 G 所有顶点的树，则称该子图为 G 的生成树。生成树是连通图的包含图中的所有顶点的极小连通子图。图的生成树不惟一。从不同的顶点出发进行遍历，可以得到不同的生成树。</p>
-<p>图的生成树问题主要包括：<strong>最小生成树问题</strong>、<strong>次小生成树问题</strong> 和 <strong>有向图的最小树形图问题</strong> 等等。</p>
-<ul>
-<li><strong>无向图的最小生成树</strong>：如果连通图 <em>G</em> 是一个带权无向图，则生成树的边也带权，则称该带权图中所有带权生成树中权值总和最小的生成树为最小生成树（也称为最小代价生成树）。</li>
-<li><strong>无向图的次小生成树</strong>：如果连通图 <em>G</em> 是一个带权无向图，生成树 <em>T</em> 是图 <em>G</em> 的一个最小生成树，如果有另一棵生成树 <em>T1</em>，<em>T1</em>≠T，满足不存在树 T′，T′≠T，且 w(<em>T′</em>)&lt;W(<em>T1</em>)，则称 <em>T1</em> 是图 <em>G</em> 的次小生成树。</li>
-<li><strong>有向图的最小树形图</strong>：如果连通图 <em>G</em> 是一个带权有向图，以顶点 vi 为根节点的生成树 <em>T</em> 中，顶点 vi 到任意非 vi 顶点的路径存在且唯一，并且生成树 <em>T</em> 中权值总和最小，则该生成树被称为有向图 <em>G</em> 的最小树形图。</li>
-</ul>
-<h4 id="44图的最短路径问题">4.4图的最短路径问题<a hidden class="anchor" aria-hidden="true" href="#44图的最短路径问题">#</a></h4>
-<p><strong>图的最短路径问题</strong>：如果用带权图来表示真实的交通、物流或社交网络，则边的权重可能代表交通运输费、距离或者熟悉程度。此时我们会考虑两个不同顶点之间的最短路径有多长，这一类问题统称为最短路径。并且我们称路径上的第一个顶点为源点，最后一个顶点为终点。</p>
-<p>按照源点数目的不同，可以将图的最短路径问题分为 <strong>单源最短路径问题</strong> 和 <strong>多源最短路径问题</strong>。</p>
-<ul>
-<li><strong>单源最短路径问题</strong>：从一个顶点出发到图中其余各个顶点之间的最短路径问题。</li>
-<li><strong>多源最短路径问题</strong>：图中任意两点之间的最短路径问题。</li>
-</ul>
-<p><strong>单源最短路径问题</strong> 的求解还是 <strong>差分约束系统问题</strong> 的基础。</p>
-<p>除此之外，在实际应用中，有时候除了需要知道最短路径外，还需要知道次最短路径或者第三最短路径。这样的多条最短路径问题称为 <strong><code>k</code> 最短路径问题</strong>。</p>
-<h2 id="2图的最短路径">2.图的最短路径<a hidden class="anchor" aria-hidden="true" href="#2图的最短路径">#</a></h2>
-<h3 id="单源最短路径">单源最短路径<a hidden class="anchor" aria-hidden="true" href="#单源最短路径">#</a></h3>
-<h4 id="1dijkstra算法">1.Dijkstra算法<a hidden class="anchor" aria-hidden="true" href="#1dijkstra算法">#</a></h4>
-<p>以下面的题为例：</p>
-<p><strong>网络延迟时间</strong></p>
-<p>有 <code>n</code> 个网络节点，标记为 <code>1</code> 到 <code>n</code>。</p>
-<p>给你一个列表 <code>times</code>，表示信号经过 <strong>有向</strong> 边的传递时间。 <code>times[i] = (ui, vi, wi)</code>，其中 <code>ui</code> 是源节点，<code>vi</code> 是目标节点， <code>wi</code> 是一个信号从源节点传递到目标节点的时间。</p>
-<p>现在，从某个节点 <code>K</code> 发出一个信号。需要多久才能使所有节点都收到信号？如果不能使所有节点收到信号，返回 <code>-1</code> 。</p>
-<p><strong>示例 1：</strong></p>
-<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2019/05/23/931_example_1.png"></p>
-<pre tabindex="0"><code>输入：times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2
+<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>图论 | YUKIPEDIA's blog</title><meta name=keywords content><meta name=description content="记录"><meta name=author content><link rel=canonical href=https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://yuk1pedia.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://yuk1pedia.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://yuk1pedia.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://yuk1pedia.github.io/apple-touch-icon.png><link rel=mask-icon href=https://yuk1pedia.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/"><meta property="og:site_name" content="YUKIPEDIA's blog"><meta property="og:title" content="图论"><meta property="og:description" content="记录"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="learning-notes"><meta name=twitter:card content="summary"><meta name=twitter:title content="图论"><meta name=twitter:description content="记录"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Learning Notes","item":"https://yuk1pedia.github.io/learning-notes/"},{"@type":"ListItem","position":2,"name":"图论","item":"https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"图论","name":"图论","description":"记录","keywords":[],"articleBody":"前言 整理自：https://algo.itcharge.cn/和代码随想录：https://www.programmercarl.com/qita/tulunfabu.html\n1.图的基础知识 (1).图的定义 图（Graph）：由顶点的非空有限集合 V （由 n\u003e0 个顶点组成）与边的集合 E（顶点之间的关系）构成的结构。其形式化定义为 G=(V,E)。\n顶点（Vertex）：图中的数据元素通常称为顶点，在下面的示意图中我们使用圆圈来表示顶点。 边（Edge）：图中两个数据元素之间的关联关系通常称为边，在下面的示意图中我们使用连接两个顶点之间的线段来表示边。边的形式化定义为：e=，表示从 u 到 v 的一条边，其中 u 称为起始点，v 称为终止点。 子图（Sub Graph）：对于图 G*=(V,E) 与 G*′=(V′,E′)，如果存在 V*′⊆V，E′⊆E，则称图 ′G′ 是图 G* 的一个子图。在下面的示意图中我们给出了一个图 G 及其一个子图 G。特别的，根据定义，G 也是其自身的子图。 (2).图的分类 2.1无向图和有向图 按照边是否有方向，我们可以将图分为两种类型：「无向图」和「有向图」。\n无向图（Undirected Graph）：如果图中的每条边都没有指向性，则称为无向图。例如朋友关系图、路线图都是无向图。 有向图（Directed Graph）：如果图中的每条边都具有指向性，则称为有向图。例如流程图是有向图。 如果无向图中有 n 个顶点，则无向图中最多有 n×(n−1)/2 条边。而具有 n×(n−1)/2 条边的无向图称为 「完全无向图（Completed Undirected Graph）」。\n如果有向图中有 n 个顶点，则有向图中最多有 n×(n−1) 条弧。而具有 n×(n−1) 条弧的有向图称为 「完全有向图（Completed Directed Graph）」。\n2.2环形图和无环图 路径：简单来说，如果顶点 vi0 可以通过一系列的顶点和边，到达顶点 vim，则称顶点 vi0 和顶点 vim 之间有一条路径，其中经过的顶点序列则称为两个顶点之间的路径。 环（Circle）：如果一条路径的起始点和终止点相同（即 vi0*==vi*m ），则称这条路径为「回路」或者「环」。 简单路径：顶点序列中顶点不重复出现的路径称为「简单路径」。 而根据图中是否有环，我们可以将图分为「环形图」和「无环图」。\n环形图（Circular Graph）：如果图中存在至少一条环路，则该图称为「环形图」。 无环图（Acyclic Graph）：如果图中不存在环路，则该图称为「无环图」。 特别的，在有向图中，如果不存在环路，则将该图称为「有向无环图（Directed Acyclic Graph）」，缩写为 DAG。\n如下图所示，分别为：无向无环图、无向环形图、有向无环图和有向环形图。\n2.3连通图和非连通图 2.3.1连通无向图和连通分量\n在无向图中，如果从顶点 vi 到顶点 vj 有路径，则称顶点 vi和 vj 是连通的。\n连通无向图：在无向图中，如果图中任意两个顶点之间都是连通的，则称该图为连通无向图。 非连通无向图：在无向图中，如果图中至少存在一对顶点之间不存在任何路径，则该图称为非连通无向图。 下面介绍一下无向图的「连通分量」概念。有些无向图可能不是连通无向图，但是其子图可能是连通的。这些子图称为原图的连通子图。而无向图的一个极大连通子图（不存在包含它的更大的连通子图）则称为该图的「连通分量」。\n连通子图：如果无向图的子图是连通无向图，则该子图称为原图的连通子图。 连通分量：无向图中的一个极大连通子图（不存在包含它的更大的连通子图）称为该图的连通分量。 极大连通子图：无向图中的一个连通子图，并且不存在包含它的更大的连通子图。 比如上图中右边的图是非连通无向图，但是它由 v1、v2、v3、v4 这四个顶点构成的子图是一个连通子图，并且是原图的极大连通子图。所以，这个子图就是原图的一个连通分量。同理，v5、v6 构成的子图也是原图的极大连通子图。\n2.3.2强连通有向图和强连通分量\n在有向图中，如果从顶点 vi 到 vj 有路径，并且从顶点 vj 到 vi 也有路径，则称顶点 vi 与 vj 是连通的。\n强连通有向图：如果图中任意两个顶点 vi 和 vj，从 vi 到 vj 和从 vj 到 vi 都有路径，则称该图为强连通有向图。 非强连通有向图：如果图中至少存在一对顶点之间不存在任何路径，则该图称为非强连通有向图。 与无向图类似，有向图的一个极大强连通子图称为该图的 强连通分量。\n强连通子图：如果有向图的子图是连通有向图，则该子图称为原图的强连通子图。 强连通分量：有向图中的一个极大强连通子图，称为该图的强连通分量。 极大强连通子图：有向图中的一个强连通子图，并且不存在包含它的更大的强连通子图。 如上图所示，左侧的强连通有向图是右侧的非强连通有向图的子图，所以左侧图是右侧图的一个强连通分量。同理，右侧图单独的 v7 也是原图的一个强连通分量\n2.4带权图 有时，图不仅需要表示顶点之间是否存在某种关系，还需要表示这一关系的具体细节。这时候我们需要在边上带一些数据信息，这些数据信息被称为 权。在具体应用中，权值可以具有某种具体意义，比如权值可以代表距离、时间以及价格等不同属性。\n带权图：如果图的每条边都被赋以⼀个权值，这种图称为带权图。 网络：带权的连通无向图称为网络。 (3)图的存储结构 具体可看原网站：https://algo.itcharge.cn/08.Graph/01.Graph-Basic/02.Graph-Structure/\n(4)图论问题应用 常见的图论问题应用大概可以分为以下几类：图的遍历问题、图的连通性问题、图的生成树问题、图的最短路径问题 等等。\n4.1图的遍历问题 图的遍历：与树的遍历类似，图的遍历指的是从图的某一个顶点出发，按照某种搜索方式对图中的所有节点都仅访问一次。\n图的遍历是求解图的连通性问题、拓扑排序和求关键路径等算法的基础。\n根据搜索方式的不同，可以将图的遍历分为「深度优先搜索」和「广度优先搜索」。\n深度优先搜索：从某一顶点出发，沿着⼀条路径⼀直搜索下去，在⽆法搜索时，回退到刚刚访问过的节点。 广度优先搜索：从某个顶点出发，⼀次性访问所有未被访问的邻接点，再依次从这些已访问过的邻接点出发，⼀层⼀层地访问。 4.2图的连通性问题 在无向图中，图的连通性问题主要包括：求无向图的连通分量、求点双连通分量（找割点）、求边双连通分量（找桥）、全局最小割问题 等等。\n在有向图中，图的连通性问题主要包括：求有向图的强连通分量、最小点基、最小权点基、2-SAT 问题 等等。\n4.3图的生成树问题 图的生成树（Spanning Tree）：如果连通图 G 的一个子图是一棵包含图 G 所有顶点的树，则称该子图为 G 的生成树。生成树是连通图的包含图中的所有顶点的极小连通子图。图的生成树不惟一。从不同的顶点出发进行遍历，可以得到不同的生成树。\n图的生成树问题主要包括：最小生成树问题、次小生成树问题 和 有向图的最小树形图问题 等等。\n无向图的最小生成树：如果连通图 G 是一个带权无向图，则生成树的边也带权，则称该带权图中所有带权生成树中权值总和最小的生成树为最小生成树（也称为最小代价生成树）。 无向图的次小生成树：如果连通图 G 是一个带权无向图，生成树 T 是图 G 的一个最小生成树，如果有另一棵生成树 T1，T1≠T，满足不存在树 T′，T′≠T，且 w(T′)","wordCount":"2085","inLanguage":"en","datePublished":"0001-01-01T00:00:00Z","dateModified":"0001-01-01T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/"},"publisher":{"@type":"Organization","name":"YUKIPEDIA's blog","logo":{"@type":"ImageObject","url":"https://yuk1pedia.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://yuk1pedia.github.io/ accesskey=h title="YUKIPEDIA's blog (Alt + H)">YUKIPEDIA's blog</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://yuk1pedia.github.io/learning-notes title="Learning Notes"><span>Learning Notes</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">图论</h1><div class=post-description>记录</div><div class=post-meta></div></header><div class=post-content><h2 id=前言>前言<a hidden class=anchor aria-hidden=true href=#前言>#</a></h2><p>整理自：https://algo.itcharge.cn/和代码随想录：https://www.programmercarl.com/qita/tulunfabu.html</p><h2 id=1图的基础知识>1.图的基础知识<a hidden class=anchor aria-hidden=true href=#1图的基础知识>#</a></h2><h3 id=1图的定义>(1).图的定义<a hidden class=anchor aria-hidden=true href=#1图的定义>#</a></h3><p><strong>图（Graph）</strong>：由顶点的非空有限集合 <em>V</em> （由 <em>n</em>>0 个顶点组成）与边的集合 <em>E</em>（顶点之间的关系）构成的结构。其形式化定义为 <em>G</em>=(<em>V</em>,<em>E</em>)。</p><ul><li><strong>顶点（Vertex）</strong>：图中的数据元素通常称为顶点，在下面的示意图中我们使用圆圈来表示顶点。</li><li><strong>边（Edge）</strong>：图中两个数据元素之间的关联关系通常称为边，在下面的示意图中我们使用连接两个顶点之间的线段来表示边。边的形式化定义为：e=&lt;u,v>，表示从 <em>u</em> 到 <em>v</em> 的一条边，其中 <em>u</em> 称为起始点，<em>v</em> 称为终止点。</li></ul><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/10/03/SeAons6h3kL5Mgx.png></p><ul><li><strong>子图（Sub Graph）</strong>：对于图 G*=(<em>V</em>,<em>E</em>) 与 G*′=(<em>V</em>′,<em>E</em>′)，如果存在 V*′⊆<em>V</em>，<em>E</em>′⊆<em>E</em>，则称图 ′<em>G</em>′ 是图 G* 的一个子图。在下面的示意图中我们给出了一个图 G 及其一个子图 <em>G</em>。特别的，根据定义，<em>G</em> 也是其自身的子图。</li></ul><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/10/03/k7DXBHvwWabslfY.png></p><h3 id=2图的分类>(2).图的分类<a hidden class=anchor aria-hidden=true href=#2图的分类>#</a></h3><h4 id=21无向图和有向图>2.1无向图和有向图<a hidden class=anchor aria-hidden=true href=#21无向图和有向图>#</a></h4><p>按照边是否有方向，我们可以将图分为两种类型：「无向图」和「有向图」。</p><ul><li><strong>无向图（Undirected Graph）</strong>：如果图中的每条边都没有指向性，则称为无向图。例如朋友关系图、路线图都是无向图。</li><li><strong>有向图（Directed Graph）</strong>：如果图中的每条边都具有指向性，则称为有向图。例如流程图是有向图。</li></ul><p>如果无向图中有 <em>n</em> 个顶点，则无向图中最多有 <em>n</em>×(<em>n</em>−1)/2 条边。而具有 <em>n</em>×(<em>n</em>−1)/2 条边的无向图称为 <strong>「完全无向图（Completed Undirected Graph）」</strong>。</p><p>如果有向图中有 <em>n</em> 个顶点，则有向图中最多有 <em>n</em>×(<em>n</em>−1) 条弧。而具有 <em>n</em>×(<em>n</em>−1) 条弧的有向图称为 <strong>「完全有向图（Completed Directed Graph）」</strong>。</p><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/10/03/M7KNtfZQwmGIL4V.png></p><h4 id=22环形图和无环图>2.2环形图和无环图<a hidden class=anchor aria-hidden=true href=#22环形图和无环图>#</a></h4><ul><li><strong>路径</strong>：简单来说，如果顶点 <em>v</em>i<em>0</em> 可以通过一系列的顶点和边，到达顶点 <em>v</em>i<em>m</em>，则称顶点 <em>v</em>i<em>0</em> 和顶点 <em>v</em>i<em>m</em> 之间有一条路径，其中经过的顶点序列则称为两个顶点之间的路径。</li><li><strong>环（Circle）</strong>：如果一条路径的起始点和终止点相同（即 v<em>i</em>0*==<em>v</em>i*m ），则称这条路径为「回路」或者「环」。</li><li><strong>简单路径</strong>：顶点序列中<strong>顶点不重复出现</strong>的路径称为「简单路径」。</li></ul><p>而根据图中是否有环，我们可以将图分为「环形图」和「无环图」。</p><ul><li><strong>环形图（Circular Graph）</strong>：如果图中存在至少一条环路，则该图称为「环形图」。</li><li><strong>无环图（Acyclic Graph）</strong>：如果图中不存在环路，则该图称为「无环图」。</li></ul><p>特别的，在有向图中，如果不存在环路，则将该图称为「有向无环图（Directed Acyclic Graph）」，缩写为 DAG。</p><p>如下图所示，分别为：无向无环图、无向环形图、有向无环图和有向环形图。</p><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/10/03/Dti5Pcslxv3Vhru.png></p><h4 id=23连通图和非连通图>2.3连通图和非连通图<a hidden class=anchor aria-hidden=true href=#23连通图和非连通图>#</a></h4><p><strong>2.3.1连通无向图和连通分量</strong></p><p>在无向图中，如果从顶点 vi 到顶点 vj 有路径，则称顶点 vi和 vj 是连通的。</p><ul><li><strong>连通无向图</strong>：在无向图中，如果图中任意两个顶点之间都是连通的，则称该图为连通无向图。</li><li><strong>非连通无向图</strong>：在无向图中，如果图中至少存在一对顶点之间不存在任何路径，则该图称为非连通无向图。</li></ul><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/10/03/tEyGMkvNXAFJf7o.png></p><p>下面介绍一下无向图的「连通分量」概念。有些无向图可能不是连通无向图，但是其子图可能是连通的。这些子图称为原图的连通子图。而<strong>无向图的一个极大连通子图（不存在包含它的更大的连通子图）则称为该图的「连通分量」</strong>。</p><ul><li><strong>连通子图</strong>：如果无向图的子图是连通无向图，则该子图称为原图的连通子图。</li><li><strong>连通分量</strong>：无向图中的一个极大连通子图（不存在包含它的更大的连通子图）称为该图的连通分量。</li><li><strong>极大连通子图</strong>：无向图中的一个连通子图，并且不存在包含它的更大的连通子图。</li></ul><p>比如上图中右边的图是<strong>非连通无向图</strong>，但是它由 v1、v2、v3、v4 这四个顶点构成的子图是一个连通子图，并且是原图的极大连通子图。所以，这个子图就是原图的一个连通分量。<strong>同理，v5、v6 构成的子图也是原图的极大连通子图</strong>。</p><p><strong>2.3.2强连通有向图和强连通分量</strong></p><p>在有向图中，如果从顶点 vi 到 vj 有路径，并且从顶点 vj 到 vi 也有路径，则称<strong>顶点 vi 与 vj 是连通的</strong>。</p><ul><li><strong>强连通有向图</strong>：如果图中任意两个顶点 vi 和 vj，从 vi 到 vj 和从 vj 到 vi 都有路径，则称该图为<strong>强连通有向图</strong>。</li><li><strong>非强连通有向图</strong>：如果图中至少存在一对顶点之间不存在任何路径，则该图称为非强连通有向图。</li></ul><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/10/03/aw6sYyEc8J9WoQz.png></p><p>与无向图类似，有向图的一个极大强连通子图称为该图的 <strong>强连通分量</strong>。</p><ul><li><strong>强连通子图</strong>：如果有向图的子图是连通有向图，则该子图称为原图的强连通子图。</li><li><strong>强连通分量</strong>：有向图中的一个极大强连通子图，称为该图的强连通分量。</li><li><strong>极大强连通子图</strong>：有向图中的一个强连通子图，并且不存在包含它的更大的强连通子图。</li></ul><p>如上图所示，左侧的强连通有向图是右侧的非强连通有向图的<strong>子图</strong>，所以左侧图是右侧图的一个<strong>强连通分量</strong>。同理，右侧图单独的 v7 也是原图的一个强连通分量</p><h4 id=24带权图>2.4带权图<a hidden class=anchor aria-hidden=true href=#24带权图>#</a></h4><p>有时，图不仅需要表示顶点之间是否存在某种关系，还需要表示这一关系的具体细节。这时候我们需要在边上带一些数据信息，这些数据信息被称为 <strong>权</strong>。在具体应用中，权值可以具有某种具体意义，比如权值可以代表距离、时间以及价格等不同属性。</p><ul><li><strong>带权图</strong>：如果图的每条边都被赋以⼀个权值，这种图称为带权图。</li><li><strong>网络</strong>：带权的连通无向图称为网络。</li></ul><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/10/03/6XHgkzt4flNU2hc.png></p><h3 id=3图的存储结构>(3)图的存储结构<a hidden class=anchor aria-hidden=true href=#3图的存储结构>#</a></h3><p>具体可看原网站：https://algo.itcharge.cn/08.Graph/01.Graph-Basic/02.Graph-Structure/</p><h3 id=4图论问题应用>(4)图论问题应用<a hidden class=anchor aria-hidden=true href=#4图论问题应用>#</a></h3><p>常见的图论问题应用大概可以分为以下几类：<strong>图的遍历问题</strong>、<strong>图的连通性问题</strong>、<strong>图的生成树问题</strong>、<strong>图的最短路径问题</strong> 等等。</p><h4 id=41图的遍历问题>4.1图的遍历问题<a hidden class=anchor aria-hidden=true href=#41图的遍历问题>#</a></h4><p><strong>图的遍历</strong>：与树的遍历类似，图的遍历指的是从图的某一个顶点出发，按照某种搜索方式对图中的所有节点都仅访问一次。</p><p>图的遍历是求解图的连通性问题、拓扑排序和求关键路径等算法的基础。</p><p>根据搜索方式的不同，可以将图的遍历分为「深度优先搜索」和「广度优先搜索」。</p><ul><li><strong>深度优先搜索</strong>：从某一顶点出发，沿着⼀条路径⼀直搜索下去，在⽆法搜索时，回退到刚刚访问过的节点。</li><li><strong>广度优先搜索</strong>：从某个顶点出发，⼀次性访问所有未被访问的邻接点，再依次从这些已访问过的邻接点出发，⼀层⼀层地访问。</li></ul><h4 id=42图的连通性问题>4.2图的连通性问题<a hidden class=anchor aria-hidden=true href=#42图的连通性问题>#</a></h4><p>在无向图中，图的连通性问题主要包括：<strong>求无向图的连通分量</strong>、<strong>求点双连通分量（找割点）</strong>、<strong>求边双连通分量（找桥）</strong>、<strong>全局最小割问题</strong> 等等。</p><p>在有向图中，图的连通性问题主要包括：<strong>求有向图的强连通分量</strong>、<strong>最小点基</strong>、<strong>最小权点基</strong>、<strong>2-SAT 问题</strong> 等等。</p><h4 id=43图的生成树问题>4.3图的生成树问题<a hidden class=anchor aria-hidden=true href=#43图的生成树问题>#</a></h4><p><strong>图的生成树（Spanning Tree）</strong>：如果连通图 G 的一个子图是一棵包含图 G 所有顶点的树，则称该子图为 G 的生成树。生成树是连通图的包含图中的所有顶点的极小连通子图。图的生成树不惟一。从不同的顶点出发进行遍历，可以得到不同的生成树。</p><p>图的生成树问题主要包括：<strong>最小生成树问题</strong>、<strong>次小生成树问题</strong> 和 <strong>有向图的最小树形图问题</strong> 等等。</p><ul><li><strong>无向图的最小生成树</strong>：如果连通图 <em>G</em> 是一个带权无向图，则生成树的边也带权，则称该带权图中所有带权生成树中权值总和最小的生成树为最小生成树（也称为最小代价生成树）。</li><li><strong>无向图的次小生成树</strong>：如果连通图 <em>G</em> 是一个带权无向图，生成树 <em>T</em> 是图 <em>G</em> 的一个最小生成树，如果有另一棵生成树 <em>T1</em>，<em>T1</em>≠T，满足不存在树 T′，T′≠T，且 w(<em>T′</em>)&lt;W(<em>T1</em>)，则称 <em>T1</em> 是图 <em>G</em> 的次小生成树。</li><li><strong>有向图的最小树形图</strong>：如果连通图 <em>G</em> 是一个带权有向图，以顶点 vi 为根节点的生成树 <em>T</em> 中，顶点 vi 到任意非 vi 顶点的路径存在且唯一，并且生成树 <em>T</em> 中权值总和最小，则该生成树被称为有向图 <em>G</em> 的最小树形图。</li></ul><h4 id=44图的最短路径问题>4.4图的最短路径问题<a hidden class=anchor aria-hidden=true href=#44图的最短路径问题>#</a></h4><p><strong>图的最短路径问题</strong>：如果用带权图来表示真实的交通、物流或社交网络，则边的权重可能代表交通运输费、距离或者熟悉程度。此时我们会考虑两个不同顶点之间的最短路径有多长，这一类问题统称为最短路径。并且我们称路径上的第一个顶点为源点，最后一个顶点为终点。</p><p>按照源点数目的不同，可以将图的最短路径问题分为 <strong>单源最短路径问题</strong> 和 <strong>多源最短路径问题</strong>。</p><ul><li><strong>单源最短路径问题</strong>：从一个顶点出发到图中其余各个顶点之间的最短路径问题。</li><li><strong>多源最短路径问题</strong>：图中任意两点之间的最短路径问题。</li></ul><p><strong>单源最短路径问题</strong> 的求解还是 <strong>差分约束系统问题</strong> 的基础。</p><p>除此之外，在实际应用中，有时候除了需要知道最短路径外，还需要知道次最短路径或者第三最短路径。这样的多条最短路径问题称为 <strong><code>k</code> 最短路径问题</strong>。</p><h2 id=2图的最短路径>2.图的最短路径<a hidden class=anchor aria-hidden=true href=#2图的最短路径>#</a></h2><h3 id=单源最短路径>单源最短路径<a hidden class=anchor aria-hidden=true href=#单源最短路径>#</a></h3><h4 id=1dijkstra算法>1.Dijkstra算法<a hidden class=anchor aria-hidden=true href=#1dijkstra算法>#</a></h4><p>以下面的题为例：</p><p><strong>网络延迟时间</strong></p><p>有 <code>n</code> 个网络节点，标记为 <code>1</code> 到 <code>n</code>。</p><p>给你一个列表 <code>times</code>，表示信号经过 <strong>有向</strong> 边的传递时间。 <code>times[i] = (ui, vi, wi)</code>，其中 <code>ui</code> 是源节点，<code>vi</code> 是目标节点， <code>wi</code> 是一个信号从源节点传递到目标节点的时间。</p><p>现在，从某个节点 <code>K</code> 发出一个信号。需要多久才能使所有节点都收到信号？如果不能使所有节点收到信号，返回 <code>-1</code> 。</p><p><strong>示例 1：</strong></p><p><img alt=img loading=lazy src=https://assets.leetcode.com/uploads/2019/05/23/931_example_1.png></p><pre tabindex=0><code>输入：times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2
 输出：2
-</code></pre><p><strong>示例 2：</strong></p>
-<pre tabindex="0"><code>输入：times = [[1,2,1]], n = 2, k = 1
+</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：times = [[1,2,1]], n = 2, k = 1
 输出：1
-</code></pre><p><strong>示例 3：</strong></p>
-<pre tabindex="0"><code>输入：times = [[1,2,1]], n = 2, k = 2
+</code></pre><p><strong>示例 3：</strong></p><pre tabindex=0><code>输入：times = [[1,2,1]], n = 2, k = 2
 输出：-1
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>1 &lt;= k &lt;= n &lt;= 100</code></li>
-<li><code>1 &lt;= times.length &lt;= 6000</code></li>
-<li><code>times[i].length == 3</code></li>
-<li><code>1 &lt;= ui, vi &lt;= n</code></li>
-<li><code>ui != vi</code></li>
-<li><code>0 &lt;= wi &lt;= 100</code></li>
-<li>所有 <code>(ui, vi)</code> 对都 <strong>互不相同</strong>（即，不含重复边）</li>
-</ul>
-<p><strong>思路</strong></p>
-<p>定义 <code>g[i][j]</code> 表示节点 <em>i</em> 到 节点 <em>j</em> 这条边的边权。如果没有 <em>i</em> 到 <em>j</em> 的边，则 <code>g[i][j] = ∞</code>。</p>
-<p>定义 <code>dis[i]</code> 表示起点 <em>k</em> 到节点 <em>i</em> 的最短路长度，一开始 <code>dis[k] = 0</code> ，其余 <code>dis[i] = ∞</code> 表示尚未计算出。</p>
-<p><strong>我们的目标是计算出最终的 <code>dis</code> 数组</strong>。</p>
-<ul>
-<li>首先更新起点 <em>k</em> 到其邻居 <em>y</em> 的最短路，即更新 <code>dis[y]</code> 为 <code>g[k][y]</code>。</li>
-<li>然后取除了起点 <em>k</em>  以外的 <code>dis[i]</code> 的最小值，假设最小值对应的节点是 <em>3</em> 。此时可以断言：<code>dis[3]</code> 已经是 <em>k</em> 到 <em>3</em> 的最短路长度，不可能有其他 <em>k</em> 到 <em>3</em> 的路径更短。反证法：假设存在更短的路径，那么我们一定会从 <em>k</em> 出发，经过一个点 <em>u</em> ，它的 <code>dis[u]</code> 比 <code>dis[3]</code> 还要小，然后再经过一些边到达 <em>3</em> ，得到更小的 <code>dis[3]</code> 。但是 <code>dis[3]</code> 已经是最小的了，并且<strong>图中没有负数边权</strong>，所以 <em>u</em> 是不存在的，矛盾。故原命题成立，此时我们得到了 <code>dis[3]</code> 的最终值。</li>
-<li>用节点 <em>3</em> 到其邻居 <em>y</em> 的边权 <code>g[3][y]</code> 更新 <code>dis[y]</code> ：如果 <code>dis[3] + g[3][y] &lt; dis[y]</code> ，那么更新 <code>dis[y]</code> 为 <code>dis[3] + g[3][y]</code> ，否则不更新。</li>
-<li>然后取除了节点 <em>k</em>，<em>3</em> 以外的 <code>dis[i]</code> 的最小值，重复上述过程。</li>
-<li>有数学归纳法可知，这一做法可以得到每个点的最短路。当所有点的最短路都已确定时，算法结束。</li>
-</ul>
-<p><strong>写法一：朴素 Dijkstra （适用于稠密图）</strong></p>
-<p>对于本题，在计算最短路时，如果发现当前找到的最小最短路等于 ∞，说明有节点不可达，可以提前结束算法，返回 -1。</p>
-<p>如果所有节点都可达，返回 <code>max(dis)</code> 。</p>
-<p>代码实现时，节点编号改成从 <em>0</em> 开始</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> networkDelayTime(vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> times, <span style="color:#66d9ef">int</span> n, <span style="color:#66d9ef">int</span> k) {
-</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> g(n, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>(n, INT_MAX <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>)); <span style="color:#75715e">// 邻接矩阵
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// 建图
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> t: times) {
-</span></span><span style="display:flex;"><span>            g[t[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>][t[<span style="color:#ae81ff">1</span>]<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> t[<span style="color:#ae81ff">2</span>];
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// dis[i] 表示起点 k 到 i 的最短距离
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// done[i] 记录起点到 i 的最短路是否已经确定
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> dis(n, INT_MAX <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>), done(n);
-</span></span><span style="display:flex;"><span>        dis[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">while</span> (true) {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 取出当前最短的 dis[i] ，继续更新
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>done[i] <span style="color:#f92672">&amp;&amp;</span> (x <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">||</span> dis[i] <span style="color:#f92672">&lt;</span> dis[x])) {
-</span></span><span style="display:flex;"><span>                    x <span style="color:#f92672">=</span> i;
-</span></span><span style="display:flex;"><span>                }
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (x <span style="color:#f92672">&lt;</span> <span style="color:#ae81ff">0</span>) { <span style="color:#75715e">// 所有的最短路都已经确定
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">return</span> ranges<span style="color:#f92672">::</span>max(dis);
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (dis[x] <span style="color:#f92672">==</span> INT_MAX <span style="color:#f92672">/</span> <span style="color:#ae81ff">2</span>) { <span style="color:#75715e">// 存在不可达节点
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">return</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>            done[x] <span style="color:#f92672">=</span> true; <span style="color:#75715e">// 最短路长度已确定
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> y <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; y <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>y) {
-</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 更新 x 的邻居的最短路
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                dis[y] <span style="color:#f92672">=</span> min(dis[y], dis[x] <span style="color:#f92672">+</span> g[x][y]);
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><p>时空复杂度均为 <code>O(n^2)</code> 。</p>
-<p><strong>写法二：堆优化 Dijkstra （适用于稀疏图）</strong></p>
-<p>寻找最小值的过程可以用一个最小堆来快速完成：</p>
-<ul>
-<li>一开始把 <code>(dis[k], k)</code> 二元组入堆。</li>
-<li>当节点 <em>x</em> 首次出堆时，<code>dis[x]</code> 就是写法一中寻找的最小最短路。</li>
-<li>更新 <code>dis[y]</code> 时，把 <code>(dis[y], y)</code> 二元组入堆。</li>
-</ul>
-<p>注意，如果一个节点 <em>x</em> 在出堆前，其最短路长度 <code>dis[x]</code> 被多次更新，那么堆中会有多个重复的 <em>x</em> ，并且包含 <em>x</em> 的二元组中的 <code>dis[x]</code> 是互不相同的（因为我们只在找到更小的最短路时才会把二元组入堆）。</p>
-<p>所以写法一中的 <code>done</code> 数组可以省去，取而代之的是用出堆的最短路值（记作 <code>dx</code> ）与当前的 <code>dis[x]</code> 比较，如果 <code>dx &gt; dis[x]</code> 说明 <em>x</em> 之前出堆过，我们已经更新了 <em>x</em> 的邻居的最短路，所以这次就不用更新了，继续外层循环。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> networkDelayTime(vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> times, <span style="color:#66d9ef">int</span> n, <span style="color:#66d9ef">int</span> k) {
-</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span>pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>, <span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&gt;</span> g(n); <span style="color:#75715e">// 邻接表
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">// 建图
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> t: times) {
-</span></span><span style="display:flex;"><span>            g[t[<span style="color:#ae81ff">0</span>]<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>].emplace_back(t[<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>, t[<span style="color:#ae81ff">2</span>]);
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> dis(n, INT_MAX);
-</span></span><span style="display:flex;"><span>        dis[k<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 最小堆中存放的是 (dis[i], i)
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        priority_queue<span style="color:#f92672">&lt;</span>pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>, <span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>, vector<span style="color:#f92672">&lt;</span>pair<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span>, <span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span>, greater<span style="color:#f92672">&lt;&gt;&gt;</span> pq;
-</span></span><span style="display:flex;"><span>        pq.emplace(<span style="color:#ae81ff">0</span>, k <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>); <span style="color:#75715e">// (dis[k], k) 入堆
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!</span>pq.empty()) {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">auto</span> [dx, x] <span style="color:#f92672">=</span> pq.top();
-</span></span><span style="display:flex;"><span>            pq.pop();
-</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// x 之前出堆过
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">if</span> (dx <span style="color:#f92672">&gt;</span> dis[x]) <span style="color:#66d9ef">continue</span>;
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> [y, d] <span style="color:#f92672">:</span> g[x]) {
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">int</span> new_dis <span style="color:#f92672">=</span> dx <span style="color:#f92672">+</span> d;
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> (new_dis <span style="color:#f92672">&lt;</span> dis[y]) {
-</span></span><span style="display:flex;"><span>                    dis[y] <span style="color:#f92672">=</span> new_dis;
-</span></span><span style="display:flex;"><span>                    pq.emplace(new_dis, y);
-</span></span><span style="display:flex;"><span>                }
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> mx <span style="color:#f92672">=</span> ranges<span style="color:#f92672">::</span>max(dis);
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> mx <span style="color:#f92672">&lt;</span> INT_MAX <span style="color:#f92672">?</span> mx : <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><p><strong>如果输入的是稠密图，写法二的时间复杂度不如写法一</strong></p>
-<h2 id="3dfs-与-bfs-遍历图">3.DFS 与 BFS 遍历图<a hidden class="anchor" aria-hidden="true" href="#3dfs-与-bfs-遍历图">#</a></h2>
-<h3 id="dfs-部分">DFS 部分<a hidden class="anchor" aria-hidden="true" href="#dfs-部分">#</a></h3>
-<p>因为 dfs 搜索一直往一个方向深入，并需要回溯，所以用递归方式来实现是最方便的。</p>
-<p><strong>dfs 代码框架</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">dfs</span>(<span style="color:#960050;background-color:#1e0010">参数</span>) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (<span style="color:#960050;background-color:#1e0010">终止条件</span>) {
-</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">存放结果</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span>;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#960050;background-color:#1e0010">选择：本节点所连接的其他节点</span>) {
-</span></span><span style="display:flex;"><span>        <span style="color:#960050;background-color:#1e0010">处理节点</span>;
-</span></span><span style="display:flex;"><span>        dfs(<span style="color:#960050;background-color:#1e0010">图，选择的节点</span>); <span style="color:#75715e">// 递归
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#960050;background-color:#1e0010">回溯，撤销处理结果</span>
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="bfs-部分">BFS 部分<a hidden class="anchor" aria-hidden="true" href="#bfs-部分">#</a></h3>
-<p>广搜的搜索方式适合解决两个点之间的最短路径问题。</p>
-<p>因为广搜是从起点出发，以起始点为中心一圈一圈进行搜索，一旦遇到终点，记录之前走过的节点就是一条最短路。</p>
-<p>当然，也有一些问题是<strong>广搜</strong>和<strong>深搜</strong>都可以解决的，例如岛屿问题，<strong>这类问题的特征就是不涉及具体的遍历方式，只要能把相邻且相同属性的节点标记上就行</strong>。</p>
-<p>BFS 的实现需要通过<strong>队列</strong>实现，具体的代码可以看下面的例题。</p>
-<p>对于图上的 DFS 和 BFS ，我们均通过下面这道寻找连通分量的题来学习。</p>
-<p><strong>省份数量</strong></p>
-<p>有 <code>n</code> 个城市，其中一些彼此相连，另一些没有相连。如果城市 <code>a</code> 与城市 <code>b</code> 直接相连，且城市 <code>b</code> 与城市 <code>c</code> 直接相连，那么城市 <code>a</code> 与城市 <code>c</code> 间接相连。<strong>省份</strong> 是一组直接或间接相连的城市，组内不含其他没有相连的城市。</p>
-<p>给你一个 <code>n x n</code> 的矩阵 <code>isConnected</code> ，其中 <code>isConnected[i][j] = 1</code> 表示第 <code>i</code> 个城市和第 <code>j</code> 个城市直接相连，而<code>isConnected[i][j] = 0</code> 表示二者不直接相连。</p>
-<p>返回矩阵中 <strong>省份</strong> 的数量。</p>
-<p><strong>示例 1：</strong></p>
-<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2020/12/24/graph1.jpg"></p>
-<pre tabindex="0"><code>输入：isConnected = [[1,1,0],[1,1,0],[0,0,1]]
+</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= k &lt;= n &lt;= 100</code></li><li><code>1 &lt;= times.length &lt;= 6000</code></li><li><code>times[i].length == 3</code></li><li><code>1 &lt;= ui, vi &lt;= n</code></li><li><code>ui != vi</code></li><li><code>0 &lt;= wi &lt;= 100</code></li><li>所有 <code>(ui, vi)</code> 对都 <strong>互不相同</strong>（即，不含重复边）</li></ul><p><strong>思路</strong></p><p>定义 <code>g[i][j]</code> 表示节点 <em>i</em> 到 节点 <em>j</em> 这条边的边权。如果没有 <em>i</em> 到 <em>j</em> 的边，则 <code>g[i][j] = ∞</code>。</p><p>定义 <code>dis[i]</code> 表示起点 <em>k</em> 到节点 <em>i</em> 的最短路长度，一开始 <code>dis[k] = 0</code> ，其余 <code>dis[i] = ∞</code> 表示尚未计算出。</p><p><strong>我们的目标是计算出最终的 <code>dis</code> 数组</strong>。</p><ul><li>首先更新起点 <em>k</em> 到其邻居 <em>y</em> 的最短路，即更新 <code>dis[y]</code> 为 <code>g[k][y]</code>。</li><li>然后取除了起点 <em>k</em> 以外的 <code>dis[i]</code> 的最小值，假设最小值对应的节点是 <em>3</em> 。此时可以断言：<code>dis[3]</code> 已经是 <em>k</em> 到 <em>3</em> 的最短路长度，不可能有其他 <em>k</em> 到 <em>3</em> 的路径更短。反证法：假设存在更短的路径，那么我们一定会从 <em>k</em> 出发，经过一个点 <em>u</em> ，它的 <code>dis[u]</code> 比 <code>dis[3]</code> 还要小，然后再经过一些边到达 <em>3</em> ，得到更小的 <code>dis[3]</code> 。但是 <code>dis[3]</code> 已经是最小的了，并且<strong>图中没有负数边权</strong>，所以 <em>u</em> 是不存在的，矛盾。故原命题成立，此时我们得到了 <code>dis[3]</code> 的最终值。</li><li>用节点 <em>3</em> 到其邻居 <em>y</em> 的边权 <code>g[3][y]</code> 更新 <code>dis[y]</code> ：如果 <code>dis[3] + g[3][y] &lt; dis[y]</code> ，那么更新 <code>dis[y]</code> 为 <code>dis[3] + g[3][y]</code> ，否则不更新。</li><li>然后取除了节点 <em>k</em>，<em>3</em> 以外的 <code>dis[i]</code> 的最小值，重复上述过程。</li><li>有数学归纳法可知，这一做法可以得到每个点的最短路。当所有点的最短路都已确定时，算法结束。</li></ul><p><strong>写法一：朴素 Dijkstra （适用于稠密图）</strong></p><p>对于本题，在计算最短路时，如果发现当前找到的最小最短路等于 ∞，说明有节点不可达，可以提前结束算法，返回 -1。</p><p>如果所有节点都可达，返回 <code>max(dis)</code> 。</p><p>代码实现时，节点编号改成从 <em>0</em> 开始</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> networkDelayTime(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> times, <span style=color:#66d9ef>int</span> n, <span style=color:#66d9ef>int</span> k) {
+</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> g(n, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>(n, INT_MAX <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>)); <span style=color:#75715e>// 邻接矩阵
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#75715e>// 建图
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>auto</span><span style=color:#f92672>&amp;</span> t: times) {
+</span></span><span style=display:flex><span>            g[t[<span style=color:#ae81ff>0</span>]<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>][t[<span style=color:#ae81ff>1</span>]<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> t[<span style=color:#ae81ff>2</span>];
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// dis[i] 表示起点 k 到 i 的最短距离
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#75715e>// done[i] 记录起点到 i 的最短路是否已经确定
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> dis(n, INT_MAX <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>), done(n);
+</span></span><span style=display:flex><span>        dis[k<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>while</span> (true) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> x <span style=color:#f92672>=</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>            <span style=color:#75715e>// 取出当前最短的 dis[i] ，继续更新
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>done[i] <span style=color:#f92672>&amp;&amp;</span> (x <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>||</span> dis[i] <span style=color:#f92672>&lt;</span> dis[x])) {
+</span></span><span style=display:flex><span>                    x <span style=color:#f92672>=</span> i;
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (x <span style=color:#f92672>&lt;</span> <span style=color:#ae81ff>0</span>) { <span style=color:#75715e>// 所有的最短路都已经确定
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                <span style=color:#66d9ef>return</span> ranges<span style=color:#f92672>::</span>max(dis);
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (dis[x] <span style=color:#f92672>==</span> INT_MAX <span style=color:#f92672>/</span> <span style=color:#ae81ff>2</span>) { <span style=color:#75715e>// 存在不可达节点
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                <span style=color:#66d9ef>return</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            done[x] <span style=color:#f92672>=</span> true; <span style=color:#75715e>// 最短路长度已确定
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> y <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; y <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>y) {
+</span></span><span style=display:flex><span>                <span style=color:#75715e>// 更新 x 的邻居的最短路
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                dis[y] <span style=color:#f92672>=</span> min(dis[y], dis[x] <span style=color:#f92672>+</span> g[x][y]);
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><p>时空复杂度均为 <code>O(n^2)</code> 。</p><p><strong>写法二：堆优化 Dijkstra （适用于稀疏图）</strong></p><p>寻找最小值的过程可以用一个最小堆来快速完成：</p><ul><li>一开始把 <code>(dis[k], k)</code> 二元组入堆。</li><li>当节点 <em>x</em> 首次出堆时，<code>dis[x]</code> 就是写法一中寻找的最小最短路。</li><li>更新 <code>dis[y]</code> 时，把 <code>(dis[y], y)</code> 二元组入堆。</li></ul><p>注意，如果一个节点 <em>x</em> 在出堆前，其最短路长度 <code>dis[x]</code> 被多次更新，那么堆中会有多个重复的 <em>x</em> ，并且包含 <em>x</em> 的二元组中的 <code>dis[x]</code> 是互不相同的（因为我们只在找到更小的最短路时才会把二元组入堆）。</p><p>所以写法一中的 <code>done</code> 数组可以省去，取而代之的是用出堆的最短路值（记作 <code>dx</code> ）与当前的 <code>dis[x]</code> 比较，如果 <code>dx > dis[x]</code> 说明 <em>x</em> 之前出堆过，我们已经更新了 <em>x</em> 的邻居的最短路，所以这次就不用更新了，继续外层循环。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> networkDelayTime(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> times, <span style=color:#66d9ef>int</span> n, <span style=color:#66d9ef>int</span> k) {
+</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span>pair<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&gt;</span> g(n); <span style=color:#75715e>// 邻接表
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#75715e>// 建图
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>auto</span><span style=color:#f92672>&amp;</span> t: times) {
+</span></span><span style=display:flex><span>            g[t[<span style=color:#ae81ff>0</span>]<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>].emplace_back(t[<span style=color:#ae81ff>1</span>] <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>, t[<span style=color:#ae81ff>2</span>]);
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> dis(n, INT_MAX);
+</span></span><span style=display:flex><span>        dis[k<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#75715e>// 最小堆中存放的是 (dis[i], i)
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        priority_queue<span style=color:#f92672>&lt;</span>pair<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>, vector<span style=color:#f92672>&lt;</span>pair<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span>, <span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span>, greater<span style=color:#f92672>&lt;&gt;&gt;</span> pq;
+</span></span><span style=display:flex><span>        pq.emplace(<span style=color:#ae81ff>0</span>, k <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>); <span style=color:#75715e>// (dis[k], k) 入堆
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>while</span> (<span style=color:#f92672>!</span>pq.empty()) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>auto</span> [dx, x] <span style=color:#f92672>=</span> pq.top();
+</span></span><span style=display:flex><span>            pq.pop();
+</span></span><span style=display:flex><span>            <span style=color:#75715e>// x 之前出堆过
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#66d9ef>if</span> (dx <span style=color:#f92672>&gt;</span> dis[x]) <span style=color:#66d9ef>continue</span>;
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>auto</span><span style=color:#f92672>&amp;</span> [y, d] <span style=color:#f92672>:</span> g[x]) {
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>int</span> new_dis <span style=color:#f92672>=</span> dx <span style=color:#f92672>+</span> d;
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>if</span> (new_dis <span style=color:#f92672>&lt;</span> dis[y]) {
+</span></span><span style=display:flex><span>                    dis[y] <span style=color:#f92672>=</span> new_dis;
+</span></span><span style=display:flex><span>                    pq.emplace(new_dis, y);
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> mx <span style=color:#f92672>=</span> ranges<span style=color:#f92672>::</span>max(dis);
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> mx <span style=color:#f92672>&lt;</span> INT_MAX <span style=color:#f92672>?</span> mx : <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><p><strong>如果输入的是稠密图，写法二的时间复杂度不如写法一</strong></p><h2 id=3dfs-与-bfs-遍历图>3.DFS 与 BFS 遍历图<a hidden class=anchor aria-hidden=true href=#3dfs-与-bfs-遍历图>#</a></h2><h3 id=dfs-部分>DFS 部分<a hidden class=anchor aria-hidden=true href=#dfs-部分>#</a></h3><p>因为 dfs 搜索一直往一个方向深入，并需要回溯，所以用递归方式来实现是最方便的。</p><p><strong>dfs 代码框架</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>dfs</span>(<span style=color:#960050;background-color:#1e0010>参数</span>) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (<span style=color:#960050;background-color:#1e0010>终止条件</span>) {
+</span></span><span style=display:flex><span>        <span style=color:#960050;background-color:#1e0010>存放结果</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span>;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> (<span style=color:#960050;background-color:#1e0010>选择：本节点所连接的其他节点</span>) {
+</span></span><span style=display:flex><span>        <span style=color:#960050;background-color:#1e0010>处理节点</span>;
+</span></span><span style=display:flex><span>        dfs(<span style=color:#960050;background-color:#1e0010>图，选择的节点</span>); <span style=color:#75715e>// 递归
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#960050;background-color:#1e0010>回溯，撤销处理结果</span>
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=bfs-部分>BFS 部分<a hidden class=anchor aria-hidden=true href=#bfs-部分>#</a></h3><p>广搜的搜索方式适合解决两个点之间的最短路径问题。</p><p>因为广搜是从起点出发，以起始点为中心一圈一圈进行搜索，一旦遇到终点，记录之前走过的节点就是一条最短路。</p><p>当然，也有一些问题是<strong>广搜</strong>和<strong>深搜</strong>都可以解决的，例如岛屿问题，<strong>这类问题的特征就是不涉及具体的遍历方式，只要能把相邻且相同属性的节点标记上就行</strong>。</p><p>BFS 的实现需要通过<strong>队列</strong>实现，具体的代码可以看下面的例题。</p><p>对于图上的 DFS 和 BFS ，我们均通过下面这道寻找连通分量的题来学习。</p><p><strong>省份数量</strong></p><p>有 <code>n</code> 个城市，其中一些彼此相连，另一些没有相连。如果城市 <code>a</code> 与城市 <code>b</code> 直接相连，且城市 <code>b</code> 与城市 <code>c</code> 直接相连，那么城市 <code>a</code> 与城市 <code>c</code> 间接相连。<strong>省份</strong> 是一组直接或间接相连的城市，组内不含其他没有相连的城市。</p><p>给你一个 <code>n x n</code> 的矩阵 <code>isConnected</code> ，其中 <code>isConnected[i][j] = 1</code> 表示第 <code>i</code> 个城市和第 <code>j</code> 个城市直接相连，而<code>isConnected[i][j] = 0</code> 表示二者不直接相连。</p><p>返回矩阵中 <strong>省份</strong> 的数量。</p><p><strong>示例 1：</strong></p><p><img alt=img loading=lazy src=https://assets.leetcode.com/uploads/2020/12/24/graph1.jpg></p><pre tabindex=0><code>输入：isConnected = [[1,1,0],[1,1,0],[0,0,1]]
 输出：2
-</code></pre><p><strong>示例 2：</strong></p>
-<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2020/12/24/graph2.jpg"></p>
-<pre tabindex="0"><code>输入：isConnected = [[1,0,0],[0,1,0],[0,0,1]]
+</code></pre><p><strong>示例 2：</strong></p><p><img alt=img loading=lazy src=https://assets.leetcode.com/uploads/2020/12/24/graph2.jpg></p><pre tabindex=0><code>输入：isConnected = [[1,0,0],[0,1,0],[0,0,1]]
 输出：3
-</code></pre><p><strong>提示：</strong></p>
-<ul>
-<li><code>1 &lt;= n &lt;= 200</code></li>
-<li><code>n == isConnected.length</code></li>
-<li><code>n == isConnected[i].length</code></li>
-<li><code>isConnected[i][j]</code> 为 <code>1</code> 或 <code>0</code></li>
-<li><code>isConnected[i][i] == 1</code></li>
-<li><code>isConnected[i][j] == isConnected[j][i]</code></li>
-</ul>
-<p><strong>一、DFS 解法</strong></p>
-<p>题意翻译一下就是：给你一个图的邻接矩阵，要你判断这个图中有多少个连通分量，我们可以通过 <em>DFS</em> 解决。</p>
-<p>遍历邻接矩阵中的每个节点，从该节点为起点开始进行 <em>DFS</em> ，直到找不到下一个相邻的节点，就相当于找到了一个连通分量，更新答案。</p>
-<p>注意：为了避免重复访问相同的节点，我们需要创建一个 <em>vis</em> 数组记录是否访问过当前节点。</p>
-<p><strong>Code</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">void</span> dfs(vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> isConnected, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> vis, <span style="color:#66d9ef">int</span> n, <span style="color:#66d9ef">int</span> i) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; j <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>j) {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (isConnected[i][j] <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span>vis[j]) {
-</span></span><span style="display:flex;"><span>                vis[j] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>                dfs(isConnected, vis, n, j);
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">findCircleNum</span>(vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> isConnected) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> isConnected.size();
-</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> vis(n);
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>vis[i]) {
-</span></span><span style="display:flex;"><span>                dfs(isConnected, vis, n, i);
-</span></span><span style="display:flex;"><span>                <span style="color:#f92672">++</span>res;
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><p><strong>二、BFS 解法</strong></p>
-<p>除了使用一路到底的 <em>DFS</em> 搜索图中所有的连通分量，我们还可以使用 <em>BFS</em> 解决这个问题。</p>
-<p>实现 <em>BFS</em> 需要用到队列，可以参考下面的模板。</p>
-<p><strong>Code</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> findCircleNum(vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> isConnected) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> isConnected.size();
-</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> vis(n);
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
-</span></span><span style="display:flex;"><span>        queue<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> q;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>vis[i]) {
-</span></span><span style="display:flex;"><span>                q.push(i);
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">while</span> (<span style="color:#f92672">!</span>q.empty()) {
-</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> q.front();
-</span></span><span style="display:flex;"><span>                    q.pop();
-</span></span><span style="display:flex;"><span>                    vis[j] <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> k <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; k <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>k) {
-</span></span><span style="display:flex;"><span>                        <span style="color:#66d9ef">if</span> (isConnected[j][k] <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span>vis[k]) {
-</span></span><span style="display:flex;"><span>                            q.push(k);
-</span></span><span style="display:flex;"><span>                        }
-</span></span><span style="display:flex;"><span>                    }
-</span></span><span style="display:flex;"><span>                }
-</span></span><span style="display:flex;"><span>                <span style="color:#f92672">++</span>res;
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><h2 id="4并查集">4.并查集<a hidden class="anchor" aria-hidden="true" href="#4并查集">#</a></h2>
-<h3 id="并查集原理">并查集原理<a hidden class="anchor" aria-hidden="true" href="#并查集原理">#</a></h3>
-<p>并查集通常用来解决连通性问题，当我们需要判断<strong>两个元素是否在同一个集合里</strong>的时候，我们就要想到用并查集。</p>
-<p>并查集主要有两个功能：</p>
-<ul>
-<li>将两个元素<strong>添加</strong>到一个集合中</li>
-<li>判断两个元素<strong>在不在</strong>同一个集合中</li>
-</ul>
-<p>从代码层面，我们如何将两个元素添加到同一个集合中呢？</p>
-<p>我们将三个元素A，B，C（分别是数字）放在同一个集合，<strong>其实就是将三个元素连通在一起</strong>，那么如何连通呢？</p>
-<p>只需要用一个一维数组来表示，即：<code>father[A] = B</code>，<code>father[B] = C</code> 。这样就表述 A 与 B 与 C 连通了（有向连通图）。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">// 将v，u 这条边加入并查集
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">join</span>(<span style="color:#66d9ef">int</span> u, <span style="color:#66d9ef">int</span> v) {
-</span></span><span style="display:flex;"><span>    u <span style="color:#f92672">=</span> find(u); <span style="color:#75715e">// 寻找u的根
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    v <span style="color:#f92672">=</span> find(v); <span style="color:#75715e">// 寻找v的根
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (u <span style="color:#f92672">==</span> v) <span style="color:#66d9ef">return</span>; <span style="color:#75715e">// 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    father[v] <span style="color:#f92672">=</span> u;
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>这里可能会有疑问：这样我可以知道 A 连通 B，因为 A 是索引下标，根据 father[A]的数值就知道 A 连通 B。那怎么知道 B 连通 A呢？</p>
-<p>我们的目的是判断这三个元素是否在同一个集合里，知道 A 连通 B 就已经足够了。</p>
-<p>这里要讲到寻根思路，只要 A ，B，C 在同一个根下就是同一个集合。</p>
-<p>给出 A 元素，就可以通过 <code>father[A] = B</code>，<code>father[B] = C</code>，找到根为 C。</p>
-<p>给出 B 元素，就可以通过 <code>father[B] = C</code>，找到根也为为 C，说明 A 和 B 是在同一个集合里。</p>
-<p>第一段代码中有一个 find函数 ，这是并查集的寻根函数，其实就是通过数组下标找到数组元素，一层一层寻根：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">// 并查集里寻根的过程
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">find</span>(<span style="color:#66d9ef">int</span> u) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (u <span style="color:#f92672">==</span> father[u]) <span style="color:#66d9ef">return</span> u; <span style="color:#75715e">// 如果根就是自己，直接返回
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">return</span> find(father[u]); <span style="color:#75715e">// 如果根不是自己，就根据数组下标一层一层向下找
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><p>如何表示 C 也在同一个集合里呢？ 我们需要 <code>father[C] = C</code>，即C的根也为C，这样就方便表示 A，B，C 都在同一个集合里了。</p>
-<p>所以 <code>father</code> 数组初始化时要 <code>father[i] = i</code> ，默认自己指向自己。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">// 并查集初始化
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">init</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>        father[i] <span style="color:#f92672">=</span> i;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>最后我们如何判断两个元素是否在同一个集合里？如果通过 find函数 找到<strong>两个元素属于同一个根</strong>的话，那么这两个元素就是同一个集合。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">// 判断 u 和 v是否找到同一个根
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">isSame</span>(<span style="color:#66d9ef">int</span> u, <span style="color:#66d9ef">int</span> v) {
-</span></span><span style="display:flex;"><span>    u <span style="color:#f92672">=</span> find(u);
-</span></span><span style="display:flex;"><span>    v <span style="color:#f92672">=</span> find(v);
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> u <span style="color:#f92672">==</span> v;
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="路径压缩">路径压缩<a hidden class="anchor" aria-hidden="true" href="#路径压缩">#</a></h3>
-<p>在实现 find 函数的过程中，我们知道，通过递归的方式，不断获取father数组下标对应的数值，最终找到这个集合的根。</p>
-<p>搜索过程像是一个多叉树中从叶子到根节点的过程，如图：</p>
-<p><img alt="img" loading="lazy" src="https://code-thinking-1253855093.file.myqcloud.com/pics/20230602102619.png"></p>
-<p>如果这棵多叉树高度很深的话，每次find函数 去寻找根的过程就要递归很多次。</p>
-<p>我们的目的只需要知道这些节点在同一个根下就可以，所以对这棵多叉树的构造只需要这样就可以了，如图：</p>
-<p><img alt="img" loading="lazy" src="https://code-thinking-1253855093.file.myqcloud.com/pics/20230602103040.png"></p>
-<p><strong>除了根节点其他所有节点都挂载根节点下</strong>，这样我们在寻根的时候就很快。</p>
-<p>想要达到这样的效果，就需要<strong>路径压缩</strong>，将非根节点的所有节点直接指向根节点。那么在代码层面如何实现呢？</p>
-<p>我们只需要在递归的过程中，让 <code>father[u]</code> 接住 递归函数 <code>find(father[u])</code> 的返回结果。</p>
-<p>因为 find 函数<strong>向上寻找根节点</strong>，<code>father[u]</code> 表述 u 的<strong>父节点</strong>，那么让 <code>father[u]</code> 直接获取 find函数 返回的<strong>根节点</strong>，这样就让节点 u 的父节点变成根节点。</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#75715e">// 并查集里寻根的过程
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">find</span>(<span style="color:#66d9ef">int</span> u) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span> (u <span style="color:#f92672">==</span> father[u]) <span style="color:#66d9ef">return</span> u;
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">return</span> father[u] <span style="color:#f92672">=</span> find(father[u]); <span style="color:#75715e">// 路径压缩
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span></code></pre></div><p>用三目运算符精简一下：</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">find</span>(<span style="color:#66d9ef">int</span> u) {
-</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> u <span style="color:#f92672">==</span> father[u] <span style="color:#f92672">?</span> u : father[u] <span style="color:#f92672">=</span> find(father[u]);
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><h3 id="并查集模板">并查集模板<a hidden class="anchor" aria-hidden="true" href="#并查集模板">#</a></h3>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> <span style="color:#ae81ff">1005</span>; <span style="color:#75715e">// n根据题目中节点数量而定，一般比节点数量大一点就好
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> father <span style="color:#f92672">=</span> vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> (n, <span style="color:#ae81ff">0</span>); <span style="color:#75715e">// C++里的一种数组结构
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 并查集初始化
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">init</span>() {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>        father[i] <span style="color:#f92672">=</span> i;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 并查集里寻根的过程
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">find</span>(<span style="color:#66d9ef">int</span> u) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> u <span style="color:#f92672">==</span> father[u] <span style="color:#f92672">?</span> u : father[u] <span style="color:#f92672">=</span> find(father[u]); <span style="color:#75715e">// 路径压缩
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 判断 u 和 v是否找到同一个根
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">isSame</span>(<span style="color:#66d9ef">int</span> u, <span style="color:#66d9ef">int</span> v) {
-</span></span><span style="display:flex;"><span>    u <span style="color:#f92672">=</span> find(u);
-</span></span><span style="display:flex;"><span>    v <span style="color:#f92672">=</span> find(v);
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> u <span style="color:#f92672">==</span> v;
-</span></span><span style="display:flex;"><span>}
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// 将v-&gt;u 这条边加入并查集
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">join</span>(<span style="color:#66d9ef">int</span> u, <span style="color:#66d9ef">int</span> v) {
-</span></span><span style="display:flex;"><span>    u <span style="color:#f92672">=</span> find(u); <span style="color:#75715e">// 寻找u的根
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    v <span style="color:#f92672">=</span> find(v); <span style="color:#75715e">// 寻找v的根
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">if</span> (u <span style="color:#f92672">==</span> v) <span style="color:#66d9ef">return</span> ; <span style="color:#75715e">// 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    father[v] <span style="color:#f92672">=</span> u;
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>通过模板，我们可以知道，并查集主要有三个功能：</p>
-<ol>
-<li>寻找根节点，函数：<code>find(int u)</code> ，也就是<strong>判断这个节点的祖先节点是哪个</strong></li>
-<li>将两个节点接入到同一个集合，函数：<code>join(int u, int v)</code> ，<strong>将两个节点连在同一个根节点上</strong></li>
-<li>判断两个节点是否在同一个集合，函数：<code>isSame(int u, int v)</code> ，就是<strong>判断两个节点是不是同一个根节点</strong></li>
-</ol>
-<h3 id="例题">例题<a hidden class="anchor" aria-hidden="true" href="#例题">#</a></h3>
-<p><strong>1.冗余连接</strong></p>
-<p>树可以看成是一个连通且 <strong>无环</strong> 的 <strong>无向</strong> 图。</p>
-<p>给定往一棵 <code>n</code> 个节点 (节点值 <code>1～n</code>) 的树中添加一条边后的图。添加的边的两个顶点包含在 <code>1</code> 到 <code>n</code> 中间，且这条附加的边不属于树中已存在的边。图的信息记录于长度为 <code>n</code> 的二维数组 <code>edges</code> ，<code>edges[i] = [ai, bi]</code> 表示图中在 <code>ai</code> 和 <code>bi</code> 之间存在一条边。</p>
-<p>请找出一条可以删去的边，删除后可使得剩余部分是一个有着 <code>n</code> 个节点的树。如果有多个答案，则返回数组 <code>edges</code> 中最后出现的那个。</p>
-<p><strong>示例 1：</strong></p>
-<p><img alt="img" loading="lazy" src="https://pic.leetcode-cn.com/1626676174-hOEVUL-image.png"></p>
-<pre tabindex="0"><code>输入: edges = [[1,2], [1,3], [2,3]]
+</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= n &lt;= 200</code></li><li><code>n == isConnected.length</code></li><li><code>n == isConnected[i].length</code></li><li><code>isConnected[i][j]</code> 为 <code>1</code> 或 <code>0</code></li><li><code>isConnected[i][i] == 1</code></li><li><code>isConnected[i][j] == isConnected[j][i]</code></li></ul><p><strong>一、DFS 解法</strong></p><p>题意翻译一下就是：给你一个图的邻接矩阵，要你判断这个图中有多少个连通分量，我们可以通过 <em>DFS</em> 解决。</p><p>遍历邻接矩阵中的每个节点，从该节点为起点开始进行 <em>DFS</em> ，直到找不到下一个相邻的节点，就相当于找到了一个连通分量，更新答案。</p><p>注意：为了避免重复访问相同的节点，我们需要创建一个 <em>vis</em> 数组记录是否访问过当前节点。</p><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>void</span> dfs(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> isConnected, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> vis, <span style=color:#66d9ef>int</span> n, <span style=color:#66d9ef>int</span> i) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; j <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>j) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (isConnected[i][j] <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>!</span>vis[j]) {
+</span></span><span style=display:flex><span>                vis[j] <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>                dfs(isConnected, vis, n, j);
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>findCircleNum</span>(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> isConnected) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> isConnected.size();
+</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> vis(n);
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> res <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>vis[i]) {
+</span></span><span style=display:flex><span>                dfs(isConnected, vis, n, i);
+</span></span><span style=display:flex><span>                <span style=color:#f92672>++</span>res;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> res;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><p><strong>二、BFS 解法</strong></p><p>除了使用一路到底的 <em>DFS</em> 搜索图中所有的连通分量，我们还可以使用 <em>BFS</em> 解决这个问题。</p><p>实现 <em>BFS</em> 需要用到队列，可以参考下面的模板。</p><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> findCircleNum(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> isConnected) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> isConnected.size();
+</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> vis(n);
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> res <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
+</span></span><span style=display:flex><span>        queue<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> q;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>vis[i]) {
+</span></span><span style=display:flex><span>                q.push(i);
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>while</span> (<span style=color:#f92672>!</span>q.empty()) {
+</span></span><span style=display:flex><span>                    <span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> q.front();
+</span></span><span style=display:flex><span>                    q.pop();
+</span></span><span style=display:flex><span>                    vis[j] <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>                    <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> k <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; k <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>k) {
+</span></span><span style=display:flex><span>                        <span style=color:#66d9ef>if</span> (isConnected[j][k] <span style=color:#f92672>&amp;&amp;</span> <span style=color:#f92672>!</span>vis[k]) {
+</span></span><span style=display:flex><span>                            q.push(k);
+</span></span><span style=display:flex><span>                        }
+</span></span><span style=display:flex><span>                    }
+</span></span><span style=display:flex><span>                }
+</span></span><span style=display:flex><span>                <span style=color:#f92672>++</span>res;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> res;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><h2 id=4并查集>4.并查集<a hidden class=anchor aria-hidden=true href=#4并查集>#</a></h2><h3 id=并查集原理>并查集原理<a hidden class=anchor aria-hidden=true href=#并查集原理>#</a></h3><p>并查集通常用来解决连通性问题，当我们需要判断<strong>两个元素是否在同一个集合里</strong>的时候，我们就要想到用并查集。</p><p>并查集主要有两个功能：</p><ul><li>将两个元素<strong>添加</strong>到一个集合中</li><li>判断两个元素<strong>在不在</strong>同一个集合中</li></ul><p>从代码层面，我们如何将两个元素添加到同一个集合中呢？</p><p>我们将三个元素A，B，C（分别是数字）放在同一个集合，<strong>其实就是将三个元素连通在一起</strong>，那么如何连通呢？</p><p>只需要用一个一维数组来表示，即：<code>father[A] = B</code>，<code>father[B] = C</code> 。这样就表述 A 与 B 与 C 连通了（有向连通图）。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#75715e>// 将v，u 这条边加入并查集
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>join</span>(<span style=color:#66d9ef>int</span> u, <span style=color:#66d9ef>int</span> v) {
+</span></span><span style=display:flex><span>    u <span style=color:#f92672>=</span> find(u); <span style=color:#75715e>// 寻找u的根
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    v <span style=color:#f92672>=</span> find(v); <span style=color:#75715e>// 寻找v的根
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>if</span> (u <span style=color:#f92672>==</span> v) <span style=color:#66d9ef>return</span>; <span style=color:#75715e>// 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    father[v] <span style=color:#f92672>=</span> u;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>这里可能会有疑问：这样我可以知道 A 连通 B，因为 A 是索引下标，根据 father[A]的数值就知道 A 连通 B。那怎么知道 B 连通 A呢？</p><p>我们的目的是判断这三个元素是否在同一个集合里，知道 A 连通 B 就已经足够了。</p><p>这里要讲到寻根思路，只要 A ，B，C 在同一个根下就是同一个集合。</p><p>给出 A 元素，就可以通过 <code>father[A] = B</code>，<code>father[B] = C</code>，找到根为 C。</p><p>给出 B 元素，就可以通过 <code>father[B] = C</code>，找到根也为为 C，说明 A 和 B 是在同一个集合里。</p><p>第一段代码中有一个 find函数 ，这是并查集的寻根函数，其实就是通过数组下标找到数组元素，一层一层寻根：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#75715e>// 并查集里寻根的过程
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>find</span>(<span style=color:#66d9ef>int</span> u) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (u <span style=color:#f92672>==</span> father[u]) <span style=color:#66d9ef>return</span> u; <span style=color:#75715e>// 如果根就是自己，直接返回
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>return</span> find(father[u]); <span style=color:#75715e>// 如果根不是自己，就根据数组下标一层一层向下找
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>}
+</span></span></code></pre></div><p>如何表示 C 也在同一个集合里呢？ 我们需要 <code>father[C] = C</code>，即C的根也为C，这样就方便表示 A，B，C 都在同一个集合里了。</p><p>所以 <code>father</code> 数组初始化时要 <code>father[i] = i</code> ，默认自己指向自己。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#75715e>// 并查集初始化
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>init</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>        father[i] <span style=color:#f92672>=</span> i;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>最后我们如何判断两个元素是否在同一个集合里？如果通过 find函数 找到<strong>两个元素属于同一个根</strong>的话，那么这两个元素就是同一个集合。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#75715e>// 判断 u 和 v是否找到同一个根
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>bool</span> <span style=color:#a6e22e>isSame</span>(<span style=color:#66d9ef>int</span> u, <span style=color:#66d9ef>int</span> v) {
+</span></span><span style=display:flex><span>    u <span style=color:#f92672>=</span> find(u);
+</span></span><span style=display:flex><span>    v <span style=color:#f92672>=</span> find(v);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> u <span style=color:#f92672>==</span> v;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=路径压缩>路径压缩<a hidden class=anchor aria-hidden=true href=#路径压缩>#</a></h3><p>在实现 find 函数的过程中，我们知道，通过递归的方式，不断获取father数组下标对应的数值，最终找到这个集合的根。</p><p>搜索过程像是一个多叉树中从叶子到根节点的过程，如图：</p><p><img alt=img loading=lazy src=https://code-thinking-1253855093.file.myqcloud.com/pics/20230602102619.png></p><p>如果这棵多叉树高度很深的话，每次find函数 去寻找根的过程就要递归很多次。</p><p>我们的目的只需要知道这些节点在同一个根下就可以，所以对这棵多叉树的构造只需要这样就可以了，如图：</p><p><img alt=img loading=lazy src=https://code-thinking-1253855093.file.myqcloud.com/pics/20230602103040.png></p><p><strong>除了根节点其他所有节点都挂载根节点下</strong>，这样我们在寻根的时候就很快。</p><p>想要达到这样的效果，就需要<strong>路径压缩</strong>，将非根节点的所有节点直接指向根节点。那么在代码层面如何实现呢？</p><p>我们只需要在递归的过程中，让 <code>father[u]</code> 接住 递归函数 <code>find(father[u])</code> 的返回结果。</p><p>因为 find 函数<strong>向上寻找根节点</strong>，<code>father[u]</code> 表述 u 的<strong>父节点</strong>，那么让 <code>father[u]</code> 直接获取 find函数 返回的<strong>根节点</strong>，这样就让节点 u 的父节点变成根节点。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#75715e>// 并查集里寻根的过程
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>find</span>(<span style=color:#66d9ef>int</span> u) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>if</span> (u <span style=color:#f92672>==</span> father[u]) <span style=color:#66d9ef>return</span> u;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>else</span> <span style=color:#66d9ef>return</span> father[u] <span style=color:#f92672>=</span> find(father[u]); <span style=color:#75715e>// 路径压缩
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>}
+</span></span></code></pre></div><p>用三目运算符精简一下：</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>find</span>(<span style=color:#66d9ef>int</span> u) {
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>return</span> u <span style=color:#f92672>==</span> father[u] <span style=color:#f92672>?</span> u : father[u] <span style=color:#f92672>=</span> find(father[u]);
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h3 id=并查集模板>并查集模板<a hidden class=anchor aria-hidden=true href=#并查集模板>#</a></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> <span style=color:#ae81ff>1005</span>; <span style=color:#75715e>// n根据题目中节点数量而定，一般比节点数量大一点就好
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> father <span style=color:#f92672>=</span> vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> (n, <span style=color:#ae81ff>0</span>); <span style=color:#75715e>// C++里的一种数组结构
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 并查集初始化
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>init</span>() {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>        father[i] <span style=color:#f92672>=</span> i;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#75715e>// 并查集里寻根的过程
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>int</span> <span style=color:#a6e22e>find</span>(<span style=color:#66d9ef>int</span> u) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> u <span style=color:#f92672>==</span> father[u] <span style=color:#f92672>?</span> u : father[u] <span style=color:#f92672>=</span> find(father[u]); <span style=color:#75715e>// 路径压缩
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 判断 u 和 v是否找到同一个根
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>bool</span> <span style=color:#a6e22e>isSame</span>(<span style=color:#66d9ef>int</span> u, <span style=color:#66d9ef>int</span> v) {
+</span></span><span style=display:flex><span>    u <span style=color:#f92672>=</span> find(u);
+</span></span><span style=display:flex><span>    v <span style=color:#f92672>=</span> find(v);
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>return</span> u <span style=color:#f92672>==</span> v;
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// 将v-&gt;u 这条边加入并查集
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span><span style=color:#66d9ef>void</span> <span style=color:#a6e22e>join</span>(<span style=color:#66d9ef>int</span> u, <span style=color:#66d9ef>int</span> v) {
+</span></span><span style=display:flex><span>    u <span style=color:#f92672>=</span> find(u); <span style=color:#75715e>// 寻找u的根
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    v <span style=color:#f92672>=</span> find(v); <span style=color:#75715e>// 寻找v的根
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>if</span> (u <span style=color:#f92672>==</span> v) <span style=color:#66d9ef>return</span> ; <span style=color:#75715e>// 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    father[v] <span style=color:#f92672>=</span> u;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>通过模板，我们可以知道，并查集主要有三个功能：</p><ol><li>寻找根节点，函数：<code>find(int u)</code> ，也就是<strong>判断这个节点的祖先节点是哪个</strong></li><li>将两个节点接入到同一个集合，函数：<code>join(int u, int v)</code> ，<strong>将两个节点连在同一个根节点上</strong></li><li>判断两个节点是否在同一个集合，函数：<code>isSame(int u, int v)</code> ，就是<strong>判断两个节点是不是同一个根节点</strong></li></ol><h3 id=例题>例题<a hidden class=anchor aria-hidden=true href=#例题>#</a></h3><p><strong>1.冗余连接</strong></p><p>树可以看成是一个连通且 <strong>无环</strong> 的 <strong>无向</strong> 图。</p><p>给定往一棵 <code>n</code> 个节点 (节点值 <code>1～n</code>) 的树中添加一条边后的图。添加的边的两个顶点包含在 <code>1</code> 到 <code>n</code> 中间，且这条附加的边不属于树中已存在的边。图的信息记录于长度为 <code>n</code> 的二维数组 <code>edges</code> ，<code>edges[i] = [ai, bi]</code> 表示图中在 <code>ai</code> 和 <code>bi</code> 之间存在一条边。</p><p>请找出一条可以删去的边，删除后可使得剩余部分是一个有着 <code>n</code> 个节点的树。如果有多个答案，则返回数组 <code>edges</code> 中最后出现的那个。</p><p><strong>示例 1：</strong></p><p><img alt=img loading=lazy src=https://pic.leetcode-cn.com/1626676174-hOEVUL-image.png></p><pre tabindex=0><code>输入: edges = [[1,2], [1,3], [2,3]]
 输出: [2,3]
-</code></pre><p><strong>示例 2：</strong></p>
-<p><img alt="img" loading="lazy" src="https://pic.leetcode-cn.com/1626676179-kGxcmu-image.png"></p>
-<pre tabindex="0"><code>输入: edges = [[1,2], [2,3], [3,4], [1,4], [1,5]]
+</code></pre><p><strong>示例 2：</strong></p><p><img alt=img loading=lazy src=https://pic.leetcode-cn.com/1626676179-kGxcmu-image.png></p><pre tabindex=0><code>输入: edges = [[1,2], [2,3], [3,4], [1,4], [1,5]]
 输出: [1,4]
-</code></pre><p><strong>提示:</strong></p>
-<ul>
-<li><code>n == edges.length</code></li>
-<li><code>3 &lt;= n &lt;= 1000</code></li>
-<li><code>edges[i].length == 2</code></li>
-<li><code>1 &lt;= ai &lt; bi &lt;= edges.length</code></li>
-<li><code>ai != bi</code></li>
-<li><code>edges</code> 中无重复元素</li>
-<li>给定的图是连通的</li>
-</ul>
-<p><strong>思路</strong></p>
-<p>一棵树中边的数量比节点数量少 1。如果一棵树有 <em>n</em> 个节点，则这棵树有 <em>n - 1</em> 条边。</p>
-<p>树是一个连通且无环的无向图，在树中多了一条附加的边之后就会出现环，因此<strong>附加的边即为导致环出现的边</strong>。</p>
-<p>可以通过<strong>并查集</strong>寻找附加的边。初始时，每个节点都属于不同的连通分量。遍历每一条边，判断这条边连接的两个顶点是否属于相同的连通分量。</p>
-<ul>
-<li>如果两个顶点属于不同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间不连通，因此当前的边不会导致环的出现，合并这两个顶点的连通分量。</li>
-<li>如果两个顶点属于相同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间已经连通，因此当前的边导致环出现，为附加的边，将当前的边作为答案返回。</li>
-</ul>
-<p><strong>Code</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> <span style="color:#ae81ff">1005</span>; <span style="color:#75715e">// n根据题目中节点数量而定，一般比节点数量大一点就好
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> father <span style="color:#f92672">=</span> vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> (n, <span style="color:#ae81ff">0</span>); <span style="color:#75715e">// C++里的一种数组结构
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 并查集初始化
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">init</span>() {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
-</span></span><span style="display:flex;"><span>            father[i] <span style="color:#f92672">=</span> i;
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 并查集里寻根的过程
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">find</span>(<span style="color:#66d9ef">int</span> u) {
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> u <span style="color:#f92672">==</span> father[u] <span style="color:#f92672">?</span> u : father[u] <span style="color:#f92672">=</span> find(father[u]); <span style="color:#75715e">// 路径压缩
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 判断 u 和 v是否找到同一个根
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">isSame</span>(<span style="color:#66d9ef">int</span> u, <span style="color:#66d9ef">int</span> v) {
-</span></span><span style="display:flex;"><span>        u <span style="color:#f92672">=</span> find(u);
-</span></span><span style="display:flex;"><span>        v <span style="color:#f92672">=</span> find(v);
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> u <span style="color:#f92672">==</span> v;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 将v-&gt;u 这条边加入并查集
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">join</span>(<span style="color:#66d9ef">int</span> u, <span style="color:#66d9ef">int</span> v) {
-</span></span><span style="display:flex;"><span>        u <span style="color:#f92672">=</span> find(u); <span style="color:#75715e">// 寻找u的根
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        v <span style="color:#f92672">=</span> find(v); <span style="color:#75715e">// 寻找v的根
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> (u <span style="color:#f92672">==</span> v) <span style="color:#66d9ef">return</span> ; <span style="color:#75715e">// 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        father[v] <span style="color:#f92672">=</span> u;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> findRedundantConnection(vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> edges) {
-</span></span><span style="display:flex;"><span>        init(); <span style="color:#75715e">// 并查集初始化
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> edge: edges) { <span style="color:#75715e">// 遍历每条边
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> node1 <span style="color:#f92672">=</span> edge[<span style="color:#ae81ff">0</span>], node2 <span style="color:#f92672">=</span> edge[<span style="color:#ae81ff">1</span>];
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (find(node1) <span style="color:#f92672">!=</span> find(node2)) { <span style="color:#75715e">// 如果不在同一个连通分量，说明这个边没有导致环的出现，合并
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                join(node1, node2);
-</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> { <span style="color:#75715e">// 已经在同一个连通分量里，说明当前边导致了环的出现，当前边就是我们要找的边
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">return</span> edge;
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> {};
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><p><strong>2.新增道路查询后的最短距离Ⅱ</strong></p>
-<p>给你一个整数 <code>n</code> 和一个二维整数数组 <code>queries</code>。</p>
-<p>有 <code>n</code> 个城市，编号从 <code>0</code> 到 <code>n - 1</code>。初始时，每个城市 <code>i</code> 都有一条<strong>单向</strong>道路通往城市 <code>i + 1</code>（ <code>0 &lt;= i &lt; n - 1</code>）。</p>
-<p><code>queries[i] = [ui, vi]</code> 表示新建一条从城市 <code>ui</code> 到城市 <code>vi</code> 的<strong>单向</strong>道路。每次查询后，你需要找到从城市 <code>0</code> 到城市 <code>n - 1</code> 的<strong>最短路径</strong>的<strong>长度</strong>。</p>
-<p>所有查询中不会存在两个查询都满足 <code>queries[i][0] &lt; queries[j][0] &lt; queries[i][1] &lt; queries[j][1]</code>。</p>
-<p>返回一个数组 <code>answer</code>，对于范围 <code>[0, queries.length - 1]</code> 中的每个 <code>i</code>，<code>answer[i]</code> 是处理完<strong>前</strong> <code>i + 1</code> 个查询后，从城市 <code>0</code> 到城市 <code>n - 1</code> 的最短路径的<em>长度</em>。</p>
-<p><strong>示例 1：</strong></p>
-<p><strong>输入：</strong> n = 5, queries = [[2, 4], [0, 2], [0, 4]]</p>
-<p><strong>输出：</strong> [3, 2, 1]</p>
-<p><strong>解释：</strong></p>
-<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2024/06/28/image8.jpg"></p>
-<p>新增一条从 2 到 4 的道路后，从 0 到 4 的最短路径长度为 3。</p>
-<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2024/06/28/image9.jpg"></p>
-<p>新增一条从 0 到 2 的道路后，从 0 到 4 的最短路径长度为 2。</p>
-<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2024/06/28/image10.jpg"></p>
-<p>新增一条从 0 到 4 的道路后，从 0 到 4 的最短路径长度为 1。</p>
-<p><strong>示例 2：</strong></p>
-<p><strong>输入：</strong> n = 4, queries = [[0, 3], [0, 2]]</p>
-<p><strong>输出：</strong> [1, 1]</p>
-<p><strong>解释：</strong></p>
-<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2024/06/28/image11.jpg"></p>
-<p>新增一条从 0 到 3 的道路后，从 0 到 3 的最短路径长度为 1。</p>
-<p><img alt="img" loading="lazy" src="https://assets.leetcode.com/uploads/2024/06/28/image12.jpg"></p>
-<p>新增一条从 0 到 2 的道路后，从 0 到 3 的最短路径长度仍为 1。</p>
-<p><strong>提示:</strong></p>
-<ul>
-<li><code>3 &lt;= n &lt;= 10^5</code></li>
-<li><code>1 &lt;= queries.length &lt;= 10^5</code></li>
-<li><code>queries[i].length == 2</code></li>
-<li><code>0 &lt;= queries[i][0] &lt; queries[i][1] &lt; n</code></li>
-<li><code>1 &lt; queries[i][1] - queries[i][0]</code></li>
-<li>查询中不存在重复的道路。</li>
-<li>不存在两个查询都满足 <code>i != j</code> 且 <code>queries[i][0] &lt; queries[j][0] &lt; queries[i][1] &lt; queries[j][1]</code>。</li>
-</ul>
-<p><strong>思路</strong></p>
-<p>本题满足一个性质：所有查询中不会存在两个查询都满足 <code>queries[i][0] &lt; queries[j][0] &lt; queries[i][1] &lt; queries[j][1]</code>。</p>
-<p>这说明所有添加的边都不会交叉，从贪心的角度来看，遇到捷径就走捷径是最优的。</p>
-<p>考虑如上性质，我们把目光放在<strong>边</strong>上：</p>
-<p>初始有 <code>n - 1</code> 条边，我们在 <code>0 -&gt; 1</code> 这条边上，目标是到达 <code>(n - 2) -&gt; (n - 1)</code> 这条边，并把这条边走完。</p>
-<p>处理 <code>queries</code> 之前，我们需要走 <code>n - 1</code> 条边。</p>
-<p><img alt="w409c-1.jpg" loading="lazy" src="https://pic.leetcode.cn/1722747389-ZsMpqd-w409c-1.jpg"></p>
-<p>连一条 2 到 4 的边，意味着什么？</p>
-<p>相当于把 <code>2 -&gt; 3</code> 这条边和 <code>3 -&gt; 4</code> 这条边合并成一条边。现在从起点到终点需要 3 条边。</p>
-<p><img alt="w409c-2.jpg" loading="lazy" src="https://pic.leetcode.cn/1722747344-UibNQD-w409c.jpg"></p>
-<p>连一条从 0 到 2 的边，相当于把 <code>0 -&gt; 1</code> 这条边和 <code>1 -&gt; 2</code> 这条边合并成一条边。现在从起点到终点需要 2 条边。</p>
-<p>我们可以用<strong>并查集</strong>实现边的合并。初始化一个大小为 <code>n - 1</code> 的并查集，并查集中的节点 i 表示题目的边 <code>i -&gt; (i + 1)</code> ，这就相当于给每条边编号 <code>0, 1, 2, ..., n - 2</code> 。</p>
-<p>连一条从 L 到 R 的边，相当于把并查集中的节点 <code>L, L + 1, L + 2, ... , R - 2</code> 合并到并查集中的节点 <code>R - 1</code> 上。</p>
-<p>合并的同时，维护并查集连通块个数，答案就是每次合并后的并查集连通块个数。</p>
-<p><strong>Code</strong></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
-</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> shortestDistanceAfterQueries(<span style="color:#66d9ef">int</span> n, vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> queries) {
-</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> fa(n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>);
-</span></span><span style="display:flex;"><span>        iota(fa.begin(), fa.end(), <span style="color:#ae81ff">0</span>);
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">auto</span> find <span style="color:#f92672">=</span> [<span style="color:#f92672">&amp;</span>](<span style="color:#66d9ef">int</span> x) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">int</span> {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> rt <span style="color:#f92672">=</span> x;
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">while</span> (fa[rt] <span style="color:#f92672">!=</span> rt) {
-</span></span><span style="display:flex;"><span>                rt <span style="color:#f92672">=</span> fa[rt];
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">while</span> (fa[x] <span style="color:#f92672">!=</span> rt) {
-</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">int</span> tmp <span style="color:#f92672">=</span> fa[x];
-</span></span><span style="display:flex;"><span>                fa[x] <span style="color:#f92672">=</span> rt;
-</span></span><span style="display:flex;"><span>                x <span style="color:#f92672">=</span> tmp;
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> rt;
-</span></span><span style="display:flex;"><span>        };
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> ans(queries.size());
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> cnt <span style="color:#f92672">=</span> n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> qi <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; qi <span style="color:#f92672">&lt;</span> queries.size(); <span style="color:#f92672">++</span>qi) {
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> l <span style="color:#f92672">=</span> queries[qi][<span style="color:#ae81ff">0</span>], r <span style="color:#f92672">=</span> queries[qi][<span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>;
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> fr <span style="color:#f92672">=</span> find(r);
-</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> find(l); i <span style="color:#f92672">&lt;</span> r; i <span style="color:#f92672">=</span> find(i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>)) {
-</span></span><span style="display:flex;"><span>                fa[i] <span style="color:#f92672">=</span> fr;
-</span></span><span style="display:flex;"><span>                cnt<span style="color:#f92672">--</span>;
-</span></span><span style="display:flex;"><span>            }
-</span></span><span style="display:flex;"><span>            ans[qi] <span style="color:#f92672">=</span> cnt;
-</span></span><span style="display:flex;"><span>        }
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ans;
-</span></span><span style="display:flex;"><span>    }
-</span></span><span style="display:flex;"><span>};
-</span></span></code></pre></div><p>下面分析上面的代码是如何使用并查集的：</p>
-<ul>
-<li>寻根过程：</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">while</span> (fa[rt] <span style="color:#f92672">!=</span> rt) {
-</span></span><span style="display:flex;"><span>    rt <span style="color:#f92672">=</span> fa[rt];
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>逐层跳跃父节点，找到 <code>x</code> 所在连通块的根节点 <code>rt</code></p>
-<ul>
-<li>路径压缩：</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">while</span> (fa[x] <span style="color:#f92672">!=</span> rt) {
-</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> tmp <span style="color:#f92672">=</span> fa[x];
-</span></span><span style="display:flex;"><span>    fa[x] <span style="color:#f92672">=</span> rt;
-</span></span><span style="display:flex;"><span>    x <span style="color:#f92672">=</span> tmp;
-</span></span><span style="display:flex;"><span>}
-</span></span></code></pre></div><p>优化并查集的结构，将路径上所有节点直接指向根节点 <code>rt</code> ，使树更加“扁平化”。下次查询时，路径上的节点直接指向根节点，大幅加快后续操作的效率。</p>
-<p><strong>为什么使用两次循环而不是递归来实现并查集的寻根过程和路径压缩过程？</strong></p>
-<ul>
-<li>使用迭代而非递归可以避免函数调用栈的额外开销，在深度较大的树上更安全。</li>
-</ul>
-
-
-  </div>
-
-  <footer class="post-footer">
-    <ul class="post-tags">
-    </ul>
-  </footer>
-</article>
-    </main>
-    
-<footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
-
-    <span>
-        Powered by
-        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
-        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
-    </span>
-</footer>
-<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
-        <path d="M12 6H0l6-6z" />
-    </svg>
-</a>
-
-<script>
-    let menu = document.getElementById('menu')
-    if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
-        menu.onscroll = function () {
-            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
-        }
-    }
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            var id = this.getAttribute("href").substr(1);
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
-                    behavior: "smooth"
-                });
-            } else {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
-            }
-            if (id === "top") {
-                history.replaceState(null, null, " ");
-            } else {
-                history.pushState(null, null, `#${id}`);
-            }
-        });
-    });
-
-</script>
-<script>
-    var mybutton = document.getElementById("top-link");
-    window.onscroll = function () {
-        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
-            mybutton.style.visibility = "visible";
-            mybutton.style.opacity = "1";
-        } else {
-            mybutton.style.visibility = "hidden";
-            mybutton.style.opacity = "0";
-        }
-    };
-
-</script>
-<script>
-    document.getElementById("theme-toggle").addEventListener("click", () => {
-        if (document.body.className.includes("dark")) {
-            document.body.classList.remove('dark');
-            localStorage.setItem("pref-theme", 'light');
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem("pref-theme", 'dark');
-        }
-    })
-
-</script>
-</body>
-
-</html>
+</code></pre><p><strong>提示:</strong></p><ul><li><code>n == edges.length</code></li><li><code>3 &lt;= n &lt;= 1000</code></li><li><code>edges[i].length == 2</code></li><li><code>1 &lt;= ai &lt; bi &lt;= edges.length</code></li><li><code>ai != bi</code></li><li><code>edges</code> 中无重复元素</li><li>给定的图是连通的</li></ul><p><strong>思路</strong></p><p>一棵树中边的数量比节点数量少 1。如果一棵树有 <em>n</em> 个节点，则这棵树有 <em>n - 1</em> 条边。</p><p>树是一个连通且无环的无向图，在树中多了一条附加的边之后就会出现环，因此<strong>附加的边即为导致环出现的边</strong>。</p><p>可以通过<strong>并查集</strong>寻找附加的边。初始时，每个节点都属于不同的连通分量。遍历每一条边，判断这条边连接的两个顶点是否属于相同的连通分量。</p><ul><li>如果两个顶点属于不同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间不连通，因此当前的边不会导致环的出现，合并这两个顶点的连通分量。</li><li>如果两个顶点属于相同的连通分量，则说明在遍历到当前的边之前，这两个顶点之间已经连通，因此当前的边导致环出现，为附加的边，将当前的边作为答案返回。</li></ul><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> <span style=color:#ae81ff>1005</span>; <span style=color:#75715e>// n根据题目中节点数量而定，一般比节点数量大一点就好
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> father <span style=color:#f92672>=</span> vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> (n, <span style=color:#ae81ff>0</span>); <span style=color:#75715e>// C++里的一种数组结构
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 并查集初始化
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>init</span>() {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
+</span></span><span style=display:flex><span>            father[i] <span style=color:#f92672>=</span> i;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 并查集里寻根的过程
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>find</span>(<span style=color:#66d9ef>int</span> u) {
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> u <span style=color:#f92672>==</span> father[u] <span style=color:#f92672>?</span> u : father[u] <span style=color:#f92672>=</span> find(father[u]); <span style=color:#75715e>// 路径压缩
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 判断 u 和 v是否找到同一个根
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>bool</span> <span style=color:#a6e22e>isSame</span>(<span style=color:#66d9ef>int</span> u, <span style=color:#66d9ef>int</span> v) {
+</span></span><span style=display:flex><span>        u <span style=color:#f92672>=</span> find(u);
+</span></span><span style=display:flex><span>        v <span style=color:#f92672>=</span> find(v);
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> u <span style=color:#f92672>==</span> v;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>    <span style=color:#75715e>// 将v-&gt;u 这条边加入并查集
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>    <span style=color:#66d9ef>void</span> <span style=color:#a6e22e>join</span>(<span style=color:#66d9ef>int</span> u, <span style=color:#66d9ef>int</span> v) {
+</span></span><span style=display:flex><span>        u <span style=color:#f92672>=</span> find(u); <span style=color:#75715e>// 寻找u的根
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        v <span style=color:#f92672>=</span> find(v); <span style=color:#75715e>// 寻找v的根
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>if</span> (u <span style=color:#f92672>==</span> v) <span style=color:#66d9ef>return</span> ; <span style=color:#75715e>// 如果发现根相同，则说明在一个集合，不用两个节点相连直接返回
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        father[v] <span style=color:#f92672>=</span> u;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> findRedundantConnection(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> edges) {
+</span></span><span style=display:flex><span>        init(); <span style=color:#75715e>// 并查集初始化
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>auto</span><span style=color:#f92672>&amp;</span> edge: edges) { <span style=color:#75715e>// 遍历每条边
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#66d9ef>int</span> node1 <span style=color:#f92672>=</span> edge[<span style=color:#ae81ff>0</span>], node2 <span style=color:#f92672>=</span> edge[<span style=color:#ae81ff>1</span>];
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (find(node1) <span style=color:#f92672>!=</span> find(node2)) { <span style=color:#75715e>// 如果不在同一个连通分量，说明这个边没有导致环的出现，合并
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                join(node1, node2);
+</span></span><span style=display:flex><span>            } <span style=color:#66d9ef>else</span> { <span style=color:#75715e>// 已经在同一个连通分量里，说明当前边导致了环的出现，当前边就是我们要找的边
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                <span style=color:#66d9ef>return</span> edge;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> {};
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><p><strong>2.新增道路查询后的最短距离Ⅱ</strong></p><p>给你一个整数 <code>n</code> 和一个二维整数数组 <code>queries</code>。</p><p>有 <code>n</code> 个城市，编号从 <code>0</code> 到 <code>n - 1</code>。初始时，每个城市 <code>i</code> 都有一条<strong>单向</strong>道路通往城市 <code>i + 1</code>（ <code>0 &lt;= i &lt; n - 1</code>）。</p><p><code>queries[i] = [ui, vi]</code> 表示新建一条从城市 <code>ui</code> 到城市 <code>vi</code> 的<strong>单向</strong>道路。每次查询后，你需要找到从城市 <code>0</code> 到城市 <code>n - 1</code> 的<strong>最短路径</strong>的<strong>长度</strong>。</p><p>所有查询中不会存在两个查询都满足 <code>queries[i][0] &lt; queries[j][0] &lt; queries[i][1] &lt; queries[j][1]</code>。</p><p>返回一个数组 <code>answer</code>，对于范围 <code>[0, queries.length - 1]</code> 中的每个 <code>i</code>，<code>answer[i]</code> 是处理完<strong>前</strong> <code>i + 1</code> 个查询后，从城市 <code>0</code> 到城市 <code>n - 1</code> 的最短路径的<em>长度</em>。</p><p><strong>示例 1：</strong></p><p><strong>输入：</strong> n = 5, queries = [[2, 4], [0, 2], [0, 4]]</p><p><strong>输出：</strong> [3, 2, 1]</p><p><strong>解释：</strong></p><p><img alt=img loading=lazy src=https://assets.leetcode.com/uploads/2024/06/28/image8.jpg></p><p>新增一条从 2 到 4 的道路后，从 0 到 4 的最短路径长度为 3。</p><p><img alt=img loading=lazy src=https://assets.leetcode.com/uploads/2024/06/28/image9.jpg></p><p>新增一条从 0 到 2 的道路后，从 0 到 4 的最短路径长度为 2。</p><p><img alt=img loading=lazy src=https://assets.leetcode.com/uploads/2024/06/28/image10.jpg></p><p>新增一条从 0 到 4 的道路后，从 0 到 4 的最短路径长度为 1。</p><p><strong>示例 2：</strong></p><p><strong>输入：</strong> n = 4, queries = [[0, 3], [0, 2]]</p><p><strong>输出：</strong> [1, 1]</p><p><strong>解释：</strong></p><p><img alt=img loading=lazy src=https://assets.leetcode.com/uploads/2024/06/28/image11.jpg></p><p>新增一条从 0 到 3 的道路后，从 0 到 3 的最短路径长度为 1。</p><p><img alt=img loading=lazy src=https://assets.leetcode.com/uploads/2024/06/28/image12.jpg></p><p>新增一条从 0 到 2 的道路后，从 0 到 3 的最短路径长度仍为 1。</p><p><strong>提示:</strong></p><ul><li><code>3 &lt;= n &lt;= 10^5</code></li><li><code>1 &lt;= queries.length &lt;= 10^5</code></li><li><code>queries[i].length == 2</code></li><li><code>0 &lt;= queries[i][0] &lt; queries[i][1] &lt; n</code></li><li><code>1 &lt; queries[i][1] - queries[i][0]</code></li><li>查询中不存在重复的道路。</li><li>不存在两个查询都满足 <code>i != j</code> 且 <code>queries[i][0] &lt; queries[j][0] &lt; queries[i][1] &lt; queries[j][1]</code>。</li></ul><p><strong>思路</strong></p><p>本题满足一个性质：所有查询中不会存在两个查询都满足 <code>queries[i][0] &lt; queries[j][0] &lt; queries[i][1] &lt; queries[j][1]</code>。</p><p>这说明所有添加的边都不会交叉，从贪心的角度来看，遇到捷径就走捷径是最优的。</p><p>考虑如上性质，我们把目光放在<strong>边</strong>上：</p><p>初始有 <code>n - 1</code> 条边，我们在 <code>0 -> 1</code> 这条边上，目标是到达 <code>(n - 2) -> (n - 1)</code> 这条边，并把这条边走完。</p><p>处理 <code>queries</code> 之前，我们需要走 <code>n - 1</code> 条边。</p><p><img alt=w409c-1.jpg loading=lazy src=https://pic.leetcode.cn/1722747389-ZsMpqd-w409c-1.jpg></p><p>连一条 2 到 4 的边，意味着什么？</p><p>相当于把 <code>2 -> 3</code> 这条边和 <code>3 -> 4</code> 这条边合并成一条边。现在从起点到终点需要 3 条边。</p><p><img alt=w409c-2.jpg loading=lazy src=https://pic.leetcode.cn/1722747344-UibNQD-w409c.jpg></p><p>连一条从 0 到 2 的边，相当于把 <code>0 -> 1</code> 这条边和 <code>1 -> 2</code> 这条边合并成一条边。现在从起点到终点需要 2 条边。</p><p>我们可以用<strong>并查集</strong>实现边的合并。初始化一个大小为 <code>n - 1</code> 的并查集，并查集中的节点 i 表示题目的边 <code>i -> (i + 1)</code> ，这就相当于给每条边编号 <code>0, 1, 2, ..., n - 2</code> 。</p><p>连一条从 L 到 R 的边，相当于把并查集中的节点 <code>L, L + 1, L + 2, ... , R - 2</code> 合并到并查集中的节点 <code>R - 1</code> 上。</p><p>合并的同时，维护并查集连通块个数，答案就是每次合并后的并查集连通块个数。</p><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>    vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> shortestDistanceAfterQueries(<span style=color:#66d9ef>int</span> n, vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> queries) {
+</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> fa(n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>);
+</span></span><span style=display:flex><span>        iota(fa.begin(), fa.end(), <span style=color:#ae81ff>0</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>auto</span> find <span style=color:#f92672>=</span> [<span style=color:#f92672>&amp;</span>](<span style=color:#66d9ef>int</span> x) <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>int</span> {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> rt <span style=color:#f92672>=</span> x;
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>while</span> (fa[rt] <span style=color:#f92672>!=</span> rt) {
+</span></span><span style=display:flex><span>                rt <span style=color:#f92672>=</span> fa[rt];
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>while</span> (fa[x] <span style=color:#f92672>!=</span> rt) {
+</span></span><span style=display:flex><span>                <span style=color:#66d9ef>int</span> tmp <span style=color:#f92672>=</span> fa[x];
+</span></span><span style=display:flex><span>                fa[x] <span style=color:#f92672>=</span> rt;
+</span></span><span style=display:flex><span>                x <span style=color:#f92672>=</span> tmp;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> rt;
+</span></span><span style=display:flex><span>        };
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> ans(queries.size());
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> cnt <span style=color:#f92672>=</span> n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> qi <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; qi <span style=color:#f92672>&lt;</span> queries.size(); <span style=color:#f92672>++</span>qi) {
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> l <span style=color:#f92672>=</span> queries[qi][<span style=color:#ae81ff>0</span>], r <span style=color:#f92672>=</span> queries[qi][<span style=color:#ae81ff>1</span>] <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>;
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> fr <span style=color:#f92672>=</span> find(r);
+</span></span><span style=display:flex><span>            <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> find(l); i <span style=color:#f92672>&lt;</span> r; i <span style=color:#f92672>=</span> find(i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>)) {
+</span></span><span style=display:flex><span>                fa[i] <span style=color:#f92672>=</span> fr;
+</span></span><span style=display:flex><span>                cnt<span style=color:#f92672>--</span>;
+</span></span><span style=display:flex><span>            }
+</span></span><span style=display:flex><span>            ans[qi] <span style=color:#f92672>=</span> cnt;
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> ans;
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>};
+</span></span></code></pre></div><p>下面分析上面的代码是如何使用并查集的：</p><ul><li>寻根过程：</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>while</span> (fa[rt] <span style=color:#f92672>!=</span> rt) {
+</span></span><span style=display:flex><span>    rt <span style=color:#f92672>=</span> fa[rt];
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>逐层跳跃父节点，找到 <code>x</code> 所在连通块的根节点 <code>rt</code></p><ul><li>路径压缩：</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>while</span> (fa[x] <span style=color:#f92672>!=</span> rt) {
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> tmp <span style=color:#f92672>=</span> fa[x];
+</span></span><span style=display:flex><span>    fa[x] <span style=color:#f92672>=</span> rt;
+</span></span><span style=display:flex><span>    x <span style=color:#f92672>=</span> tmp;
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>优化并查集的结构，将路径上所有节点直接指向根节点 <code>rt</code> ，使树更加“扁平化”。下次查询时，路径上的节点直接指向根节点，大幅加快后续操作的效率。</p><p><strong>为什么使用两次循环而不是递归来实现并查集的寻根过程和路径压缩过程？</strong></p><ul><li>使用迭代而非递归可以避免函数调用栈的额外开销，在深度较大的树上更安全。</li></ul></div><footer class=post-footer><ul class=post-tags></ul></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://yuk1pedia.github.io/>YUKIPEDIA's blog</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>
