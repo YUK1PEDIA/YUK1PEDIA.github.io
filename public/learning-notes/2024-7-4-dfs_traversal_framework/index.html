@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
-<title>岛屿类问题的通用解法、DFS遍历框架 | YUKIPEDIA&#39;s blog</title>
+<meta name="robots" content="noindex, nofollow">
+<title>岛屿类问题的通用解法、DFS 遍历框架 | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
-<meta name="description" content="算法">
+<meta name="description" content="岛屿类问题的通用解法、DFS 遍历框架 - YUKIPEDIA&#39;s blog">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-7-4-dfs_traversal_framework/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2024-7-4-dfs_traversal_framework/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-7-4-dfs_traversal_framework/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2024-7-4-dfs_traversal_framework/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,67 +55,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-7-4-dfs_traversal_framework/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="岛屿类问题的通用解法、DFS遍历框架">
-  <meta property="og:description" content="算法">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="岛屿类问题的通用解法、DFS遍历框架">
-<meta name="twitter:description" content="算法">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "岛屿类问题的通用解法、DFS遍历框架",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-7-4-dfs_traversal_framework/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "岛屿类问题的通用解法、DFS遍历框架",
-  "name": "岛屿类问题的通用解法、DFS遍历框架",
-  "description": "算法",
-  "keywords": [
-    
-  ],
-  "articleBody": "前言 我们所熟悉的DFS问题通常是在树或者图结构上进行的。本文讨论的DFS问题是在一种**「网格」**结构中进行的。岛屿问题是这类网格DFS问题的典型代表。网格结构遍历起来要比二叉树更加复杂，如果没有掌握一定的方法，DFS代码容易写得冗杂。\n本文将以岛屿问题为例，展示网格类问题DFS通用思路，以及如何让代码变得简洁。\n网格类问题的DFS遍历方法 基本概念 我们首先明确一下岛屿问题中的网格结构是如何定义的，以方便我们后面的讨论。\n网格问题是由 m × n 个小方格组成一个网格，每个小方格与其上下左右四个方格认为是相邻的，要在这样的网格上进行某种搜索。\n岛屿问题是一类典型的网格问题。每个格子中的数字可能是 0 或者 1。我们把数字为 0 的格子看成海洋格子，数字为 1 的格子看成陆地格子，这样相邻的陆地格子就连接成一个岛屿。\n在这样一个设定下，就出现了各种岛屿问题的变种，包括岛屿的数量、面积、周长等。不过这些问题基本都可以用DFS遍历来解决。\nDFS的基本结构 网格问题要比二叉树结构稍微复杂一些，它其实是一种简化版的图结构。要写好网格上的DFS遍历，我们首先要理解二叉树上的DFS遍历方法，再类比写出网格结构上的DFS遍历。我们写的二叉树DFS遍历一般是这样的：\nvoid traverse(TreeNode root) { // 判断 base case if (root == null) { return; } // 访问两个相邻结点：左子结点、右子结点 traverse(root.left); traverse(root.right); } 可以看到，二叉树的DFS有两个要素：「访问相邻结点」和「判断 base case」。\n访问相邻节点：二叉树的相邻节点比较简单，只有左子节点和右子节点两个。二叉树本身就是一个递归定义的结构：一棵二叉树，它的左子树和右子树也是一棵二叉树。那么我们的DFS遍历只需要递归调用左子树和右子树即可。 判断 base case：一般来说，二叉树遍历的 base case 是 root == null 。这样一个条件判断其实有两个含义： 一方面，这表示 root 指向的子树为空，不需要再向下遍历了。 另一方面，在 root == null 的时候及时返回，可以让后面的 root.left 和 root.right 操作不会出现空指针异常。 对于网格上的DFS，我们完全可以参考二叉树的DFS，写出网格DFS的两个要素：\n首先，网格结构中的格子有多少相邻节点？答案是上下左右四个。对于格子 (r, c) 来说（r 和 c分别代表行坐标和列坐标），四个相邻的格子分别是 (r-1, c) 、 (r+1, c) 、 (r, c-1) 、 (r, c+1) 。换句话说，网格结构是**「四叉」**的 其次，网格DFS中的 base case 是什么？从二叉树的 base case 对应过来，应该是网格中不需要继续遍历、 grid[r][c] 会出现数组下标越界异常的格子，也就是那些超出网格范围的格子。 这种方法可以称为「先污染后治理」——不管当前是在哪个格子，先往四个方向走一步再说，如果发现走出了网格范围，再赶紧返回。这和二叉树的遍历方法是一样的，先递归调用，发现root == null 再返回。\n这样，我们得到了网格DFS便利的框架代码：\nvoid dfs(int[][] grid, int r, int c) { // 判断 base case // 如果坐标 (r, c) 超出了网格范围，直接返回 if (!inArea(grid, r, c)) { return; } // 访问上、下、左、右四个相邻结点 dfs(grid, r - 1, c); dfs(grid, r + 1, c); dfs(grid, r, c - 1); dfs(grid, r, c + 1); } // 判断坐标 (r, c) 是否在网格中 boolean inArea(int[][] grid, int r, int c) { return 0 \u003c= r \u0026\u0026 r \u003c grid.length \u0026\u0026 0 \u003c= c \u0026\u0026 c \u003c grid[0].length; } 如何避免重复遍历？ 网格结构的DFS与二叉树的DFS最大的不同之处在于，遍历中可能遇到遍历过的节点。这是因为，网格结构本质上是一个**「图」**，我们可以把每个格子看作图中的节点，每个节点有上下左右四条边。在图中遍历时，自然可能遇到重复遍历的节点。\n这时候，DFS可能会不停的**「兜圈子」**，永远停不下来。\n如何避免这样的重复遍历？答案是标记已经遍历过的格子。以岛屿问题为例，我们需要在所有值为 1 的陆地格子上进行DFS。每走过一个陆地格子，就把格子的值改为 2，这样当我们遇到 2 的时候，就知道这是遍历过的格子了。也就是说，每个格子可能取三个值：\n0——海洋格子 1——陆地格子（未遍历过） 2——陆地格子（已遍历过） 我们在框架代码中加入避免重复遍历的语句：\nvoid dfs(int[][] grid, int r, int c) { // 判断 base case if (!inArea(grid, r, c)) { return; } // 如果这个格子不是岛屿，直接返回 if (grid[r][c] != 1) { return; } grid[r][c] = 2; // 将格子标记为「已遍历过」 // 访问上、下、左、右四个相邻结点 dfs(grid, r - 1, c); dfs(grid, r + 1, c); dfs(grid, r, c - 1); dfs(grid, r, c + 1); } // 判断坐标 (r, c) 是否在网格中 boolean inArea(int[][] grid, int r, int c) { return 0 \u003c= r \u0026\u0026 r \u003c grid.length \u0026\u0026 0 \u003c= c \u0026\u0026 c \u003c grid[0].length; } 这样，我们就得到了一个岛屿问题、乃至各种网格问题的通用DFS遍历方法。\n注意：在一些题解中，可能会把「已遍历过的陆地格子」标记为和海洋格子一样的 0，即遍历完一个陆地格子就让陆地「沉没」为海洋。这种方法看似很巧妙，但实际上有很大隐患，因为这样我们就无法区分「海洋格子」和「已遍历过的陆地格子」了。如果题目更复杂一点，这很容易出 bug。\n例题1：岛屿数量 给你一个由 '1'（陆地）和 '0'（水）组成的的二维网格，请你计算网格中岛屿的数量。\n岛屿总是被水包围，并且每座岛屿只能由水平方向和/或竖直方向上相邻的陆地连接形成。\n此外，你可以假设该网格的四条边均被水包围。\n示例 1：\n输入：grid = [\r[\"1\",\"1\",\"1\",\"1\",\"0\"],\r[\"1\",\"1\",\"0\",\"1\",\"0\"],\r[\"1\",\"1\",\"0\",\"0\",\"0\"],\r[\"0\",\"0\",\"0\",\"0\",\"0\"]\r]\r输出：1 示例 2：\n输入：grid = [\r[\"1\",\"1\",\"0\",\"0\",\"0\"],\r[\"1\",\"1\",\"0\",\"0\",\"0\"],\r[\"0\",\"0\",\"1\",\"0\",\"0\"],\r[\"0\",\"0\",\"0\",\"1\",\"1\"]\r]\r输出：3 提示：\nm == grid.length n == grid[i].length 1 \u003c= m, n \u003c= 300 grid[i][j] 的值为 '0' 或 '1' 代码\nclass Solution { public: {% raw %} vector\u003cpair\u003cint, int\u003e\u003e dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; {% endraw %} void dfs(vector\u003cvector\u003cchar\u003e\u003e\u0026 grid, int x, int y) { if (!judge(grid, x, y)) return; if (grid[x][y] == '1') { grid[x][y] = '2'; for (int i = 0; i \u003c 4; ++i) { int dirx = x + dir[i].first; int diry = y + dir[i].second; dfs(grid, dirx, diry); } } } bool judge(vector\u003cvector\u003cchar\u003e\u003e\u0026 grid, int x, int y) { int row = grid.size(); int col = grid[0].size(); if (x \u003e= row || x \u003c 0 || y \u003e= col || y \u003c 0) return false; return true; } int numIslands(vector\u003cvector\u003cchar\u003e\u003e\u0026 grid) { int ans = 0; int row = grid.size(), col = grid[0].size(); for (int i = 0; i \u003c row; ++i) { for (int j = 0; j \u003c col; ++j) { if (grid[i][j] == '1') { dfs(grid, i, j); ans++; } } } return ans; } }; 例题2：字母迷宫 字母迷宫游戏初始界面记作 m x n 二维字符串数组 grid，请判断玩家是否能在 grid 中找到目标单词 target。 注意：寻找单词时 必须 按照字母顺序，通过水平或垂直方向相邻的单元格内的字母构成，同时，同一个单元格内的字母 不允许被重复使用 。\n示例 1：\n输入：grid = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], target = \"ABCCED\"\r输出：true 示例 2：\n输入：grid = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], target = \"SEE\"\r输出：true 示例 3：\n输入：grid = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], target = \"ABCB\"\r输出：false 提示：\nm == grid.length n = grid[i].length 1 \u003c= m, n \u003c= 6 1 \u003c= target.length \u003c= 15 grid 和 target 仅由大小写英文字母组成 思路\n思路很好想，遍历表中所有的字母，当前字母为起点进行 DFS ，逐位地匹配 target 字符串，如果还没有达到 target 的长度就出现了不同，说明此次搜索没有搜索到，直接返回 false ，具体看代码实现：\nCode\nclass Solution { {% raw %} static constexpr int DIRS[4][2] = {{0, 1}, {0, -1}, {1, 0}, {-1, 0}}; {% endraw %} public: bool wordPuzzle(vector\u003cvector\u003cchar\u003e\u003e\u0026 grid, string target) { int m = grid.size(), n = grid[0].size(); auto dfs = [\u0026](auto\u0026\u0026 dfs, int i, int j, int k) -\u003e bool { if (grid[i][j] != target[k]) { // 当前字符匹配失败 return false; } if (k + 1 == target.length()) { // 匹配成功 return true; } grid[i][j] = 0; // 标记访问过 for (auto\u0026 [dx, dy]: DIRS) { int x = i + dx, y = j + dy; // 没有越界并且搜索成功 if (x \u003e= 0 \u0026\u0026 x \u003c m \u0026\u0026 y \u003e= 0 \u0026\u0026 y \u003c n \u0026\u0026 dfs(dfs, x, y, k + 1)) { return true; } } // 没有搜到，恢复现场 grid[i][j] = target[k]; return false; }; for (int i = 0; i \u003c m; ++i) { for (int j = 0; j \u003c n; ++j) { if (dfs(dfs, i, j, 0)) { return true; } } } return false; } }; ",
-  "wordCount" : "729",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-7-4-dfs_traversal_framework/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -133,7 +73,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -159,7 +99,7 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span>Learning Notes</span>
                 </a>
             </li>
@@ -172,12 +112,9 @@
   <header class="post-header">
     
     <h1 class="post-title entry-hint-parent">
-      岛屿类问题的通用解法、DFS遍历框架
+      岛屿类问题的通用解法、DFS 遍历框架
     </h1>
-    <div class="post-description">
-      算法
-    </div>
-    <div class="post-meta">
+    <div class="post-meta"><span title='2024-07-04 00:00:00 +0000 UTC'>July 4, 2024</span>
 
 </div>
   </header> 
@@ -416,7 +353,7 @@
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

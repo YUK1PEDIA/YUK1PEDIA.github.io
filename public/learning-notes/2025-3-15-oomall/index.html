@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>OOMALL相关扩展思考 | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="记录">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2025-3-15-oomall/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2025-3-15-oomall/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2025-3-15-oomall/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2025-3-15-oomall/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,67 +55,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2025-3-15-oomall/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="OOMALL相关扩展思考">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="OOMALL相关扩展思考">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "OOMALL相关扩展思考",
-      "item": "https://yuk1pedia.github.io/learning-notes/2025-3-15-oomall/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "OOMALL相关扩展思考",
-  "name": "OOMALL相关扩展思考",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "\n1.电商往往会涉及到资金的流转，在后端方面如何保证资金在电商平台上的安全？ 如何确保用户账户、支付信息不被篡改或盗用？\n可以采用双重身份验证，引入短信验证码、邮箱验证码进行二次验证\n用户支付密码需要避免明文存储，可以采用 PBKDF2 或者 Argon2 哈希存储\n防止暴力破解，限制支付密码输入错误次数，超过阈值后进行账户锁定或额外验证\n补充：\nPBKDF2（Password-Based Key Derivation Function 2）会对密码进行多次加密，让破解变得非常困难\n原理：用户输入密码，例如 mypassword123 ，系统给它加点“盐”（随机数据），比如 randomsalt ，再用 PBKDF2 算法反复进行哈希运算，得到最终的哈希值，存入数据库 Argon2 是一种更先进的哈希算法，相比 PBKDF2，它不仅反复 “加密” ，还让计算过程 更吃内存，这样黑客即使使用高性能 GPU 或专门的破解硬件，也很难暴力破解\n如何保证用户支付、退款等资金操作不会因为系统异常导致资金错账或丢失？\n采用分布式事务保障\nTCC 事务机制：Try 预留资金（冻结余额）、Confirm 确认扣款（实际转账）、Cancel 取消预留（释放资金） SAGA 事务模式：长事务，如跨行转账，采用补偿机制回滚失败操作 消息事务 + 幂等处理：采用 RocketMQ 的半消息机制实现消息事务，支付成功后发送事务消息到 MQ，再异步更新订单状态。注意订单状态更新必须是 幂等的，防止消息重复消费 对账机制\n定期对账（商户、银行、用户对账），发现差异立即报警 记录交易日志，提高不可篡改性 补充：\nTCC（Try-Confirm-Cancel）是一种 两阶段提交（2PC） 的思想（TCC 可以保证事务操作的严格执行，不会出现一部分成功，一部分失败的情况），核心思路是：“先预留资源，再真正提交，失败后回滚” 。举个例子，你去餐厅订了一桌火锅，整个流程是这样的：\nTry（尝试扣留资源）：你打电话订座，餐厅告诉你“位置已预留”，但还没真正让你入座\nConfirm（确认执行）：你准时到达餐厅，餐厅正式给你安排座位，你可以开始吃火锅了\nCancel（取消执行）：如果你临时有事不去了，餐厅会把你的座位释放出来，别人可以预订\nSAGA（补偿事务）模式，是一种长事务管理模式，适用于 异步、非实时的业务。核心思路是：“如果某个步骤失败，就执行补偿操作撤销已完成的步骤” 。\n假设你在电商平台下单：\n用户下单，订单服务创建订单\n扣减库存\n扣款支付\n通知商家发货\n如果第 4 步失败了（比如商家没货），SAGA 需要执行补偿操作：\n退款\n回复库存\n取消订单\n与 TCC 不同的是，SAGA 不用预留资源，而是进行补偿操作，更适合长时间运行的事务，比如机票预订、物流订单等\n如何防止恶意用户利用支付系统进行欺诈或盗刷？\n结合 IP、设备指纹、地理位置、交易习惯 进行用户风险评分\n黑名单系统，记录欺诈用户、异常设备、IP 段，拒绝高风险交易\n如何确保支付系统 24 小时高可用，不因系统故障影响资金流转？\n多活架构，采用 双机房 + 多活部署（如主流银行的两地三中心）\n负载均衡，进行流量分发，避免单点故障\nRaft/Paxos 分布式一致性协议，保证支付系统在节点故障时可自动切换\n定期进行 容灾演练，确保故障时可以快速恢复\n2.为什么使用 RocketMQ 而不是其他的消息队列？ 商城项目往往会有很高的在线人数，需要高吞吐量，RabbitMQ 就不适合高吞吐场景 电商场景下，要求整体延迟低，RocketMQ 在延迟方面表现更好，适合金融、电商等场景 电商平台中，订单、交易等场景需要保证消息的消费顺序，RocketMQ 支持全局顺序消息和分区顺序消息，适合需要严格顺序的场景 RocketMQ 使用 java 开发，和项目联系更紧密 RocketMQ 顺序消息如何实现？\n确保同一业务的消息 按顺序 发送到同一个队列中，并由同一个消费者线程 按顺序 消费 队列锁机制：每个 queue 都分配一个锁，确保同一时间只有一个线程消费该 queue 的消息，这样可以避免多个线程同时消费同一个 queue 导致消息乱序 消费者 在本地维护一个队列，按照消息的存储顺序逐个处理 消息消费失败，RocketMQ 会将消息重新放入队列，等待下一次消费 ",
-  "wordCount" : "126",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2025-3-15-oomall/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -133,7 +73,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -159,8 +99,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -345,7 +290,7 @@
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

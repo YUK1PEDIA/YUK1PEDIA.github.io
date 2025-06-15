@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Spring框架学习笔记 | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="笔记">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/learning-notes/2024-5-5-spring/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/learning-notes/2024-5-5-spring/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
+                    <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      Spring框架学习笔记
+    </h1>
+    <div class="post-description">
+      笔记
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="iocinversion-of-control-控制反转与didependency-injection依赖注入">IoC(Inversion of Control) 控制反转与DI(Dependency Injection)依赖注入<a hidden class="anchor" aria-hidden="true" href="#iocinversion-of-control-控制反转与didependency-injection依赖注入">#</a></h2>
+<ul>
+<li>
+<p><strong>IoC(Inversion of Control) 控制反转</strong></p>
+<ul>
+<li>使用对象时，<strong>由主动new产生对象转换为由外部提供对象</strong>，此过程中对象创建控制权由程序转移到外部，此思想称为控制反转（<strong>降低程序的耦合度</strong>）</li>
+</ul>
+</li>
+<li>
+<p><strong>Spring技术对IoC思想进行了实现</strong></p>
+<ul>
+<li>
+<p>Spring提供了一个容器，称为<strong>IoC容器</strong>，用来充当思想中的“<strong>外部</strong>”</p>
+</li>
+<li>
+<p>IoC容器负责对象的创建、初始化等一系列工作，被创建或被管理的对象在IoC容器中被称为<strong>Bean</strong></p>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>DI(Dependency Injection) 依赖注入</strong></p>
+<ul>
+<li>在容器中建立bean与bean之间的依赖关系的整个过程，称为<strong>依赖注入</strong></li>
+</ul>
+</li>
+</ul>
+<p><img alt="18b60548ce1018a417087f63c3c9eccc_720.png" loading="lazy" src="https://s2.loli.net/2024/06/30/LwtBPSmWElrDRpg.png"></p>
+<p><strong>以上操作的目标：充分解耦</strong></p>
+<h2 id="bean相关">bean相关<a hidden class="anchor" aria-hidden="true" href="#bean相关">#</a></h2>
+<h3 id="bean配置">bean配置<a hidden class="anchor" aria-hidden="true" href="#bean配置">#</a></h3>
+<ul>
+<li>
+<p><strong>bean基础配置</strong></p>
+<ul>
+<li>
+<p>id：bean的id，使用容器可以通过id值获取对应的bean，在一个容器中id值唯一</p>
+</li>
+<li>
+<p>class：bean的类型，即配置的bean的全路径类名</p>
+</li>
+<li>
+<p>例子</p>
+</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;bean</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;bookDao&#34;</span> <span style="color:#a6e22e">class=</span><span style="color:#e6db74">&#34;com.itheima.dao.impl.BookDaoImpl&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;bean</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;bookService&#34;</span> <span style="color:#a6e22e">class=</span><span style="color:#e6db74">&#34;com.itheima.service.impl.BookServiceImpl&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span></code></pre></div><ul>
+<li><strong>bean的别名</strong>
+<ul>
+<li>name：为bean指定别名，别名可以有多个，使用逗号，分号，空格进行分隔</li>
+<li>例子</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;bean</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;bookService&#34;</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;service service4 bookEbi&#34;</span> <span style="color:#a6e22e">class=</span><span style="color:#e6db74">&#34;com.itheima.service.impl.BookServiceImpl&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;property</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;bookDao&#34;</span> <span style="color:#a6e22e">ref=</span><span style="color:#e6db74">&#34;bookDao&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/bean&gt;</span>
+</span></span></code></pre></div><ul>
+<li><strong>bean的作用范围</strong>
+<ul>
+<li>scope：为bean设置作用范围，可选值为<strong>单例singleton</strong>，<strong>非单例prototype</strong>，若不写scope，则默认是单例对象</li>
+<li>例子</li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;bean</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;bookDao&#34;</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;dao&#34;</span> <span style="color:#a6e22e">class=</span><span style="color:#e6db74">&#34;com.itheima.dao.impl.BookDaoImpl&#34;</span> <span style="color:#a6e22e">scope=</span><span style="color:#e6db74">&#34;prototype&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span></code></pre></div><h3 id="bean实例化">bean实例化<a hidden class="anchor" aria-hidden="true" href="#bean实例化">#</a></h3>
+<p><strong>使用FactoryBean的方式实例化bean对象</strong></p>
+<ul>
+<li>实现FactoryBean接口，指定创建的泛型对象</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">//FactoryBean创建对象</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserDaoFactoryBean</span> <span style="color:#66d9ef">implements</span> FactoryBean<span style="color:#f92672">&lt;</span>UserDao<span style="color:#f92672">&gt;</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//代替原始实例工厂中创建对象的方法</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> UserDao <span style="color:#a6e22e">getObject</span>() <span style="color:#66d9ef">throws</span> Exception {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> UserDaoImpl();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Class<span style="color:#f92672">&lt;?&gt;</span> getObjectType() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> UserDao.<span style="color:#a6e22e">class</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 控制创建的bean是单例的还是非单例的，通常都是单例的</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">isSingleton</span>() {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span>;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>配置</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;!--方式四：使用FactoryBean实例化bean--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--注意，这种构造方法创建的不是FactoryBean对象，而是FactoryBean对象中的getObject对象--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;bean</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;userDao&#34;</span> <span style="color:#a6e22e">class=</span><span style="color:#e6db74">&#34;com.itheima.factory.UserDaoFactoryBean&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span></code></pre></div><h3 id="bean的生命周期">bean的生命周期<a hidden class="anchor" aria-hidden="true" href="#bean的生命周期">#</a></h3>
+<ul>
+<li>
+<p><strong>初始化容器</strong></p>
+<ul>
+<li>1.创建对象（内存分配）</li>
+<li>2.执行构造方法</li>
+<li>3.执行属性注入（set操作）</li>
+<li><strong>4.执行bean初始化方法</strong></li>
+</ul>
+</li>
+<li>
+<p><strong>使用bean</strong></p>
+<ul>
+<li>执行业务操作</li>
+</ul>
+</li>
+<li>
+<p><strong>关闭/销毁容器</strong></p>
+<ul>
+<li>执行bean销毁方法</li>
+</ul>
+</li>
+<li>
+<p><strong>bean的销毁时机</strong></p>
+<ul>
+<li>
+<p><strong>容器关闭前触发bean的销毁</strong></p>
+</li>
+<li>
+<p>关闭容器方式：</p>
+<ul>
+<li>手动关闭容器</li>
+</ul>
+<pre tabindex="0"><code>ConfigurableApplicationContext接口close()操作
+</code></pre><ul>
+<li>注册关闭钩子，在虚拟机退出前先关闭容器再退出虚拟机</li>
+</ul>
+<pre tabindex="0"><code>ConfigurableApplicationContext接口registerShutdownHook()操作
+</code></pre></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AppForLifeCycle</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">main</span>( String<span style="color:#f92672">[]</span> args ) {
+</span></span><span style="display:flex;"><span>        ClassPathXmlApplicationContext ctx <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ClassPathXmlApplicationContext(<span style="color:#e6db74">&#34;applicationContext.xml&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        BookDao bookDao <span style="color:#f92672">=</span> (BookDao) ctx.<span style="color:#a6e22e">getBean</span>(<span style="color:#e6db74">&#34;bookDao&#34;</span>);
+</span></span><span style="display:flex;"><span>        bookDao.<span style="color:#a6e22e">save</span>();
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//注册关闭钩子函数，在虚拟机退出之前回调此函数，关闭容器</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//ctx.registerShutdownHook();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//关闭容器</span>
+</span></span><span style="display:flex;"><span>        ctx.<span style="color:#a6e22e">close</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h2 id="依赖注入相关">依赖注入相关<a hidden class="anchor" aria-hidden="true" href="#依赖注入相关">#</a></h2>
+<h3 id="依赖注入方式">依赖注入方式<a hidden class="anchor" aria-hidden="true" href="#依赖注入方式">#</a></h3>
+<ul>
+<li>
+<p>向一个类中传递数据的方式有几种？</p>
+<ul>
+<li>普通方法（set方法）</li>
+<li>构造方法</li>
+</ul>
+</li>
+<li>
+<p><strong>依赖注入描述了在容器中建立bean和bean之间依赖关系的过程</strong>，如果bean运行需要的是数字或字符串呢？</p>
+<ul>
+<li>引用类型</li>
+<li>简单类型（基本数据类型与String）</li>
+</ul>
+</li>
+<li>
+<p><strong>依赖注入方式</strong></p>
+<ul>
+<li>
+<p><strong>setter注入</strong></p>
+<ul>
+<li>
+<p>简单类型</p>
+<ul>
+<li><strong>在bean中定义引用类型属性并提供可访问的set方法</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BookDaoImpl</span> <span style="color:#66d9ef">implements</span> BookDao {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String databaseName; <span style="color:#75715e">// 数据库名称</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> connectionNum; <span style="color:#75715e">// 数据库连接数量</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//setter注入需要提供要注入对象的set方法</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setConnectionNum</span>(<span style="color:#66d9ef">int</span> connectionNum) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">connectionNum</span> <span style="color:#f92672">=</span> connectionNum;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//setter注入需要提供要注入对象的set方法</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setDatabaseName</span>(String databaseName) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">databaseName</span> <span style="color:#f92672">=</span> databaseName;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>配置中使用property标签value属性注入简单类型数据</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;!--注入简单类型--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--对bookDao进行配置--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;bean</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;bookDao&#34;</span> <span style="color:#a6e22e">class=</span><span style="color:#e6db74">&#34;com.itheima.dao.impl.BookDaoImpl&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">&lt;!--property标签：设置注入属性--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">&lt;!--name属性：设置注入的属性名，实际是set方法对应的名称--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">&lt;!--value属性：设置注入简单类型数据值--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;property</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;connectionNum&#34;</span> <span style="color:#a6e22e">value=</span><span style="color:#e6db74">&#34;100&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;property</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;databaseName&#34;</span> <span style="color:#a6e22e">value=</span><span style="color:#e6db74">&#34;mysql&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/bean&gt;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>引用类型</p>
+<ul>
+<li><strong>在bean中定义引用类型属性并提供可访问的set方法</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BookServiceImpl</span> <span style="color:#66d9ef">implements</span> BookService{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> BookDao bookDao;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> UserDao userDao;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//setter注入需要提供要注入对象的set方法</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setUserDao</span>(UserDao userDao) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">userDao</span> <span style="color:#f92672">=</span> userDao;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//setter注入需要提供要注入对象的set方法</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setBookDao</span>(BookDao bookDao) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span>.<span style="color:#a6e22e">bookDao</span> <span style="color:#f92672">=</span> bookDao;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>配置中使用property标签ref属性注入引用类型对象</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;!--注入引用类型--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--对bookService进行配置--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;bean</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;bookService&#34;</span> <span style="color:#a6e22e">class=</span><span style="color:#e6db74">&#34;com.itheima.service.impl.BookServiceImpl&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">&lt;!--property标签：设置注入属性--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">&lt;!--name属性：设置注入的属性名，实际是set方法对应的名称--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">&lt;!--ref属性：设置注入引用类型bean的id或name--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;property</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;bookDao&#34;</span> <span style="color:#a6e22e">ref=</span><span style="color:#e6db74">&#34;bookDao&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;property</span> <span style="color:#a6e22e">name=</span><span style="color:#e6db74">&#34;userDao&#34;</span> <span style="color:#a6e22e">ref=</span><span style="color:#e6db74">&#34;userDao&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;/bean&gt;</span>
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p><strong>构造器注入</strong></p>
+<ul>
+<li>简单类型</li>
+<li>引用类型</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="依赖自动装配">依赖自动装配<a hidden class="anchor" aria-hidden="true" href="#依赖自动装配">#</a></h3>
+<ul>
+<li>
+<p>IoC容器根据bean所依赖的资源在容器中自动查找并注入到bean中的过程称为自动装配</p>
+</li>
+<li>
+<p>自动装配方式</p>
+<ul>
+<li><strong>按类型（常用）</strong></li>
+<li>按名称</li>
+<li>按构造方法</li>
+</ul>
+</li>
+<li>
+<p>配置中使用bean标签autowire属性设置自动装配的类型</p>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;!--id在自动装配时可以省略不写--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;bean</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;bookDao&#34;</span> <span style="color:#a6e22e">class=</span><span style="color:#e6db74">&#34;com.itheima.dao.impl.BookDaoImpl&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">&lt;!--autowire属性：开启自动装配，通常使用按类型装配--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;bean</span> <span style="color:#a6e22e">id=</span><span style="color:#e6db74">&#34;bookService&#34;</span> <span style="color:#a6e22e">class=</span><span style="color:#e6db74">&#34;com.itheima.service.impl.BookServiceImpl&#34;</span> <span style="color:#a6e22e">autowire=</span><span style="color:#e6db74">&#34;byType&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span></code></pre></div><p><strong>一些细节需要注意</strong></p>
+<ul>
+<li>自动装配用于<strong>引用类型</strong>依赖注入，不能对<strong>简单类型</strong>进行操作</li>
+<li>使用<strong>按类型装配</strong>时**（byType）**必须保障容器中相同类型的bean唯一，<strong>推荐使用</strong></li>
+<li>使用<strong>按名称装配</strong>时**（byName）**必须保障容器中具有指定名称的bean，<strong>因为变量名与配置耦合，不推荐使用</strong></li>
+<li>自动装配优先级低于setter注入与构造器注入，同时出现时自动装配配置失效</li>
+</ul>
+<h2 id="容器">容器<a hidden class="anchor" aria-hidden="true" href="#容器">#</a></h2>
+<h3 id="创建容器">创建容器<a hidden class="anchor" aria-hidden="true" href="#创建容器">#</a></h3>
+<ul>
+<li>类路径加载配置文件</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>ApplicationContext ctx <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ClassPathXmlApplicationContext(<span style="color:#e6db74">&#34;applicationContext.xml&#34;</span>);
+</span></span></code></pre></div><ul>
+<li>文件路径加载配置文件</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>ApplicationContext ctx <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> FileSystemXmlApplicationContext(<span style="color:#e6db74">&#34;D:\\Code\\java\\spring\\spring_10_container\\src\\main\\resources\\applicationContext.xml&#34;</span>);
+</span></span></code></pre></div><ul>
+<li>加载多个配置文件</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>ApplicationContext ctx <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ClassPathXmlApplicationContext(<span style="color:#e6db74">&#34;bean1.xml&#34;</span>, <span style="color:#e6db74">&#34;bean2.xml&#34;</span>);
+</span></span></code></pre></div><h3 id="获取bean">获取bean<a hidden class="anchor" aria-hidden="true" href="#获取bean">#</a></h3>
+<ul>
+<li><strong>使用bean名称获取</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>BookDao bookDao <span style="color:#f92672">=</span> (BookDao) ctx.<span style="color:#a6e22e">getBean</span>(<span style="color:#e6db74">&#34;bookDao&#34;</span>);
+</span></span></code></pre></div><ul>
+<li><strong>使用bean名称获取并指定类型</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>BookDao bookDao <span style="color:#f92672">=</span> ctx.<span style="color:#a6e22e">getBean</span>(<span style="color:#e6db74">&#34;bookDao&#34;</span>, BookDao.<span style="color:#a6e22e">class</span>);
+</span></span></code></pre></div><ul>
+<li><strong>使用bean类型获取（容器中这个类型的bean只能有一个）</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>BookDao bookDao <span style="color:#f92672">=</span> ctx.<span style="color:#a6e22e">getBean</span>(BookDao.<span style="color:#a6e22e">class</span>);
+</span></span></code></pre></div><h2 id="注解开发">注解开发<a hidden class="anchor" aria-hidden="true" href="#注解开发">#</a></h2>
+<h3 id="bean相关-1">bean相关<a hidden class="anchor" aria-hidden="true" href="#bean相关-1">#</a></h3>
+<h4 id="注解开发定义bean">注解开发定义bean<a hidden class="anchor" aria-hidden="true" href="#注解开发定义bean">#</a></h4>
+<ul>
+<li><strong>使用@Component定义bean</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>(<span style="color:#e6db74">&#34;bookDao&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BookDaoImpl</span> <span style="color:#66d9ef">implements</span> BookDao {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BookServiceImpl</span> <span style="color:#66d9ef">implements</span> BookService {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>核心配置文件中通过组件扫描加载bean</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#f92672">&lt;context:component-scan</span> <span style="color:#a6e22e">base-package=</span><span style="color:#e6db74">&#34;com.itheima&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span></code></pre></div><ul>
+<li><strong>Spring提供@Component注解的三个衍生注解</strong>
+<ul>
+<li><strong>@Controller：用于表现层bean定义</strong></li>
+<li><strong>@Service：用于业务层bean定义</strong></li>
+<li><strong>@Repository：用于数据层bean定义</strong></li>
+</ul>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Repository</span>(<span style="color:#e6db74">&#34;bookDao&#34;</span>) <span style="color:#75715e">// 数据层的bean</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BookDaoImpl</span> <span style="color:#66d9ef">implements</span> BookDao {
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Service</span> <span style="color:#75715e">// 业务层的bean</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BookServiceImpl</span> <span style="color:#66d9ef">implements</span> BookService {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><h4 id="纯注解开发">纯注解开发<a hidden class="anchor" aria-hidden="true" href="#纯注解开发">#</a></h4>
+<ul>
+<li>
+<p><strong>在纯注解开发中，使用java类代替spring核心配置文件</strong></p>
+<ul>
+<li>核心配置文件如下</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span><span style="color:#75715e">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;beans</span> <span style="color:#a6e22e">xmlns=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/beans&#34;</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#a6e22e">xmlns:context=</span><span style="color:#e6db74">&#34;http://www.springframework.org/schema/context&#34;</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#a6e22e">xmlns:xsi=</span><span style="color:#e6db74">&#34;http://www.w3.org/2001/XMLSchema-instance&#34;</span>
+</span></span><span style="display:flex;"><span>       <span style="color:#a6e22e">xsi:schemaLocation=</span><span style="color:#e6db74">&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd&#34;</span><span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">&lt;!--    核心配置文件中通过组件扫描加载bean--&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;context:component-scan</span> <span style="color:#a6e22e">base-package=</span><span style="color:#e6db74">&#34;com.itheima&#34;</span><span style="color:#f92672">/&gt;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/beans&gt;</span>
+</span></span></code></pre></div><ul>
+<li>java类如下</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">package</span> com.itheima.config;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.context.annotation.ComponentScan;
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> org.springframework.context.annotation.Configuration;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//声明当前类为Spring配置类</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//设置bean扫描路径，多个路径书写为字符串数组格式</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@ComponentScan</span>({<span style="color:#e6db74">&#34;com.itheima.service&#34;</span>,<span style="color:#e6db74">&#34;com.itheima.dao&#34;</span>})
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SpringConfig</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+</ul>
+<p>​	<strong>其中，java类中的@Configuration完全代替了原来核心配置文件的结构</strong></p>
+<ul>
+<li><strong>@Configuration注解用于设定当前类为配置类</strong></li>
+<li><strong>@ConponentScan注解用于设定扫描路径，此注解只能添加一次，多个数据用数组格式</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">//设置bean扫描路径，多个路径书写为字符串数组格式</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@ComponentScan</span>({<span style="color:#e6db74">&#34;com.itheima.service&#34;</span>,<span style="color:#e6db74">&#34;com.itheima.dao&#34;</span>})
+</span></span></code></pre></div><ul>
+<li><strong>读取Spring核心配置文件初始化容器对象切换为读取java配置类初始化容器对象</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">// 加载配置文件初始化容器</span>
+</span></span><span style="display:flex;"><span>ApplicationContext ctx <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ClassPathXmlApplicationContext(<span style="color:#e6db74">&#34;applicationContext.xml&#34;</span>);
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// 加载配置类初始化容器</span>
+</span></span><span style="display:flex;"><span>ApplicationContext ctx <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> AnnotationConfigApplicationContext(SpringConfig.<span style="color:#a6e22e">class</span>);
+</span></span></code></pre></div><h4 id="纯注解开发中bean的管理">纯注解开发中bean的管理<a hidden class="anchor" aria-hidden="true" href="#纯注解开发中bean的管理">#</a></h4>
+<ul>
+<li>
+<p><strong>bean的作用范围</strong></p>
+<ul>
+<li><strong>使用@Scope定义bean作用范围</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">//@Scope设置bean的作用范围</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Scope</span>(<span style="color:#e6db74">&#34;singleton&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BookDaoImpl</span> <span style="color:#66d9ef">implements</span> BookDao {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p><strong>bean的生命周期</strong></p>
+<ul>
+<li><strong>使用@PostConstruct、@PreDestroy定义bean生命周期</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Repository</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//@Scope设置bean的作用范围</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Scope</span>(<span style="color:#e6db74">&#34;singleton&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BookDaoImpl</span> <span style="color:#66d9ef">implements</span> BookDao {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">save</span>() {
+</span></span><span style="display:flex;"><span>        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;book dao save ...&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//@PostConstruct设置bean的初始化方法</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@PostConstruct</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">init</span>() {
+</span></span><span style="display:flex;"><span>        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;init ...&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//@PreDestroy设置bean的销毁方法</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@PreDestroy</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">destroy</span>() {
+</span></span><span style="display:flex;"><span>        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;destroy ...&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+</ul>
+<h3 id="依赖注入相关-1">依赖注入相关<a hidden class="anchor" aria-hidden="true" href="#依赖注入相关-1">#</a></h3>
+<h4 id="依赖注入">依赖注入<a hidden class="anchor" aria-hidden="true" href="#依赖注入">#</a></h4>
+<ul>
+<li><strong>使用@Autowired注解开启自动装配模式（按类型装配）</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BookServiceImpl</span> <span style="color:#66d9ef">implements</span> BookService {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//@Autowired：注入引用类型，自动装配模式，默认按类型装配</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> BookDao bookDao;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">save</span>() {
+</span></span><span style="display:flex;"><span>        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;book service save ...&#34;</span>);
+</span></span><span style="display:flex;"><span>        bookDao.<span style="color:#a6e22e">save</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>注意：自动装配基于反射设计创建对象并暴力反射对应属性为私有属性初始化数据，因此无需提供setter方法</strong></p>
+<p><strong>注意：自动装配建议使用无参构造方法创建对象（默认），如果不提供对应构造方法，请提供唯一的构造方法</strong></p>
+<ul>
+<li><strong>使用@Qualifier注解开启指定名称装配bean</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BookServiceImpl</span> <span style="color:#66d9ef">implements</span> BookService {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//@Autowired：注入引用类型，自动装配模式，默认按类型装配</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//@Qualifier：自动装配bean时按bean名称装配</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Qualifier</span>(<span style="color:#e6db74">&#34;bookDao&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> BookDao bookDao;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>注意：@Qualifier注解无法单独使用，必须配合@Autowired注解使用</strong></p>
+<ul>
+<li><strong>对于简单类型注入，使用@Value进行装配</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Repository</span>(<span style="color:#e6db74">&#34;bookDao&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BookDaoImpl</span> <span style="color:#66d9ef">implements</span> BookDao {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//@Value：注入简单类型（无需提供set方法）</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Value</span>(<span style="color:#e6db74">&#34;${name}&#34;</span>) <span style="color:#75715e">// name来自于配置文件property</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String name;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">save</span>() {
+</span></span><span style="display:flex;"><span>        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;book dao save ...&#34;</span> <span style="color:#f92672">+</span> name);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>使用@PropertySource注解加载properties文件</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@ComponentScan</span>(<span style="color:#e6db74">&#34;com.itheima&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//@PropertySource加载properties配置文件</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@PropertySource</span>({<span style="color:#e6db74">&#34;jdbc.properties&#34;</span>})
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SpringConfig</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>注意：路径仅支持单一文件配置，多文件要使用数组格式配置，不允许使用通配符</strong>*</p>
+<h4 id="第三方bean管理">第三方bean管理<a hidden class="anchor" aria-hidden="true" href="#第三方bean管理">#</a></h4>
+<ul>
+<li>使用@Bean配置第三方bean</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SpringConfig</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DataSource <span style="color:#a6e22e">dataSource</span>(){
+</span></span><span style="display:flex;"><span>        DruidDataSource ds <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DruidDataSource();
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setDriverClassName</span>(driver);
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setUrl</span>(url);
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setUsername</span>(userName);
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setPassword</span>(password);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ds;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>使用独立的配置类管理第三方bean</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">JdbcConfig</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DataSource <span style="color:#a6e22e">dataSource</span>(){
+</span></span><span style="display:flex;"><span>        DruidDataSource ds <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DruidDataSource();
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setDriverClassName</span>(driver);
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setUrl</span>(url);
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setUsername</span>(userName);
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setPassword</span>(password);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ds;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>
+<p><strong>将独立的配置类加入核心配置</strong></p>
+<ul>
+<li><strong>方式一：导入式（推荐使用）</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">JdbcConfig</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DataSource <span style="color:#a6e22e">dataSource</span>(){
+</span></span><span style="display:flex;"><span>        DruidDataSource ds <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DruidDataSource();
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 相关配置</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ds;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>使用@Import注解手动加入配置类到核心配置，此注解只能添加一次，多个数据请用数组格式</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Import</span>({JdbcConfig.<span style="color:#a6e22e">class</span>})
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SpringConfig</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>方式二：扫描式**（不推荐使用，隐藏性强，不知道在config中导入过哪些配置类）**</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">JdbcConfig</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DataSource <span style="color:#a6e22e">dataSource</span>(){
+</span></span><span style="display:flex;"><span>        DruidDataSource ds <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DruidDataSource();
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 相关配置</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ds;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>使用@ComponentScan注解扫描配置类所在的包，加载对应的配置类信息</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@ComponentScan</span>({<span style="color:#e6db74">&#34;com.itheima.config&#34;</span>, <span style="color:#e6db74">&#34;com.itheima.service&#34;</span>, <span style="color:#e6db74">&#34;com.itheima.dao&#34;</span>})
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SpringConfig</span> {
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+</ul>
+<h4 id="第三方bean依赖注入">第三方bean依赖注入<a hidden class="anchor" aria-hidden="true" href="#第三方bean依赖注入">#</a></h4>
+<ul>
+<li>简单类型依赖注入</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">JdbcConfig</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//1.定义一个方法获得要管理的对象</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Value</span>(<span style="color:#e6db74">&#34;com.mysql.jdbc.Driver&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String driver;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Value</span>(<span style="color:#e6db74">&#34;jdbc:mysql://localhost:3306/spring_db&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String url;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Value</span>(<span style="color:#e6db74">&#34;root&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String userName;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Value</span>(<span style="color:#e6db74">&#34;root&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String password;
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//2.添加@Bean，表示当前方法的返回值是一个bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//@Bean修饰的方法，形参根据类型自动装配</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DataSource <span style="color:#a6e22e">dataSource</span>(BookDao bookDao){
+</span></span><span style="display:flex;"><span>        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(bookDao);
+</span></span><span style="display:flex;"><span>        DruidDataSource ds <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DruidDataSource();
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setDriverClassName</span>(driver);
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setUrl</span>(url);
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setUsername</span>(userName);
+</span></span><span style="display:flex;"><span>        ds.<span style="color:#a6e22e">setPassword</span>(password);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ds;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li>引用类型依赖注入</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> DataSource <span style="color:#a6e22e">dataSource</span>(BookDao bookDao){
+</span></span><span style="display:flex;"><span>        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(bookDao);
+</span></span><span style="display:flex;"><span>        DruidDataSource ds <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> DruidDataSource();
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 属性设置</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ds;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p><strong>引用类型注入只需要为bean定义方法设置形参即可，容器会根据类型自动装配对象</strong></p>
+<h2 id="aopaspect-oriented-programming面向切面编程">AOP(Aspect Oriented Programming)面向切面编程<a hidden class="anchor" aria-hidden="true" href="#aopaspect-oriented-programming面向切面编程">#</a></h2>
+<h3 id="aop简介">AOP简介<a hidden class="anchor" aria-hidden="true" href="#aop简介">#</a></h3>
+<ul>
+<li>
+<p>AOP：面向切面编程，一种编程范式，指导开发者如何组织程序结构</p>
+</li>
+<li>
+<p><strong>作用：在不改变原始设计的基础上为其进行功能增强</strong></p>
+</li>
+<li>
+<p><strong>spring理念：无入侵式编程</strong></p>
+</li>
+</ul>
+<h3 id="aop核心概念">AOP核心概念<a hidden class="anchor" aria-hidden="true" href="#aop核心概念">#</a></h3>
+<ul>
+<li>连接点：程序执行过程中的任意位置，粒度为执行方法、抛出异常、设置变量等
+<ul>
+<li><strong>在SpringAOP中，理解为方法的执行</strong></li>
+</ul>
+</li>
+<li>切入点：匹配连接点的式子
+<ul>
+<li><strong>在SpringAOP中，一个切入点可以只描述一个具体方法，也可以匹配多个方法</strong></li>
+</ul>
+</li>
+<li>通知：在切入点处执行的操作，也就是共性功能
+<ul>
+<li>在SpringAOP中，功能最终以方法的形式呈现</li>
+</ul>
+</li>
+<li>通知类：定义通知的类</li>
+<li>切面：描述通知与切入点的对应关系</li>
+</ul>
+<h3 id="aop工作流程">AOP工作流程<a hidden class="anchor" aria-hidden="true" href="#aop工作流程">#</a></h3>
+<p><strong>1.Spring容器启动</strong></p>
+<p><strong>2.读取所有切面配置中的切入点</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">//通知类必须配置成Spring管理的bean</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">//设置当前类为切面类类</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Aspect</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MyAdvice</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 设置切入点，要求配置在方法上方</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Pointcut</span>(<span style="color:#e6db74">&#34;execution(void com.itheima.dao.BookDao.update())&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">ptx</span>(){}
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Pointcut</span>(<span style="color:#e6db74">&#34;execution(void com.itheima.dao.BookDao.update())&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">pt</span>(){}
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 设置在切入点pt()的前面运行当前操作（前置通知）</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Before</span>(<span style="color:#e6db74">&#34;pt()&#34;</span>)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">method</span>(){
+</span></span><span style="display:flex;"><span>        System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(System.<span style="color:#a6e22e">currentTimeMillis</span>());
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>3.初始化bean，判定bean对应的类中的方法是否匹配到任意切入点</strong></p>
+<ul>
+<li>匹配失败，则<strong>创建对象</strong></li>
+<li>匹配成功，则创建原始对象**（目标对象）<strong>的</strong>代理**对象</li>
+</ul>
+<p><strong>注：只要有一个切入点匹配成功，就算匹配上了</strong></p>
+<p><strong>4.获取bean执行方法</strong></p>
+<ul>
+<li>获取bean，调用方法并执行，完成操作</li>
+<li>获取的bean是代理对象时，根据代理对象的运行模式运行原始方法与增强的内容，完成操作</li>
+</ul>
+<h3 id="aop切入点表达式">AOP切入点表达式<a hidden class="anchor" aria-hidden="true" href="#aop切入点表达式">#</a></h3>
+<p>切入点：要进行增强的方法</p>
+<p><strong>切入点表达式：要进行增强的方法的描述方式</strong></p>
+<ul>
+<li>方式一：执行<strong>接口中</strong>的无参数方法</li>
+<li>方式二：执行<strong>实现类中</strong>的无参数方法</li>
+</ul>
+<p><strong>切入点表达式标准格式：动作关键字（访问修饰符  返回值  包名.类/接口名.方法名(参数)异常名）</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>execution(<span style="color:#66d9ef">public</span> User com.<span style="color:#a6e22e">itheima</span>.<span style="color:#a6e22e">service</span>.<span style="color:#a6e22e">UserService</span>.<span style="color:#a6e22e">findById</span>(<span style="color:#66d9ef">int</span>))
+</span></span></code></pre></div><ul>
+<li>动作关键字：描述切入点的行为动作，例如execution表示执行到指定切入点</li>
+<li>访问修饰符：public、private等，可省略</li>
+<li>返回值</li>
+<li>包名</li>
+<li>类/接口名</li>
+<li>方法名</li>
+<li>参数</li>
+<li>异常名：方法定义中抛出指定异常，可以省略</li>
+</ul>
+<p>可以使用<strong>通配符</strong>描述切入点，<strong>实现快速描述</strong></p>
+<ul>
+<li>*****：单个独立的任意符号，可以独立出现，也可以作为前缀或者后缀的匹配符出现</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>execution(<span style="color:#66d9ef">public</span> <span style="color:#f92672">*</span> com.<span style="color:#a6e22e">itheima</span>.<span style="color:#f92672">*</span>.<span style="color:#a6e22e">UserService</span>.<span style="color:#a6e22e">find</span><span style="color:#f92672">*</span>(<span style="color:#f92672">*</span>))
+</span></span></code></pre></div><p><strong>匹配com.itheima包下的任意包中的UserService类或接口中所有find开头的带有一个参数的方法</strong></p>
+<ul>
+<li><strong>..</strong>：多个连续地任意符号，可以对出现，常用于化简包名与参数的书写</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>execution(<span style="color:#66d9ef">public</span> User com..<span style="color:#a6e22e">UserService</span>.<span style="color:#a6e22e">findById</span>(..))
+</span></span></code></pre></div><p><strong>匹配com包下的任意包中的UserService类或接口中所有名称为findById的方法</strong></p>
+<ul>
+<li><strong>+</strong>：专用于匹配子类类型</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>execution(<span style="color:#f92672">*</span> <span style="color:#f92672">*</span>..<span style="color:#f92672">*</span>Service<span style="color:#f92672">+</span>.<span style="color:#f92672">*</span>(..))
+</span></span></code></pre></div><p><strong>书写技巧</strong></p>
+<ul>
+<li>描述切入点<strong>通常描述接口</strong>，而<strong>不描述实现类</strong>，可以降低耦合度</li>
+<li>访问控制修饰符针<strong>对接口开发均采用public描述（可省略public）</strong></li>
+<li>返回值类型对于<strong>增删改类使用精准类型加速匹配</strong>，对于<strong>查询类使用*通配快速描述</strong></li>
+<li><strong>包名书写尽量不使用..匹配</strong>，效率过低，常用*做单个包描述匹配，或精准匹配</li>
+<li>接口名/类名书写名称与模块相关的采用*****匹配，例如UserService书写成：*Service，绑定业务层接口名</li>
+<li>方法名书写以动词进行精准匹配，名词采用*****匹配，例如getById书写成getBy*，selectAll书写成selectAll</li>
+<li><strong>通常不使用异常作为匹配规则</strong></li>
+</ul>
+<h3 id="通知类型">通知类型<a hidden class="anchor" aria-hidden="true" href="#通知类型">#</a></h3>
+<ul>
+<li>
+<p>AOP通知描述了抽取的共性功能，根据共性功能抽取的位置不同，最终运行代码时要将其加入到合理的位置</p>
+</li>
+<li>
+<p>AOP通知共分为5种类型</p>
+<ul>
+<li>
+<p>前置通知</p>
+</li>
+<li>
+<p>后置通知</p>
+</li>
+<li>
+<p>环绕通知（常用）</p>
+<ul>
+<li>名称：@Around</li>
+<li>类型：方法注解</li>
+<li>位置：通知方法定义上方</li>
+<li>作用：设置当前通知方法与切入点之间的绑定关系，当前通知方法在原始切入点方法前后运行</li>
+<li>范例</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Around</span>(<span style="color:#e6db74">&#34;pt()&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">around</span>(ProceedingJoinPoint pjp) <span style="color:#66d9ef">throws</span> Throwable {
+</span></span><span style="display:flex;"><span>    System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;around before advice ...&#34;</span>);
+</span></span><span style="display:flex;"><span>    Object ret <span style="color:#f92672">=</span> pjp.<span style="color:#a6e22e">proceed</span>(); <span style="color:#75715e">// 表示对原始操作的调用</span>
+</span></span><span style="display:flex;"><span>    System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;around after advice ...&#34;</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> ret;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div></li>
+<li>
+<p>返回后通知（不常用）</p>
+</li>
+<li>
+<p>抛出异常后通知（不常用）</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>@Around注意事项</strong></p>
+<ul>
+<li>环绕通知<strong>必须依赖形参ProceedingJoinPoint</strong>才能实现对原始方法的调用，进而实现原始方法调用前后同时添加通知</li>
+<li>通知中如果未使用ProceedingJoinPoint对原始方法进行调用，将跳过原始方法的执行</li>
+<li>对原始方法的调用可以不接收返回值，通知方法设置成void即可，<strong>如果接收返回值，通知方法必须设定为Object类型</strong></li>
+<li>原始方法的返回值如果是void类型，通知方法的返回值可以设置成void，也可以设置成Object</li>
+<li>由于<strong>无法预知原始方法运行后是否会抛出异常</strong>，因此<strong>环绕通知方法必须抛出Throwable对象</strong></li>
+</ul>
+<h3 id="aop通知获取数据">AOP通知获取数据<a hidden class="anchor" aria-hidden="true" href="#aop通知获取数据">#</a></h3>
+<ul>
+<li>
+<p><strong>获取切入点方法的参数</strong></p>
+<ul>
+<li><strong>JoinPoint：适用于前置、后置、返回后、抛出异常后通知</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Before</span>(<span style="color:#e6db74">&#34;pt()&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">before</span>(JoinPoint jp) {
+</span></span><span style="display:flex;"><span>    Object<span style="color:#f92672">[]</span> args <span style="color:#f92672">=</span> jp.<span style="color:#a6e22e">getArgs</span>();
+</span></span><span style="display:flex;"><span>    System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(Arrays.<span style="color:#a6e22e">toString</span>(args));
+</span></span><span style="display:flex;"><span>    System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(<span style="color:#e6db74">&#34;before advice ...&#34;</span> );
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ul>
+<li><strong>ProceedingJointPoint：适用于环绕通知</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Around</span>(<span style="color:#e6db74">&#34;pt()&#34;</span>)
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> Object <span style="color:#a6e22e">around</span>(ProceedingJoinPoint pjp) {
+</span></span><span style="display:flex;"><span>    Object<span style="color:#f92672">[]</span> args <span style="color:#f92672">=</span> pjp.<span style="color:#a6e22e">getArgs</span>();
+</span></span><span style="display:flex;"><span>    System.<span style="color:#a6e22e">out</span>.<span style="color:#a6e22e">println</span>(Arrays.<span style="color:#a6e22e">toString</span>(args));
+</span></span><span style="display:flex;"><span>    args<span style="color:#f92672">[</span>0<span style="color:#f92672">]</span> <span style="color:#f92672">=</span> 666;
+</span></span><span style="display:flex;"><span>    Object ret <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">try</span> {
+</span></span><span style="display:flex;"><span>        ret <span style="color:#f92672">=</span> pjp.<span style="color:#a6e22e">proceed</span>(args);
+</span></span><span style="display:flex;"><span>    } <span style="color:#66d9ef">catch</span> (Throwable t) {
+</span></span><span style="display:flex;"><span>        t.<span style="color:#a6e22e">printStackTrace</span>();
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> ret;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p><strong>注：ProceedingJointPoint是JointPoint的子类</strong></p>
+</li>
+<li>
+<p><strong>获取切入点方法返回值</strong></p>
+<ul>
+<li>返回后通知</li>
+<li>环绕通知</li>
+</ul>
+</li>
+<li>
+<p><strong>获取切入点方法运行异常信息</strong></p>
+<ul>
+<li>抛出异常后通知</li>
+<li>环绕通知</li>
+</ul>
+</li>
+</ul>
+<h2 id="spring事务">Spring事务<a hidden class="anchor" aria-hidden="true" href="#spring事务">#</a></h2>
+<h3 id="spring事务简介">Spring事务简介<a hidden class="anchor" aria-hidden="true" href="#spring事务简介">#</a></h3>
+<ul>
+<li>事务作用：在数据层保障一系列的数据库操作同成功同失败</li>
+<li>Spring事务作用：在数据层或<strong>业务层</strong>保障一系列的数据库操作同成功或同失败</li>
+</ul>
+<h3 id="spring事务角色">Spring事务角色<a hidden class="anchor" aria-hidden="true" href="#spring事务角色">#</a></h3>
+<ul>
+<li>事务管理员：<strong>发起事务方</strong>，在Spring中通常指代业务层开启事务的方法</li>
+<li>事务调解员：<strong>加入事务方</strong>，在Spring中通常指代数据层方法，也可以是业务层方法</li>
+</ul>
+<h3 id="spring事务属性">Spring事务属性<a hidden class="anchor" aria-hidden="true" href="#spring事务属性">#</a></h3>
+<p><strong>事务相关配置</strong></p>
+<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/06/30/OQSZIcCABgtxuPe.png"></p>
+<p><strong>事务传播行为</strong></p>
+<ul>
+<li>事务传播行为：事务协调员对事务管理员所携带事务的处理态度</li>
+</ul>
+<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/06/30/Aqm9LaQs46jBUp5.png"></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

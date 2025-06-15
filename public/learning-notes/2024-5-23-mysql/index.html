@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>mysql常用指令 | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="记录">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-5-23-mysql/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2024-5-23-mysql/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-5-23-mysql/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2024-5-23-mysql/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,67 +55,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-5-23-mysql/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="mysql常用指令">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="mysql常用指令">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "mysql常用指令",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-5-23-mysql/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "mysql常用指令",
-  "name": "mysql常用指令",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "Ⅰ-DDL语句 1.数据库操作 1.登录指令：mysql -u root -p，密码：123456\n2.查询所有数据库\nSHOW DATABASES; 3.查询当前数据库\nSELECT DATABASE(); 4.创建数据库\nCREATE DATABASE; 5.删除数据库\nDROP DATABASE; 6.使用（跳转到某数据库）：USE 数据库名;\n2.表操作 (1).表的创建相关操作 1.创建表：CREATE TABLE 表名(\n​\t字段1 字段1类型[COMMENT 字段1注释],\n​\t字段2 字段2类型[COMMENT 字段2注释]\n​\t……\n​\t字段n 字段n注释[COMMENT 字段n注释]\n)[COMMENT 表注释];\n2.查询当前数据库所有表\nSHOW TABLES; 3.查询表结构：DESC 表名;\n4.查询指定表的建表语句：SHOW CREATE TABLE 表名;\n(2).表的修改相关操作 1.往表结构中增加字段：ALTER TABLE 表名 ADD 字段名 类型(长度) [COMMENT注释] [约束];\n2.修改字段名和字段类型：ALTER TABLE 表名 CHANGE 旧字段名 新字段名 类型(长度) [COMMENT 注释] [约束];\n3.修改数据类型：ALTER TABLE 表名 MODIFY 字段名 新数据类型(长度);\n4.修改表名：ALTER TABLE 表名 RENAME TO 新表名;\n5.删除字段：ALTER TABLE 表名 DROP 字段名;\n6.删除表：DROP TABLE [IF EXISTS] 表名;\n7.删除指定表，并重新创建该表：TRUNCATE TABLE 表名(作用是将该表数据全部清空，得到一张全新的空表，但结构不变);\nⅡ-DML语句 1.添加数据(INSERT) 1.给指定字段添加数据：INSERT INTO 表名(字段1,字段2,…) VALUES(值1,值2,…);\n2.给全部字段添加数据：INSERT INTO 表名 VALUES(值1,值2，…);\n3.批量添加数据：\n为指定字段添加：INSERT INTO 表名(字段名1,字段名2,…) VALUES(值1,值2,…),(值1,值2,…),(值1,值2,…);\n为表中全部字段添加：INSERT INTO 表名 VALUES(值1,值2…),(值1,值2…),(值1,值2…);\n注意：1.插入数据时，指定字段顺序要与值的顺序一一对应；2.字符串和日期型数据应包含在引号中；3.插入的数据大小应该在字段的规定范围内。\n2.修改数据(UPDATA) 修改数据语法：UPDATE 表名 SET 字段名1 = 值1，字段名2 = 值2，…[WHERE 条件]\n若不加where语句，则修改整张表的字段名\n3.删除数据(DELETE) 删除数据语法：DELETE FROM 表名 [WHERE 条件]\n注意：1.DELETE的条件可以有也可以没有，若没有条件则会删除整张表的所有数据；2.DELETE语句不能删除某一个字段的值(可以用UPDATE将该字段的值置为NULL)\nⅢ-DQL语句 1.基础查询 (1).查询多个字段\n1.查询指定多个字段：SELECT 字段1,字段2,… FROM 表名\n2.查询整张表：SELECT * FROM 表名;\n(2).设置别名\n语法：SELECT 字段1 [AS 别名1], 字段2 [AS 别名2]… FROM 表名;\n(3).去除重复记录\n语法：SELECT DISTINCT 字段列表 FROM 表名;\n2.条件查询 (1).基本语法\n语法：SELECT 字段列表 FROM 表名 WHERE 条件列表;\n(2.)条件\n对于比较运算符后三中查询的举例说明\n1.IN(…)，可以用于查询如：查询年龄等于18或20或40的员工信息\nSELECT * FROM emp WHERE age in(18,20,40); 2.LIKE 占位符，用于模糊匹配，比如查询姓名为两个字的员工信息\nSELECT * FROM emp WHERE name LIKE '__'; 又如查询身份证号末尾是X的员工信息\nSELECT * FROM emp WHERE idcard LIKE '%X'; 3.聚合函数 (1).什么是聚合函数\n概念：将一列数据作为一个整体，进行纵向计算，作用于某一列（字段）\n(2).常见聚合函数\n(3).语法\n语法：SELECT 聚合函数(字段列表) FROM 表名;\n统计员工数量\nSELECT COUNT(*) FROM emp; 统计有身份证号的员工数量\nSELECT COUNT(idcard) FROM emp; 统计员工最大年龄\nSELECT MAX(age) FROM emp; 统计西安地区员工的年龄之和\nSELECT SUM(age) FROM emp WHERE workaddress = '西安'; 注意：NULL值不参与所有聚合函数的计算\n4.分组查询 (1).语法\n**语法：**SELECT 字段列表 FROM 表名 [WHERE 条件] GROUP BY 分组字段名 [HAVING 分组后过滤条件];\nWHERE与HAVING的区别：\n执行时机不同：WHERE是分组前进行过滤，不满足WHERE条件的不参与分组；HAVING对分组后的结果进行过滤 判断条件不同：WHERE不能对聚合函数进行判断，而HAVING可以 (2).示例\n基础查询\n根据性别分组，统计男性员工与女性员工数量\nSELECT gender, COUNT(*) FROM emp GROUP BY gender; 根据性别分组，统计男员工与女员工的平均年龄\nSELECT gender, AVG(age) FROM emp GROUP BY gender; 分组查询\n查询年龄小于45的员工，并根据工作地址分组，获取员工数量大于等于3的工作地址 SELECT workaddress, COUNT(*) address_count FROM emp WHERE age \u003c 45 GROUP BY workaddress HAVING address_count \u003e= 3; 5.排序查询 (1).语法\n语法：SELECT 字段列表 FROM 表名 ORDER BY 字段1 排序方式1, 字段2 排序方式2;\n(2).排序方式\nASC：升序（默认值） DESC：降序 注意：如果是多字段排序，只有当第一个字段值相同时，才会根据第二个字段进行排序\n6.分页查询 (1).语法\n语法：SELECT 字段列表 FROM 表名 LIMIT 起始索引, 查询记录数;\n注意\n起始索引从0开始，起始索引 = (查询页码 - 1) * 每页显示记录数 分页查询是数据库的方言，不同的数据库有不同的实现，MySQL是LIMIT 如果查询的是第一页数据，起始索引可以省略，直接简写为LIMIT 10 (2).例子\n查询第1页员工数据，每页展示10条数据 SELECT * FROM emp LIMIT 0, 10; 查询第2页员工数据，每页展示10条数据**（起始索引 = (页码 - 1) * 页展示记录数）**\nSELECT * FROM emp LIMIT 10, 10; Ⅳ-DCL语句 1.用户管理 (1).查询用户\nUSE mysql;\rSELECT * FROM user; (2).创建用户\nCREATE USER '用户名'@'主机名' IDENTIFIED BY '密码'; (3).修改用户密码\nALTER USER '用户名'@'主机名' IDENTIFIED WITH mysql_native_password BY '新密码'; (4).删除用户\nDROP USER '用户名'@'主机名'; 2.权限控制 1.查询权限\nSHOW GRANTS FOR '用户名'@'主机名'; 2.授予权限\nGRANT 权限列表 ON 数据库名.表名 TO '用户名'@'主机名'; 3.撤销权限\nREVOKE 权限列表 ON 数据库名.表名 FROM '用户名'@'主机名'; 注意\n多个权限之间使用逗号分隔 授权时，数据库名和表名以使用 * 进行通配，代表所有 ",
-  "wordCount" : "398",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-5-23-mysql/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -133,7 +73,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -159,8 +99,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -365,7 +310,7 @@ SELECT * FROM user;
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

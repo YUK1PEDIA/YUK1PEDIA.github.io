@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Learning Notes | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="Learning Notes - YUKIPEDIA&#39;s blog">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://yuk1pedia.github.io/learning-notes/index.xml">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/learning-notes/index.xml">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/">
 <noscript>
     <style>
         #theme-toggle,
@@ -56,30 +56,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="Learning Notes">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Learning Notes">
-<meta name="twitter:description" content="">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }
-  ]
-}
-</script>
+</noscript>
 </head>
 
 <body class="list" id="top">
@@ -97,7 +74,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -123,8 +100,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span class="active">Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -136,24 +118,6 @@
     Learning Notes
   </h1>
 </header>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">缓存穿透、缓存雪崩、缓存击穿与缓存污染
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>1.缓存穿透 什么是缓存穿透？
-我们使用 redis 大部分情况都是通过 key 查询对应的值，假如发送的请求传进来的 key 是不存在redis 中的，那么就查不到缓存，查不到缓存就会去数据库查询。假如有大量这样的请求，这些请求像“穿透”了缓存一样直接打在数据库上，这种现象就叫做缓存穿透。
-分析：
-关键在于在 redis 查不到 key 值，这和缓存击穿有根本的区别，区别在于缓存穿透的情况是传进来的 key 在 redis 中是不存在的。假如有黑客传进大量的不存在的 key ，那么大量的请求打在数据库上是很致命的问题，所以在日常开发中要对参数做好校验，一些非法的参数，不可能存在的key就直接返回错误提示，要对调用方保持这种“不信任”的心态。
-解决方案：
-把无效的 key 存进 redis 中。如果 redis 查不到数据，数据库也查不到，我们把这个 key 值保存进 redis ，设置 value=“null” ，当下次再通过这个 key 查询时就不需要再查询数据库。但这种处理方式肯定是有问题的，假如传进来的这个不存在的 key 值每次都是随机的，那存进 redis 也没有意义，会造成无意义的内存消耗，并且如果某个之前访问过的 key 此时设置了对应的值，那么就会造成 redis 和数据库的短暂不一致。 使用布隆过滤器。布隆过滤器的作用是某个 key 不存在，那么就一定不存在，它说某个 key 存在，那么很大可能是存在(存在一定的误判率)。于是我们可以在缓存之前再加一层布隆过滤器，在查询的时候先去布隆过滤器查询 key 是否存在，如果不存在就直接返回。 布隆过滤器的一种实现：
-初始化一个较大的数组，用来存放二进制 0 或 1。一开始数组中数据都为 0，当一个 key 来了之后经过 3 次 hash 计算，得到三个下标 index，将数组中这三个下标对应的数据从 0 改为 1，这样的话数组中三个位置就能标明一个 key 的存在。 当然这种实现也是有误判率的，应该说布隆过滤器的误判率不可能为 0。如果我们想要减少误判率，就得增加数组的长度，但这样会造成更多的内存消耗。 ...</p>
-  </div>
-  <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 缓存穿透、缓存雪崩、缓存击穿与缓存污染" href="https://yuk1pedia.github.io/learning-notes/2024-11-6-cache-penetration-cache-avalanche-and-cache-breakdown/"></a>
-</article>
 
 <article class="post-entry"> 
   <header class="entry-header">
@@ -184,7 +148,7 @@ Q5：数据库方面呢？说说你是用过哪些数据库？ A：mysql、redis
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 记录暑期和秋招" href="https://yuk1pedia.github.io/learning-notes/2025-4-14-autumn-recruitment/"></a>
+  <a class="entry-link" aria-label="post link to 记录暑期和秋招" href="http://localhost:1313/learning-notes/2025-4-14-autumn-recruitment/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -199,7 +163,7 @@ Q5：数据库方面呢？说说你是用过哪些数据库？ A：mysql、redis
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 通过AOP和反射实现不同表的公共字段自动填充" href="https://yuk1pedia.github.io/learning-notes/2024-9-4-implement-automatic-filling-of-common-fields-for-different-tables-through-aop-and-reflection/"></a>
+  <a class="entry-link" aria-label="post link to 通过AOP和反射实现不同表的公共字段自动填充" href="http://localhost:1313/learning-notes/2024-9-4-implement-automatic-filling-of-common-fields-for-different-tables-through-aop-and-reflection/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -215,11 +179,11 @@ Q5：数据库方面呢？说说你是用过哪些数据库？ A：mysql、redis
 </p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 随便写写，感觉更像日记" href="https://yuk1pedia.github.io/learning-notes/2025-4-19-record/"></a>
+  <a class="entry-link" aria-label="post link to 随便写写，感觉更像日记" href="http://localhost:1313/learning-notes/2025-4-19-record/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
-    <a class="prev" href="https://yuk1pedia.github.io/learning-notes/page/6/">
+    <a class="prev" href="http://localhost:1313/learning-notes/page/6/">
       «&nbsp;Prev&nbsp;
     </a>
   </nav>
@@ -227,7 +191,7 @@ Q5：数据库方面呢？说说你是用过哪些数据库？ A：mysql、redis
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

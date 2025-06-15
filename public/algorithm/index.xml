@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Algorithms on YUKIPEDIA&#39;s blog</title>
+    <link>http://localhost:1313/algorithm/</link>
+    <description>Recent content in Algorithms on YUKIPEDIA&#39;s blog</description>
+    <generator>Hugo -- 0.147.8</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Thu, 04 Jul 2024 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/algorithm/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>岛屿类问题的通用解法、DFS 遍历框架</title>
+      <link>http://localhost:1313/algorithm/2024-7-4-dfs_traversal_framework/</link>
+      <pubDate>Thu, 04 Jul 2024 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/algorithm/2024-7-4-dfs_traversal_framework/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

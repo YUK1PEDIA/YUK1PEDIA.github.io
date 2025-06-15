@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Docker | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="记录">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-10-8-docker/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2024-10-8-docker/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-10-8-docker/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2024-10-8-docker/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,67 +55,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-10-8-docker/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="Docker">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Docker">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Docker",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-10-8-docker/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Docker",
-  "name": "Docker",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "1.镜像和容器 利用 Docker 安装应用时，Docker 会自动搜索并下载应用镜像（image）。镜像不仅包含应用本身，还包含应用所需要的环境、配置、系统函数库（此处的环境是最轻量的，只包含容器内运行需要的环境，其他编辑操作可能包含）。Docker 会在运行镜像时创建一个隔离环境，称为容器（container）。\n镜像仓库：存储和管理镜像的平台，Docker 官方维护了一个公共仓库：https://hub.docker.com/\n2.命令解读 docker run -d \\ --name mysql \\ -p 3306:3306 \\ -e TZ=Asia/Shanghai \\ -e MYSQL_ROOT_PASSWORD=123 \\ mysql docker run ：创建并运行一个容器，-d 是让容器在后台运行。 --name mysql ：给容器起个名字，必须唯一。 -p 3306:3306 ：设置端口映射，docker 创建的容器拥有独立的文件系统、内存、网络空间等，从外部直接对 docker 容器进行 ping 操作是 ping 不通的，需要设置服务器或虚拟机的端口映射，才能通过服务器或虚拟机访问到上面的 docker 容器。冒号前面的端口是宿主机端口，冒号后面是容器内端口。 -e KEY=VALUE ：设置环境变量。上面的命令中，TZ=Asia/Shanghai 是配置时区 mysql ：指定运行的镜像的名字 补充：镜像命名规范\n镜像名称一般分两部分组成：[repository]:[tag] 其中 repository 就是镜像名 tag 是镜像的版本 在没有指定 tag 时，默认是 latest ，代表最新版本的镜像 3.常见命令 docker rmi 是删除镜像，docker rm 是删除容器 docker run 是创建并运行容器，这条命令会创建一个新的容器，如果要启动已经有的容器，需要执行 docker start 命令 docker exec 是进入到容器内部 4.数据卷挂载 数据卷挂载 数据卷（volume）是一个虚拟目录，是容器内目录与宿主机目录之间映射的桥梁。\n在执行 docker run 命令时，使用 -v 数据卷:容器内目录 可以完成数据卷挂载\n例：docker run -d --name nginx -p 80:80 -v html:/user/share/nginx/html nginx\n当创建容器时，如果挂载了数据卷且数据卷不存在，会自动创建数据卷\n数据卷挂载后，我们可以直接在宿主机进行文件的编辑操作，不用进入到容器中下载需要的编辑工具再对文件进行编辑。\n数据卷的常见命令如下：\ndocker volume ls ：查看数据卷 docker volume rm ：删除数据卷 docker volume inspect ：查看数据卷详情 docker volume prune ：删除未使用的数据卷 本地挂载 我们进行数据卷挂载时，可以不通过数据卷名称进行挂载。\n只用将之前的 docker run 命令里的 -v 数据卷:容器内目录 换成 -v 本地目录:容器内目录 即可完成本地目录挂载\n本地目录必须以 “/” 或 “./” 开头，如果直接以名称开头，会被识别为数据卷而非本地目录 -v mysql:/var/lib/mysql 会被识别为一个数据卷叫 mysql -v ./mysql:/var/lib/mysql 会被识别为当前目录下的 mysql 目录 5.自定义镜像 镜像就是包含了应用程序、程序运行的系统函数库、运行配置等文件的文件包。构建镜像的过程其实就是把上述文件打包的过程。\nDockerfile Dockerfile是一个文本文件，其中包含一个个的指令，用指令来说明要执行什么操作来构建镜像。将来 Docker 可以根据 Dockerfile 帮我们构建镜像。常见指令如下：\n指令 说明 示例 FROM 指定基础镜像 FROM centos:6 ENV 设置环境变量，可在后面指令使用 ENV key value COPY 拷贝本地文件到镜像的指定目录 COPY ./jrell.tar.gz /tmp RUN 执行 Linux 的 shell 命令，一般是安装过程的命令 RUN tar -zxvf /tmp/jrell.tar.gz \u0026\u0026 EXPORTS path=/tmp/jrell:$path EXPOSE 指定容器运行时监听的端口，是给镜像使用者看的 EXPOSE 8080 ENTRYPOINT 镜像中应用的启动命令，启动运行时调用 ENTRYPOINT java -jar xx.jar 编写好了 Dockerfile ，可以利用下面命令来构建镜像：\ndocker build -t myImage:1.0 .\n-t ：是给镜像起名，格式依然是 repository:tag 的格式，不指定 tag 时，默认为 latest . ：是指定 Dockerfile 所在目录，如果就在当前目录，则指定为 “.” 6.容器网络互连 ",
-  "wordCount" : "212",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-10-8-docker/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -133,7 +73,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -159,8 +99,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -315,7 +260,7 @@
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

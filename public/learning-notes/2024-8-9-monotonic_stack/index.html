@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>单调栈 | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="记录">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-8-9-monotonic_stack/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2024-8-9-monotonic_stack/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-8-9-monotonic_stack/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2024-8-9-monotonic_stack/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,67 +55,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-8-9-monotonic_stack/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="单调栈">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="单调栈">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "单调栈",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-8-9-monotonic_stack/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "单调栈",
-  "name": "单调栈",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "什么是单调栈？ 单调栈是一种特殊的栈，在栈的「先进后出」规则基础上，要求「从 栈顶 到 栈底 的元素是单调递增（或者单调递减）」。其中满足从栈顶到栈底的元素是单调递增的栈，叫做「单调递增栈」。满足从栈顶到栈底的元素是单调递减的栈，叫做「单调递减栈」。\n单调栈的 push 和 pop 比如我们现在有一组数：[10, 3, 7, 4, 12] ，如何将这组数放到一个单调递增栈中？\n我们从左到右遍历数组，根据以下条件判断进行何种操作：\n如果栈空或当前遍历到的元素 cur 小于栈顶元素，则入栈； 如果栈非空并且当前遍历到的元素 cur 大于栈顶元素，则将栈中所有比 cur 小的元素出栈，再将 cur 入栈。 对于上述数组，通过单调栈有如下操作：\n对于 10 ，当前栈空，直接入栈，此时栈顶到栈底：[10]； 对于 3 ，当前栈非空，且当前元素小于栈顶元素，直接入栈，此时栈顶到栈底：[3, 10]； 对于 7 ，当前栈非空，且当前元素大于栈顶元素，先将栈顶元素 3 出栈，再将 7 入栈，此时栈顶到栈底：[7, 10]； 对于 4 ，当前栈非空，且当前元素小于栈顶元素，直接入栈，此时栈顶到栈底：[4, 7, 10]； 对于 12 ，当前栈非空，且当前元素大于栈顶元素，先将 4、7、10 出栈，再将 12 入栈，此时栈顶到栈底：[12]； 单调栈能解决什么问题？ 当我们遇到：需要在 O(n) 的时间复杂度内求出数组中各个元素右侧或左侧第一个更大或更小的元素及其下标，然后一并得到其他信息时，均可以尝试单调栈的做法\n例题 87.每日温度 给定一个整数数组 temperatures ，表示每天的温度，返回一个数组 answer ，其中 answer[i] 是指对于第 i 天，下一个更高温度出现在几天后。如果气温在这之后都不会升高，请在该位置用 0 来代替。\n示例 1:\n输入: temperatures = [73,74,75,71,69,72,76,73]\r输出: [1,1,4,2,1,1,0,0] 示例 2:\n输入: temperatures = [30,40,50,60]\r输出: [1,1,1,0] 示例 3:\n输入: temperatures = [30,60,90]\r输出: [1,1,0] 提示：\n1 \u003c= temperatures.length \u003c= 10^5 30 \u003c= temperatures[i] \u003c= 100 思路 数据范围是 10^5 使用 O(n^2) 的复杂度一定会超时，这里可以考虑借助一个单调栈解决。\n我们先定义一个长度为 temperatures.size() 的数组 ans ，然后定义一个单调栈来存放 temperatures 中元素的下标，从栈底到栈顶存放的下标所对应的温度是非递增的。我们遍历一遍 temeratures 数组，进行如下处理：\n**当栈非空并且栈顶元素小于当前遍历到的元素 a **，那么 a 一定是栈顶元素右边第一个比它大的元素，于是弹出栈顶元素 pre ，更新 ans 数组中栈顶元素对应的结果为 i - pre 如若当前遍历到的元素小于等于栈顶元素或者栈空，将其入栈 代码如下：\nclass Solution { public: vector\u003cint\u003e dailyTemperatures(vector\u003cint\u003e\u0026 temperatures) { int n = temperatures.size(); vector\u003cint\u003e ans(n); stack\u003cint\u003e stk; for (int i = 0; i \u003c n; ++i) { while (!stk.empty() \u0026\u0026 temperatures[i] \u003e temperatures[stk.top()]) { int pre = stk.top(); ans[pre] = i - pre; stk.pop(); } stk.push(i); } return ans; } }; 89.柱状图中最大的矩形 给定 n 个非负整数，用来表示柱状图中各个柱子的高度。每个柱子彼此相邻，且宽度为 1 。\n求在该柱状图中，能够勾勒出来的矩形的最大面积。\n示例 1:\n输入：heights = [2,1,5,6,2,3]\r输出：10\r解释：最大的矩形为图中红色区域，面积为 10 示例 2：\n输入： heights = [2,4]\r输出： 4 提示：\n1 \u003c= heights.length \u003c=10^5 0 \u003c= heights[i] \u003c= 10^4 思路 首先，面积最大的矩形高度一定是 heights 中的元素。这可以用反证法证明：假如高度不在 heights 中，比如 4 ，那我们可以增加高度直到触及某根柱子的顶部，比如增加到 5 ，由于矩形底边长不变，高度增加，我们得到了面积更大的矩形，矛盾，所以面积最大矩形的高度一定是 heights 中的元素。\n假设 h = heights[i] 是矩形的高度，那么矩形的宽度最大是多少？这是我们要求的数据。我们需要知道：\n在 i 左侧的小于 h 的最近元素的下标为 left ，如果不存在则为 -1 。这样 left + 1 就是在 i 左侧的大于等于 h 的最近元素的下标。 在 i 右侧的小于 h 的最近元素的下标为 right ，如果不存在则为 n 。这样 right - 1 就是在 i 右侧的大于等于 h 的最近元素的下标。 比如示例 1 ，选择 i = 2 这个柱子作为矩形高，那么左边小于 heights[2] = 5 的最近元素的下标为 left = 1 ，右边小于 heights[2] = 5 的最近元素的下标为 right = 4 。\n那么矩形的宽度就是 right - left - 1 = 4 - 1 - 1 = 2 ，矩形面积为 h * (right - left - 1) = 5 * 2 = 10 。\n通过枚举 heights[i] ，计算每个 heights[i] 对应的矩形面积，更新答案的最大值。快速计算 left 和 right 可以用单调栈实现\n总的思路：求最大面积 -\u003e 枚举每个 heights[i] -\u003e 找到每个 heights[i] 对应的最大宽度 -\u003e 得到每个 heights[i] 对应的最大面积 -\u003e 再枚举每个最大面积，找到最终结果\n代码如下：\nclass Solution { public: int largestRectangleArea(vector\u003cint\u003e\u0026 heights) { int n = heights.size(); // 记录每个 heights[i] 左侧的最近元素下标 vector\u003cint\u003e left(n, -1); stack\u003cint\u003e st; // 利用单调栈计算 left 和 right，原理可以看 T87：每日温度 for (int i = 0; i \u003c n; ++i) { // 利用单调栈计算每个 heights[i] 左侧的最近元素下标 while (!st.empty() \u0026\u0026 heights[i] \u003c= heights[st.top()]) { st.pop(); } if (!st.empty()) { left[i] = st.top(); } st.push(i); } // 每个 heights[i] 右侧的最近元素下标也同样用单调栈计算 vector\u003cint\u003e right(n, n); st = stack\u003cint\u003e(); for (int i = n - 1; i \u003e= 0; --i) { while (!st.empty() \u0026\u0026 heights[i] \u003c= heights[st.top()]) { st.pop(); } if (!st.empty()) { right[i] = st.top(); } st.push(i); } int ans = 0; // 更新每个高度对应的面积 for (int i = 0; i \u003c n; ++i) { ans = max(ans, heights[i] * (right[i] - left[i] - 1)); } return ans; } }; ",
-  "wordCount" : "476",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-8-9-monotonic_stack/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -133,7 +73,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -159,8 +99,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -322,7 +267,7 @@
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

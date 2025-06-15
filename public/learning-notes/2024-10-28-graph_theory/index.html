@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>图论 | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="记录">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2024-10-28-graph_theory/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2024-10-28-graph_theory/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,67 +55,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="图论">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="图论">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "图论",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "图论",
-  "name": "图论",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "前言 整理自：https://algo.itcharge.cn/和代码随想录：https://www.programmercarl.com/qita/tulunfabu.html\n1.图的基础知识 (1).图的定义 图（Graph）：由顶点的非空有限集合 V （由 n\u003e0 个顶点组成）与边的集合 E（顶点之间的关系）构成的结构。其形式化定义为 G=(V,E)。\n顶点（Vertex）：图中的数据元素通常称为顶点，在下面的示意图中我们使用圆圈来表示顶点。 边（Edge）：图中两个数据元素之间的关联关系通常称为边，在下面的示意图中我们使用连接两个顶点之间的线段来表示边。边的形式化定义为：e=，表示从 u 到 v 的一条边，其中 u 称为起始点，v 称为终止点。 子图（Sub Graph）：对于图 G*=(V,E) 与 G*′=(V′,E′)，如果存在 V*′⊆V，E′⊆E，则称图 ′G′ 是图 G* 的一个子图。在下面的示意图中我们给出了一个图 G 及其一个子图 G。特别的，根据定义，G 也是其自身的子图。 (2).图的分类 2.1无向图和有向图 按照边是否有方向，我们可以将图分为两种类型：「无向图」和「有向图」。\n无向图（Undirected Graph）：如果图中的每条边都没有指向性，则称为无向图。例如朋友关系图、路线图都是无向图。 有向图（Directed Graph）：如果图中的每条边都具有指向性，则称为有向图。例如流程图是有向图。 如果无向图中有 n 个顶点，则无向图中最多有 n×(n−1)/2 条边。而具有 n×(n−1)/2 条边的无向图称为 「完全无向图（Completed Undirected Graph）」。\n如果有向图中有 n 个顶点，则有向图中最多有 n×(n−1) 条弧。而具有 n×(n−1) 条弧的有向图称为 「完全有向图（Completed Directed Graph）」。\n2.2环形图和无环图 路径：简单来说，如果顶点 vi0 可以通过一系列的顶点和边，到达顶点 vim，则称顶点 vi0 和顶点 vim 之间有一条路径，其中经过的顶点序列则称为两个顶点之间的路径。 环（Circle）：如果一条路径的起始点和终止点相同（即 vi0*==vi*m ），则称这条路径为「回路」或者「环」。 简单路径：顶点序列中顶点不重复出现的路径称为「简单路径」。 而根据图中是否有环，我们可以将图分为「环形图」和「无环图」。\n环形图（Circular Graph）：如果图中存在至少一条环路，则该图称为「环形图」。 无环图（Acyclic Graph）：如果图中不存在环路，则该图称为「无环图」。 特别的，在有向图中，如果不存在环路，则将该图称为「有向无环图（Directed Acyclic Graph）」，缩写为 DAG。\n如下图所示，分别为：无向无环图、无向环形图、有向无环图和有向环形图。\n2.3连通图和非连通图 2.3.1连通无向图和连通分量\n在无向图中，如果从顶点 vi 到顶点 vj 有路径，则称顶点 vi和 vj 是连通的。\n连通无向图：在无向图中，如果图中任意两个顶点之间都是连通的，则称该图为连通无向图。 非连通无向图：在无向图中，如果图中至少存在一对顶点之间不存在任何路径，则该图称为非连通无向图。 下面介绍一下无向图的「连通分量」概念。有些无向图可能不是连通无向图，但是其子图可能是连通的。这些子图称为原图的连通子图。而无向图的一个极大连通子图（不存在包含它的更大的连通子图）则称为该图的「连通分量」。\n连通子图：如果无向图的子图是连通无向图，则该子图称为原图的连通子图。 连通分量：无向图中的一个极大连通子图（不存在包含它的更大的连通子图）称为该图的连通分量。 极大连通子图：无向图中的一个连通子图，并且不存在包含它的更大的连通子图。 比如上图中右边的图是非连通无向图，但是它由 v1、v2、v3、v4 这四个顶点构成的子图是一个连通子图，并且是原图的极大连通子图。所以，这个子图就是原图的一个连通分量。同理，v5、v6 构成的子图也是原图的极大连通子图。\n2.3.2强连通有向图和强连通分量\n在有向图中，如果从顶点 vi 到 vj 有路径，并且从顶点 vj 到 vi 也有路径，则称顶点 vi 与 vj 是连通的。\n强连通有向图：如果图中任意两个顶点 vi 和 vj，从 vi 到 vj 和从 vj 到 vi 都有路径，则称该图为强连通有向图。 非强连通有向图：如果图中至少存在一对顶点之间不存在任何路径，则该图称为非强连通有向图。 与无向图类似，有向图的一个极大强连通子图称为该图的 强连通分量。\n强连通子图：如果有向图的子图是连通有向图，则该子图称为原图的强连通子图。 强连通分量：有向图中的一个极大强连通子图，称为该图的强连通分量。 极大强连通子图：有向图中的一个强连通子图，并且不存在包含它的更大的强连通子图。 如上图所示，左侧的强连通有向图是右侧的非强连通有向图的子图，所以左侧图是右侧图的一个强连通分量。同理，右侧图单独的 v7 也是原图的一个强连通分量\n2.4带权图 有时，图不仅需要表示顶点之间是否存在某种关系，还需要表示这一关系的具体细节。这时候我们需要在边上带一些数据信息，这些数据信息被称为 权。在具体应用中，权值可以具有某种具体意义，比如权值可以代表距离、时间以及价格等不同属性。\n带权图：如果图的每条边都被赋以⼀个权值，这种图称为带权图。 网络：带权的连通无向图称为网络。 (3)图的存储结构 具体可看原网站：https://algo.itcharge.cn/08.Graph/01.Graph-Basic/02.Graph-Structure/\n(4)图论问题应用 常见的图论问题应用大概可以分为以下几类：图的遍历问题、图的连通性问题、图的生成树问题、图的最短路径问题 等等。\n4.1图的遍历问题 图的遍历：与树的遍历类似，图的遍历指的是从图的某一个顶点出发，按照某种搜索方式对图中的所有节点都仅访问一次。\n图的遍历是求解图的连通性问题、拓扑排序和求关键路径等算法的基础。\n根据搜索方式的不同，可以将图的遍历分为「深度优先搜索」和「广度优先搜索」。\n深度优先搜索：从某一顶点出发，沿着⼀条路径⼀直搜索下去，在⽆法搜索时，回退到刚刚访问过的节点。 广度优先搜索：从某个顶点出发，⼀次性访问所有未被访问的邻接点，再依次从这些已访问过的邻接点出发，⼀层⼀层地访问。 4.2图的连通性问题 在无向图中，图的连通性问题主要包括：求无向图的连通分量、求点双连通分量（找割点）、求边双连通分量（找桥）、全局最小割问题 等等。\n在有向图中，图的连通性问题主要包括：求有向图的强连通分量、最小点基、最小权点基、2-SAT 问题 等等。\n4.3图的生成树问题 图的生成树（Spanning Tree）：如果连通图 G 的一个子图是一棵包含图 G 所有顶点的树，则称该子图为 G 的生成树。生成树是连通图的包含图中的所有顶点的极小连通子图。图的生成树不惟一。从不同的顶点出发进行遍历，可以得到不同的生成树。\n图的生成树问题主要包括：最小生成树问题、次小生成树问题 和 有向图的最小树形图问题 等等。\n无向图的最小生成树：如果连通图 G 是一个带权无向图，则生成树的边也带权，则称该带权图中所有带权生成树中权值总和最小的生成树为最小生成树（也称为最小代价生成树）。 无向图的次小生成树：如果连通图 G 是一个带权无向图，生成树 T 是图 G 的一个最小生成树，如果有另一棵生成树 T1，T1≠T，满足不存在树 T′，T′≠T，且 w(T′)",
-  "wordCount" : "2085",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-10-28-graph_theory/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -133,7 +73,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -159,8 +99,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -800,7 +745,7 @@
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

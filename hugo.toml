@@ -6,11 +6,21 @@ theme = ["PaperMod"]
 [params]
   defaultTheme = "auto"
   
-  # 使用标准表格格式替代内联表格
   [params.homeInfoParams]
-    Title = "Hello, I'm YUKIPEDIA. Welcome to my blog"
+    Title = "Welcome!"
+    Content = "Can be Info, links, about..."
+
+  [[params.socialIcons]]
+    name = "github"
+    url = "https://github.com/YUK1PEDIA"
+  
 
 [[menu.main]]
   name = "Learning Notes"
   url = "/Learning Notes"
   weight = 1
+
+[[menu.main]]
+  name = "Algorithm"
+  url = "/Algorithm"
+  weight = 2

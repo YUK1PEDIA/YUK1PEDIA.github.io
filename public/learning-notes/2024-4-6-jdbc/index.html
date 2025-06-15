@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
-<title>JDBC学习笔记 | YUKIPEDIA&#39;s blog</title>
+<meta name="robots" content="noindex, nofollow">
+<title>JDBC 学习笔记 | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
-<meta name="description" content="记录">
+<meta name="description" content="JDBC 学习笔记 - YUKIPEDIA&#39;s blog">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-4-6-jdbc/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2024-4-6-jdbc/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-4-6-jdbc/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2024-4-6-jdbc/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,67 +55,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-4-6-jdbc/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="JDBC学习笔记">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="JDBC学习笔记">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "JDBC学习笔记",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-4-6-jdbc/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "JDBC学习笔记",
-  "name": "JDBC学习笔记",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "JDBC-API详解 一、DriverManager 1.DriverManager(驱动管理类)作用 (1).注册驱动\n(2).获取数据库连接\n二、Connection 1.Connection(数据库连接对象)作用 (1).获取执行SQL的对象\n(2).管理事务\n什么是事务？数据库中的事务是指对数据库执行一批操作，在同一个事务当中，这些操作最终要么全部执行成功，要么全部失败，不会存在部分成功的情况。\n2.具体操作 获取执行SQL对象 (1).普通执行SQL对象\nStatement createStatement() (2).预编译SQL的执行SQL对象：防止SQL注入\nPreparedStatement prepareStatement(sql) (3).执行存储过程的对象(不常用)\nCallableStatement prepareCall(sql) 事务管理 (1).MySQL事务管理\n开启事务：BEGIN;/START TRANSACTION;\n提交事务：COMMIT;\n回滚事务：ROLLBACK;\n注：MySQL默认自动提交事务\n(2).JDBC事务管理：Connection接口中定义了3个对应的方法\n开启事务：setAutoCommit(bollean autoCommit)：true为自动提交事务；false为手动提交事务，即为开启事务\n提交事务：commit()\n回滚事务：rollback()\n三、Statement 1.Statement作用 执行SQL语句 int executeUpdate(sql) 执行DML、DDL语句，返回值：(1).DML语句影响的行数；(2).DDL语句执行后，执行成功也可能返回0\nResultSet executeQuery(sql) 执行DQL语句，返回值：ResultSet结果集对象\n四、ResultSet 1.ResultSet(结果集对象)作用 封装了DQL查询语句的结果\nResultSet stmt.executeQuery(sql); 以上语句执行DQL语句，返回一个ResultSet对象\n2.获取查询结果 boolean next(); (1).将光标从当前位置向前移动一位；(2).判断当前行是否为有效行\n返回值：(1).true：有效行，当前行有数据；(2).false：无效行，当前行无数据\nxxx getXxx(参数); 上述语句用于获取数据，其中xxx表示数据类型，如：int getInt(参数)；String getString(参数)\n参数：(1).对于int，参数是列的编号（从1开始）；(2).对于String，参数是列的名称\n3.使用步骤 (1).游标向下移动一行，并判断该行是否有数据：next()\n(2).获取数据：getXxx(参数)\n// 循环判断游标是否是最后一行末尾\rwhile (rs.next()) {\r// 获取数据\rrs.getXxx(参数);\r} 五、PreparedStatement 作用：预编译SQL语句并执行，预防SQL注入问题\n什么是SQL注入：SQL注入是通过操作输入来修改事先定义好的SQL语句，用以达到执行代码对服务器进行攻击的方法\n1.获取PreparedStatement对象 // SQL语句中的参数值使用? 占位符替代\rString sql = \"select * from user where username = ? and password = ?\";\r// 通过Connection对象获取并传入对应的SQL语句\rPreparedStatement pstmt = conn.prepareStatement(sql); 2.设置参数值 PreparedStatement对象：setXxx(参数1，参数2)：给？赋值\r(1)Xxx：数据类型；如setInt(参数1,参数2)\r(2)参数：\r参数1：？的位置编号，从1开始\r参数2：？的值 3.执行SQL executeUpdate();/executeQuery(); 由于创建PreparedStatement对象时已经传入了SQL语句，所以此处不用再传入SQL语句\n六、数据库连接池 1.数据库连接池简介 ​\t(1).数据库连接池是个容器，负责分配、管理数据库连接(Connection)；\n​\t(2).它允许应用程序重复使用一个现有的数据库连接，而不是再重新建立一个；\n​\t(3).释放空闲时间超过最大空闲时间的数据库连接来避免因为没有释放数据库连接而引起的数据库连接遗漏\n好处：资源重用；提升系统响应速度；避免数据库连接遗漏\n上图中蓝色部分为数据库连接池\n2.数据库连接池实现 标准接口：DataSource\n官方(SUN)提供的数据库连接池标准接口，由第三方组织实现此接口\n功能：获取连接\nConnection getConnection() ",
-  "wordCount" : "124",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-4-6-jdbc/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -133,7 +73,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -159,8 +99,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -172,12 +117,9 @@
   <header class="post-header">
     
     <h1 class="post-title entry-hint-parent">
-      JDBC学习笔记
+      JDBC 学习笔记
     </h1>
-    <div class="post-description">
-      记录
-    </div>
-    <div class="post-meta">
+    <div class="post-meta"><span title='2024-04-06 00:00:00 +0000 UTC'>April 6, 2024</span>
 
 </div>
   </header> 
@@ -288,7 +230,7 @@ PreparedStatement pstmt = conn.prepareStatement(sql);
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

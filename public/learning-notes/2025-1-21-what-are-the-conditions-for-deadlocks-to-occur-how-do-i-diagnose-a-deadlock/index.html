@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>死锁产生的条件？如何诊断死锁？ | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="记录">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2025-1-21-what-are-the-conditions-for-deadlocks-to-occur-how-do-i-diagnose-a-deadlock/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2025-1-21-what-are-the-conditions-for-deadlocks-to-occur-how-do-i-diagnose-a-deadlock/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2025-1-21-what-are-the-conditions-for-deadlocks-to-occur-how-do-i-diagnose-a-deadlock/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2025-1-21-what-are-the-conditions-for-deadlocks-to-occur-how-do-i-diagnose-a-deadlock/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,67 +55,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2025-1-21-what-are-the-conditions-for-deadlocks-to-occur-how-do-i-diagnose-a-deadlock/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="死锁产生的条件？如何诊断死锁？">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="死锁产生的条件？如何诊断死锁？">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "死锁产生的条件？如何诊断死锁？",
-      "item": "https://yuk1pedia.github.io/learning-notes/2025-1-21-what-are-the-conditions-for-deadlocks-to-occur-how-do-i-diagnose-a-deadlock/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "死锁产生的条件？如何诊断死锁？",
-  "name": "死锁产生的条件？如何诊断死锁？",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "死锁产生的条件 在操作系统中，死锁只有同时满足以下四个条件才会发生：\n互斥条件 持有并等待条件 不可剥夺条件 环路等待条件 在 java 程序中，由于 java 自带线程，因此自己编写的两条线程也可能出现死锁的情况。\n具体而言，java 程序里死锁产生的条件是两条线程分别持有两个锁，并且都在尝试获取对方所持有的锁，这样就造成了死锁。\n以下面的程序为例：\npublic class Main { public static void main(String[] args) { Object A = new Object(); Object B = new Object(); Thread t1 = new Thread(() -\u003e { synchronized (A) { System.out.println(\"lock A\"); try { sleep(1000); } catch (InterruptedException e) { throw new RuntimeException(e); } synchronized (B) { System.out.println(\"lock B\"); System.out.println(\"操作...\"); } } }, \"t1\"); Thread t2 = new Thread(() -\u003e { synchronized (B) { System.out.println(\"lock B\"); try { sleep(500); } catch (InterruptedException e) { throw new RuntimeException(e); } synchronized (A) { System.out.println(\"lock A\"); System.out.println(\"操作...\"); } } }, \"t2\"); t1.start(); t2.start(); } } 线程 t1 和线程 t2 分别获取了锁 A 和锁 B ，并且都在尝试获取对方的锁，因此就出现了死锁：\n如何诊断死锁 使用 JDK 自带的工具：jps 和 jstack\njps：输出 JVM 中运行的进程状态信息 jstack：查看 java 进程内线程的堆栈信息，查看日志，检查是否有死锁，如果有死锁现象，需要查看具体代码分析后修复 在运行上述代码后出现了死锁，这里可以在 terminal 输入上面两条命令来检测哪里出现了死锁：\n输入 jps 查看当前正在运行的线程 使用 jstack 查看哪里出现了死锁，根据堆栈信息进行 bug 定位并排查即可 ",
-  "wordCount" : "138",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2025-1-21-what-are-the-conditions-for-deadlocks-to-occur-how-do-i-diagnose-a-deadlock/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -133,7 +73,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -159,8 +99,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -259,7 +204,7 @@
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

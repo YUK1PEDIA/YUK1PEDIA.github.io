@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Linux常用命令 | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="记录">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2025-3-10-common-linux-commands/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2025-3-10-common-linux-commands/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2025-3-10-common-linux-commands/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2025-3-10-common-linux-commands/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,67 +55,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2025-3-10-common-linux-commands/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="Linux常用命令">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Linux常用命令">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "Linux常用命令",
-      "item": "https://yuk1pedia.github.io/learning-notes/2025-3-10-common-linux-commands/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "Linux常用命令",
-  "name": "Linux常用命令",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "1.文件与目录操作 命令 作用 使用场景 ls -lh 显示目录文件列表 查看文件大小、权限、修改时间等 cd 切换目录 进入代码目录、日志目录等 pwd 显示当前路径 确认当前工作目录 mkdir -p dir 创建目录 创建不存在的目录（含父级） rm -rf file 删除文件/目录 清理临时文件，删除无用日志 cp -r src dest 复制文件/目录 备份代码、配置文件等 mv src dest 移动/重命名文件 重命名日志、移动文件到目标目录 find /path -name \"*.log\" 查找文件 定位日志文件、查找大文件 du -sh file 查看文件大小 确定哪些文件占用空间过大 df -h 查看磁盘使用情况 确保服务器磁盘空间足够 2.进程管理 命令 作用 使用场景 ps aux 查看所有进程 查找某个进程的 PID top / htop 实时查看 CPU/内存使用 排查服务器性能问题 kill -9 PID 强制结束进程 终止卡死的程序 pkill -f process_name 根据名称杀进程 结束 Web 服务器进程 nohup command \u0026 后台运行进程 运行服务后保持终端关闭 jobs / fg / bg 管理后台进程 让任务在后台执行 3.网络调试 命令 作用 使用场景 ifconfig / ip a 查看 IP 地址 确认服务器 IP ping google.com 测试网络连通性 检查网络是否可用 curl -I http://example.com 发送 HTTP 请求 检测 API 是否正常 wget url 下载文件 获取远程资源 netstat -tulnp / ss -tulnp 查看监听端口 确保服务正确运行 telnet IP PORT 测试端口连通性 确认服务是否开放端口 scp file user@remote:/path 远程传输文件 部署代码到远程服务器 rsync -avz src dest 高效同步文件 备份数据，服务器同步代码 4.日志管理 命令 作用 使用场景 cat file.log 显示完整日志 查看小型日志文件 less file.log 分页查看 适用于大日志文件 tail -f file.log 实时查看日志 监控应用运行状态 grep \"error\" file.log 过滤关键字 查找日志错误信息 awk '{print $1}' file.log 处理文本 提取指定字段 sed -i 's/old/new/g' file.log 替换文本 修改日志或配置文件 ",
-  "wordCount" : "176",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2025-3-10-common-linux-commands/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -133,7 +73,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -159,8 +99,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -391,7 +336,7 @@
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

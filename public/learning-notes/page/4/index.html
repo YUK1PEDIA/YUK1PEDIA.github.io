@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Learning Notes | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="Learning Notes - YUKIPEDIA&#39;s blog">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://yuk1pedia.github.io/learning-notes/index.xml">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/learning-notes/index.xml">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/">
 <noscript>
     <style>
         #theme-toggle,
@@ -56,30 +56,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="Learning Notes">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Learning Notes">
-<meta name="twitter:description" content="">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }
-  ]
-}
-</script>
+</noscript>
 </head>
 
 <body class="list" id="top">
@@ -97,7 +74,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -123,8 +100,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span class="active">Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -154,7 +136,7 @@ cron 表达式 通过 cron 表达式可以定义任务触发的事件
 Spring Task 使用步骤 导入 maven 坐标 spring-context 启动类添加注解 @EnableScheduling 开启任务调度 package com.sky; import lombok.extern.slf4j.Slf4j; import org.springframework.boot.SpringApplication; import org.springframework.boot.autoconfigure.SpringBootApplication; import org.springframework.cache.annotation.EnableCaching; import org.springframework.scheduling.annotation.EnableScheduling; import org.springframework.transaction.annotation.EnableTransactionManagement; @SpringBootApplication @EnableTransactionManagement //开启注解方式的事务管理 @Slf4j @EnableCaching // 开启缓存注解 @EnableScheduling // 开启任务调度 public class SkyApplication { public static void main(String[] args) { SpringApplication.run(SkyApplication.class, args); log.info(&#34;server started&#34;); } } 自定义定时任务类 package com.sky.task; import lombok.extern.slf4j.Slf4j; import org.springframework.scheduling.annotation.Scheduled; import org.springframework.stereotype.Component; import java.util.Date; /** * 自定义定时任务类 */ @Component @Slf4j public class MyTask { /** * 定时任务，每隔五秒触发一次 */ @Scheduled(cron = &#34;0/5 * * * * ?&#34;) public void executeTask() { log.info(&#34;定时任务开始执行：{}&#34;, new Date()); } } </p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to Spring Task" href="https://yuk1pedia.github.io/learning-notes/2024-10-3-spring_task/"></a>
+  <a class="entry-link" aria-label="post link to Spring Task" href="http://localhost:1313/learning-notes/2024-10-3-spring_task/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -176,7 +158,7 @@ yaml基本语法
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to Springboot框架学习笔记" href="https://yuk1pedia.github.io/learning-notes/2024-5-13-springboot/"></a>
+  <a class="entry-link" aria-label="post link to Springboot框架学习笔记" href="http://localhost:1313/learning-notes/2024-5-13-springboot/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -200,7 +182,7 @@ class：bean的类型，即配置的bean的全路径类名
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to Spring框架学习笔记" href="https://yuk1pedia.github.io/learning-notes/2024-5-5-spring/"></a>
+  <a class="entry-link" aria-label="post link to Spring框架学习笔记" href="http://localhost:1313/learning-notes/2024-5-5-spring/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -217,7 +199,7 @@ string()//构造空字符串 string(const char* s);//拷贝s所指向的字符�
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to STL容器——string成员函数" href="https://yuk1pedia.github.io/learning-notes/2024-9-5-stl-container----string-member-function/"></a>
+  <a class="entry-link" aria-label="post link to STL容器——string成员函数" href="http://localhost:1313/learning-notes/2024-9-5-stl-container----string-member-function/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -240,7 +222,7 @@ string()//构造空字符串 string(const char* s);//拷贝s所指向的字符�
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to TCP超时重传机制的底层原理" href="https://yuk1pedia.github.io/learning-notes/2025-2-27-the-underlying-principle-of-tcp-timeout-retransmission/"></a>
+  <a class="entry-link" aria-label="post link to TCP超时重传机制的底层原理" href="http://localhost:1313/learning-notes/2025-2-27-the-underlying-principle-of-tcp-timeout-retransmission/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -265,7 +247,7 @@ hash(data1) → 找到顺时针方向最近的节点 如果 hash(data1) 位于�
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 一致性哈希" href="https://yuk1pedia.github.io/learning-notes/2024-12-19-hash/"></a>
+  <a class="entry-link" aria-label="post link to 一致性哈希" href="http://localhost:1313/learning-notes/2024-12-19-hash/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -286,7 +268,7 @@ Master（主节点）：控制 K8s 节点的机器，也是创建作业任务的
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 云原生" href="https://yuk1pedia.github.io/learning-notes/2025-4-25-cloud-native/"></a>
+  <a class="entry-link" aria-label="post link to 云原生" href="http://localhost:1313/learning-notes/2025-4-25-cloud-native/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -305,7 +287,7 @@ Master（主节点）：控制 K8s 节点的机器，也是创建作业任务的
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 什么是强引用、软引用、弱引用和虚引用？" href="https://yuk1pedia.github.io/learning-notes/2025-1-29-what-are-strong-references-soft-referencesweak-referencesand-virtual-references/"></a>
+  <a class="entry-link" aria-label="post link to 什么是强引用、软引用、弱引用和虚引用？" href="http://localhost:1313/learning-notes/2025-1-29-what-are-strong-references-soft-referencesweak-referencesand-virtual-references/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -325,7 +307,7 @@ Master（主节点）：控制 K8s 节点的机器，也是创建作业任务的
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 分布式相关：CAP和BASE" href="https://yuk1pedia.github.io/learning-notes/2025-3-11-cap-vs-base/"></a>
+  <a class="entry-link" aria-label="post link to 分布式相关：CAP和BASE" href="http://localhost:1313/learning-notes/2025-3-11-cap-vs-base/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -342,21 +324,21 @@ Master（主节点）：控制 K8s 节点的机器，也是创建作业任务的
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 分布式锁" href="https://yuk1pedia.github.io/learning-notes/2024-11-9-distributed-lock/"></a>
+  <a class="entry-link" aria-label="post link to 分布式锁" href="http://localhost:1313/learning-notes/2024-11-9-distributed-lock/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
-    <a class="prev" href="https://yuk1pedia.github.io/learning-notes/page/3/">
+    <a class="prev" href="http://localhost:1313/learning-notes/page/3/">
       «&nbsp;Prev&nbsp;
     </a>
-    <a class="next" href="https://yuk1pedia.github.io/learning-notes/page/5/">Next&nbsp;&nbsp;»
+    <a class="next" href="http://localhost:1313/learning-notes/page/5/">Next&nbsp;&nbsp;»
     </a>
   </nav>
 </footer>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

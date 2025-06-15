@@ -2,25 +2,25 @@
 <html lang="en" dir="auto">
 
 <head>
-	<meta name="generator" content="Hugo 0.147.8"><meta charset="utf-8">
+	<meta name="generator" content="Hugo 0.147.8"><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>YUKIPEDIA&#39;s blog</title>
 
 <meta name="description" content="">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/">
+<link rel="canonical" href="http://localhost:1313/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://yuk1pedia.github.io/index.xml">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/index.xml">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/">
 <noscript>
     <style>
         #theme-toggle,
@@ -57,28 +57,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="YUKIPEDIA&#39;s blog">
-<meta name="twitter:description" content="">
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "YUKIPEDIA's blog",
-  "url": "https://yuk1pedia.github.io/",
-  "description": "",
-  "logo": "https://yuk1pedia.github.io/favicon.ico",
-  "sameAs": [
-      
-  ]
-}
-</script>
+</noscript>
 </head>
 
 <body class="list" id="top">
@@ -96,7 +75,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -122,14 +101,41 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
     </nav>
 </header>
 <main class="main"> 
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Spring Data &#43; Mongo
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>1.什么是 Spring Data？ Spring Data 是 Spring 框架中的一部分，专注于简化数据访问层的开发。其核心目标是减少开发人员编写的数据访问层代码，并为常见的数据访问模式提供开箱即用的解决方案。Spring Data 支持多种数据存储技术，如关系数据库（通过 JPA）、NoSQL 数据库（如 MongoDB、Cassandra 等）。
+主要功能如下：
+简化的 CRUD 操作：通过 Spring Data，开发者可以轻松实现基本的 CRUD（增删查改）操作，无需编写复杂的 SQL 语句。
+Repository 接口：定义简单的 Repository 接口，并通过 Spring Data 自动提供实现。例如，可以定义一个继承 JpaRepository 的接口，Spring Data JPA 会自动生成常见的 CRUD 方法。
+自定义查询方法：通过方法名称来定义查询，Spring Data 会自动解析方法名并生成相应的 SQL。例如，方法名为 findByName 会自动生成一个按 name 字段查询的 SQL 语句。
+分页和排序：通过 Pageable 接口，轻松实现分页查询和结果排序。
+支持事务管理：Spring Data 与 Spring 的事务管理无缝集成，开发者可以使用注解来管理事务，确保数据的安全性和一致性。
+2.什么是 JPA？ JPA 是 Java 中的一个标准规范，用于管理 Java 对象与关系数据库之间的映射。JPA 规范本身并不是具体的实现，而是定义了一套用于**对象-关系映射（ORM）**的 API。
+JPA 核心概念：
+实体（Entity）：一个被映射到数据库表的普通 Java 类。通过 @Entity 注解将类声明为一个 JPA 实体，并通过其他注解指定其与数据库表之间的关系。
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to Spring Data &#43; Mongo" href="http://localhost:1313/posts/learning-notes/2024-10-21-spring-data-&#43;-mongo/"></a>
+</article>
 
 <article class="post-entry"> 
   <header class="entry-header">
@@ -148,7 +154,7 @@ cron 表达式 通过 cron 表达式可以定义任务触发的事件
 Spring Task 使用步骤 导入 maven 坐标 spring-context 启动类添加注解 @EnableScheduling 开启任务调度 package com.sky; import lombok.extern.slf4j.Slf4j; import org.springframework.boot.SpringApplication; import org.springframework.boot.autoconfigure.SpringBootApplication; import org.springframework.cache.annotation.EnableCaching; import org.springframework.scheduling.annotation.EnableScheduling; import org.springframework.transaction.annotation.EnableTransactionManagement; @SpringBootApplication @EnableTransactionManagement //开启注解方式的事务管理 @Slf4j @EnableCaching // 开启缓存注解 @EnableScheduling // 开启任务调度 public class SkyApplication { public static void main(String[] args) { SpringApplication.run(SkyApplication.class, args); log.info(&#34;server started&#34;); } } 自定义定时任务类 package com.sky.task; import lombok.extern.slf4j.Slf4j; import org.springframework.scheduling.annotation.Scheduled; import org.springframework.stereotype.Component; import java.util.Date; /** * 自定义定时任务类 */ @Component @Slf4j public class MyTask { /** * 定时任务，每隔五秒触发一次 */ @Scheduled(cron = &#34;0/5 * * * * ?&#34;) public void executeTask() { log.info(&#34;定时任务开始执行：{}&#34;, new Date()); } } </p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to Spring Task" href="https://yuk1pedia.github.io/learning-notes/2024-10-3-spring_task/"></a>
+  <a class="entry-link" aria-label="post link to Spring Task" href="http://localhost:1313/posts/learning-notes/2024-10-3-spring_task/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -170,7 +176,7 @@ yaml基本语法
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to Springboot框架学习笔记" href="https://yuk1pedia.github.io/learning-notes/2024-5-13-springboot/"></a>
+  <a class="entry-link" aria-label="post link to Springboot框架学习笔记" href="http://localhost:1313/posts/learning-notes/2024-5-13-springboot/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -194,7 +200,7 @@ class：bean的类型，即配置的bean的全路径类名
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to Spring框架学习笔记" href="https://yuk1pedia.github.io/learning-notes/2024-5-5-spring/"></a>
+  <a class="entry-link" aria-label="post link to Spring框架学习笔记" href="http://localhost:1313/posts/learning-notes/2024-5-5-spring/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -211,7 +217,7 @@ string()//构造空字符串 string(const char* s);//拷贝s所指向的字符�
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to STL容器——string成员函数" href="https://yuk1pedia.github.io/learning-notes/2024-9-5-stl-container----string-member-function/"></a>
+  <a class="entry-link" aria-label="post link to STL容器——string成员函数" href="http://localhost:1313/posts/learning-notes/2024-9-5-stl-container----string-member-function/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -234,7 +240,7 @@ string()//构造空字符串 string(const char* s);//拷贝s所指向的字符�
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to TCP超时重传机制的底层原理" href="https://yuk1pedia.github.io/learning-notes/2025-2-27-the-underlying-principle-of-tcp-timeout-retransmission/"></a>
+  <a class="entry-link" aria-label="post link to TCP超时重传机制的底层原理" href="http://localhost:1313/posts/learning-notes/2025-2-27-the-underlying-principle-of-tcp-timeout-retransmission/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -259,7 +265,7 @@ hash(data1) → 找到顺时针方向最近的节点 如果 hash(data1) 位于�
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 一致性哈希" href="https://yuk1pedia.github.io/learning-notes/2024-12-19-hash/"></a>
+  <a class="entry-link" aria-label="post link to 一致性哈希" href="http://localhost:1313/posts/learning-notes/2024-12-19-hash/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -280,7 +286,7 @@ Master（主节点）：控制 K8s 节点的机器，也是创建作业任务的
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 云原生" href="https://yuk1pedia.github.io/learning-notes/2025-4-25-cloud-native/"></a>
+  <a class="entry-link" aria-label="post link to 云原生" href="http://localhost:1313/posts/learning-notes/2025-4-25-cloud-native/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -299,7 +305,7 @@ Master（主节点）：控制 K8s 节点的机器，也是创建作业任务的
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 什么是强引用、软引用、弱引用和虚引用？" href="https://yuk1pedia.github.io/learning-notes/2025-1-29-what-are-strong-references-soft-referencesweak-referencesand-virtual-references/"></a>
+  <a class="entry-link" aria-label="post link to 什么是强引用、软引用、弱引用和虚引用？" href="http://localhost:1313/posts/learning-notes/2025-1-29-what-are-strong-references-soft-referencesweak-referencesand-virtual-references/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -319,38 +325,21 @@ Master（主节点）：控制 K8s 节点的机器，也是创建作业任务的
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 分布式相关：CAP和BASE" href="https://yuk1pedia.github.io/learning-notes/2025-3-11-cap-vs-base/"></a>
-</article>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">分布式锁
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>基本原理和实现方式 分布式锁：满足分布式系统或集群模式下多进程可见并且互斥的锁。分布式锁的核心思想就是让大家都使用同一把锁，只要大家使用的是同一把锁，那么我们就能锁住线程，不让线程进行，让程序串行执行。 那么分布式锁他应该满足的条件呢？ 可见性：多个线程都能看到相同的结果，注意：这个地方说的可见性并不是并发编程中指的内存可见性，只是说多个进程之间都能感知到变化的意思 互斥：互斥是分布式锁的最基本的条件，使得程序串行执行 高可用：程序不易崩溃，时时刻刻都保证较高的可用性 高性能：由于加锁本身就让性能降低，所有对于分布式锁本身需要他就较高的加锁性能和释放锁性能 安全性：安全也是程序中必不可少的一环 常见的分布式锁有三种： Mysql：mysql本身就带有锁机制，但是由于mysql性能本身一般，所以采用分布式锁的情况下，其实使用mysql作为分布式锁比较少见 Redis：redis作为分布式锁是非常常见的一种使用方式，现在企业级开发中基本都使用redis或者zookeeper作为分布式锁，利用setnx这个方法，如果插入key成功，则表示获得到了锁，如果有人插入成功，其他人插入失败则表示无法获得到锁，利用这套逻辑来实现分布式锁 Zookeeper：zookeeper也是企业级开发中较好的一个实现分布式锁的方案，zookeeper中实现分布式锁主要依赖于它的临时节点（ephemeral node）和顺序节点（sequential node）特性。 Redis 分布式锁的实现核心思路 实现分布式锁时需要实现的两个基本方法：
-获取锁： 互斥：确保只能有一个线程获取锁 非阻塞：尝试一次，成功返回 true，失败返回 false 释放锁： 手动释放 超时释放：获取锁时添加一个超时时间 实现核心思路：
-我们利用 redis 的 setnx 方法，当有多个线程进入时，我们就利用该方法，第一个线程进入时，redis 中就有这个 key 了，返回了1，如果结果是1，则表示他抢到了锁，那么他去执行业务，然后再删除锁，退出锁逻辑，没有抢到锁的线程，等待一定时间后重试即可。
-实现基于 redis 的分布式锁 分布式锁的基本接口
-/** * 分布式锁 */ public interface ILock { /** * 尝试获取锁 * @param timeoutSec * @return */ boolean tryLock(long timeoutSec); /** * 释放锁 */ void unlock(); } 简单分布式锁的实现
-...</p>
-  </div>
-  <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to 分布式锁" href="https://yuk1pedia.github.io/learning-notes/2024-11-9-distributed-lock/"></a>
+  <a class="entry-link" aria-label="post link to 分布式相关：CAP和BASE" href="http://localhost:1313/posts/learning-notes/2025-3-11-cap-vs-base/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
-    <a class="prev" href="https://yuk1pedia.github.io/page/3/">
+    <a class="prev" href="http://localhost:1313/page/3/">
       «&nbsp;Prev&nbsp;
     </a>
-    <a class="next" href="https://yuk1pedia.github.io/page/5/">Next&nbsp;&nbsp;»
+    <a class="next" href="http://localhost:1313/page/5/">Next&nbsp;&nbsp;»
     </a>
   </nav>
 </footer>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

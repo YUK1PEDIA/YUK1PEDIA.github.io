@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>Learning Notes | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="Learning Notes - YUKIPEDIA&#39;s blog">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="https://yuk1pedia.github.io/learning-notes/index.xml">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/learning-notes/index.xml">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/">
 <noscript>
     <style>
         #theme-toggle,
@@ -56,30 +56,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="Learning Notes">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Learning Notes">
-<meta name="twitter:description" content="">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }
-  ]
-}
-</script>
+</noscript>
 </head>
 
 <body class="list" id="top">
@@ -97,7 +74,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -123,8 +100,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span class="active">Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -139,44 +121,29 @@
 
 <article class="post-entry"> 
   <header class="entry-header">
-    <h2 class="entry-hint-parent">JDBC学习笔记
+    <h2 class="entry-hint-parent">Java的反射机制
     </h2>
   </header>
   <div class="entry-content">
-    <p>JDBC-API详解 一、DriverManager 1.DriverManager(驱动管理类)作用 (1).注册驱动
-(2).获取数据库连接
-二、Connection 1.Connection(数据库连接对象)作用 (1).获取执行SQL的对象
-(2).管理事务
-什么是事务？数据库中的事务是指对数据库执行一批操作，在同一个事务当中，这些操作最终要么全部执行成功，要么全部失败，不会存在部分成功的情况。
-2.具体操作 获取执行SQL对象 (1).普通执行SQL对象
-Statement createStatement() (2).预编译SQL的执行SQL对象：防止SQL注入
-PreparedStatement prepareStatement(sql) (3).执行存储过程的对象(不常用)
-CallableStatement prepareCall(sql) 事务管理 (1).MySQL事务管理
-开启事务：BEGIN;/START TRANSACTION;
-提交事务：COMMIT;
-回滚事务：ROLLBACK;
-注：MySQL默认自动提交事务
-(2).JDBC事务管理：Connection接口中定义了3个对应的方法
-开启事务：setAutoCommit(bollean autoCommit)：true为自动提交事务；false为手动提交事务，即为开启事务
-提交事务：commit()
-回滚事务：rollback()
-三、Statement 1.Statement作用 执行SQL语句 int executeUpdate(sql) 执行DML、DDL语句，返回值：(1).DML语句影响的行数；(2).DDL语句执行后，执行成功也可能返回0
-ResultSet executeQuery(sql) 执行DQL语句，返回值：ResultSet结果集对象
-四、ResultSet 1.ResultSet(结果集对象)作用 封装了DQL查询语句的结果
-ResultSet stmt.executeQuery(sql); 以上语句执行DQL语句，返回一个ResultSet对象
-2.获取查询结果 boolean next(); (1).将光标从当前位置向前移动一位；(2).判断当前行是否为有效行
-返回值：(1).true：有效行，当前行有数据；(2).false：无效行，当前行无数据
-xxx getXxx(参数); 上述语句用于获取数据，其中xxx表示数据类型，如：int getInt(参数)；String getString(参数)
-参数：(1).对于int，参数是列的编号（从1开始）；(2).对于String，参数是列的名称
-3.使用步骤 (1).游标向下移动一行，并判断该行是否有数据：next()
-(2).获取数据：getXxx(参数)
-// 循环判断游标是否是最后一行末尾while (rs.next()) {// 获取数据rs.getXxx(参数);} 五、PreparedStatement 作用：预编译SQL语句并执行，预防SQL注入问题
-什么是SQL注入：SQL注入是通过操作输入来修改事先定义好的SQL语句，用以达到执行代码对服务器进行攻击的方法
-1.获取PreparedStatement对象 // SQL语句中的参数值使用? 占位符替代String sql = &#34;select * from user where username = ? and password = ?&#34;;// 通过Connection对象获取并传入对应的SQL语句PreparedStatement pstmt = conn.prepareStatement(sql); 2.设置参数值 PreparedStatement对象：setXxx(参数1，参数2)：给？赋值(1)Xxx：数据类型；如setInt(参数1,参数2)(2)参数：参数1：？的位置编号，从1开始参数2：？的值 3.执行SQL executeUpdate();/executeQuery(); 由于创建PreparedStatement对象时已经传入了SQL语句，所以此处不用再传入SQL语句
-...</p>
+    <p>1.什么是反射机制？ 反射（Reflection）是Java中的一个强大功能，允许程序在运行时动态地访问和操作类的元数据（如类名、字段、方法等）。通过反射，Java程序可以在运行时动态地获取类的信息，甚至动态地创建对象和调用方法。
+举个简单的例子，在编写程序时，通常是明确地知道类的名字和结构，然后直接使用它们。反射则允许你在运行时才知道类的信息，并通过这些信息去操作类。所以说，反射的作用就是获取类的信息（成员变量、方法、构造方法等）
+2.反射机制的工作原理 反射的核心就是通过类的字节码来动态获取类的元数据，并在运行时操作这些信息。反射依赖于Java类加载机制，类的字节码通过类加载器加载到内存中后，反射机制就能操作它们。
+2.1 反射的基本流程 类加载：
+在Java程序中，类并不是在编译时就加载到内存的，而是当JVM第一次需要使用该类时，它才会加载这个类（如创建实例、调用方法时）。
+反射通过Class.forName()等方法动态加载类，并获得该类的Class对象。
+获取类的元数据：
+通过反射，你可以获取类的构造方法、字段、方法等元数据。这个过程是通过Class对象来实现的。 比如，使用clazz.getDeclaredMethods()可以获取类的所有方法，clazz.getDeclaredFields()可以获取类的所有字段。 动态创建对象和调用方法：
+使用反射，你不仅能获取类的信息，还能动态地创建对象、调用方法、修改字段等。通过Method.invoke()可以动态调用类的方法，通过Constructor.newInstance()可以创建类的实例。 2.2 核心类和方法 Class：Class类是反射的核心，它代表了一个类的字节码。通过Class对象，你可以动态获取该类的构造方法、字段、方法等信息。
+示例：
+Class&lt;?&gt; clazz = Class.forName(&#34;java.lang.String&#34;); Field、Method、Constructor：这些类提供了反射操作字段、方法、构造函数的接口。通过这些接口，你可以动态地获取类的成员变量、方法信息，甚至修改它们的值。
+3.反射的应用场景 3.1 框架和库开发 许多Java框架（如Spring、Hibernate）都依赖反射机制来实现动态注入、配置和对象创建。反射让框架能够在运行时发现并操作类，而不需要提前在源代码中硬编码。 依赖注入（Dependency Injection）：Spring框架通过反射来扫描类和字段，自动将依赖的对象注入到目标类中。 AOP（面向切面编程）：Spring AOP使用反射来动态地创建代理对象，并在方法调用前后插入切面逻辑。 3.2 动态代理 反射常用于实现动态代理。动态代理允许你在运行时动态生成一个实现了指定接口的类，并在调用方法时插入自定义逻辑。
+例如，Java的Proxy类配合反射可以创建一个代理对象，代理对象会将方法调用转发给一个处理器。
+MyInterface proxy = (MyInterface) Proxy.newProxyInstance( MyInterface.class.getClassLoader(), new Class[]{MyInterface.class}, new MyInvocationHandler()); 3.3 插件系统和模块化应用 在一些需要插件化或者模块化的系统中，反射非常有用。通过反射，程序可以在运行时动态加载并使用外部插件或模块，而无需提前知道它们的具体实现。
+比如，一个插件系统可能在启动时扫描特定的插件目录，通过反射加载插件类并执行它们。
+3.4 JDBC数据库操作 **JDBC（Java数据库连接）**使用反射来动态加载数据库驱动类。例如，Class.forName(&#34;com.mysql.cj.jdbc.Driver&#34;)通过反射加载数据库驱动类，并注册它，使得数据库操作可以在运行时进行。 3.5 单元测试和框架调试 在单元测试中，反射用于访问和测试私有方法或字段，这对于测试框架尤其重要。比如，JUnit在进行测试时，可能需要通过反射来调用私有方法或检查私有字段的值。 4.反射的优缺点 4.1 优点 灵活性：反射可以让程序在运行时决定要执行哪些操作，这使得程序具有高度的灵活性。 解耦：通过反射，框架可以在运行时动态地发现和调用类的方法，而不需要在编译时明确指定，从而提高了系统的解耦性。 动态性：反射支持在运行时加载类、创建对象、调用方法，这使得程序能够更适应变化的需求。 4.2 缺点 性能开销：反射是基于动态查找和解析的，因此它比直接调用方法或访问字段要慢一些。过度使用反射可能会导致性能问题。 类型安全问题：反射是动态操作的，编译时无法检查代码的正确性，容易引发类型转换等错误。使用反射时需要特别小心。 代码可读性差：反射使得代码的执行过程变得不透明，难以理解和调试。反射的代码通常不如直接调用的代码直观。 5.反射的常见操作 加载类 Class&lt;?&gt; clazz = Class.forName(&#34;com.example.MyClass&#34;); 获取类的构造方法 Constructor&lt;?&gt; constructor = clazz.getConstructor(String.class, int.class); Object obj = constructor.newInstance(&#34;John&#34;, 30); 获取类的方法 Method method = clazz.getDeclaredMethod(&#34;sayHello&#34;); method.setAccessible(true); // 如果方法是私有的 method.invoke(obj); 获取类的字段 Field field = clazz.getDeclaredField(&#34;name&#34;); field.setAccessible(true); // 如果字段是私有的 String name = (String) field.get(obj); </p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to JDBC学习笔记" href="https://yuk1pedia.github.io/learning-notes/2024-4-6-jdbc/"></a>
+  <a class="entry-link" aria-label="post link to Java的反射机制" href="http://localhost:1313/learning-notes/2024-11-27-java_reflection/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -200,7 +167,7 @@ std::sort 自定义排序： vector&lt;int&gt; arr = {5, 2, 9, 1}; sort(arr.begi
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to Lambda表达式在STL中的应用" href="https://yuk1pedia.github.io/learning-notes/2024-9-13-lambda/"></a>
+  <a class="entry-link" aria-label="post link to Lambda表达式在STL中的应用" href="http://localhost:1313/learning-notes/2024-9-13-lambda/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -221,7 +188,7 @@ std::sort 自定义排序： vector&lt;int&gt; arr = {5, 2, 9, 1}; sort(arr.begi
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to LCR-二叉树" href="https://yuk1pedia.github.io/learning-notes/2024-10-21-binary-tree/"></a>
+  <a class="entry-link" aria-label="post link to LCR-二叉树" href="http://localhost:1313/learning-notes/2024-10-21-binary-tree/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -241,7 +208,7 @@ std::sort 自定义排序： vector&lt;int&gt; arr = {5, 2, 9, 1}; sort(arr.begi
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to LCR-位运算" href="https://yuk1pedia.github.io/learning-notes/2024-10-22-bit-operation/"></a>
+  <a class="entry-link" aria-label="post link to LCR-位运算" href="http://localhost:1313/learning-notes/2024-10-22-bit-operation/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -260,7 +227,7 @@ F(0) = 0，F(1) = 1F(n) = F(n - 1) &#43; F(n - 2)，其中 n &gt; 1 给定 n �
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to LCR-动态规划" href="https://yuk1pedia.github.io/learning-notes/2024-11-1-dynamic-programming/"></a>
+  <a class="entry-link" aria-label="post link to LCR-动态规划" href="http://localhost:1313/learning-notes/2024-11-1-dynamic-programming/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -279,7 +246,7 @@ push(bookID)：把借阅的书籍还到图书馆。 pop()：从图书馆中借�
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to LCR-栈和队列" href="https://yuk1pedia.github.io/learning-notes/2024-10-8-stack_and_queue/"></a>
+  <a class="entry-link" aria-label="post link to LCR-栈和队列" href="http://localhost:1313/learning-notes/2024-10-8-stack_and_queue/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -298,7 +265,7 @@ push(bookID)：把借阅的书籍还到图书馆。 pop()：从图书馆中借�
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to leetcode" href="https://yuk1pedia.github.io/learning-notes/2024-9-18-leetcode/"></a>
+  <a class="entry-link" aria-label="post link to leetcode" href="http://localhost:1313/learning-notes/2024-9-18-leetcode/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -320,7 +287,7 @@ push(bookID)：把借阅的书籍还到图书馆。 pop()：从图书馆中借�
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to leetcode hot100" href="https://yuk1pedia.github.io/learning-notes/2024-8-18-leetcode_hot100/"></a>
+  <a class="entry-link" aria-label="post link to leetcode hot100" href="http://localhost:1313/learning-notes/2024-8-18-leetcode_hot100/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -332,7 +299,7 @@ push(bookID)：把借阅的书籍还到图书馆。 pop()：从图书馆中借�
     <p>1.文件与目录操作 命令 作用 使用场景 ls -lh 显示目录文件列表 查看文件大小、权限、修改时间等 cd 切换目录 进入代码目录、日志目录等 pwd 显示当前路径 确认当前工作目录 mkdir -p dir 创建目录 创建不存在的目录（含父级） rm -rf file 删除文件/目录 清理临时文件，删除无用日志 cp -r src dest 复制文件/目录 备份代码、配置文件等 mv src dest 移动/重命名文件 重命名日志、移动文件到目标目录 find /path -name &#34;*.log&#34; 查找文件 定位日志文件、查找大文件 du -sh file 查看文件大小 确定哪些文件占用空间过大 df -h 查看磁盘使用情况 确保服务器磁盘空间足够 2.进程管理 命令 作用 使用场景 ps aux 查看所有进程 查找某个进程的 PID top / htop 实时查看 CPU/内存使用 排查服务器性能问题 kill -9 PID 强制结束进程 终止卡死的程序 pkill -f process_name 根据名称杀进程 结束 Web 服务器进程 nohup command &amp; 后台运行进程 运行服务后保持终端关闭 jobs / fg / bg 管理后台进程 让任务在后台执行 3.网络调试 命令 作用 使用场景 ifconfig / ip a 查看 IP 地址 确认服务器 IP ping google.com 测试网络连通性 检查网络是否可用 curl -I http://example.com 发送 HTTP 请求 检测 API 是否正常 wget url 下载文件 获取远程资源 netstat -tulnp / ss -tulnp 查看监听端口 确保服务正确运行 telnet IP PORT 测试端口连通性 确认服务是否开放端口 scp file user@remote:/path 远程传输文件 部署代码到远程服务器 rsync -avz src dest 高效同步文件 备份数据，服务器同步代码 4.日志管理 命令 作用 使用场景 cat file.log 显示完整日志 查看小型日志文件 less file.log 分页查看 适用于大日志文件 tail -f file.log 实时查看日志 监控应用运行状态 grep &#34;error&#34; file.log 过滤关键字 查找日志错误信息 awk &#39;{print $1}&#39; file.log 处理文本 提取指定字段 sed -i &#39;s/old/new/g&#39; file.log 替换文本 修改日志或配置文件 </p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to Linux常用命令" href="https://yuk1pedia.github.io/learning-notes/2025-3-10-common-linux-commands/"></a>
+  <a class="entry-link" aria-label="post link to Linux常用命令" href="http://localhost:1313/learning-notes/2025-3-10-common-linux-commands/"></a>
 </article>
 
 <article class="post-entry"> 
@@ -352,21 +319,21 @@ public interface UserMapper extends BaseMapper&lt;User&gt; { // 你可以根据�
 ...</p>
   </div>
   <footer class="entry-footer"></footer>
-  <a class="entry-link" aria-label="post link to MyBatis-plus" href="https://yuk1pedia.github.io/learning-notes/2024-11-19-mybatis-plus/"></a>
+  <a class="entry-link" aria-label="post link to MyBatis-plus" href="http://localhost:1313/learning-notes/2024-11-19-mybatis-plus/"></a>
 </article>
 <footer class="page-footer">
   <nav class="pagination">
-    <a class="prev" href="https://yuk1pedia.github.io/learning-notes/">
+    <a class="prev" href="http://localhost:1313/learning-notes/">
       «&nbsp;Prev&nbsp;
     </a>
-    <a class="next" href="https://yuk1pedia.github.io/learning-notes/page/3/">Next&nbsp;&nbsp;»
+    <a class="next" href="http://localhost:1313/learning-notes/page/3/">Next&nbsp;&nbsp;»
     </a>
   </nav>
 </footer>
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by

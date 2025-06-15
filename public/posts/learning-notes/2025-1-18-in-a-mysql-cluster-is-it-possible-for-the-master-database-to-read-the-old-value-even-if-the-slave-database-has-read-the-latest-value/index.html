@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>在MySQL集群中，在从库已经读到了最新值的情况下，主库还有可能读到旧值吗？ | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="记录">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/posts/learning-notes/2025-1-18-in-a-mysql-cluster-is-it-possible-for-the-master-database-to-read-the-old-value-even-if-the-slave-database-has-read-the-latest-value/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/learning-notes/2025-1-18-in-a-mysql-cluster-is-it-possible-for-the-master-database-to-read-the-old-value-even-if-the-slave-database-has-read-the-latest-value/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
+                    <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      在MySQL集群中，在从库已经读到了最新值的情况下，主库还有可能读到旧值吗？
+    </h1>
+    <div class="post-description">
+      记录
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><p>参考：https://golangguide.top/</p>
+<p>对于 MySQL 数据库，为了得到更高的性能，一般会搭建 MySQL 集群实现<strong>读写分离</strong>，主库用于写操作，从库用于读操作。虽然主库一般用于写，但也是能读的。那么就有这样一个问题：<strong>在 MySQL 集群中，在从库已经读到了最新值的情况下，主库还有可能读到旧值吗？</strong></p>
+<h2 id="正常的主从更新流程">正常的主从更新流程<a hidden class="anchor" aria-hidden="true" href="#正常的主从更新流程">#</a></h2>
+<p>假设在主库和从库中都有一张 user 表，此时有以下数据：</p>
+<table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>name</th>
+          <th>age</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>小王</td>
+          <td>72</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>小李</td>
+          <td>60</td>
+      </tr>
+  </tbody>
+</table>
+<p>我们往主库执行写操作时，一般都能理解成单条语句的事务，比如下面两段 SQL 效果相同：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span><span style="color:#66d9ef">update</span> <span style="color:#66d9ef">user</span> <span style="color:#66d9ef">set</span> age <span style="color:#f92672">=</span> <span style="color:#ae81ff">50</span> <span style="color:#66d9ef">where</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-mysql" data-lang="mysql"><span style="display:flex;"><span>begin;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">update</span> <span style="color:#66d9ef">user</span> <span style="color:#66d9ef">set</span> age <span style="color:#f92672">=</span> <span style="color:#ae81ff">50</span> <span style="color:#66d9ef">where</span> id <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>commit;
+</span></span></code></pre></div><p>如果事务执行成功了，数据会先写入到主库的 binlog 文件中，然后再刷入磁盘。</p>
+<p><strong>binlog 文件</strong>是 MySQL 的 server 层日志，记录了用户对数据库有哪些<strong>变更操作</strong>，比如建数据库表、加字段，以及对某些行的增删改等。</p>
+<p>如果两个 MySQL 节点配置好了主从关系，那么它们之间会建立一个 <strong>TCP 长连接</strong>，主要用于传输同步数据。</p>
+<p>除此之外，主库还会再创建一个 <strong>binlog dump 线程</strong>，将 binlog 文件的变更发送给从库。以上，主库的工作就结束了。</p>
+<p>当从库通过之前创建的 <strong>TCP 长连接</strong>收到 binlog 后，会有一个 <strong>IO 线程</strong>负责把收到的数据写入到 **relay log（中继日志）**中，然后再有一个 <strong>SQL 线程</strong>来读取 relay log 的内容，接下来对从库执行 SQL 语句操作，完成数据的主从同步。</p>
+<h3 id="为什么要先写一遍-relay-log-然后再写从库">为什么要先写一遍 relay log 然后再写从库？<a hidden class="anchor" aria-hidden="true" href="#为什么要先写一遍-relay-log-然后再写从库">#</a></h3>
+<p>relay log 的作用就类似一个中间层，<strong>主库是多线程并发写的，从库的 SQL 线程是单线程串行执行的</strong>，所以两边的生产和消费速度肯定不同。当主库的 binlog 消息过多时，从库的 relay log 可以起到暂存主库数据的作用，接着从库的 SQL 线程再慢慢消费这些 relay log 数据，这样既不会限制主库发消息的速度，也不会给从库造成过大的压力。</p>
+<p>因此总结起来，主从同步的步骤如下：</p>
+<ol>
+<li>执行更新 SQL 语句</li>
+<li>主库写成功时，更新 binlog</li>
+<li>主库 binlog dump 线程将 binlog 的更新部分发给从库</li>
+<li>从库 IO 线程收到 binlog 更新部分，写入到 relay log 中</li>
+<li>从库 SQL 线程读取 relay log 内容，重放执行 SQL，最后主从一致</li>
+</ol>
+<p><img alt="mysql主从同步" loading="lazy" src="https://cdn.xiaobaidebug.top/image/mysql%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5-20220419210000882.png"></p>
+<h2 id="主库更新后从库都读到最新值了主库还有可能读到旧值吗">主库更新后，从库都读到最新值了，主库还有可能读到旧值吗？<a hidden class="anchor" aria-hidden="true" href="#主库更新后从库都读到最新值了主库还有可能读到旧值吗">#</a></h2>
+<p>答案是会的，这里需要先了解 MySQL 的四种隔离级别，分别是：<strong>读未提交（Read uncommitted），读已提交（Read committed），可重复读（Repeatable read）和串行化（Serializable）</strong>。在不同的隔离级别下，并发读写效果是不一样的。</p>
+<p>四种隔离级具体可以看这篇：https://yuk1pedia.github.io/2024/11/MySQL-Principles/</p>
+<p>掌握了 MySQL 的四种隔离级别后，就可以回到这个问题：<strong>主库更新后，从库都读到最新值了，主库还有可能读到旧值吗？</strong></p>
+<p>我们还是以这张表为例：</p>
+<table>
+  <thead>
+      <tr>
+          <th>id</th>
+          <th>name</th>
+          <th>age</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>1</td>
+          <td>小王</td>
+          <td>72</td>
+      </tr>
+      <tr>
+          <td>2</td>
+          <td>小李</td>
+          <td>60</td>
+      </tr>
+  </tbody>
+</table>
+<p>假设当前数据库事务的隔离级别是<strong>可重复读</strong>，主库中有 A、B 两个线程，同时执行 begin 开启事务，此时主库的线程 2 先读一次 id = 1 的数据，发现 age = 72，<strong>由于当前事务隔离级别是可重复读</strong>，那么只要线程 2 在它提交之前不做任何更新操作，<strong>不管重复读多少次，age 都是 72</strong>。</p>
+<p>在这之后主库的线程 1 将 age 更新为 100，且执行 commit 提交了事务，那么主库线程 1 就会产生 binlog，然后同步给从库，<strong>此时从库去查询就能查到 age = 100</strong>。</p>
+<p>回过头来，此时主库中的线程 2 还没有提交事务，所以就会<strong>一直读到旧值 age = 72</strong>。当线程 2 提交了事务，再查询就能查到最新的数据 age = 100了。</p>
+<p>从结论上来说，出现了<strong>从库都读到最新值了，主库却读到了旧值的情况</strong>。</p>
+<p><img alt="从库读到最新值主库却读到旧值" loading="lazy" src="https://cdn.xiaobaidebug.top/image/2%E4%BB%8E%E5%BA%93%E8%AF%BB%E5%88%B0%E6%9C%80%E6%96%B0%E5%80%BC%E4%B8%BB%E5%BA%93%E5%8D%B4%E8%AF%BB%E5%88%B0%E6%97%A7%E5%80%BC.drawio.png"></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

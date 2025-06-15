@@ -1,24 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="auto">
 
-<head><meta charset="utf-8">
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex, nofollow">
 <title>leetcode | YUKIPEDIA&#39;s blog</title>
 <meta name="keywords" content="">
 <meta name="description" content="记录">
 <meta name="author" content="">
-<link rel="canonical" href="https://yuk1pedia.github.io/learning-notes/2024-9-18-leetcode/">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2024-9-18-leetcode/">
 <link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="https://yuk1pedia.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://yuk1pedia.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://yuk1pedia.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://yuk1pedia.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://yuk1pedia.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" hreflang="en" href="https://yuk1pedia.github.io/learning-notes/2024-9-18-leetcode/">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2024-9-18-leetcode/">
 <noscript>
     <style>
         #theme-toggle,
@@ -55,67 +55,7 @@
         }
 
     </style>
-</noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-9-18-leetcode/">
-  <meta property="og:site_name" content="YUKIPEDIA&#39;s blog">
-  <meta property="og:title" content="leetcode">
-  <meta property="og:description" content="记录">
-  <meta property="og:locale" content="zh-cn">
-  <meta property="og:type" content="article">
-    <meta property="article:section" content="learning-notes">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="leetcode">
-<meta name="twitter:description" content="记录">
-
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BreadcrumbList",
-  "itemListElement": [
-    {
-      "@type": "ListItem",
-      "position":  1 ,
-      "name": "Learning Notes",
-      "item": "https://yuk1pedia.github.io/learning-notes/"
-    }, 
-    {
-      "@type": "ListItem",
-      "position":  2 ,
-      "name": "leetcode",
-      "item": "https://yuk1pedia.github.io/learning-notes/2024-9-18-leetcode/"
-    }
-  ]
-}
-</script>
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": "leetcode",
-  "name": "leetcode",
-  "description": "记录",
-  "keywords": [
-    
-  ],
-  "articleBody": "1.找出最具竞争力的子序列（单调栈+贪心） 给你一个整数数组 nums 和一个正整数 k ，返回长度为 k 且最具 竞争力 的 nums 子序列。\n数组的子序列是从数组中删除一些元素（可能不删除元素）得到的序列。\n在子序列 a 和子序列 b 第一个不相同的位置上，如果 a 中的数字小于 b 中对应的数字，那么我们称子序列 a 比子序列 b（相同长度下）更具 竞争力 。 例如，[1,3,4] 比 [1,3,5] 更具竞争力，在第一个不相同的位置，也就是最后一个位置上， 4 小于 5 。\n示例 1：\n输入：nums = [3,5,2,6], k = 2\r输出：[2,6]\r解释：在所有可能的子序列集合 {[3,5], [3,2], [3,6], [5,2], [5,6], [2,6]} 中，[2,6] 最具竞争力。 示例 2：\n输入：nums = [2,4,3,3,5,4,9,6], k = 4\r输出：[2,3,3,4] 提示：\n1 \u003c= nums.length \u003c= 10^5 0 \u003c= nums[i] \u003c= 10^9 1 \u003c= k \u003c= nums.length 思路 根据题意，最具竞争力的子序列一定是较小的元素尽可能地放到序列的前面。所以我们可以遍历一遍数组，维持一个单调栈结构，将较小的元素尽可能地往前放。\n那么我们应该如何操作？因为我们可以使用单调栈，所以说我们每次将当前元素和栈顶元素比较，如果当前元素更小，并且能够保证栈内元素数目 + 数组中剩余元素 \u003e k且栈非空，那么我们就弹出栈顶元素，将当前元素压入栈，一直重复，最后返回栈内自下而上的前k各元素为结果即可。\n记nums的大小为n，遍历数组nums，假设当前访问的下标为 i ，对数组nums[i]执行以下操作：\n记栈中元素数目为 m，我们不断地进行操作直到不满足以下条件：如果 m \u003e 0且 m + n - i \u003e k且单调栈的栈顶元素大于nums[i]，说明栈顶元素可以被当前数字nums[i]替换，我们就弹出栈顶元素 将nums[i]压入栈中 最后返回栈自下而上的前 k 个元素作为结果 代码如下\nclass Solution { public: vector\u003cint\u003e mostCompetitive(vector\u003cint\u003e\u0026 nums, int k) { vector\u003cint\u003e res; int n = nums.size(); // 原数组的大小 for (int i = 0; i \u003c n; ++i) { while (!res.empty() \u0026\u0026 res.size() + n - i \u003e k \u0026\u0026 res.back() \u003e nums[i]) { res.pop_back(); } res.push_back(nums[i]); } res.resize(k); return res; } }; 2.搜索插入位置（二分搜索） 给定一个排序数组和一个目标值，在数组中找到目标值，并返回其索引。如果目标值不存在于数组中，返回它将会被按顺序插入的位置。\n请必须使用时间复杂度为 O(log n) 的算法。\n示例 1:\n输入: nums = [1,3,5,6], target = 5\r输出: 2 示例 2:\n输入: nums = [1,3,5,6], target = 2\r输出: 1 示例 3:\n输入: nums = [1,3,5,6], target = 7\r输出: 4 提示:\n1 \u003c= nums.length \u003c= 10^4 -10^4 \u003c= nums[i] \u003c= 10^4 nums 为 无重复元素 的 升序 排列数组 -10^4 \u003c= target \u003c= 10^4 思路 不断用二分法逼近查找第一个大于等于target的下标，ans初值设置为数组长度可以省略边界条件的判断，因为存在一种情况是target大于数组中的所有数，此时需要插入到数组长度的位置\nclass Solution { public: int searchInsert(vector\u003cint\u003e\u0026 nums, int target) { int left = 0, right = nums.size() - 1; int ans = nums.size(); while (left \u003c= right) { // 防止加法溢出，位运算比除法更快 int middle = ((right - left) \u003e\u003e 1 ) + left; if (target \u003e nums[middle]) { left = middle + 1; } else if (target \u003c= nums[middle]) { ans = middle; // 将目标数字插到middle的位置 right = middle - 1; } } return ans; } }; 3.删除并获得点数（打家劫舍） 给你一个整数数组 nums ，你可以对它进行一些操作。\n每次操作中，选择任意一个 nums[i] ，删除它并获得 nums[i] 的点数。之后，你必须删除 所有 等于 nums[i] - 1 和 nums[i] + 1 的元素。\n开始你拥有 0 个点数。返回你能通过这些操作获得的最大点数。\n示例 1：\n输入：nums = [3,4,2]\r输出：6\r解释：\r删除 4 获得 4 个点数，因此 3 也被删除。\r之后，删除 2 获得 2 个点数。总共获得 6 个点数。 示例 2：\n输入：nums = [2,2,3,3,3,4]\r输出：9\r解释：\r删除 3 获得 3 个点数，接着要删除两个 2 和 4 。\r之后，再次删除 3 获得 3 个点数，再次删除 3 获得 3 个点数。\r总共获得 9 个点数。 提示：\n1 \u003c= nums.length \u003c= 2 * 10^4 1 \u003c= nums[i] \u003c= 10^4 思路 题目中的条件：“每次操作中，选择任意一个 nums[i] ，删除它并获得 nums[i] 的点数。之后，你必须删除 所有 等于 nums[i] - 1 和 nums[i] + 1 的元素”，可以理解为打家劫舍。\n记元素x在数组中出现的次数为cx，我们可以用一个数组sum记录数组nums中所有相同元素之和，即sum[x] = x * cx。若选择了x，则可以获取sum[x]的点数，且无法再选择x-1和x+1。\nclass Solution { public: int rob(vector\u003cint\u003e \u0026sum) { int size = sum.size(); int dp[size]; dp[0] = sum[0]; dp[1] = max(sum[0], sum[1]); for (int i = 2; i \u003c size; ++i) { dp[i] = max(dp[i - 1], dp[i - 2] + sum[i]); } return dp[size - 1]; } int deleteAndEarn(vector\u003cint\u003e\u0026 nums) { int maxVal = 0; for (auto val : nums) maxVal = max(maxVal, val); vector\u003cint\u003e sum(maxVal + 1); for (auto val : nums) sum[val] += val; return rob(sum); } }; 由于在打家劫舍中，每个变量的状态只与前两个变量的状态有关，所以可以不使用数组，只用两个变量来实现。\nclass Solution { public: int rob(vector\u003cint\u003e \u0026nums) { int size = nums.size(); int first = nums[0], second = max(nums[0], nums[1]); for (int i = 2; i \u003c size; i++) { int temp = second; second = max(first + nums[i], second); first = temp; } return second; } int deleteAndEarn(vector\u003cint\u003e\u0026 nums) { int maxVal = 0; for (auto val : nums) maxVal = max(maxVal, val); vector\u003cint\u003e sum(maxVal + 1); for (auto val : nums) sum[val] += val; return rob(sum); } }; 4.K 秒后第 N 个元素的值（前缀和） 给你两个整数 n 和 k。\n最初，你有一个长度为 n 的整数数组 a，对所有 0 \u003c= i \u003c= n - 1，都有 a[i] = 1 。每过一秒，你会同时更新每个元素为其前面所有元素的和加上该元素本身。例如，一秒后，a[0] 保持不变，a[1] 变为 a[0] + a[1]，a[2] 变为 a[0] + a[1] + a[2]，以此类推。\n返回 k 秒后 a[n - 1] 的值。\n由于答案可能非常大，返回其对 109 + 7 取余 后的结果。\n示例 1：\n**输入：**n = 4, k = 5\n**输出：**56\n解释：\n时间（秒） 数组状态 0 [1,1,1,1] 1 [1,2,3,4] 2 [1,3,6,10] 3 [1,4,10,20] 4 [1,5,15,35] 5 [1,6,21,56] 示例 2：\n**输入：**n = 5, k = 3\n**输出：**35\n解释：\n时间（秒） 数组状态 0 [1,1,1,1,1] 1 [1,2,3,4,5] 2 [1,3,6,10,15] 3 [1,4,10,20,35] 提示：\n1 \u003c= n, k \u003c= 1000 思路 注意每次计算前缀和后取余，不要最后返回结果的时候取余，不然会爆longlong。还有一点就是不能暴力遍历，会超时，所以需要用dp\nclass Solution { public: int valueAfterKSeconds(int n, int k) { int mod = 1e9 + 7; long long a[n]; for (int i = 0; i \u003c n; ++i) a[i] = 1; while (k--) { long long sum[1005] = {1}; for (int i = 1; i \u003c n; ++i) { sum[i] = sum[i - 1] + a[i]; sum[i] %= mod; } for (int i = 0; i \u003c n; ++i) { a[i] = sum[i]; } } return a[n - 1]; } }; 5.救生艇（双指针+贪心） 给定数组 people 。people[i]表示第 i 个人的体重 ，船的数量不限，每艘船可以承载的最大重量为 limit。\n每艘船最多可同时载两人，但条件是这些人的重量之和最多为 limit。\n返回 承载所有人所需的最小船数 。\n示例 1：\n输入：people = [1,2], limit = 3\r输出：1\r解释：1 艘船载 (1, 2) 示例 2：\n输入：people = [3,2,2,1], limit = 3\r输出：3\r解释：3 艘船分别载 (1, 2), (2) 和 (3) 示例 3：\n输入：people = [3,5,3,4], limit = 5\r输出：4\r解释：4 艘船分别载 (3), (3), (4), (5) 提示：\n1 \u003c= people.length \u003c= 5 * 10^4 1 \u003c= people[i] \u003c= limit \u003c= 3 * 10^4 思路 本题是较明显的贪心问题。要承载所有人所需的船数尽可能的小，就需要每艘船装的人尽量多。怎么装才能使人尽量多呢？自然而然是把体重大的和体重小的安排在同一艘船上。所以贪心选择策略是：每艘船装当前最大体重和最小体重的人，如果总体重超过limit，则大体重的自己上一艘船，小体重和下一个大体重的匹配。实现这个策略可以使用双指针，在此之前我们需要people数组有序。\nclass Solution { public: int numRescueBoats(vector\u003cint\u003e\u0026 people, int limit) { int ans = 0; int num = people.size(); sort(people.begin(), people.end(), greater\u003cint\u003e()); int left = 0, right = num - 1; while (left \u003c= right) { ans++; if (left == right) break; if (people[left] + people[right] \u003c= limit) { left++, right--; } else { left++; } } return ans; } }; 6.甲板上的战舰 给你一个大小为 m x n 的矩阵 board 表示甲板，其中，每个单元格可以是一艘战舰 'X' 或者是一个空位 '.' ，返回在甲板 board 上放置的 战舰 的数量。\n战舰 只能水平或者垂直放置在 board 上。换句话说，战舰只能按 1 x k（1 行，k 列）或 k x 1（k 行，1 列）的形状建造，其中 k 可以是任意大小。两艘战舰之间至少有一个水平或垂直的空位分隔 （即没有相邻的战舰）。\n示例 1：\n输入：board = [[\"X\",\".\",\".\",\"X\"],[\".\",\".\",\".\",\"X\"],[\".\",\".\",\".\",\"X\"]]\r输出：2 示例 2：\n输入：board = [[\".\"]]\r输出：0 提示：\nm == board.length n == board[i].length 1 \u003c= m, n \u003c= 200 board[i][j] 是 '.' 或 'X' 思路 遍历一次board，找到一个X就遍历行和列，将X改为.，统计答案即可\nclass Solution { public: int countBattleships(vector\u003cvector\u003cchar\u003e\u003e\u0026 board) { int row = board.size(); int col = board[0].size(); int ans = 0; for (int i = 0; i \u003c row; ++i) { for (int j = 0; j \u003c col; ++j) { if (board[i][j] == 'X') { board[i][j] = '.'; // 遍历列 for (int k = j + 1; k \u003c col \u0026\u0026 board[i][k] == 'X'; ++k) board[i][k] = '.'; // 遍历行 for (int k = i + 1; k \u003c row \u0026\u0026 board[k][j] == 'X'; ++k) board[k][j] = '.'; ans++; } } } return ans; } }; 7.不同路径Ⅱ 一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为 “Start” ）。\n机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为 “Finish”）。\n现在考虑网格中有障碍物。那么从左上角到右下角将会有多少条不同的路径？\n网格中的障碍物和空位置分别用 1 和 0 来表示。\n示例 1：\n输入：obstacleGrid = [[0,0,0],[0,1,0],[0,0,0]]\r输出：2\r解释：3x3 网格的正中间有一个障碍物。\r从左上角到右下角一共有 2 条不同的路径：\r1. 向右 -\u003e 向右 -\u003e 向下 -\u003e 向下\r2. 向下 -\u003e 向下 -\u003e 向右 -\u003e 向右 示例 2：\n输入：obstacleGrid = [[0,1],[0,0]]\r输出：1 提示：\nm == obstacleGrid.length n == obstacleGrid[i].length 1 \u003c= m, n \u003c= 100 obstacleGrid[i][j] 为 0 或 1 思路 这是一个带障碍物的二维dp，我们可以将其降到一维，代码如下\nclass Solution { public: int uniquePathsWithObstacles(vector\u003cvector\u003cint\u003e\u003e\u0026 obstacleGrid) { int n = obstacleGrid.size(), m = obstacleGrid.at(0).size(); vector\u003cint\u003e dp(m); // 用一维数组遍历整个棋盘 if (obstacleGrid[0][0] == 0) dp[0] = 1; for (int i = 0; i \u003c n; ++i) { for (int j = 0; j \u003c m; ++j) { if (obstacleGrid[i][j] == 1) { dp[j] = 0; continue; } if (j - 1 \u003e= 0 \u0026\u0026 obstacleGrid[i][j - 1] == 0) { dp[j] += dp[j - 1]; // 这里的dp[j]是继承了上一行的dp[j]，所以只用加上前一个dp[j - 1]即可 } } } return dp.back(); } }; 二维做法如下\nclass Solution { public: int uniquePathsWithObstacles(vector\u003cvector\u003cint\u003e\u003e\u0026 obstacleGrid) { int m = obstacleGrid.size(), n = obstacleGrid.at(0).size(); int dp[105][105] = {0}; if (obstacleGrid[0][0] == 0) dp[0][0] = 1; // 特判一下起点 for (int i = 1; i \u003c n; ++i) { if (obstacleGrid[0][i] != 1) dp[0][i] += dp[0][i - 1]; else dp[0][i] = 0; } for (int j = 1; j \u003c m; ++j) { if (obstacleGrid[j][0] != 1) dp[j][0] += dp[j - 1][0]; else dp[j][0] = 0; } for (int i = 1; i \u003c m; ++i) { for (int j = 1; j \u003c n; ++j) { if (obstacleGrid[i][j] == 1) dp[i][j] = 0; else dp[i][j] = dp[i - 1][j] + dp[i][j - 1]; } } return dp[m - 1][n - 1]; } }; 8.施咒的最大总伤害（dp） 一个魔法师有许多不同的咒语。\n给你一个数组 power ，其中每个元素表示一个咒语的伤害值，可能会有多个咒语有相同的伤害值。\n已知魔法师使用伤害值为 power[i] 的咒语时，他们就 不能 使用伤害为 power[i] - 2 ，power[i] - 1 ，power[i] + 1 或者 power[i] + 2 的咒语。\n每个咒语最多只能被使用 一次 。\n请你返回这个魔法师可以达到的伤害值之和的 最大值 。\n示例 1：\n**输入：**power = [1,1,3,4]\n**输出：**6\n解释：\n可以使用咒语 0，1，3，伤害值分别为 1，1，4，总伤害值为 6 。\n示例 2：\n**输入：**power = [7,1,6,6]\n**输出：**13\n解释：\n可以使用咒语 1，2，3，伤害值分别为 1，6，6，总伤害值为 13 。\n提示：\n1 \u003c= power.length \u003c= 10^5 1 \u003c= power[i] \u003c= 10^9 思路 本题为动态规划，每个咒语都有一个对应的伤害值，选了某个咒语后，该咒语的伤害值+-2范围内的咒语都不能选，给定一个咒语数组，要我们求最大能够造成多少伤害。注意若有多个相同伤害值的咒语，可以重复选择。所以对于每种伤害值的咒语，他能打出的伤害应该是ai*bi，其中ai表示咒语的伤害值，bi表示该伤害值咒语的数量。\n我们用f[i]来记录最后使用第i个咒语能打出的最大总伤害，我们先根据咒语的本身基础伤害排序，那么对于j",
-  "wordCount" : "5876",
-  "inLanguage": "en",
-  "datePublished": "0001-01-01T00:00:00Z",
-  "dateModified": "0001-01-01T00:00:00Z",
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "https://yuk1pedia.github.io/learning-notes/2024-9-18-leetcode/"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "YUKIPEDIA's blog",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://yuk1pedia.github.io/favicon.ico"
-    }
-  }
-}
-</script>
+</noscript>
 </head>
 
 <body class="" id="top">
@@ -133,7 +73,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://yuk1pedia.github.io/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -159,8 +99,13 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="https://yuk1pedia.github.io/learning-notes" title="Learning Notes">
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
                     <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
                 </a>
             </li>
         </ul>
@@ -1765,7 +1710,7 @@
     </main>
     
 <footer class="footer">
-        <span>&copy; 2025 <a href="https://yuk1pedia.github.io/">YUKIPEDIA&#39;s blog</a></span> · 
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
 
     <span>
         Powered by
