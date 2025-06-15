@@ -1,39 +1,264 @@
-<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Learning Notes | YUKIPEDIA's blog</title><meta name=keywords content><meta name=description content="Learning Notes - YUKIPEDIA's blog"><meta name=author content><link rel=canonical href=https://yuk1pedia.github.io/learning-notes/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://yuk1pedia.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://yuk1pedia.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://yuk1pedia.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://yuk1pedia.github.io/apple-touch-icon.png><link rel=mask-icon href=https://yuk1pedia.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate type=application/rss+xml href=https://yuk1pedia.github.io/learning-notes/index.xml><link rel=alternate hreflang=en href=https://yuk1pedia.github.io/learning-notes/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/"><meta property="og:site_name" content="YUKIPEDIA's blog"><meta property="og:title" content="Learning Notes"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="website"><meta name=twitter:card content="summary"><meta name=twitter:title content="Learning Notes"><meta name=twitter:description content><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Learning Notes","item":"https://yuk1pedia.github.io/learning-notes/"}]}</script></head><body class=list id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://yuk1pedia.github.io/ accesskey=h title="YUKIPEDIA's blog (Alt + H)">YUKIPEDIA's blog</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
-<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://yuk1pedia.github.io/learning-notes title="Learning Notes"><span class=active>Learning Notes</span></a></li></ul></nav></header><main class=main><header class=page-header><h1>Learning Notes</h1></header><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>缓存穿透、缓存雪崩、缓存击穿与缓存污染</h2></header><div class=entry-content><p>1.缓存穿透 什么是缓存穿透？
-我们使用 redis 大部分情况都是通过 key 查询对应的值，假如发送的请求传进来的 key 是不存在redis 中的，那么就查不到缓存，查不到缓存就会去数据库查询。假如有大量这样的请求，这些请求像“穿透”了缓存一样直接打在数据库上，这种现象就叫做缓存穿透。
-分析：
-关键在于在 redis 查不到 key 值，这和缓存击穿有根本的区别，区别在于缓存穿透的情况是传进来的 key 在 redis 中是不存在的。假如有黑客传进大量的不存在的 key ，那么大量的请求打在数据库上是很致命的问题，所以在日常开发中要对参数做好校验，一些非法的参数，不可能存在的key就直接返回错误提示，要对调用方保持这种“不信任”的心态。
-解决方案：
-把无效的 key 存进 redis 中。如果 redis 查不到数据，数据库也查不到，我们把这个 key 值保存进 redis ，设置 value=“null” ，当下次再通过这个 key 查询时就不需要再查询数据库。但这种处理方式肯定是有问题的，假如传进来的这个不存在的 key 值每次都是随机的，那存进 redis 也没有意义，会造成无意义的内存消耗，并且如果某个之前访问过的 key 此时设置了对应的值，那么就会造成 redis 和数据库的短暂不一致。 使用布隆过滤器。布隆过滤器的作用是某个 key 不存在，那么就一定不存在，它说某个 key 存在，那么很大可能是存在(存在一定的误判率)。于是我们可以在缓存之前再加一层布隆过滤器，在查询的时候先去布隆过滤器查询 key 是否存在，如果不存在就直接返回。 布隆过滤器的一种实现：
-初始化一个较大的数组，用来存放二进制 0 或 1。一开始数组中数据都为 0，当一个 key 来了之后经过 3 次 hash 计算，得到三个下标 index，将数组中这三个下标对应的数据从 0 改为 1，这样的话数组中三个位置就能标明一个 key 的存在。 当然这种实现也是有误判率的，应该说布隆过滤器的误判率不可能为 0。如果我们想要减少误判率，就得增加数组的长度，但这样会造成更多的内存消耗。 ...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to 缓存穿透、缓存雪崩、缓存击穿与缓存污染" href=https://yuk1pedia.github.io/learning-notes/2024-11-6-cache-penetration-cache-avalanche-and-cache-breakdown/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>记录暑期和秋招</h2></header><div class=entry-content><p>前言 这篇博客用来记录本人暑期实习 + 秋招全过程，主要应该是面经吧，可能会有些其他的碎碎念。这篇博客的内容我在牛客也会同步更新：https://www.nowcoder.com/users/209838151
-2024/11/23 写完点评项目，将点评 + 外卖缝合到一起，总结学过的技术栈与各种经历，完成第一版简历
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Learning Notes | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Learning Notes - YUKIPEDIA&#39;s blog">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/learning-notes/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/learning-notes/index.xml">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="list" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
+                    <span class="active">Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main"> 
+<header class="page-header">
+  <h1>
+    Learning Notes
+  </h1>
+</header>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">记录暑期和秋招
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>前言 这篇博客用来记录本人暑期实习 &#43; 秋招全过程，主要应该是面经吧，可能会有些其他的碎碎念。这篇博客的内容我在牛客也会同步更新：https://www.nowcoder.com/users/209838151
+2024/11/23 写完点评项目，将点评 &#43; 外卖缝合到一起，总结学过的技术栈与各种经历，完成第一版简历
 2024/12/01 开始投递简历，总的投递公司数量不多，有：腾讯、字节、快手、百度、美团、小红书、小米
 后续：字节美团小米泡池子，快手投一次挂一次（听说是没有实习经历不给过简历，也可能是没到实习招聘时间），小红书和百度简历挂，只有腾讯给面试
 2024/12/12 2024/12/1 投递后做了测评，一直到 10 号状态一直处于测评后等通知，2024/12/11 在官网更新了下简历，12号状态变成初试
 2024/12/13 官网显示流程结束
-2024/12/14 腾讯下午五点打电话约面，时间定的 2024/12/20 上午 11 点。面试部门是天美后台开发，13 号流程结束面试官说是没来得及更新官网状态，不过天美主 cpp + golang ，不知道为啥捞我 Java 选手面试
+2024/12/14 腾讯下午五点打电话约面，时间定的 2024/12/20 上午 11 点。面试部门是天美后台开发，13 号流程结束面试官说是没来得及更新官网状态，不过天美主 cpp &#43; golang ，不知道为啥捞我 Java 选手面试
 2024/12/20 第一次面试，面经如下：
 全程一个半小时，前一个小时在做题，题目是翻转字符串和两个栈实现队列 翻转字符串就是输入：hello world,god bless you，需要输出：world hello,you bless god 两道题都不难，但第一次面试紧张感实在难顶，也不熟悉acm模式，输入输出处理的不太好，花了好久才做出来 后面半小时也没问什么，感觉是技术栈不match
-我是java技术栈，面试官看我写题用cpp的stl比较熟练，上来先问： Q1：我看你stl用的挺熟练的，介绍下c++11的新特性？ A：这个真不会，我对cpp的使用仅限于拿stl来做题
+我是java技术栈，面试官看我写题用cpp的stl比较熟练，上来先问： Q1：我看你stl用的挺熟练的，介绍下c&#43;&#43;11的新特性？ A：这个真不会，我对cpp的使用仅限于拿stl来做题
 之后估计面试官着急吃饭，随便问了点 Q2：网络编程了解吗？讲讲java里套接字的api A：上次用有点太久远了，只讲了如何使用socket类绑定主机端口，其他讲的磕磕绊绊的
 Q3：多态用过吗？你是java技术栈的话讲讲java的多态 A：吟唱八股
 Q4：Linux有用过吗？使用过哪些命令？ A：有使用docker在服务器上部署项目的经验，主要用的还是文件检索、修改、移动等基础的命令
 Q5：数据库方面呢？说说你是用过哪些数据库？ A：mysql、redis、mongo，吟唱一小段mysql和redis的八股
 最后反问：第一次面试表现？学习建议？ 面试官回答：知识广度还行，建议的话就是熟悉acm模式，写题需要有准确的输入输出，考虑边界情况
 总结 面试官也问了一句了不了解go，我也是仅限于了解，没有实际用过。之前有看过天美的其他面经，感觉部门主要还是使用cpp和golang，虽然问的问题不多，但主要问的还是cpp相关的问题，cpp选手对Linux的掌握程度应该远高于我这个半吊子java选手 腾讯天美的总体面试体验很好，面试官很温柔，完全不push，看我写算法紧张会引导我思考，算法确实刷了不少，但面试做题和平时刷力扣完全是两个场景，很难不紧张。回池子等捞了，天美这类主cpp的部门就别捞我了
-面完之后下午挂，应该是技术栈不 match + 做题比较慢
+面完之后下午挂，应该是技术栈不 match &#43; 做题比较慢
 补充：
 两个栈实现队列力扣有原题，翻转字符串暂时没找到，面试后自己重新做了一遍，补一下题解，面试的时候面试官说可以不考虑输入输出，硬编码进main函数中就行。 整体思路是先按照逗号将原字符串分割成子字符串，对每个子字符串按照空格分割成一个个单词，对单词顺序进行翻转
-#include&lt;bits/stdc++.h> using namespace std; string solve(string input) { // 翻转子串 auto reverseSubStr = [&](string str) -> string { vector&lt;string> words; string word = ""; for (char c : str) { if (c == ' ') { if (!word.empty()) { words.push_back(word); word = ""; } } else { word += c; } } if (!word.empty()) { words.push_back(word); } string res = ""; for (int i = words.size() - 1; i >= 0; --i) { res += words[i]; if (i != 0) { res += " "; } } return res; }; vector&lt;string> substrs; string substr = ""; for (char c : input) { if (c == ',') { substrs.push_back(substr); substr = ""; } else { substr += c; } } if (!substr.empty()) { substrs.push_back(substr); } for (auto& substr : substrs) { substr = reverseSubStr(substr); } string res = ""; for (int i = 0; i &lt; substrs.size(); ++i) { res += substrs[i]; if (i != substrs.size() - 1) { res += ","; } } return res; } int main() { string in = "hello world,god bless you"; string out = solve(in); cout &lt;&lt; out &lt;&lt; endl; return 0; } 2024/12/25 腾讯二进宫，部门是微信支付前端开发，早上十点发短信约 26 号晚上七点面试，但那时候有课程汇报，期末也很忙，和面试官联系把面试时间推到了考试周（2025/1/6）
-...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to 记录暑期和秋招" href=https://yuk1pedia.github.io/learning-notes/2025-4-14-autumn-recruitment/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>通过AOP和反射实现不同表的公共字段自动填充</h2></header><div class=entry-content><p>项目问题场景 当前端页面涉及到新增或更新数据操作时，在后端数据库中会有更新某些公共字段的需求，比如创建时间、更新时间、创建人等等。
+#include&lt;bits/stdc&#43;&#43;.h&gt; using namespace std; string solve(string input) { // 翻转子串 auto reverseSubStr = [&amp;](string str) -&gt; string { vector&lt;string&gt; words; string word = &#34;&#34;; for (char c : str) { if (c == &#39; &#39;) { if (!word.empty()) { words.push_back(word); word = &#34;&#34;; } } else { word &#43;= c; } } if (!word.empty()) { words.push_back(word); } string res = &#34;&#34;; for (int i = words.size() - 1; i &gt;= 0; --i) { res &#43;= words[i]; if (i != 0) { res &#43;= &#34; &#34;; } } return res; }; vector&lt;string&gt; substrs; string substr = &#34;&#34;; for (char c : input) { if (c == &#39;,&#39;) { substrs.push_back(substr); substr = &#34;&#34;; } else { substr &#43;= c; } } if (!substr.empty()) { substrs.push_back(substr); } for (auto&amp; substr : substrs) { substr = reverseSubStr(substr); } string res = &#34;&#34;; for (int i = 0; i &lt; substrs.size(); &#43;&#43;i) { res &#43;= substrs[i]; if (i != substrs.size() - 1) { res &#43;= &#34;,&#34;; } } return res; } int main() { string in = &#34;hello world,god bless you&#34;; string out = solve(in); cout &lt;&lt; out &lt;&lt; endl; return 0; } 2024/12/25 腾讯二进宫，部门是微信支付前端开发，早上十点发短信约 26 号晚上七点面试，但那时候有课程汇报，期末也很忙，和面试官联系把面试时间推到了考试周（2025/1/6）
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to 记录暑期和秋招" href="http://localhost:1313/learning-notes/2025-4-14-autumn-recruitment/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">通过AOP和反射实现不同表的公共字段自动填充
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>项目问题场景 当前端页面涉及到新增或更新数据操作时，在后端数据库中会有更新某些公共字段的需求，比如创建时间、更新时间、创建人等等。
 比如下面的 service 层代码：
-/** * 新增员工 * @param employeeDTO */ public void save(EmployeeDTO employeeDTO) { System.out.println("当前线程的 id：" + Thread.currentThread().getId()); Employee employee = new Employee(); // 对象属性拷贝，将前者的属性拷贝到后者的属性上，前提是两者的属性名一致 BeanUtils.copyProperties(employeeDTO, employee); // 设置账号状态，默认正常状态 1表示正常，0表示锁定 employee.setStatus(StatusConstant.ENABLE); // 用常量类来设置，不用具体的数字（硬编码） // 设置密码，默认为 123456，同样使用常量类来设置 employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes())); // 设置当前记录的创建时间和修改时间 employee.setCreateTime(LocalDateTime.now()); employee.setUpdateTime(LocalDateTime.now()); // 设置当前记录创建人 id 和修改人 id employee.setCreateUser(BaseContext.getCurrentId()); employee.setUpdateUser(BaseContext.getCurrentId()); employeeMapper.insert(employee); } /** * 编辑员工信息 * @param employeeDTO */ public void update(EmployeeDTO employeeDTO) { Employee employee = new Employee(); BeanUtils.copyProperties(employeeDTO, employee); employee.setUpdateTime(LocalDateTime.now()); employee.setUpdateUser(BaseContext.getCurrentId()); // 获取操作人 id，此处是通过拦截器的 thread 获取对应信息 employeeMapper.update(employee); } 其中更新 updateTime 、setUpdateUser 等操作在重复的调用相同的 set 方法，会增加代码的冗余且不便于后期维护。
-...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to 通过AOP和反射实现不同表的公共字段自动填充" href=https://yuk1pedia.github.io/learning-notes/2024-9-4-implement-automatic-filling-of-common-fields-for-different-tables-through-aop-and-reflection/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>随便写写，感觉更像日记</h2></header><div class=entry-content><p>前言 暑期拿到了白月光腾讯的 offer，和面试我的三位面试官都聊的很开心，去实习前随便写点啥~
+/** * 新增员工 * @param employeeDTO */ public void save(EmployeeDTO employeeDTO) { System.out.println(&#34;当前线程的 id：&#34; &#43; Thread.currentThread().getId()); Employee employee = new Employee(); // 对象属性拷贝，将前者的属性拷贝到后者的属性上，前提是两者的属性名一致 BeanUtils.copyProperties(employeeDTO, employee); // 设置账号状态，默认正常状态 1表示正常，0表示锁定 employee.setStatus(StatusConstant.ENABLE); // 用常量类来设置，不用具体的数字（硬编码） // 设置密码，默认为 123456，同样使用常量类来设置 employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes())); // 设置当前记录的创建时间和修改时间 employee.setCreateTime(LocalDateTime.now()); employee.setUpdateTime(LocalDateTime.now()); // 设置当前记录创建人 id 和修改人 id employee.setCreateUser(BaseContext.getCurrentId()); employee.setUpdateUser(BaseContext.getCurrentId()); employeeMapper.insert(employee); } /** * 编辑员工信息 * @param employeeDTO */ public void update(EmployeeDTO employeeDTO) { Employee employee = new Employee(); BeanUtils.copyProperties(employeeDTO, employee); employee.setUpdateTime(LocalDateTime.now()); employee.setUpdateUser(BaseContext.getCurrentId()); // 获取操作人 id，此处是通过拦截器的 thread 获取对应信息 employeeMapper.update(employee); } 其中更新 updateTime 、setUpdateUser 等操作在重复的调用相同的 set 方法，会增加代码的冗余且不便于后期维护。
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to 通过AOP和反射实现不同表的公共字段自动填充" href="http://localhost:1313/learning-notes/2024-9-4-implement-automatic-filling-of-common-fields-for-different-tables-through-aop-and-reflection/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">随便写写，感觉更像日记
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>前言 暑期拿到了白月光腾讯的 offer，和面试我的三位面试官都聊的很开心，去实习前随便写点啥~
 4/17 这一天先后加了leader 、hr 和 mentor 的微信，leader 超级热情！mentor 也有问必答
 4/18 mentor 早上和我说看我博客主页背景和头像，发现我是 key 社粉丝，聊起了二次元哈哈哈哈，mt 本人也超级健谈，肯定会有一个不错的实习体验！虽然还没去上班，但组内氛围一定特别特别好，很想很想转正！！
-4/24 翻到了 leader 的博客，看了好久发现 leader 居然写书哈哈哈，如果有兴趣的话可以去那里瞅瞅：https://www.piglei.com/</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to 随便写写，感觉更像日记" href=https://yuk1pedia.github.io/learning-notes/2025-4-19-record/></a></article><footer class=page-footer><nav class=pagination><a class=prev href=https://yuk1pedia.github.io/learning-notes/page/6/>«&nbsp;Prev&nbsp;</a></nav></footer></main><footer class=footer><span>&copy; 2025 <a href=https://yuk1pedia.github.io/>YUKIPEDIA's blog</a></span> ·
-<span>Powered by
-<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
-</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>
+4/24 翻到了 leader 的博客，看了好久发现 leader 居然写书哈哈哈，如果有兴趣的话可以去那里瞅瞅：https://www.piglei.com/
+</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to 随便写写，感觉更像日记" href="http://localhost:1313/learning-notes/2025-4-19-record/"></a>
+</article>
+<footer class="page-footer">
+  <nav class="pagination">
+    <a class="prev" href="http://localhost:1313/learning-notes/page/6/">
+      «&nbsp;Prev&nbsp;
+    </a>
+  </nav>
+</footer>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

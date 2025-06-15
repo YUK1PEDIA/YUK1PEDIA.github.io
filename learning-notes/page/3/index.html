@@ -1,23 +1,160 @@
-<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Learning Notes | YUKIPEDIA's blog</title><meta name=keywords content><meta name=description content="Learning Notes - YUKIPEDIA's blog"><meta name=author content><link rel=canonical href=https://yuk1pedia.github.io/learning-notes/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://yuk1pedia.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://yuk1pedia.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://yuk1pedia.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://yuk1pedia.github.io/apple-touch-icon.png><link rel=mask-icon href=https://yuk1pedia.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate type=application/rss+xml href=https://yuk1pedia.github.io/learning-notes/index.xml><link rel=alternate hreflang=en href=https://yuk1pedia.github.io/learning-notes/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/"><meta property="og:site_name" content="YUKIPEDIA's blog"><meta property="og:title" content="Learning Notes"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="website"><meta name=twitter:card content="summary"><meta name=twitter:title content="Learning Notes"><meta name=twitter:description content><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Learning Notes","item":"https://yuk1pedia.github.io/learning-notes/"}]}</script></head><body class=list id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://yuk1pedia.github.io/ accesskey=h title="YUKIPEDIA's blog (Alt + H)">YUKIPEDIA's blog</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
-<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://yuk1pedia.github.io/learning-notes title="Learning Notes"><span class=active>Learning Notes</span></a></li></ul></nav></header><main class=main><header class=page-header><h1>Learning Notes</h1></header><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>MySQL原理</h2></header><div class=entry-content><p>一、存储引擎 1.MySQL体系结构 连接层：一些客户端和连接服务，主要完成一些类似于连接处理、授权认证及相关的安全方案。服务器也会为安全接入的每个客户端验证它所具有的操作权限。 服务层：第二层架构主要完成大多数的核心服务功能，如 SQL 接口，并完成缓存的查询、SQL的分析和优化、部分内置函数的执行。所有跨存储引擎的功能也在这一层实现。 引擎层：存储引擎真正的负责了 MySQL 中数据的存储和提取，服务器通过 API 和存储引擎进行通信。不同的存储引擎具有不同的功能。 存储层：将数据存储在文件系统之上，完成与存储引擎的交互。 2.存储引擎 存储引擎简介：存储引擎就是存储数据、建立索引、更新/查询数据等技术的实现方式。存储引擎是基于表的，不同的表可以用不同的存储引擎，因此存储引擎也被称为表类型。 图中可以看出 MySQL 的默认存储引擎是 InnoDB。
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Learning Notes | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="Learning Notes - YUKIPEDIA&#39;s blog">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/learning-notes/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/learning-notes/index.xml">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="list" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
+                    <span class="active">Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main"> 
+<header class="page-header">
+  <h1>
+    Learning Notes
+  </h1>
+</header>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">MySQL原理
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>一、存储引擎 1.MySQL体系结构 连接层：一些客户端和连接服务，主要完成一些类似于连接处理、授权认证及相关的安全方案。服务器也会为安全接入的每个客户端验证它所具有的操作权限。 服务层：第二层架构主要完成大多数的核心服务功能，如 SQL 接口，并完成缓存的查询、SQL的分析和优化、部分内置函数的执行。所有跨存储引擎的功能也在这一层实现。 引擎层：存储引擎真正的负责了 MySQL 中数据的存储和提取，服务器通过 API 和存储引擎进行通信。不同的存储引擎具有不同的功能。 存储层：将数据存储在文件系统之上，完成与存储引擎的交互。 2.存储引擎 存储引擎简介：存储引擎就是存储数据、建立索引、更新/查询数据等技术的实现方式。存储引擎是基于表的，不同的表可以用不同的存储引擎，因此存储引擎也被称为表类型。 图中可以看出 MySQL 的默认存储引擎是 InnoDB。
 InnoDB
 介绍：一种兼顾高可靠性和高性能的通用存储引擎，MySQL 5.5 之后，InnoDB 是默认的存储引擎。 特点 DML 操作遵循 ACID 模型，支持事务 行级锁，提高并发访问性能 支持外键约束，保证数据的完整和可靠性 文件：xxx.ibd ：xxx 代表的是表名，InnoDB 引擎的每张表都对应这样一个表空间文件，存储该表的表结构（frm、sdi）、数据和索引 以下是 InnoDB 的逻辑存储结构 存储引擎的选择
 二、索引 1.索引概述 概念：索引（index）是帮助 MySQL 高效获取数据的数据结构（有序）。这些数据结构满足特定查找算法，并且以某种方式指向数据，这样就可以在这些数据结构上实现高级查找算法。
 优缺点：
-优势 劣势 提高数据检索效率，降低数据库 IO 成本 索引列也要占据空间 通过索引列对数据进行排序，降低数据排序成本，降低 CPU 的消耗 索引大大提高了查询效率，但降低了表的更新速度（更新表时需要操作对应的索引） 2.索引结构 索引结构：MySQL 的索引在存储引擎层实现，不同的存储引擎有不同的结构 以 B-Tree和 B+Tree 为例
+优势 劣势 提高数据检索效率，降低数据库 IO 成本 索引列也要占据空间 通过索引列对数据进行排序，降低数据排序成本，降低 CPU 的消耗 索引大大提高了查询效率，但降低了表的更新速度（更新表时需要操作对应的索引） 2.索引结构 索引结构：MySQL 的索引在存储引擎层实现，不同的存储引擎有不同的结构 以 B-Tree和 B&#43;Tree 为例
 B-Tree （多路平衡查找树） 下面是一棵最大度数为 5 的 B-Tree ，每层的节点都会携带数据
-...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to MySQL原理" href=https://yuk1pedia.github.io/learning-notes/2024-11-4-mysql-principles/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>mysql常用指令</h2></header><div class=entry-content><p>Ⅰ-DDL语句 1.数据库操作 1.登录指令：mysql -u root -p，密码：123456
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to MySQL原理" href="http://localhost:1313/learning-notes/2024-11-4-mysql-principles/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">mysql常用指令
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Ⅰ-DDL语句 1.数据库操作 1.登录指令：mysql -u root -p，密码：123456
 2.查询所有数据库
 SHOW DATABASES; 3.查询当前数据库
 SELECT DATABASE(); 4.创建数据库
 CREATE DATABASE; 5.删除数据库
 DROP DATABASE; 6.使用（跳转到某数据库）：USE 数据库名;
 2.表操作 (1).表的创建相关操作 1.创建表：CREATE TABLE 表名(
-​ 字段1 字段1类型[COMMENT 字段1注释],
-​ 字段2 字段2类型[COMMENT 字段2注释]
-​ ……
-​ 字段n 字段n注释[COMMENT 字段n注释]
+​	字段1 字段1类型[COMMENT 字段1注释],
+​	字段2 字段2类型[COMMENT 字段2注释]
+​	……
+​	字段n 字段n注释[COMMENT 字段n注释]
 )[COMMENT 表注释];
 2.查询当前数据库所有表
 SHOW TABLES; 3.查询表结构：DESC 表名;
@@ -25,7 +162,20 @@ SHOW TABLES; 3.查询表结构：DESC 表名;
 (2).表的修改相关操作 1.往表结构中增加字段：ALTER TABLE 表名 ADD 字段名 类型(长度) [COMMENT注释] [约束];
 2.修改字段名和字段类型：ALTER TABLE 表名 CHANGE 旧字段名 新字段名 类型(长度) [COMMENT 注释] [约束];
 3.修改数据类型：ALTER TABLE 表名 MODIFY 字段名 新数据类型(长度);
-...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to mysql常用指令" href=https://yuk1pedia.github.io/learning-notes/2024-5-23-mysql/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>OOMALL相关扩展思考</h2></header><div class=entry-content><p>1.电商往往会涉及到资金的流转，在后端方面如何保证资金在电商平台上的安全？ 如何确保用户账户、支付信息不被篡改或盗用？
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to mysql常用指令" href="http://localhost:1313/learning-notes/2024-5-23-mysql/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">OOMALL相关扩展思考
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>
+1.电商往往会涉及到资金的流转，在后端方面如何保证资金在电商平台上的安全？ 如何确保用户账户、支付信息不被篡改或盗用？
 可以采用双重身份验证，引入短信验证码、邮箱验证码进行二次验证
 用户支付密码需要避免明文存储，可以采用 PBKDF2 或者 Argon2 哈希存储
 防止暴力破解，限制支付密码输入错误次数，超过阈值后进行账户锁定或额外验证
@@ -34,7 +184,7 @@ PBKDF2（Password-Based Key Derivation Function 2）会对密码进行多次加�
 原理：用户输入密码，例如 mypassword123 ，系统给它加点“盐”（随机数据），比如 randomsalt ，再用 PBKDF2 算法反复进行哈希运算，得到最终的哈希值，存入数据库 Argon2 是一种更先进的哈希算法，相比 PBKDF2，它不仅反复 “加密” ，还让计算过程 更吃内存，这样黑客即使使用高性能 GPU 或专门的破解硬件，也很难暴力破解
 如何保证用户支付、退款等资金操作不会因为系统异常导致资金错账或丢失？
 采用分布式事务保障
-TCC 事务机制：Try 预留资金（冻结余额）、Confirm 确认扣款（实际转账）、Cancel 取消预留（释放资金） SAGA 事务模式：长事务，如跨行转账，采用补偿机制回滚失败操作 消息事务 + 幂等处理：采用 RocketMQ 的半消息机制实现消息事务，支付成功后发送事务消息到 MQ，再异步更新订单状态。注意订单状态更新必须是 幂等的，防止消息重复消费 对账机制
+TCC 事务机制：Try 预留资金（冻结余额）、Confirm 确认扣款（实际转账）、Cancel 取消预留（释放资金） SAGA 事务模式：长事务，如跨行转账，采用补偿机制回滚失败操作 消息事务 &#43; 幂等处理：采用 RocketMQ 的半消息机制实现消息事务，支付成功后发送事务消息到 MQ，再异步更新订单状态。注意订单状态更新必须是 幂等的，防止消息重复消费 对账机制
 定期对账（商户、银行、用户对账），发现差异立即报警 记录交易日志，提高不可篡改性 补充：
 TCC（Try-Confirm-Cancel）是一种 两阶段提交（2PC） 的思想（TCC 可以保证事务操作的严格执行，不会出现一部分成功，一部分失败的情况），核心思路是：“先预留资源，再真正提交，失败后回滚” 。举个例子，你去餐厅订了一桌火锅，整个流程是这样的：
 Try（尝试扣留资源）：你打电话订座，餐厅告诉你“位置已预留”，但还没真正让你入座
@@ -47,46 +197,106 @@ SAGA（补偿事务）模式，是一种长事务管理模式，适用于 异步
 扣款支付
 通知商家发货
 如果第 4 步失败了（比如商家没货），SAGA 需要执行补偿操作：
-...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to OOMALL相关扩展思考" href=https://yuk1pedia.github.io/learning-notes/2025-3-15-oomall/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>python + django</h2></header><div class=entry-content><p>python 语法 文件类型相关
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to OOMALL相关扩展思考" href="http://localhost:1313/learning-notes/2025-3-15-oomall/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">python &#43; django
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>python 语法 文件类型相关
 python 是动态类型语言，存在三种文件类型：python file、python unit test 和 python stub
 python file：普通的 Python 脚本文件，用于编写常规的 Python 代码，如业务逻辑、工具脚本、程序主体等 python unit test：专门用于编写单元测试的文件，通常与测试框架（如 unittest、pytest）配合使用，用于验证代码功能的正确性 python stub：存根文件（.pyi），用于类型提示（Type Hints），不包含实际代码逻辑，仅定义函数、类、变量的类型签名 最后一个 python stub可能不太好理解，由于 python 是动态类型语言，写代码时不强制声明变量类型，但在大型项目里，不明确类型会让代码阅读和维护变难，IDE 也不好做智能提示，Python stub 就是专门用来写类型信息的文件，它里面只写函数、变量、类等的类型，没有实际代码逻辑
 变量
 python 中对象分为可变对象和不可变对象，主要区别体现在 对象的值能否被修改
-不可变对象：一旦创建，其值就不能被修改。若要修改值，实际上是创建了一个新对象，原对象保持不变。不可变对象有：int、float、str、tuple 和 bool 等等 可变对象：对象创建后，其值可以在原地被修改，不会创建新的对象。主要有：list、dict 和 set 等 cnt = 2 print(id(cnt)) cnt += 2 print(id(cnt)) 比如上面代码，cnt 前后指向的是不同的对象，输出结果如下：
-140711354237896 140711354237960 python 中没有内置的常量类型，但通常约定使用 全大写 来指出应将某个变量视为常量
+不可变对象：一旦创建，其值就不能被修改。若要修改值，实际上是创建了一个新对象，原对象保持不变。不可变对象有：int、float、str、tuple 和 bool 等等 可变对象：对象创建后，其值可以在原地被修改，不会创建新的对象。主要有：list、dict 和 set 等 cnt = 2 print(id(cnt)) cnt &#43;= 2 print(id(cnt)) 比如上面代码，cnt 前后指向的是不同的对象，输出结果如下：
+140711354237896140711354237960 python 中没有内置的常量类型，但通常约定使用 全大写 来指出应将某个变量视为常量
 MAX_CONNECTIONS = 5000 列表
 python 中的 list 本质上是一个动态数组，也就是可变长度的数组
 动态数组：在内存中连续分配，通过索引能够实现随机访问，时间复杂度为 O(1) 空间分配策略：为避免频繁的内存分配，list 在创建时会 预先分配比实际所需更多的内存空间。当元素增多并超出已分配的空间时，list 会重新分配更大的内存空间，然后把原有元素复制到新空间，释放旧内存 补充：tuple 和 list tuple 是不可变序列，底层实现为静态数组，元组的元素在内存中也是连续分配的 由于 tuple 不可变，在创建时就会根据元素数量一次性分配 固定大小 的内存空间 删除 list 中的元素时，如果知道要删除元素的索引位置，可以使用 pop() 或者 del
-...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to python + django" href=https://yuk1pedia.github.io/learning-notes/2025-5-3-python+django/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>Redis 集群方案</h2></header><div class=entry-content><p>1.主从复制 经典的 一主多从 模式实现方案。就是将原来的一台 redis 服务器，同步数据到多台从 redis 服务器上，主从服务器之间采用的是 读写分离 的方式。
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to python &#43; django" href="http://localhost:1313/learning-notes/2025-5-3-python&#43;django/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Redis 集群方案
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>1.主从复制 经典的 一主多从 模式实现方案。就是将原来的一台 redis 服务器，同步数据到多台从 redis 服务器上，主从服务器之间采用的是 读写分离 的方式。
 主服务器可以进行 读写操作，当发生写操作时，自动将写操作同步给从服务器，从服务器一般是 只读 的，并接受主服务器同步过来的写操作命令。
 也就是说，所有的数据修改只在主服务器上进行，然后将最新的数据同步给从服务器，这样就达到主从一致。注意，主从服务器之间的命令复制是 异步 进行的。
 由于主从同步是 异步 的，这就导致了主从复制方案无法实现 强一致性保证，数据不一致是难以避免的。
 同步这两个字说的简单，但是这个同步过程要考虑的事情不是一两个。
 第一次同步 多台服务器之间到底要怎么确定谁是主服务器，谁是从服务器？
 我们可以使用 replicaof 命令形成主服务器和从服务器的关系。比如，现在有服务器 A 和服务器 B，我们在 B 上执行下面的命令：
-replicaof &lt;服务器 A 的 IP 地址> &lt;服务器 A 的 redis 端口号> 接着，服务器 B 就会变成 A 的 从服务器，然后与主服务器进行第一次同步。
+replicaof &lt;服务器 A 的 IP 地址&gt; &lt;服务器 A 的 redis 端口号&gt; 接着，服务器 B 就会变成 A 的 从服务器，然后与主服务器进行第一次同步。
 主从服务器间的第一次同步分为三个阶段：
 建立链接、协商同步； 主服务器同步数据给从服务器 主服务器发送新写操作命令给从服务器 第一阶段：建立链接，协商同步
 执行了 replicaof 命令后，从服务器就会给主服务器发送 psync 命令，表示要进行数据同步。
 psync 命令包含两个参数，分别是 主服务器的 runID 和 复制进度 offset。
-runID ：每个 redis 服务器在启动时都会自动生成一个随机的 ID 来唯一标识自己。当从服务器和主服务器第一次同步时，因为不知道主服务器的 runID ，所以将其设置为 “?"。 offset ：表示复制进度，第一次同步时值为 -1. 主服务器收到 psync 命令后，会用 FULLRESYNC 作为相应命令返回给对方。
-...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to Redis 集群方案" href=https://yuk1pedia.github.io/learning-notes/2025-3-22-redis-cluster-scheme/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>Redis基础</h2></header><div class=entry-content><p>Redis简介 Redis 是一个基于内存的 key-value 结构数据库（mysql 的数据是存放在磁盘上）
+runID ：每个 redis 服务器在启动时都会自动生成一个随机的 ID 来唯一标识自己。当从服务器和主服务器第一次同步时，因为不知道主服务器的 runID ，所以将其设置为 “?&#34;。 offset ：表示复制进度，第一次同步时值为 -1. 主服务器收到 psync 命令后，会用 FULLRESYNC 作为相应命令返回给对方。
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to Redis 集群方案" href="http://localhost:1313/learning-notes/2025-3-22-redis-cluster-scheme/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Redis基础
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>Redis简介 Redis 是一个基于内存的 key-value 结构数据库（mysql 的数据是存放在磁盘上）
 基于内存存储，读写性能高 适合存储热点数据（热点商品、咨询、新闻等访问量比较大的数据） Redis数据类型 Redis 存储的是 key-value 结构的数据，其中 key 是字符串类型，value 有 5 种常用的类型。
-5 种常用数据类型 字符串 string 哈希 hash 列表 list 集合 set 有序集合 sorted set / zset 各种数据类型的特点 字符串（string）：普通字符串，Redis 中最简单的数据类型 哈希（hash）：也叫散列，类似于 Java 中的 HashMap 结构 列表（list）：按照插入顺序排序，可以有重复元素，类似 Java 中的 LinkedList 集合（set）：无序集合，没有重复元素，类似于 Java 中的 HashSet 有序集合（sorted set / zset）：集合中每个元素关联一个分数（score），根据分数升序排序，没有重复元素 Redis常用命令 字符串操作命令 SET key value ：设置指定 key 的值（插入数据） GET key ：获取指定 key 的值 SETEX key seconds value ：设置指定 key 的值，并将 key 的过期时间设为 seconds 秒（适用于短信验证码） SETNX key value ：只有在 key 不存在时设置 key 的值（分布式锁） ...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to Redis基础" href=https://yuk1pedia.github.io/learning-notes/2024-9-15-redis/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>RocketMQ</h2></header><div class=entry-content><p>[TOC]
+5 种常用数据类型 字符串 string 哈希 hash 列表 list 集合 set 有序集合 sorted set / zset 各种数据类型的特点 字符串（string）：普通字符串，Redis 中最简单的数据类型 哈希（hash）：也叫散列，类似于 Java 中的 HashMap 结构 列表（list）：按照插入顺序排序，可以有重复元素，类似 Java 中的 LinkedList 集合（set）：无序集合，没有重复元素，类似于 Java 中的 HashSet 有序集合（sorted set / zset）：集合中每个元素关联一个分数（score），根据分数升序排序，没有重复元素 Redis常用命令 字符串操作命令 SET key value ：设置指定 key 的值（插入数据） GET key ：获取指定 key 的值 SETEX key seconds value ：设置指定 key 的值，并将 key 的过期时间设为 seconds 秒（适用于短信验证码） SETNX key value ：只有在 key 不存在时设置 key 的值（分布式锁） ...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to Redis基础" href="http://localhost:1313/learning-notes/2024-9-15-redis/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">RocketMQ
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>[TOC]
 消息队列为什么会出现？ 消息队列顾名思义就是存放消息的队列，我们需要理解的问题并不是消息队列是什么，而是消息队列为什么会出现？消息队列能用来干什么？会带来哪些好处和副作用？
 对于一个分布式应用，必定涉及到各个系统之间的通信问题，这个时候消息队列也应运而生了，可以说分布式的产生是消息队列的基础。
 消息队列能用来干什么？ 异步 在刚开始学习分布式相关知识时，我们往往不太明白为什么好好的通信为什么中间非要插一个消息队列呢？我们不能直接进行通信吗？
 如果我们的应用之间直接进行通信，就会涉及到一个概念：同步通信。比如现在业界使用比较多的 Dubbo 就是一个适用于各个系统之间同步通信的 RPC 框架。
 举个例子，我们有一个购票系统，需求是用户在购买完之后能接收到购买完成的短信。
-我们省略中间的网络通信时间消耗，假如购票系统处理需要 150ms ，短信系统处理需要 200ms ，那么整个处理流程的时间消耗就是 150 + 200 = 350ms 。
+我们省略中间的网络通信时间消耗，假如购票系统处理需要 150ms ，短信系统处理需要 200ms ，那么整个处理流程的时间消耗就是 150 &#43; 200 = 350ms 。
 当然，乍看没什么问题。可是仔细一想你就感觉有点问题，我用户购票在购票系统的时候其实就已经完成了购买，而我现在通过同步调用非要让整个请求拉长时间，而短信系统这玩意又不是很有必要，它仅仅是一个辅助功能增强用户体验感而已。我现在整个调用流程就有点头重脚轻的感觉了，购票是一个不太耗时的流程，而我现在因为同步调用，非要等待发送短信这个比较耗时的操作才返回结果。那我如果再加一个发送邮件呢？
 这样整个系统的调用链又变长了，整体响应时间也会因为应用间的同步调用而拉长。
 所以，为了解决这一个问题，我们可以在这个过程中间加一层中间件——消息队列。
-这样，我们在将消息存入消息队列之后我们就可以直接返回了。另外举一个例子，你到饭店里吃饭，你只需要告诉服务员（消息队列）你想要吃什么，然后你就可以开始玩手机了。所以根据上图，整个相应耗时：150 + 10 = 160ms 。
+这样，我们在将消息存入消息队列之后我们就可以直接返回了。另外举一个例子，你到饭店里吃饭，你只需要告诉服务员（消息队列）你想要吃什么，然后你就可以开始玩手机了。所以根据上图，整个相应耗时：150 &#43; 10 = 160ms 。
 解耦 回到最初同步调用的过程，我们写个伪代码简单概括一下。
 public void purchaseTicket(Request request) { // 校验 validate(request); // 购票 Result result = purchase(request); // 发送短信 sendMessage(result); } 那么第二步，我们又添加了一个发送邮件，我们就得重新去修改代码，如果我们又加一个需求：用户购买完还需要给他加积分，这个时候我们是不是又得改代码？
 public void purchaseTicket(Request request) { // 校验 validate(request); // 购票 Result result = purchase(request); // 发送短信 sendMessage(result); // 添加积分 addPoint(result); // ...其他需求 } 这样改来改去是不是很麻烦，那么此时我们就用一个消息队列在中间进行解耦。需要注意的是，我们后面的发送短信、发送邮件、添加积分等一些操作都依赖于上面的 result ，这东西抽象出来就是购票的处理结果，比如订单号、用户账号等等，也就是说我们后面的一系列服务都是需要同样的消息来进行处理。这样的话，我们就可以通过 “广播消息” 来实现。
-...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to RocketMQ" href=https://yuk1pedia.github.io/learning-notes/2025-3-2-rocketmq/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>RPC vs HTTP</h2></header><div class=entry-content><p>HTTP 协议和 RPC 协议是两种广泛使用的通信协议，它们在分布式系统、微服务架构和跨语言应用中扮演着重要角色。这两种协议有一个共同的特点：它们都是由 TCP 协议 衍生而来的。
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to RocketMQ" href="http://localhost:1313/learning-notes/2025-3-2-rocketmq/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">RPC vs HTTP
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>HTTP 协议和 RPC 协议是两种广泛使用的通信协议，它们在分布式系统、微服务架构和跨语言应用中扮演着重要角色。这两种协议有一个共同的特点：它们都是由 TCP 协议 衍生而来的。
 从 TCP 聊起 在日常开发中，常常会遇到网络编程，比如我们需要在 A 电脑的进程发一段数据给 B 电脑的进程，我们一般都会在代码里使用 Socket 进行编程。
 大多数情况下，可选项就两个：TCP 和 UDP 。这两个协议的区别简单来讲：TCP 可靠，UDP 不可靠。所以只要我们的程序对可靠性有些要求，无脑选 TCP 就对了。
 类似下面这样：
@@ -97,15 +307,39 @@ fd = socket(AF_INET,SOCK_STREAM,0); 其中 SOCK_STREAM ，是指使用字节流�
 使用纯裸 TCP 会有什么问题？ 首先，TCP 有三个特点：面向连接、可靠、基于字节流。这里出现的问题主要是第三点：基于字节流。
 字节流可以理解为一个双向的通道里流淌的数据，这个数据其实就是常说的二进制数据，简单来说就是一大堆 01 串。纯裸 TCP 收发的这些 01 串之间是没有任何边界的，我们根本不知道到哪个地方才算一条完整消息。
 正因为这个没有边界的特点，当我们选择使用 TCP 发送数据时，很可能会出现粘包问题。
-举个例子，我们发送 “但丁“ 和 ”真是意大利人” 这句话时， 接收端收到的就是 “但丁真是意大利人” ，这时候接收端就无法区分去发送端是想要表达 “但丁” + “真是意大利人” 还是 “但丁真” + “是意大利人” 。
-...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to RPC vs HTTP" href=https://yuk1pedia.github.io/learning-notes/2025-2-14-rpc_vs_http/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>Spring Cache</h2></header><div class=entry-content><p>什么是Spring Cache？ Spring Cache 是一个框架，实现了基于注解的缓存功能。
+举个例子，我们发送 “但丁“ 和 ”真是意大利人” 这句话时， 接收端收到的就是 “但丁真是意大利人” ，这时候接收端就无法区分去发送端是想要表达 “但丁” &#43; “真是意大利人” 还是 “但丁真” &#43; “是意大利人” 。
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to RPC vs HTTP" href="http://localhost:1313/learning-notes/2025-2-14-rpc_vs_http/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Spring Cache
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>什么是Spring Cache？ Spring Cache 是一个框架，实现了基于注解的缓存功能。
 Spring Cache 提供了一层抽象，底层可以切换不同的缓存实现，例如：
 EHCache Caffeine Redis 要使用 Spring Cache 时，需要在工程的 pom 文件中导入相应的坐标：
-&lt;dependency> &lt;groupId>org.springframework.boot&lt;/groupId> &lt;artifactId>spring-boot-starter-cache&lt;/artifactId> &lt;version>2.7.3&lt;/version> &lt;/dependency> 指定缓存中间件时，需要导入对应的中间件坐标，比如 Redis：
-&lt;dependency> &lt;groupId>org.springframework.boot&lt;/groupId> &lt;artifactId>spring-boot-starter-data-redis&lt;/artifactId> &lt;/dependency> 常用注解 注解 说明 @EnableCaching 开启缓存注解功能，通常加在启动类上 @Cacheable 在方法执行前先查询缓存中是否有数据，如果有数据，则直接返回缓存数据；如果没有缓存数据，调用方法并将方法返回值放到缓存中 @CachePut 将方法的返回值放到缓存中 @CacheEvict 将一条或多条数据从缓存中删除 @CachePut @PostMapping // 使用Spring Cache缓存数据，生成的 key 为：“userCache::user.id" @CachePut(cacheNames = "userCache", key = "#user.id") public User save(@RequestBody User user){ userMapper.insert(user); return user; } 调用该方法后，redis 中生成的 key-value 为：
+&lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-cache&lt;/artifactId&gt; &lt;version&gt;2.7.3&lt;/version&gt; &lt;/dependency&gt; 指定缓存中间件时，需要导入对应的中间件坐标，比如 Redis：
+&lt;dependency&gt; &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt; &lt;artifactId&gt;spring-boot-starter-data-redis&lt;/artifactId&gt; &lt;/dependency&gt; 常用注解 注解 说明 @EnableCaching 开启缓存注解功能，通常加在启动类上 @Cacheable 在方法执行前先查询缓存中是否有数据，如果有数据，则直接返回缓存数据；如果没有缓存数据，调用方法并将方法返回值放到缓存中 @CachePut 将方法的返回值放到缓存中 @CacheEvict 将一条或多条数据从缓存中删除 @CachePut @PostMapping // 使用Spring Cache缓存数据，生成的 key 为：“userCache::user.id&#34; @CachePut(cacheNames = &#34;userCache&#34;, key = &#34;#user.id&#34;) public User save(@RequestBody User user){ userMapper.insert(user); return user; } 调用该方法后，redis 中生成的 key-value 为：
 key 的具体值是根据 user 对象的 id 属性计算来的
 有一个 [Empty] 文件夹是因为每个冒号 “:” 代表一层关系，这里有两个冒号
-...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to Spring Cache" href=https://yuk1pedia.github.io/learning-notes/2024-9-24-spring_cache/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>Spring Data + Mongo</h2></header><div class=entry-content><p>1.什么是 Spring Data？ Spring Data 是 Spring 框架中的一部分，专注于简化数据访问层的开发。其核心目标是减少开发人员编写的数据访问层代码，并为常见的数据访问模式提供开箱即用的解决方案。Spring Data 支持多种数据存储技术，如关系数据库（通过 JPA）、NoSQL 数据库（如 MongoDB、Cassandra 等）。
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to Spring Cache" href="http://localhost:1313/learning-notes/2024-9-24-spring_cache/"></a>
+</article>
+
+<article class="post-entry"> 
+  <header class="entry-header">
+    <h2 class="entry-hint-parent">Spring Data &#43; Mongo
+    </h2>
+  </header>
+  <div class="entry-content">
+    <p>1.什么是 Spring Data？ Spring Data 是 Spring 框架中的一部分，专注于简化数据访问层的开发。其核心目标是减少开发人员编写的数据访问层代码，并为常见的数据访问模式提供开箱即用的解决方案。Spring Data 支持多种数据存储技术，如关系数据库（通过 JPA）、NoSQL 数据库（如 MongoDB、Cassandra 等）。
 主要功能如下：
 简化的 CRUD 操作：通过 Spring Data，开发者可以轻松实现基本的 CRUD（增删查改）操作，无需编写复杂的 SQL 语句。
 Repository 接口：定义简单的 Repository 接口，并通过 Spring Data 自动提供实现。例如，可以定义一个继承 JpaRepository 的接口，Spring Data JPA 会自动生成常见的 CRUD 方法。
@@ -115,9 +349,91 @@ Repository 接口：定义简单的 Repository 接口，并通过 Spring Data �
 2.什么是 JPA？ JPA 是 Java 中的一个标准规范，用于管理 Java 对象与关系数据库之间的映射。JPA 规范本身并不是具体的实现，而是定义了一套用于**对象-关系映射（ORM）**的 API。
 JPA 核心概念：
 实体（Entity）：一个被映射到数据库表的普通 Java 类。通过 @Entity 注解将类声明为一个 JPA 实体，并通过其他注解指定其与数据库表之间的关系。
-...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to Spring Data + Mongo" href=https://yuk1pedia.github.io/learning-notes/2024-10-21-spring-data-+-mongo/></a></article><footer class=page-footer><nav class=pagination><a class=prev href=https://yuk1pedia.github.io/learning-notes/page/2/>«&nbsp;Prev&nbsp;
-</a><a class=next href=https://yuk1pedia.github.io/learning-notes/page/4/>Next&nbsp;&nbsp;»</a></nav></footer></main><footer class=footer><span>&copy; 2025 <a href=https://yuk1pedia.github.io/>YUKIPEDIA's blog</a></span> ·
-<span>Powered by
-<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
-</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>
+...</p>
+  </div>
+  <footer class="entry-footer"></footer>
+  <a class="entry-link" aria-label="post link to Spring Data &#43; Mongo" href="http://localhost:1313/learning-notes/2024-10-21-spring-data-&#43;-mongo/"></a>
+</article>
+<footer class="page-footer">
+  <nav class="pagination">
+    <a class="prev" href="http://localhost:1313/learning-notes/page/2/">
+      «&nbsp;Prev&nbsp;
+    </a>
+    <a class="next" href="http://localhost:1313/learning-notes/page/4/">Next&nbsp;&nbsp;»
+    </a>
+  </nav>
+</footer>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

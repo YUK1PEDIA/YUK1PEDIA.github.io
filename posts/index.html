@@ -1,208 +1,45 @@
-<!DOCTYPE html>
-<html lang="en" dir="auto">
-
-<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="robots" content="noindex, nofollow">
-<title>Posts | YUKIPEDIA&#39;s blog</title>
-<meta name="keywords" content="">
-<meta name="description" content="Posts - YUKIPEDIA&#39;s blog">
-<meta name="author" content="">
-<link rel="canonical" href="http://localhost:1313/posts/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
-<link rel="icon" href="http://localhost:1313/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
-<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
-<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
-<meta name="theme-color" content="#2e2e33">
-<meta name="msapplication-TileColor" content="#2e2e33">
-<link rel="alternate" type="application/rss+xml" href="http://localhost:1313/posts/index.xml">
-<link rel="alternate" hreflang="en" href="http://localhost:1313/posts/">
-<noscript>
-    <style>
-        #theme-toggle,
-        .top-link {
-            display: none;
-        }
-
-    </style>
-    <style>
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --theme: rgb(29, 30, 32);
-                --entry: rgb(46, 46, 51);
-                --primary: rgb(218, 218, 219);
-                --secondary: rgb(155, 156, 157);
-                --tertiary: rgb(65, 66, 68);
-                --content: rgb(196, 196, 197);
-                --code-block-bg: rgb(46, 46, 51);
-                --code-bg: rgb(55, 56, 62);
-                --border: rgb(51, 51, 51);
-            }
-
-            .list {
-                background: var(--theme);
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-track {
-                background: 0 0;
-            }
-
-            .list:not(.dark)::-webkit-scrollbar-thumb {
-                border-color: var(--theme);
-            }
-        }
-
-    </style>
-</noscript>
-</head>
-
-<body class="list" id="top">
-<script>
-    if (localStorage.getItem("pref-theme") === "dark") {
-        document.body.classList.add('dark');
-    } else if (localStorage.getItem("pref-theme") === "light") {
-        document.body.classList.remove('dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.body.classList.add('dark');
-    }
-
-</script>
-
-<header class="header">
-    <nav class="nav">
-        <div class="logo">
-            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
-            <div class="logo-switches">
-                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
-                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                </button>
-            </div>
-        </div>
-        <ul id="menu">
-            <li>
-                <a href="http://localhost:1313/posts" title="笔记">
-                    <span class="active">笔记</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
-</header>
-<main class="main"> 
-<header class="page-header">
-  <h1>
-    Posts
-  </h1>
-</header>
-
-<article class="post-entry"> 
-  <header class="entry-header">
-    <h2 class="entry-hint-parent">Hello
-      <span class="entry-hint" title="Draft">
-        <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" fill="currentColor">
-          <path
-            d="M160-410v-60h300v60H160Zm0-165v-60h470v60H160Zm0-165v-60h470v60H160Zm360 580v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q9 9 13 20t4 22q0 11-4.5 22.5T862.09-380L643-160H520Zm300-263-37-37 37 37ZM580-220h38l121-122-18-19-19-18-122 121v38Zm141-141-19-18 37 37-18-19Z" />
-        </svg>
-      </span>
-    </h2>
-  </header>
-  <div class="entry-content">
-    <p>this is my first blog 😊
-</p>
-  </div>
-  <footer class="entry-footer"><span title='2025-06-14 22:03:19 +0800 CST'>June 14, 2025</span></footer>
-  <a class="entry-link" aria-label="post link to Hello" href="http://localhost:1313/posts/hello/"></a>
-</article>
-    </main>
-    
-<footer class="footer">
-        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
-
-    <span>
-        Powered by
-        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
-        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
-    </span>
-</footer>
-<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
-        <path d="M12 6H0l6-6z" />
-    </svg>
-</a>
-
-<script>
-    let menu = document.getElementById('menu')
-    if (menu) {
-        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
-        menu.onscroll = function () {
-            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
-        }
-    }
-
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener("click", function (e) {
-            e.preventDefault();
-            var id = this.getAttribute("href").substr(1);
-            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
-                    behavior: "smooth"
-                });
-            } else {
-                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
-            }
-            if (id === "top") {
-                history.replaceState(null, null, " ");
-            } else {
-                history.pushState(null, null, `#${id}`);
-            }
-        });
-    });
-
-</script>
-<script>
-    var mybutton = document.getElementById("top-link");
-    window.onscroll = function () {
-        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
-            mybutton.style.visibility = "visible";
-            mybutton.style.opacity = "1";
-        } else {
-            mybutton.style.visibility = "hidden";
-            mybutton.style.opacity = "0";
-        }
-    };
-
-</script>
-<script>
-    document.getElementById("theme-toggle").addEventListener("click", () => {
-        if (document.body.className.includes("dark")) {
-            document.body.classList.remove('dark');
-            localStorage.setItem("pref-theme", 'light');
-        } else {
-            document.body.classList.add('dark');
-            localStorage.setItem("pref-theme", 'dark');
-        }
-    })
-
-</script>
-</body>
-
-</html>
+<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Posts | YUKIPEDIA's blog</title><meta name=keywords content><meta name=description content="Posts - YUKIPEDIA's blog"><meta name=author content><link rel=canonical href=https://yuk1pedia.github.io/posts/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://yuk1pedia.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://yuk1pedia.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://yuk1pedia.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://yuk1pedia.github.io/apple-touch-icon.png><link rel=mask-icon href=https://yuk1pedia.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate type=application/rss+xml href=https://yuk1pedia.github.io/posts/index.xml><link rel=alternate hreflang=en href=https://yuk1pedia.github.io/posts/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://yuk1pedia.github.io/posts/"><meta property="og:site_name" content="YUKIPEDIA's blog"><meta property="og:title" content="Posts"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="website"><meta name=twitter:card content="summary"><meta name=twitter:title content="Posts"><meta name=twitter:description content><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Posts","item":"https://yuk1pedia.github.io/posts/"}]}</script></head><body class=list id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://yuk1pedia.github.io/ accesskey=h title="YUKIPEDIA's blog (Alt + H)">YUKIPEDIA's blog</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
+<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://yuk1pedia.github.io/learning-notes title="Learning Notes"><span>Learning Notes</span></a></li><li><a href=https://yuk1pedia.github.io/algorithm title=Algorithm><span>Algorithm</span></a></li></ul></nav></header><main class=main><header class=page-header><h1>Posts</h1></header><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>Hello</h2></header><div class=entry-content><p></p></div><footer class=entry-footer><span title='2025-06-14 00:00:00 +0000 UTC'>June 14, 2025</span></footer><a class=entry-link aria-label="post link to Hello" href=https://yuk1pedia.github.io/posts/learning-notes/hello/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>岛屿类问题的通用解法、DFS 遍历框架</h2></header><div class=entry-content><p></p></div><footer class=entry-footer><span title='2024-07-04 00:00:00 +0000 UTC'>July 4, 2024</span></footer><a class=entry-link aria-label="post link to 岛屿类问题的通用解法、DFS 遍历框架" href=https://yuk1pedia.github.io/posts/algorithm/2024-7-4-dfs_traversal_framework/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>JDBC 学习笔记</h2></header><div class=entry-content><p></p></div><footer class=entry-footer><span title='2024-04-06 00:00:00 +0000 UTC'>April 6, 2024</span></footer><a class=entry-link aria-label="post link to JDBC 学习笔记" href=https://yuk1pedia.github.io/posts/learning-notes/2024-4-6-jdbc/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>《Python-craftsman》Reading notes</h2></header><div class=entry-content><p>前言 2025/5/11 结束了暑期实习的面试后，非常幸运的，我加入了一个充满活力、技术氛围浓厚的技术团队。在入职 landing 四天里，我体会到了组里对实习生的热情关怀，同时也结交了一位非常优秀，兴趣相投的 mentor。
+在这四天里，通过组里的大小会议和上班时的学习过渡，我慢慢了解了组里具体负责的业务和如何用 python 进行后端开发。
+这本书的作者是我实习组里的 leader，在入职前就了解到他有出版过 python 相关的书籍，也借此机会来拜读一下。这篇 blog 应该是记录读这本书的过程和一些想法和收获吧，可能也会写一些实习期间的感触 ~</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to 《Python-craftsman》Reading notes" href=https://yuk1pedia.github.io/posts/learning-notes/2025-5-11-python-craftsman-reading-notes/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>01背包</h2></header><div class=entry-content><p>1.概念 有 n 件物品和一个最多能装重量为 w 的背包，第 i 件物品的重量是 weight[i]， 该物品的价值是 value[i] ，每件物品只能用一次，求解将哪些物品装入背包里能得到最大价值。
+2.二维求解纯01背包问题 确定 dp 数组以及下标的含义
+对于背包问题有一种二维数组的写法：dp[i][j] 表示从下标为 [0-i] 的物品里任意取，放进容量为 j 的背包，价值总和最大是多少 确定状态转移方程
+我们需要根据 dp 数组以及下标的含义，将原问题抽象成可以求解的子问题，在这个过程中，我们要始终记着 dp 数组的含义。 对于纯01背包问题，我们可以从遍历单个物品的角度去思考，这样也比较好理解： 不放物品 i ：dp[i][j] 可以由 dp[i-1][j] 推出，根据前面定义的 dp 数组，我们可以得知 dp[i-1][j] 表示背包容量为 j ，里面不放物品 i 的最大价值总和 放物品 i ：dp[i][j] 可以由 dp[i-1][j-weight[i]] 推出。可以类比着不放物品 i 的情况理解。那么此时 dp[i][j] = dp[i-1][j-weight[i]] + value[i] 遍历物品时对以上两种情况取一个 max 即可。 dp 数组的初始化
+根据定义的 dp 数组的含义，我们对边界情况进行初始化 从定义出发，如果容量 j 为 0 ，即 dp[i][0] ，那么肯定选不了任何物品，所以价值总和一定为 0 再从状态转移方程出发： dp[i][j] = max(dp[i-1][j], dp[i-1][j-weight[i]] + value[i]) 防止数组越界，当 i = 0 时一定要初始化。在这个维度上，我们就要考虑背包容量了，背包容量必须大于等于第 0 个物品的重量才能装进去，其余情况均不能装，价值为 0 确定遍历顺序
+...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to 01背包" href=https://yuk1pedia.github.io/posts/learning-notes/2024-7-12-0-1_knapsack_problem/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>Docker</h2></header><div class=entry-content><p>1.镜像和容器 利用 Docker 安装应用时，Docker 会自动搜索并下载应用镜像（image）。镜像不仅包含应用本身，还包含应用所需要的环境、配置、系统函数库（此处的环境是最轻量的，只包含容器内运行需要的环境，其他编辑操作可能包含）。Docker 会在运行镜像时创建一个隔离环境，称为容器（container）。
+镜像仓库：存储和管理镜像的平台，Docker 官方维护了一个公共仓库：https://hub.docker.com/
+2.命令解读 docker run -d \ --name mysql \ -p 3306:3306 \ -e TZ=Asia/Shanghai \ -e MYSQL_ROOT_PASSWORD=123 \ mysql docker run ：创建并运行一个容器，-d 是让容器在后台运行。 --name mysql ：给容器起个名字，必须唯一。 -p 3306:3306 ：设置端口映射，docker 创建的容器拥有独立的文件系统、内存、网络空间等，从外部直接对 docker 容器进行 ping 操作是 ping 不通的，需要设置服务器或虚拟机的端口映射，才能通过服务器或虚拟机访问到上面的 docker 容器。冒号前面的端口是宿主机端口，冒号后面是容器内端口。 -e KEY=VALUE ：设置环境变量。上面的命令中，TZ=Asia/Shanghai 是配置时区 mysql ：指定运行的镜像的名字 补充：镜像命名规范
+镜像名称一般分两部分组成：[repository]:[tag] 其中 repository 就是镜像名 tag 是镜像的版本 在没有指定 tag 时，默认是 latest ，代表最新版本的镜像 3.常见命令 docker rmi 是删除镜像，docker rm 是删除容器 docker run 是创建并运行容器，这条命令会创建一个新的容器，如果要启动已经有的容器，需要执行 docker start 命令 docker exec 是进入到容器内部 4.数据卷挂载 数据卷挂载 数据卷（volume）是一个虚拟目录，是容器内目录与宿主机目录之间映射的桥梁。
+...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to Docker" href=https://yuk1pedia.github.io/posts/learning-notes/2024-10-8-docker/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>Docker 和虚拟机的区别？Docker 是如何实现隔离的？</h2></header><div class=entry-content><p>1. 两者的区别是什么？ 首先，Docker 和虚拟机（Virtual Machine, VM）都是用来实现隔离和资源管理的技术，主要目的是让不同的应用程序能够运行在相互独立的环境中，互不干扰。但它们的实现方式、性能和使用场景有很大的区别。
+我们用独立的房子和公寓大楼来类比着理解 Docker 和虚拟机的区别：
+虚拟机： 可以把虚拟机比作一套完整的“独立房子”：
+每个虚拟机都像一栋完整的房子，带有自己的地基（操作系统内核）、墙（硬件模拟）和房间（运行的应用程序）。 每次需要新的虚拟机，就需要重新盖一套完整的房子（安装新的操作系统和硬件模拟），耗时耗力，且占用资源大。 Docker： Docker 更像是住在一栋“公寓大楼”里的租户：
+公寓楼（宿主机的操作系统和硬件）已经盖好了，Docker 容器只需要一个隔间（容器）就可以住人，不需要重新建地基（操作系统）。 所有租户（容器）共用这栋公寓楼的公共设施（宿主机内核和资源），但互相独立，各自的生活（程序运行）互不干扰。 根据以上场景，Docker 和虚拟机的区别就比较明显了。下面是他们的核心区别：
+特点 虚拟机 Docker（容器） 运行环境 每个虚拟机都有自己的操作系统 容器共用宿主机的操作系统内核 启动速度 启动一个完整的虚拟机需要数十秒到几分钟 启动一个容器通常只需几秒 资源消耗 资源占用高，需要模拟完整硬件和操作系统 资源占用低，直接运行在宿主机上 隔离性 隔离较强，虚拟机之间完全独立 隔离性强，但共用内核（通过内核隔离实现） 性能 性能损耗较大，因为需要硬件虚拟化 性能接近宿主机（因为是直接运行在宿主机上） 镜像大小 镜像较大（包含完整操作系统） 镜像较小（只包含应用程序及其依赖） 技术复杂度 配置复杂，需要安装虚拟机管理程序（如 VMware、VirtualBox） 配置简单，直接运行 Docker 容器 2. Docker 是如何实现隔离的？ Docker 的隔离主要通过以下两种技术实现：
+内核级隔离： 利用 Linux 的 Namespace（命名空间）技术。 资源控制： 利用 Linux 的 Cgroups（控制组）技术。 这两种技术结合起来，让容器之间看起来像是“独立的操作系统”，但实际上它们共用同一个宿主机内核。
+2.1 Namespace：命名空间（实现环境隔离） Namespace 是什么？ Namespace 是 Linux 内核的一种技术，用于隔离容器的系统资源。通过 Namespace，Docker 可以让每个容器看到的系统资源（如进程、网络、文件系统等）看起来像是独立的。 Namespace 的主要作用： 隔离资源： 不同容器只能看到自己的资源，互相看不到。 独立运行： 每个容器都有自己的文件系统、网络、进程列表等，像是运行在独立的系统中。 Namespace 的具体分类： Docker 利用了以下几种 Namespace 技术： PID Namespace（进程隔离）： 每个容器都有自己的进程空间。 容器内的进程看不到宿主机和其他容器的进程。 Network Namespace（网络隔离）： 每个容器都有自己的网络接口、IP 地址和路由表。 容器之间的网络隔离由 Network Namespace 实现。 Mount Namespace（文件系统隔离）： 每个容器可以拥有自己的文件系统挂载点。 容器内看不到宿主机的文件，除非显式挂载共享目录。 UTS Namespace（主机名隔离）： 每个容器可以有自己的主机名和域名。 IPC Namespace（进程间通信隔离）： 容器之间的共享内存和信号量是隔离的。 User Namespace（用户隔离）： 容器内的用户和宿主机的用户可以映射，从而提供更好的安全性。 2.2 Cgroups：控制组（实现资源限制） Cgroups 是什么？ Cgroups（Control Groups）是 Linux 的一种机制，用于限制和管理容器的资源使用，包括 CPU、内存、磁盘 IO 和网络带宽。 Cgroups 的作用： 限制资源： 限制每个容器最多可以使用的 CPU、内存等资源，防止某个容器消耗过多资源而影响其他容器或宿主机。 优先级分配： 为容器设置资源的优先级。 资源统计： 监控容器的资源使用情况。 隔离资源： 每个容器只能使用分配给它的资源。 Cgroups 就像“用电闸”控制每个家庭的电量。每个家庭（容器）分配了一定的用电量（资源），如果超出配额，就会断电（资源耗尽）。 2.3 UnionFS：文件系统隔离 Docker 使用了 UnionFS（联合文件系统） 来管理容器的文件。
+...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to Docker 和虚拟机的区别？Docker 是如何实现隔离的？" href=https://yuk1pedia.github.io/posts/learning-notes/2024-12-17-docker_vs_vm/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>Go基础学习笔记</h2></header><div class=entry-content><p>[TOC]
+主要特征 语法简单，自带 gc 静态编译，编译好后在服务器直接运行 简单的思想，没有继承、多态、类等 语法层支持并发，拥有同步并发的 channel 类型，使并发开发变得非常方便 内置类型丰富，函数多返回值 反射 Golang 内置类型和函数 内置类型 值类型
+bool int(32 or 64), int8, int16, int32, int64 uint(32 or 64), uint8(byte), uint16, uint32, uint64 float32, float64 string complex64, complex128 array -- 固定长度的数组 引用类型（指针类型）
+slice -- 序列数组(最常用) map -- 映射 chan -- 管道 内置函数 Go 语言拥有一些不需要进行导入操作就可以使用的内置函数。它们有时可以针对不同的类型进行操作，例如：len、cap 和 append，或必须用于系统级的操作，例如：panic。因此，它们需要直接获得编译器的支持。
+append -- 用来追加元素到数组、slice中,返回修改后的数组、slice close -- 主要用来关闭channel delete -- 从map中删除key对应的value panic -- 停止常规的goroutine （panic和recover：用来做错误处理） recover -- 允许程序定义goroutine的panic动作 imag -- 返回complex的实部 （complex、real imag：用于创建和操作复数） real -- 返回complex的虚部 make -- 用来分配内存，返回Type本身(只能应用于slice, map, channel) new -- 用来分配内存，主要用来分配值类型，比如int、struct。返回指向Type的指针 cap -- capacity是容量的意思，用于返回某个类型的最大容量（只能用于切片和 map） copy -- 用于复制和连接slice，返回复制的数目 len -- 来求长度，比如string、array、slice、map、channel ，返回长度 print、println -- 底层打印函数，在部署环境中建议使用 fmt 包 内置接口
+type error interface { //只要实现了Error()函数，返回值为String的都实现了err接口 Error() String } init 函数和 main 函数 init 函数 go 语言中 init 函数用于包（package）的初始化，该函数是 go 语言的一个重要特性。
+init 函数有如下特征：
+init 函数是用于程序执行前做包初始化的函数，比如初始化包里的变量等 每个包可以拥有多个 init 函数 包的每个源文件也可以拥有多个 init 函数 同一个包中多个 init 函数的执行顺序 go 语言没有明确的说明 不同包的 init 函数按照包导入的依赖关系决定该初始化函数的执行顺序 init 函数不能被其他函数调用，而是在 main 函数执行之前自动被调用 main 函数 Go语言程序的默认入口函数(主函数)：func main()
+...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to Go基础学习笔记" href=https://yuk1pedia.github.io/posts/learning-notes/2025-2-5-golang/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>IntelliJ IDEA 中 Lombok 注解失效问题</h2></header><div class=entry-content><p>问题 尝试在 IDEA 中使用 Lombok 注解，但是在程序编译时出现找不到 get&amp;set 方法、找不到 builder 方法等报错，但在对应的类中都已经加上了 @Data 和 @Builder 注解，但是编译器找不到注解。
+解决方法 确保安装了 Lombok 插件，（Settings → Plugins 安装 lombok）
+并且启用了注解处理器（Settings → Build, Execution, Deployment → Compiler → Annotation Processors）
+做完上述两步后即可通过编译</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to IntelliJ IDEA 中 Lombok 注解失效问题" href=https://yuk1pedia.github.io/posts/learning-notes/2024-12-11-lombok-annotation-failure-issue/></a></article><article class=post-entry><header class=entry-header><h2 class=entry-hint-parent>Java Stream</h2></header><div class=entry-content><p>简介 Java 的 Stream API 是 Java 8 引入的一项功能，它主要用于处理集合类（如 List、Set、Map 等）中的元素，提供了一种声明性的方法来进行数据处理。Stream API 提供了许多可以连缀使用的操作，支持高效的顺序和并行流处理。
+Stream 并不是存储数据的结构，而是对集合、数组或其他数据源进行操作的一种方式。Stream 对象可以从集合、数组、文件等多种数据源获取。
+Stream 的基本特征 惰性求值（Lazy Evaluation）：Stream 的操作是懒惰求值的，只有在最终操作被触发时，Stream 才会进行计算。 可以组合操作：Stream 允许将多个操作链式组合，从而形成一条清晰的流水线。 支持并行处理：Stream 支持通过并行流（parallelStream()）来并发处理数据，能够充分利用多核 CPU，提高处理效率。 无副作用：Stream 的操作通常是无副作用的，即不会改变原始数据源。 Stream 的操作分类 Stream 的操作分为两种类型：
+中间操作：如 map()、filter()、sorted()、distinct() 等。中间操作是惰性求值的，只有在终结操作（如 collect()、forEach()）触发时，才会开始执行。 终结操作：如 collect()、forEach()、reduce()、count() 等。终结操作触发整个流水线的执行，并且一次执行后，Stream 就会被消费掉，不能再重新使用。 常用的中间操作 filter()
+功能：通过给定的条件过滤流中的元素，返回符合条件的元素
+示例：
+List&lt;Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6); List&lt;Integer> evenNumbers = numbers.stream() .filter(n -> n % 2 == 0) .collect(Collectors.toList()); System.out.println(evenNumbers); // [2, 4, 6] map()
+功能：对流中的每个元素执行一个函数，返回一个新的流（元素类型可以改变）
+...</p></div><footer class=entry-footer></footer><a class=entry-link aria-label="post link to Java Stream" href=https://yuk1pedia.github.io/posts/learning-notes/2024-11-21-java_stream/></a></article><footer class=page-footer><nav class=pagination><a class=next href=https://yuk1pedia.github.io/posts/page/2/>Next&nbsp;&nbsp;»</a></nav></footer></main><footer class=footer><span>&copy; 2025 <a href=https://yuk1pedia.github.io/>YUKIPEDIA's blog</a></span> ·
+<span>Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
+</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>

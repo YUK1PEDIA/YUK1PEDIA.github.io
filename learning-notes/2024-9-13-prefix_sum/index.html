@@ -1,6 +1,144 @@
-<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>前缀和与差分数组 | YUKIPEDIA's blog</title><meta name=keywords content><meta name=description content="记录"><meta name=author content><link rel=canonical href=https://yuk1pedia.github.io/learning-notes/2024-9-13-prefix_sum/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://yuk1pedia.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://yuk1pedia.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://yuk1pedia.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://yuk1pedia.github.io/apple-touch-icon.png><link rel=mask-icon href=https://yuk1pedia.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://yuk1pedia.github.io/learning-notes/2024-9-13-prefix_sum/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-9-13-prefix_sum/"><meta property="og:site_name" content="YUKIPEDIA's blog"><meta property="og:title" content="前缀和与差分数组"><meta property="og:description" content="记录"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="learning-notes"><meta name=twitter:card content="summary"><meta name=twitter:title content="前缀和与差分数组"><meta name=twitter:description content="记录"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Learning Notes","item":"https://yuk1pedia.github.io/learning-notes/"},{"@type":"ListItem","position":2,"name":"前缀和与差分数组","item":"https://yuk1pedia.github.io/learning-notes/2024-9-13-prefix_sum/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"前缀和与差分数组","name":"前缀和与差分数组","description":"记录","keywords":[],"articleBody":"前缀和 区域和检索 - 数组不可变\n给定一个整数数组 nums，处理以下类型的多个查询:\n计算索引 left 和 right （包含 left 和 right）之间的 nums 元素的 和 ，其中 left \u003c= right 实现 NumArray 类：\nNumArray(int[] nums) 使用数组 nums 初始化对象 int sumRange(int i, int j) 返回数组 nums 中索引 left 和 right 之间的元素的 总和 ，包含 left 和 right 两点（也就是 nums[left] + nums[left + 1] + ... + nums[right] ) 示例 1：\n输入： [\"NumArray\", \"sumRange\", \"sumRange\", \"sumRange\"] [[[-2, 0, 3, -5, 2, -1]], [0, 2], [2, 5], [0, 5]] 输出： [null, 1, -1, -3] 解释： NumArray numArray = new NumArray([-2, 0, 3, -5, 2, -1]); numArray.sumRange(0, 2); // return 1 ((-2) + 0 + 3) numArray.sumRange(2, 5); // return -1 (3 + (-5) + 2 + (-1)) numArray.sumRange(0, 5); // return -3 ((-2) + 0 + 3 + (-5) + 2 + (-1)) 提示：\n1 \u003c= nums.length \u003c= 10^4 -10^5 \u003c= nums[i] \u003c= 10^5 0 \u003c= i \u003c= j \u003c nums.length 最多调用 10^4 次 sumRange 方法 思路\n为了方便描述，把 nums 记作 a 。\n对于数组 a ，定义它的前缀和：\n为什么要定义 s[0] = 0 ，见下文。\n根据这个定义，有：s[i+1] = s[i] + a[i]\n示例中的数组 [-2,0,3,-5,2,-1] 对应的前缀和数组 s = [0,-2,-2,1,-4,-2,-3] 。\n通过前缀和，我们可以把连续子数组的元素和转换成两个前缀和的差，a[left] 到 a[right] 的元素和等于：\n有了这个式子，示例中子数组 [3,-5,2,-1] 的和，就可以用 O(1) 的时间计算出来：s[6] - s[2] = -1\n至于为什么要定义 s[0] = 0 ，这样做有什么好处？\n如果 left = 0，要计算的子数组是一个前缀（从 a[0] 到 a[right]），我们要用 s[right+1] 减去 s[0]。如果不定义 s[0] = 0，就必须特判 left = 0 的情况了。通过定义 s[0] = 0，任意子数组（包括前缀）都可以表示为两个前缀和的差。此外，如果 a 是空数组，定义 s[0] = 0 的写法是可以兼容这种情况的。\nCode\nclass NumArray { private: vector\u003cint\u003e pre; public: NumArray(vector\u003cint\u003e\u0026 nums) { int n = nums.size(); // 维护一个前缀和 pre.resize(n + 1); for (int i = 0; i \u003c n; ++i) { pre[i+1] = pre[i] + nums[i]; } } int sumRange(int left, int right) { return pre[right+1] - pre[left]; } }; /** * Your NumArray object will be instantiated and called as such: * NumArray* obj = new NumArray(nums); * int param_1 = obj-\u003esumRange(left,right); */ 例题 统计范围内的元音字符串数 给你一个下标从 0 开始的字符串数组 words 以及一个二维整数数组 queries 。\n每个查询 queries[i] = [li, ri] 会要求我们统计在 words 中下标在 li 到 ri 范围内（包含 这两个值）并且以元音开头和结尾的字符串的数目。\n返回一个整数数组，其中数组的第 i 个元素对应第 i 个查询的答案。\n**注意：**元音字母是 'a'、'e'、'i'、'o' 和 'u' 。\n示例 1：\n输入：words = [\"aba\",\"bcb\",\"ece\",\"aa\",\"e\"], queries = [[0,2],[1,4],[1,1]] 输出：[2,3,0] 解释：以元音开头和结尾的字符串是 \"aba\"、\"ece\"、\"aa\" 和 \"e\" 。 查询 [0,2] 结果为 2（字符串 \"aba\" 和 \"ece\"）。 查询 [1,4] 结果为 3（字符串 \"ece\"、\"aa\"、\"e\"）。 查询 [1,1] 结果为 0 。 返回结果 [2,3,0] 。 示例 2：\n输入：words = [\"a\",\"e\",\"i\"], queries = [[0,2],[0,1],[2,2]] 输出：[3,2,1] 解释：每个字符串都满足这一条件，所以返回 [3,2,1] 。 提示：\n1 \u003c= words.length \u003c= 10^5 1 \u003c= words[i].length \u003c= 40 words[i] 仅由小写英文字母组成 sum(words[i].length) \u003c= 3 * 10^5 1 \u003c= queries.length \u003c= 10^5 0 \u003c= queries[j][0] \u003c= queries[j][1] \u003c words.length 思路\n维护一个前缀和数组 pre ，用来记录 words 中前 i 个字符串里元音字符串的个数，其他思路和引入中的例题相同。\nCode\nclass Solution { public: unordered_set\u003cchar\u003e letters = {'a', 'e', 'i', 'o', 'u'}; vector\u003cint\u003e vowelStrings(vector\u003cstring\u003e\u0026 words, vector\u003cvector\u003cint\u003e\u003e\u0026 queries) { int n = words.size(); vector\u003cint\u003e pre(n + 1); for (int i = 0; i \u003c n; ++i) { string word = words[i]; int len = word.length(); char a = word.at(0), b = word.at(len-1); if (letters.count(a) \u0026\u0026 letters.count(b)) { pre[i+1] = pre[i] + 1; } else { pre[i+1] = pre[i]; } } vector\u003cint\u003e res; for (const auto\u0026 q: queries) { int left = q[0], right = q[1]; res.push_back(pre[right+1] - pre[left]); } return res; } }; 特殊数组Ⅱ 如果数组的每一对相邻元素都是两个奇偶性不同的数字，则该数组被认为是一个 特殊数组 。\n你有一个整数数组 nums 和一个二维整数矩阵 queries，对于 queries[i] = [fromi, toi]，请你帮助你检查子数组 nums[fromi..toi] 是不是一个 特殊数组 。\n返回布尔数组 answer，如果 nums[fromi..toi] 是特殊数组，则 answer[i] 为 true ，否则，answer[i] 为 false 。\n示例 1：\n**输入：**nums = [3,4,1,2,6], queries = [[0,4]]\n输出：[false]\n解释：\n子数组是 [3,4,1,2,6]。2 和 6 都是偶数。\n示例 2：\n**输入：**nums = [4,3,1,6], queries = [[0,2],[2,3]]\n输出：[false,true]\n解释：\n子数组是 [4,3,1]。3 和 1 都是奇数。因此这个查询的答案是 false。 子数组是 [1,6]。只有一对：(1,6)，且包含了奇偶性不同的数字。因此这个查询的答案是 true。 提示：\n1 \u003c= nums.length \u003c= 10^5 1 \u003c= nums[i] \u003c= 10^5 1 \u003c= queries.length \u003c= 10^5 queries[i].length == 2 0 \u003c= queries[i][0] \u003c= queries[i][1] \u003c= nums.length - 1 思路\n如果直接对于每个询问去遍历 nums[from]到nums[to] ，是 O(n^2) 的复杂度，看数据范围一定会超时。\n如果一个子数组存在一堆相邻元素，它们的奇偶性相同，那么这个子数组一定不是特殊数组。\n怎么快速判断是否有奇偶性相同的相邻元素？\n我们考虑这样一个问题：对于一个只含有 0 和 1 的数组，如何快速判断一个子数组是否全为 0 ？\n如果子数组的元素和为 0 ，那么这个子数组一定全为 0 ；如果子数组的元素和大于 0 ，那么子数组一定包含 1 。\n对于本题，定义一个长度为 n-1 的数组，a ，其中：\n如果 a 的下标从 from 到 to-1 的子数组和等于 0 ，就说明 nums 的下标从 from 到 to 的这个子数组，其所有相邻元素的奇偶性都不同，那么该子数组就为特殊数组。\n计算 a 的前缀和 s ，可以快速判断子数组和是否为 0 ，也就是判断：s[to] - s[from] = 0 ，即：s[from] = s[to]\nCode：\nclass Solution { public: vector\u003cbool\u003e isArraySpecial(vector\u003cint\u003e\u0026 nums, vector\u003cvector\u003cint\u003e\u003e\u0026 queries) { vector\u003cint\u003e s(nums.size()); for (int i = 1; i \u003c nums.size(); ++i) { s[i] = s[i-1] + (nums[i-1] % 2 == nums[i] % 2); } vector\u003cbool\u003e res(queries.size()); for (int i = 0; i \u003c queries.size(); ++i) { auto\u0026 q = queries[i]; res[i] = s[q[0]] == s[q[1]]; } return res; } }; 蜡烛之间的盘子 给你一个长桌子，桌子上盘子和蜡烛排成一列。给你一个下标从 0 开始的字符串 s ，它只包含字符 '*' 和 '|' ，其中 '*' 表示一个 盘子 ，'|' 表示一支 蜡烛 。\n同时给你一个下标从 0 开始的二维整数数组 queries ，其中 queries[i] = [lefti, righti] 表示 子字符串 s[lefti...righti] （包含左右端点的字符）。对于每个查询，你需要找到 子字符串中 在 两支蜡烛之间 的盘子的 数目 。如果一个盘子在 子字符串中 左边和右边 都 至少有一支蜡烛，那么这个盘子满足在 两支蜡烛之间 。\n比方说，s = \"||**||**|*\" ，查询 [3, 8] ，表示的是子字符串 \"*||**|\" 。子字符串中在两支蜡烛之间的盘子数目为 2 ，子字符串中右边两个盘子在它们左边和右边 都 至少有一支蜡烛。 请你返回一个整数数组 answer ，其中 answer[i] 是第 i 个查询的答案。\n示例 1:\n输入：s = \"**|**|***|\", queries = [[2,5],[5,9]] 输出：[2,3] 解释： - queries[0] 有两个盘子在蜡烛之间。 - queries[1] 有三个盘子在蜡烛之间。 示例 2:\n输入：s = \"***|**|*****|**||**|*\", queries = [[1,17],[4,5],[14,17],[5,11],[15,16]] 输出：[9,0,0,0,0] 解释： - queries[0] 有 9 个盘子在蜡烛之间。 - 另一个查询没有盘子在蜡烛之间。 提示：\n3 \u003c= s.length \u003c= 10^5 s 只包含字符 '*' 和 '|' 。 1 \u003c= queries.length \u003c= 10^5 queries[i].length == 2 0 \u003c= lefti \u003c= righti \u003c s.length 思路\n对于每一个询问，我们只需要找到给定区间内最左侧和最右侧的两个蜡烛，这样两个蜡烛之间的所有盘子都是符合条件的。\n我们记录以每个位置结尾的累计盘子数量作为前缀和；\n对于每个位置，记录从它开始往左数，遇到的第一个蜡烛（可以自身是蜡烛）；从他开始往右数，遇到的第一个蜡烛（可以自身是蜡烛）；\n于是，对于每一个询问 q ，我们找到给定区间最左侧和最右侧两个位置，分别记为 q[0] 和 q[1] ，那么从 q[0] 开始往右数遇到的第一个蜡烛就是给定区间最左侧的蜡烛，从 q[1] 开始往左数遇到的第一个蜡烛就是给定区间最右侧的蜡烛。\n最后返回这两个蜡烛之间的盘子数目即可，具体可通过前面计算的前缀和得到。\n注意还需要判断当前位置左右不存在蜡烛的情况，此处用 -1 来特判。\nCode：\nclass Solution { public: vector\u003cint\u003e platesBetweenCandles(string s, vector\u003cvector\u003cint\u003e\u003e\u0026 queries) { int n = s.length(); // 计算盘子数量前缀和 vector\u003cint\u003e preSum(n); for (int i = 0, sum = 0; i \u003c n; ++i) { if (s[i] == '*') { ++sum; } preSum[i] = sum; } // 预处理每个位置左侧的第一个蜡烛 vector\u003cint\u003e left(n); for (int i = 0, l = -1; i \u003c n; ++i) { if (s[i] == '|') { l = i; } left[i] = l; } // 预处理每个位置右侧的第一个蜡烛 vector\u003cint\u003e right(n); for (int i = n - 1, r = -1; i \u003e= 0; --i) { if (s[i] == '|') { r = i; } right[i] = r; } vector\u003cint\u003e ans; for (auto\u0026 q: queries) { int x = right[q[0]], y = left[q[1]]; // x == -1 和 y == -1 表示当前位置左右不存在蜡烛的情况 ans.push_back(x == -1 || y == -1 || x \u003e= y ? 0 : preSum[y] - preSum[x]); } return ans; } }; 你能在你喜欢的那天吃到你喜欢的糖果吗？ 给你一个下标从 0 开始的正整数数组 candiesCount ，其中 candiesCount[i] 表示你拥有的第 i 类糖果的数目。同时给你一个二维数组 queries ，其中 queries[i] = [favoriteTypei, favoriteDayi, dailyCapi] 。\n你按照如下规则进行一场游戏：\n你从第 **0** 天开始吃糖果。 你在吃完 所有 第 i - 1 类糖果之前，不能 吃任何一颗第 i 类糖果。 在吃完所有糖果之前，你必须每天 至少 吃 一颗 糖果。 请你构建一个布尔型数组 answer ，用以给出 queries 中每一项的对应答案。此数组满足：\nanswer.length == queries.length 。answer[i] 是 queries[i] 的答案。 answer[i] 为 true 的条件是：在每天吃 不超过 dailyCapi 颗糖果的前提下，你可以在第 favoriteDayi 天吃到第 favoriteTypei 类糖果；否则 answer[i] 为 false 。 注意，只要满足上面 3 条规则中的第二条规则，你就可以在同一天吃不同类型的糖果。\n请你返回得到的数组 answer 。\n示例 1：\n输入：candiesCount = [7,4,5,3,8], queries = [[0,2,2],[4,2,4],[2,13,1000000000]] 输出：[true,false,true] 提示： 1- 在第 0 天吃 2 颗糖果(类型 0），第 1 天吃 2 颗糖果（类型 0），第 2 天你可以吃到类型 0 的糖果。 2- 每天你最多吃 4 颗糖果。即使第 0 天吃 4 颗糖果（类型 0），第 1 天吃 4 颗糖果（类型 0 和类型 1），你也没办法在第 2 天吃到类型 4 的糖果。换言之，你没法在每天吃 4 颗糖果的限制下在第 2 天吃到第 4 类糖果。 3- 如果你每天吃 1 颗糖果，你可以在第 13 天吃到类型 2 的糖果。 示例 2：\n输入：candiesCount = [5,2,6,4,1], queries = [[3,1,2],[4,10,3],[3,10,100],[4,100,30],[1,3,1]] 输出：[false,true,true,false,false] 提示：\n1 \u003c= candiesCount.length \u003c= 10^5 1 \u003c= candiesCount[i] \u003c= 10^5 1 \u003c= queries.length \u003c= 10^5 queries[i].length == 3 0 \u003c= favoriteTypei \u003c candiesCount.length 0 \u003c= favoriteDayi \u003c= 10^9 1 \u003c= dailyCapi \u003c= 10^9 思路\n题目有点长，读懂了其实就是个前缀和\n由于吃糖果必须按照从前到后的顺序，所以用前缀和记录吃完第 i 种糖果后总共吃掉了多少糖果，\n将其记为 pre[i] ，那么有： pre[i] = pre[i-1] + candiesCount[i] 。\n对于每个询问 q ，记 q[0] 为 type 、q[1] 为 day 、q[2] 为 cap ，\n分别计算按照最大速度 cap 吃糖果共需要的天数，得到最早能吃到第 type 种糖果的日期，\n和按照最低速度 1 吃糖果共需要的天数，得到最晚吃到第 type 种糖果的日期。\n判断 day 是否在这个范围内即可。\nCode：\nclass Solution { public: vector\u003cbool\u003e canEat(vector\u003cint\u003e\u0026 candiesCount, vector\u003cvector\u003cint\u003e\u003e\u0026 queries) { int n = candiesCount.size(); vector\u003clong long\u003e pre(n); // 要吃完第 i 种糖果，至少要吃 pre[i] 个糖果 pre[0] = candiesCount[0]; for (int i = 1; i \u003c n; ++i) { pre[i] = pre[i-1] + candiesCount[i]; } vector\u003cbool\u003e res; for (const auto\u0026 q: queries) { long long type = q[0], day = q[1], cap = q[2]; long long x1 = day + 1; long long y1 = (long long) (day + 1) * cap; long long x2 = (type == 0 ? 1 : pre[type-1] + 1); long long y2 = pre[type]; res.push_back(!(x1 \u003e y2 || y1 \u003c x2)); } return res; } }; 差分数组 考虑数组 a=[1,3,3,5,8]，对其中的相邻元素两两作差（右边减左边），得到数组 [2,0,2,3]。然后在开头补上 a[0]，得到差分数组：d = [1,2,0,2,3] 。\n这有什么用呢？如果从左到右累加 d 中的元素，我们就「还原」回了 a 数组 [1,3,3,5,8]。这类似求导与积分的概念。\n这又有什么用呢？现在把连续子数组 a[1],a[2],a[3] 都加上 10，得到 a′=[1,13,13,15,8]。再次两两作差，并在开头补上 a′[0]，得到差分数组：d'=[1,12,0,2,−7]\n对比 d 和 d′，可以发现只有 d[1] 和 d[4] 变化了，这意味着对 a 中连续子数组的操作，可以转变成对差分数组 d 中两个数的操作。\n定义与性质：\n对于数组 a，定义其差分数组（difference array）为\n性质 1：从左到右累加 d 中的元素，可以得到数组 a\n性质 2：如下两个操作是等价的。\n把 a 的子数组 a[i],a[i+1], ... ,a[j] 都加上 x 。 把 d[i] 增加 x ，把 d[j+1] 减少 x 。 利用性质 2，我们只需要 O(1) 的时间就可以完成对 a 的子数组的操作。最后利用性质 1从差分数组复原出数组 a 。\n例题 拼车 车上最初有 capacity 个空座位。车 只能 向一个方向行驶（也就是说，不允许掉头或改变方向）\n给定整数 capacity 和一个数组 trips , trip[i] = [numPassengersi, fromi, toi] 表示第 i 次旅行有 numPassengersi 乘客，接他们和放他们的位置分别是 fromi 和 toi 。这些位置是从汽车的初始位置向东的公里数。\n当且仅当你可以在所有给定的行程中接送所有乘客时，返回 true，否则请返回 false。\n示例 1：\n输入：trips = [[2,1,5],[3,3,7]], capacity = 4 输出：false 示例 2：\n输入：trips = [[2,1,5],[3,3,7]], capacity = 5 输出：true 提示：\n1 \u003c= trips.length \u003c= 1000 trips[i].length == 3 1 \u003c= numPassengersi \u003c= 100 0 \u003c= fromi \u003c toi \u003c= 1000 1 \u003c= capacity \u003c= 10^5 思路\n不用差分数组时，可以开一个新数组 f ，f[i] 存放第 i 天车上的人数，然后遍历每个 trip ，将 f 的第 from 到 to - 1 都累加上 trip 中对应的人数（因为第 to 天时，当前 trip 的人都下车了，所以不用累加到第 to 天）。\n计算完后直接比较 f 的最大值和 capacity 的大小即可。也可以在计算时发现 f 比 capacity 更大而直接返回\nCode\nclass Solution { public: bool carPooling(vector\u003cvector\u003cint\u003e\u003e\u0026 trips, int capacity) { int n = trips.size(); vector\u003cint\u003e f(1005); for (int i = 0; i \u003c n; ++i) { int num = trips[i][0], from = trips[i][1], to = trips[i][2]; for (int j = from; j \u003c to; ++j) { f[j] += num; } } if (*max_element(f.begin(), f.end()) \u003e capacity) return false; return true; } }; 看了上面比较直接的思路，可以发现本题是处理给定数组区间的问题，我们要做的是将数组 f 的某一段区间加上 num ，这正好可以采用差分数组进行优化。\n开一个对应大小的差分数组 d ，对于每个询问，我们只需要计算差分数组的头尾。\n之后我们遍历差分数组进行累加，还原出原数组，判断有没有元素大于 capacity 即可。\nclass Solution { public: bool carPooling(vector\u003cvector\u003cint\u003e\u003e\u0026 trips, int capacity) { int d[1001]{}; for (auto\u0026 t: trips) { int num = t[0], from = t[1], to = t[2]; d[from] += num; d[to] -= num; } int s = 0; for (auto v: d) { s += v; if (s \u003e capacity) return false; } return true; } }; ","wordCount":"1634","inLanguage":"en","datePublished":"0001-01-01T00:00:00Z","dateModified":"0001-01-01T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://yuk1pedia.github.io/learning-notes/2024-9-13-prefix_sum/"},"publisher":{"@type":"Organization","name":"YUKIPEDIA's blog","logo":{"@type":"ImageObject","url":"https://yuk1pedia.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://yuk1pedia.github.io/ accesskey=h title="YUKIPEDIA's blog (Alt + H)">YUKIPEDIA's blog</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
-<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://yuk1pedia.github.io/learning-notes title="Learning Notes"><span>Learning Notes</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">前缀和与差分数组</h1><div class=post-description>记录</div><div class=post-meta></div></header><div class=post-content><h2 id=前缀和>前缀和<a hidden class=anchor aria-hidden=true href=#前缀和>#</a></h2><p><strong>区域和检索 - 数组不可变</strong></p><p>给定一个整数数组 <code>nums</code>，处理以下类型的多个查询:</p><ol><li>计算索引 <code>left</code> 和 <code>right</code> （包含 <code>left</code> 和 <code>right</code>）之间的 <code>nums</code> 元素的 <strong>和</strong> ，其中 <code>left &lt;= right</code></li></ol><p>实现 <code>NumArray</code> 类：</p><ul><li><code>NumArray(int[] nums)</code> 使用数组 <code>nums</code> 初始化对象</li><li><code>int sumRange(int i, int j)</code> 返回数组 <code>nums</code> 中索引 <code>left</code> 和 <code>right</code> 之间的元素的 <strong>总和</strong> ，包含 <code>left</code> 和 <code>right</code> 两点（也就是 <code>nums[left] + nums[left + 1] + ... + nums[right]</code> )</li></ul><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>前缀和与差分数组 | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="记录">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2024-9-13-prefix_sum/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2024-9-13-prefix_sum/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
+                    <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      前缀和与差分数组
+    </h1>
+    <div class="post-description">
+      记录
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><h2 id="前缀和">前缀和<a hidden class="anchor" aria-hidden="true" href="#前缀和">#</a></h2>
+<p><strong>区域和检索 - 数组不可变</strong></p>
+<p>给定一个整数数组  <code>nums</code>，处理以下类型的多个查询:</p>
+<ol>
+<li>计算索引 <code>left</code> 和 <code>right</code> （包含 <code>left</code> 和 <code>right</code>）之间的 <code>nums</code> 元素的 <strong>和</strong> ，其中 <code>left &lt;= right</code></li>
+</ol>
+<p>实现 <code>NumArray</code> 类：</p>
+<ul>
+<li><code>NumArray(int[] nums)</code> 使用数组 <code>nums</code> 初始化对象</li>
+<li><code>int sumRange(int i, int j)</code> 返回数组 <code>nums</code> 中索引 <code>left</code> 和 <code>right</code> 之间的元素的 <strong>总和</strong> ，包含 <code>left</code> 和 <code>right</code> 两点（也就是 <code>nums[left] + nums[left + 1] + ... + nums[right]</code> )</li>
+</ul>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：
 [&#34;NumArray&#34;, &#34;sumRange&#34;, &#34;sumRange&#34;, &#34;sumRange&#34;]
 [[[-2, 0, 3, -5, 2, -1]], [0, 2], [2, 5], [0, 5]]
 输出：
@@ -11,199 +149,459 @@ NumArray numArray = new NumArray([-2, 0, 3, -5, 2, -1]);
 numArray.sumRange(0, 2); // return 1 ((-2) + 0 + 3)
 numArray.sumRange(2, 5); // return -1 (3 + (-5) + 2 + (-1)) 
 numArray.sumRange(0, 5); // return -3 ((-2) + 0 + 3 + (-5) + 2 + (-1))
-</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= nums.length &lt;= 10^4</code></li><li><code>-10^5 &lt;= nums[i] &lt;= 10^5</code></li><li><code>0 &lt;= i &lt;= j &lt; nums.length</code></li><li>最多调用 <code>10^4</code> 次 <code>sumRange</code> 方法</li></ul><p><strong>思路</strong></p><p>为了方便描述，把 <code>nums</code> 记作 <code>a</code> 。</p><p>对于数组 <code>a</code> ，定义它的前缀和：</p><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/09/04/VNfmAd9ljaHe6Xn.png></p><p>为什么要定义 <code>s[0] = 0</code> ，见下文。</p><p>根据这个定义，有：<code>s[i+1] = s[i] + a[i]</code></p><p>示例中的数组 <code>[-2,0,3,-5,2,-1]</code> 对应的前缀和数组 <code>s = [0,-2,-2,1,-4,-2,-3]</code> 。</p><p>通过前缀和，我们可以把<strong>连续子数组的元素和转换成两个前缀和的差</strong>，<code>a[left]</code> 到 <code>a[right]</code> 的元素和等于：</p><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/09/04/BIDyzAUJpPEiKFc.png></p><p>有了这个式子，示例中子数组 <code>[3,-5,2,-1]</code> 的和，就可以用 <code>O(1)</code> 的时间计算出来：<code>s[6] - s[2] = -1</code></p><p>至于为什么要定义 <code>s[0] = 0</code> ，这样做有什么好处？</p><p>如果 <code>left = 0</code>，要计算的子数组是一个前缀（从 <code>a[0]</code> 到 <code>a[right]</code>），我们要用 <code>s[right+1]</code> 减去 <code>s[0]</code>。如果不定义 <code>s[0] = 0</code>，就必须特判 <code>left = 0</code> 的情况了。通过定义 <code>s[0] = 0</code>，任意子数组（包括前缀）都可以表示为两个前缀和的差。此外，如果 <code>a</code> 是空数组，定义 <code>s[0] = 0</code> 的写法是可以兼容这种情况的。</p><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>NumArray</span> {
-</span></span><span style=display:flex><span><span style=color:#66d9ef>private</span><span style=color:#f92672>:</span>
-</span></span><span style=display:flex><span>    vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> pre;
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
-</span></span><span style=display:flex><span>    NumArray(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> nums) {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> nums.size();
-</span></span><span style=display:flex><span>        <span style=color:#75715e>// 维护一个前缀和
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        pre.resize(n <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>);
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
-</span></span><span style=display:flex><span>            pre[i<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> pre[i] <span style=color:#f92672>+</span> nums[i];
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>    
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> <span style=color:#a6e22e>sumRange</span>(<span style=color:#66d9ef>int</span> left, <span style=color:#66d9ef>int</span> right) {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> pre[right<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>-</span> pre[left];
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>};
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span><span style=color:#75715e>/**
-</span></span></span><span style=display:flex><span><span style=color:#75715e> * Your NumArray object will be instantiated and called as such:
-</span></span></span><span style=display:flex><span><span style=color:#75715e> * NumArray* obj = new NumArray(nums);
-</span></span></span><span style=display:flex><span><span style=color:#75715e> * int param_1 = obj-&gt;sumRange(left,right);
-</span></span></span><span style=display:flex><span><span style=color:#75715e> */</span>
-</span></span></code></pre></div><h3 id=例题>例题<a hidden class=anchor aria-hidden=true href=#例题>#</a></h3><h4 id=统计范围内的元音字符串数>统计范围内的元音字符串数<a hidden class=anchor aria-hidden=true href=#统计范围内的元音字符串数>#</a></h4><p>给你一个下标从 <strong>0</strong> 开始的字符串数组 <code>words</code> 以及一个二维整数数组 <code>queries</code> 。</p><p>每个查询 <code>queries[i] = [li, ri]</code> 会要求我们统计在 <code>words</code> 中下标在 <code>li</code> 到 <code>ri</code> 范围内（<strong>包含</strong> 这两个值）并且以元音开头和结尾的字符串的数目。</p><p>返回一个整数数组，其中数组的第 <code>i</code> 个元素对应第 <code>i</code> 个查询的答案。</p><p>**注意：**元音字母是 <code>'a'</code>、<code>'e'</code>、<code>'i'</code>、<code>'o'</code> 和 <code>'u'</code> 。</p><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：words = [&#34;aba&#34;,&#34;bcb&#34;,&#34;ece&#34;,&#34;aa&#34;,&#34;e&#34;], queries = [[0,2],[1,4],[1,1]]
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= nums.length &lt;= 10^4</code></li>
+<li><code>-10^5 &lt;= nums[i] &lt;= 10^5</code></li>
+<li><code>0 &lt;= i &lt;= j &lt; nums.length</code></li>
+<li>最多调用 <code>10^4</code> 次 <code>sumRange</code> 方法</li>
+</ul>
+<p><strong>思路</strong></p>
+<p>为了方便描述，把 <code>nums</code> 记作 <code>a</code> 。</p>
+<p>对于数组 <code>a</code> ，定义它的前缀和：</p>
+<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/09/04/VNfmAd9ljaHe6Xn.png"></p>
+<p>为什么要定义 <code>s[0] = 0</code> ，见下文。</p>
+<p>根据这个定义，有：<code>s[i+1] = s[i] + a[i]</code></p>
+<p>示例中的数组 <code>[-2,0,3,-5,2,-1]</code> 对应的前缀和数组 <code>s = [0,-2,-2,1,-4,-2,-3]</code> 。</p>
+<p>通过前缀和，我们可以把<strong>连续子数组的元素和转换成两个前缀和的差</strong>，<code>a[left]</code> 到 <code>a[right]</code> 的元素和等于：</p>
+<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/09/04/BIDyzAUJpPEiKFc.png"></p>
+<p>有了这个式子，示例中子数组 <code>[3,-5,2,-1]</code> 的和，就可以用 <code>O(1)</code> 的时间计算出来：<code>s[6] - s[2] = -1</code></p>
+<p>至于为什么要定义 <code>s[0] = 0</code> ，这样做有什么好处？</p>
+<p>如果 <code>left = 0</code>，要计算的子数组是一个前缀（从 <code>a[0]</code> 到 <code>a[right]</code>），我们要用 <code>s[right+1]</code> 减去 <code>s[0]</code>。如果不定义 <code>s[0] = 0</code>，就必须特判 <code>left = 0</code> 的情况了。通过定义 <code>s[0] = 0</code>，任意子数组（包括前缀）都可以表示为两个前缀和的差。此外，如果 <code>a</code> 是空数组，定义 <code>s[0] = 0</code> 的写法是可以兼容这种情况的。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">NumArray</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> pre;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    NumArray(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> nums.size();
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 维护一个前缀和
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        pre.resize(n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>            pre[i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> pre[i] <span style="color:#f92672">+</span> nums[i];
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">sumRange</span>(<span style="color:#66d9ef">int</span> left, <span style="color:#66d9ef">int</span> right) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> pre[right<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> pre[left];
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * Your NumArray object will be instantiated and called as such:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * NumArray* obj = new NumArray(nums);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * int param_1 = obj-&gt;sumRange(left,right);
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span></code></pre></div><h3 id="例题">例题<a hidden class="anchor" aria-hidden="true" href="#例题">#</a></h3>
+<h4 id="统计范围内的元音字符串数">统计范围内的元音字符串数<a hidden class="anchor" aria-hidden="true" href="#统计范围内的元音字符串数">#</a></h4>
+<p>给你一个下标从 <strong>0</strong> 开始的字符串数组 <code>words</code> 以及一个二维整数数组 <code>queries</code> 。</p>
+<p>每个查询 <code>queries[i] = [li, ri]</code> 会要求我们统计在 <code>words</code> 中下标在 <code>li</code> 到 <code>ri</code> 范围内（<strong>包含</strong> 这两个值）并且以元音开头和结尾的字符串的数目。</p>
+<p>返回一个整数数组，其中数组的第 <code>i</code> 个元素对应第 <code>i</code> 个查询的答案。</p>
+<p>**注意：**元音字母是 <code>'a'</code>、<code>'e'</code>、<code>'i'</code>、<code>'o'</code> 和 <code>'u'</code> 。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：words = [&#34;aba&#34;,&#34;bcb&#34;,&#34;ece&#34;,&#34;aa&#34;,&#34;e&#34;], queries = [[0,2],[1,4],[1,1]]
 输出：[2,3,0]
 解释：以元音开头和结尾的字符串是 &#34;aba&#34;、&#34;ece&#34;、&#34;aa&#34; 和 &#34;e&#34; 。
 查询 [0,2] 结果为 2（字符串 &#34;aba&#34; 和 &#34;ece&#34;）。
 查询 [1,4] 结果为 3（字符串 &#34;ece&#34;、&#34;aa&#34;、&#34;e&#34;）。
 查询 [1,1] 结果为 0 。
 返回结果 [2,3,0] 。
-</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：words = [&#34;a&#34;,&#34;e&#34;,&#34;i&#34;], queries = [[0,2],[0,1],[2,2]]
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：words = [&#34;a&#34;,&#34;e&#34;,&#34;i&#34;], queries = [[0,2],[0,1],[2,2]]
 输出：[3,2,1]
 解释：每个字符串都满足这一条件，所以返回 [3,2,1] 。
-</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= words.length &lt;= 10^5</code></li><li><code>1 &lt;= words[i].length &lt;= 40</code></li><li><code>words[i]</code> 仅由小写英文字母组成</li><li><code>sum(words[i].length) &lt;= 3 * 10^5</code></li><li><code>1 &lt;= queries.length &lt;= 10^5</code></li><li><code>0 &lt;= queries[j][0] &lt;= queries[j][1] &lt; words.length</code></li></ul><p><strong>思路</strong></p><p>维护一个前缀和数组 <code>pre</code> ，用来记录 <code>words</code> 中前 <code>i</code> 个字符串里<strong>元音字符串</strong>的个数，其他思路和<strong>引入</strong>中的例题相同。</p><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
-</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
-</span></span><span style=display:flex><span>    unordered_set<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>char</span><span style=color:#f92672>&gt;</span> letters <span style=color:#f92672>=</span> {<span style=color:#e6db74>&#39;a&#39;</span>, <span style=color:#e6db74>&#39;e&#39;</span>, <span style=color:#e6db74>&#39;i&#39;</span>, <span style=color:#e6db74>&#39;o&#39;</span>, <span style=color:#e6db74>&#39;u&#39;</span>};
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>    vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> vowelStrings(vector<span style=color:#f92672>&lt;</span>string<span style=color:#f92672>&gt;&amp;</span> words, vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> queries) {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> words.size();
-</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> pre(n <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>);
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
-</span></span><span style=display:flex><span>            string word <span style=color:#f92672>=</span> words[i];
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> len <span style=color:#f92672>=</span> word.length();
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>char</span> a <span style=color:#f92672>=</span> word.at(<span style=color:#ae81ff>0</span>), b <span style=color:#f92672>=</span> word.at(len<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>);
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (letters.count(a) <span style=color:#f92672>&amp;&amp;</span> letters.count(b)) {
-</span></span><span style=display:flex><span>                pre[i<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> pre[i] <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
-</span></span><span style=display:flex><span>            } <span style=color:#66d9ef>else</span> {
-</span></span><span style=display:flex><span>                pre[i<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>=</span> pre[i];
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> res;
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>const</span> <span style=color:#66d9ef>auto</span><span style=color:#f92672>&amp;</span> q: queries) {
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> left <span style=color:#f92672>=</span> q[<span style=color:#ae81ff>0</span>], right <span style=color:#f92672>=</span> q[<span style=color:#ae81ff>1</span>];
-</span></span><span style=display:flex><span>            res.push_back(pre[right<span style=color:#f92672>+</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>-</span> pre[left]);
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> res;
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>};
-</span></span></code></pre></div><h4 id=特殊数组>特殊数组Ⅱ<a hidden class=anchor aria-hidden=true href=#特殊数组>#</a></h4><p>如果数组的每一对相邻元素都是两个奇偶性不同的数字，则该数组被认为是一个 <strong>特殊数组</strong> 。</p><p>你有一个整数数组 <code>nums</code> 和一个二维整数矩阵 <code>queries</code>，对于 <code>queries[i] = [fromi, toi]</code>，请你帮助你检查子数组 <code>nums[fromi..toi]</code> 是不是一个 <strong>特殊数组</strong> 。</p><p>返回布尔数组 <code>answer</code>，如果 <code>nums[fromi..toi]</code> 是特殊数组，则 <code>answer[i]</code> 为 <code>true</code> ，否则，<code>answer[i]</code> 为 <code>false</code> 。</p><p><strong>示例 1：</strong></p><p>**输入：**nums = [3,4,1,2,6], queries = [[0,4]]</p><p><strong>输出：</strong>[false]</p><p><strong>解释：</strong></p><p>子数组是 <code>[3,4,1,2,6]</code>。2 和 6 都是偶数。</p><p><strong>示例 2：</strong></p><p>**输入：**nums = [4,3,1,6], queries = [[0,2],[2,3]]</p><p><strong>输出：</strong>[false,true]</p><p><strong>解释：</strong></p><ol><li>子数组是 <code>[4,3,1]</code>。3 和 1 都是奇数。因此这个查询的答案是 <code>false</code>。</li><li>子数组是 <code>[1,6]</code>。只有一对：<code>(1,6)</code>，且包含了奇偶性不同的数字。因此这个查询的答案是 <code>true</code>。</li></ol><p><strong>提示：</strong></p><ul><li><code>1 &lt;= nums.length &lt;= 10^5</code></li><li><code>1 &lt;= nums[i] &lt;= 10^5</code></li><li><code>1 &lt;= queries.length &lt;= 10^5</code></li><li><code>queries[i].length == 2</code></li><li><code>0 &lt;= queries[i][0] &lt;= queries[i][1] &lt;= nums.length - 1</code></li></ul><p><strong>思路</strong></p><p>如果直接对于每个询问去遍历 <code>nums[from]到nums[to]</code> ，是 <code>O(n^2)</code> 的复杂度，看数据范围一定会超时。</p><p>如果一个子数组存在一堆相邻元素，它们的奇偶性相同，那么这个子数组一定不是特殊数组。</p><p>怎么快速判断是否有奇偶性相同的相邻元素？</p><p><strong>我们考虑这样一个问题：对于一个只含有 0 和 1 的数组，如何快速判断一个子数组是否全为 0 ？</strong></p><p><strong>如果子数组的元素和为 0</strong> ，那么这个子数组一定全为 0 ；<strong>如果子数组的元素和大于 0</strong> ，那么子数组一定包含 1 。</p><p>对于本题，定义一个长度为 <code>n-1</code> 的数组，<code>a</code> ，其中：</p><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/08/14/KHQfiU3x1BnzajM.png></p><p>如果 <code>a</code> 的下标从 <code>from</code> 到 <code>to-1</code> 的子数组和等于 0 ，就说明 <code>nums</code> 的下标从 <code>from</code> 到 <code>to</code> 的这个子数组，其所有相邻元素的奇偶性都不同，那么该子数组就为特殊数组。</p><p>计算 <code>a</code> 的前缀和 <code>s</code> ，可以快速判断子数组和是否为 0 ，也就是判断：<code>s[to] - s[from] = 0</code> ，即：<code>s[from] = s[to]</code></p><p><strong>Code：</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
-</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
-</span></span><span style=display:flex><span>    vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>bool</span><span style=color:#f92672>&gt;</span> isArraySpecial(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> nums, vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> queries) {
-</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> s(nums.size());
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&lt;</span> nums.size(); <span style=color:#f92672>++</span>i) {
-</span></span><span style=display:flex><span>            s[i] <span style=color:#f92672>=</span> s[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>+</span> (nums[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>%</span> <span style=color:#ae81ff>2</span> <span style=color:#f92672>==</span> nums[i] <span style=color:#f92672>%</span> <span style=color:#ae81ff>2</span>);
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>bool</span><span style=color:#f92672>&gt;</span> res(queries.size());
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> queries.size(); <span style=color:#f92672>++</span>i) {
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>auto</span><span style=color:#f92672>&amp;</span> q <span style=color:#f92672>=</span> queries[i];
-</span></span><span style=display:flex><span>            res[i] <span style=color:#f92672>=</span> s[q[<span style=color:#ae81ff>0</span>]] <span style=color:#f92672>==</span> s[q[<span style=color:#ae81ff>1</span>]];
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> res;
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>};
-</span></span></code></pre></div><h4 id=蜡烛之间的盘子>蜡烛之间的盘子<a hidden class=anchor aria-hidden=true href=#蜡烛之间的盘子>#</a></h4><p>给你一个长桌子，桌子上盘子和蜡烛排成一列。给你一个下标从 <strong>0</strong> 开始的字符串 <code>s</code> ，它只包含字符 <code>'*'</code> 和 <code>'|'</code> ，其中 <code>'*'</code> 表示一个 <strong>盘子</strong> ，<code>'|'</code> 表示一支 <strong>蜡烛</strong> 。</p><p>同时给你一个下标从 <strong>0</strong> 开始的二维整数数组 <code>queries</code> ，其中 <code>queries[i] = [lefti, righti]</code> 表示 <strong>子字符串</strong> <code>s[lefti...righti]</code> （<strong>包含左右端点的字符</strong>）。对于每个查询，你需要找到 <strong>子字符串中</strong> 在 <strong>两支蜡烛之间</strong> 的盘子的 <strong>数目</strong> 。如果一个盘子在 <strong>子字符串中</strong> 左边和右边 <strong>都</strong> 至少有一支蜡烛，那么这个盘子满足在 <strong>两支蜡烛之间</strong> 。</p><ul><li>比方说，<code>s = "||**||**|*"</code> ，查询 <code>[3, 8]</code> ，表示的是子字符串 <code>"*||**|"</code> 。子字符串中在两支蜡烛之间的盘子数目为 <code>2</code> ，子字符串中右边两个盘子在它们左边和右边 <strong>都</strong> 至少有一支蜡烛。</li></ul><p>请你返回一个整数数组 <code>answer</code> ，其中 <code>answer[i]</code> 是第 <code>i</code> 个查询的答案。</p><p><strong>示例 1:</strong></p><p><img alt=ex-1 loading=lazy src=https://assets.leetcode.com/uploads/2021/10/04/ex-1.png></p><pre tabindex=0><code>输入：s = &#34;**|**|***|&#34;, queries = [[2,5],[5,9]]
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= words.length &lt;= 10^5</code></li>
+<li><code>1 &lt;= words[i].length &lt;= 40</code></li>
+<li><code>words[i]</code> 仅由小写英文字母组成</li>
+<li><code>sum(words[i].length) &lt;= 3 * 10^5</code></li>
+<li><code>1 &lt;= queries.length &lt;= 10^5</code></li>
+<li><code>0 &lt;= queries[j][0] &lt;= queries[j][1] &lt; words.length</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>维护一个前缀和数组 <code>pre</code> ，用来记录 <code>words</code> 中前 <code>i</code> 个字符串里<strong>元音字符串</strong>的个数，其他思路和<strong>引入</strong>中的例题相同。</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    unordered_set<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">char</span><span style="color:#f92672">&gt;</span> letters <span style="color:#f92672">=</span> {<span style="color:#e6db74">&#39;a&#39;</span>, <span style="color:#e6db74">&#39;e&#39;</span>, <span style="color:#e6db74">&#39;i&#39;</span>, <span style="color:#e6db74">&#39;o&#39;</span>, <span style="color:#e6db74">&#39;u&#39;</span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> vowelStrings(vector<span style="color:#f92672">&lt;</span>string<span style="color:#f92672">&gt;&amp;</span> words, vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> queries) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> words.size();
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> pre(n <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>            string word <span style="color:#f92672">=</span> words[i];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> len <span style="color:#f92672">=</span> word.length();
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">char</span> a <span style="color:#f92672">=</span> word.at(<span style="color:#ae81ff">0</span>), b <span style="color:#f92672">=</span> word.at(len<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (letters.count(a) <span style="color:#f92672">&amp;&amp;</span> letters.count(b)) {
+</span></span><span style="display:flex;"><span>                pre[i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> pre[i] <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">else</span> {
+</span></span><span style="display:flex;"><span>                pre[i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">=</span> pre[i];
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> res;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> q: queries) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> left <span style="color:#f92672">=</span> q[<span style="color:#ae81ff">0</span>], right <span style="color:#f92672">=</span> q[<span style="color:#ae81ff">1</span>];
+</span></span><span style="display:flex;"><span>            res.push_back(pre[right<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">-</span> pre[left]);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h4 id="特殊数组">特殊数组Ⅱ<a hidden class="anchor" aria-hidden="true" href="#特殊数组">#</a></h4>
+<p>如果数组的每一对相邻元素都是两个奇偶性不同的数字，则该数组被认为是一个 <strong>特殊数组</strong> 。</p>
+<p>你有一个整数数组 <code>nums</code> 和一个二维整数矩阵 <code>queries</code>，对于 <code>queries[i] = [fromi, toi]</code>，请你帮助你检查子数组 <code>nums[fromi..toi]</code> 是不是一个 <strong>特殊数组</strong> 。</p>
+<p>返回布尔数组 <code>answer</code>，如果 <code>nums[fromi..toi]</code> 是特殊数组，则 <code>answer[i]</code> 为 <code>true</code> ，否则，<code>answer[i]</code> 为 <code>false</code> 。</p>
+<p><strong>示例 1：</strong></p>
+<p>**输入：**nums = [3,4,1,2,6], queries = [[0,4]]</p>
+<p><strong>输出：</strong>[false]</p>
+<p><strong>解释：</strong></p>
+<p>子数组是 <code>[3,4,1,2,6]</code>。2 和 6 都是偶数。</p>
+<p><strong>示例 2：</strong></p>
+<p>**输入：**nums = [4,3,1,6], queries = [[0,2],[2,3]]</p>
+<p><strong>输出：</strong>[false,true]</p>
+<p><strong>解释：</strong></p>
+<ol>
+<li>子数组是 <code>[4,3,1]</code>。3 和 1 都是奇数。因此这个查询的答案是 <code>false</code>。</li>
+<li>子数组是 <code>[1,6]</code>。只有一对：<code>(1,6)</code>，且包含了奇偶性不同的数字。因此这个查询的答案是 <code>true</code>。</li>
+</ol>
+<p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= nums.length &lt;= 10^5</code></li>
+<li><code>1 &lt;= nums[i] &lt;= 10^5</code></li>
+<li><code>1 &lt;= queries.length &lt;= 10^5</code></li>
+<li><code>queries[i].length == 2</code></li>
+<li><code>0 &lt;= queries[i][0] &lt;= queries[i][1] &lt;= nums.length - 1</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>如果直接对于每个询问去遍历 <code>nums[from]到nums[to]</code> ，是 <code>O(n^2)</code> 的复杂度，看数据范围一定会超时。</p>
+<p>如果一个子数组存在一堆相邻元素，它们的奇偶性相同，那么这个子数组一定不是特殊数组。</p>
+<p>怎么快速判断是否有奇偶性相同的相邻元素？</p>
+<p><strong>我们考虑这样一个问题：对于一个只含有 0 和 1 的数组，如何快速判断一个子数组是否全为 0 ？</strong></p>
+<p><strong>如果子数组的元素和为 0</strong> ，那么这个子数组一定全为 0 ；<strong>如果子数组的元素和大于 0</strong> ，那么子数组一定包含 1 。</p>
+<p>对于本题，定义一个长度为 <code>n-1</code> 的数组，<code>a</code> ，其中：</p>
+<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/08/14/KHQfiU3x1BnzajM.png"></p>
+<p>如果 <code>a</code> 的下标从 <code>from</code> 到 <code>to-1</code> 的子数组和等于 0 ，就说明 <code>nums</code> 的下标从 <code>from</code> 到 <code>to</code> 的这个子数组，其所有相邻元素的奇偶性都不同，那么该子数组就为特殊数组。</p>
+<p>计算 <code>a</code> 的前缀和 <code>s</code> ，可以快速判断子数组和是否为 0 ，也就是判断：<code>s[to] - s[from] = 0</code> ，即：<code>s[from] = s[to]</code></p>
+<p><strong>Code：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">bool</span><span style="color:#f92672">&gt;</span> isArraySpecial(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> nums, vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> queries) {
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> s(nums.size());
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> nums.size(); <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>            s[i] <span style="color:#f92672">=</span> s[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">+</span> (nums[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">%</span> <span style="color:#ae81ff">2</span> <span style="color:#f92672">==</span> nums[i] <span style="color:#f92672">%</span> <span style="color:#ae81ff">2</span>);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">bool</span><span style="color:#f92672">&gt;</span> res(queries.size());
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> queries.size(); <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> q <span style="color:#f92672">=</span> queries[i];
+</span></span><span style="display:flex;"><span>            res[i] <span style="color:#f92672">=</span> s[q[<span style="color:#ae81ff">0</span>]] <span style="color:#f92672">==</span> s[q[<span style="color:#ae81ff">1</span>]];
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h4 id="蜡烛之间的盘子">蜡烛之间的盘子<a hidden class="anchor" aria-hidden="true" href="#蜡烛之间的盘子">#</a></h4>
+<p>给你一个长桌子，桌子上盘子和蜡烛排成一列。给你一个下标从 <strong>0</strong> 开始的字符串 <code>s</code> ，它只包含字符 <code>'*'</code> 和 <code>'|'</code> ，其中 <code>'*'</code> 表示一个 <strong>盘子</strong> ，<code>'|'</code> 表示一支 <strong>蜡烛</strong> 。</p>
+<p>同时给你一个下标从 <strong>0</strong> 开始的二维整数数组 <code>queries</code> ，其中 <code>queries[i] = [lefti, righti]</code> 表示 <strong>子字符串</strong> <code>s[lefti...righti]</code> （<strong>包含左右端点的字符</strong>）。对于每个查询，你需要找到 <strong>子字符串中</strong> 在 <strong>两支蜡烛之间</strong> 的盘子的 <strong>数目</strong> 。如果一个盘子在 <strong>子字符串中</strong> 左边和右边 <strong>都</strong> 至少有一支蜡烛，那么这个盘子满足在 <strong>两支蜡烛之间</strong> 。</p>
+<ul>
+<li>比方说，<code>s = &quot;||**||**|*&quot;</code> ，查询 <code>[3, 8]</code> ，表示的是子字符串 <code>&quot;*||**|&quot;</code> 。子字符串中在两支蜡烛之间的盘子数目为 <code>2</code> ，子字符串中右边两个盘子在它们左边和右边 <strong>都</strong> 至少有一支蜡烛。</li>
+</ul>
+<p>请你返回一个整数数组 <code>answer</code> ，其中 <code>answer[i]</code> 是第 <code>i</code> 个查询的答案。</p>
+<p><strong>示例 1:</strong></p>
+<p><img alt="ex-1" loading="lazy" src="https://assets.leetcode.com/uploads/2021/10/04/ex-1.png"></p>
+<pre tabindex="0"><code>输入：s = &#34;**|**|***|&#34;, queries = [[2,5],[5,9]]
 输出：[2,3]
 解释：
 - queries[0] 有两个盘子在蜡烛之间。
 - queries[1] 有三个盘子在蜡烛之间。
-</code></pre><p><strong>示例 2:</strong></p><p><img alt=ex-2 loading=lazy src=https://assets.leetcode.com/uploads/2021/10/04/ex-2.png></p><pre tabindex=0><code>输入：s = &#34;***|**|*****|**||**|*&#34;, queries = [[1,17],[4,5],[14,17],[5,11],[15,16]]
+</code></pre><p><strong>示例 2:</strong></p>
+<p><img alt="ex-2" loading="lazy" src="https://assets.leetcode.com/uploads/2021/10/04/ex-2.png"></p>
+<pre tabindex="0"><code>输入：s = &#34;***|**|*****|**||**|*&#34;, queries = [[1,17],[4,5],[14,17],[5,11],[15,16]]
 输出：[9,0,0,0,0]
 解释：
 - queries[0] 有 9 个盘子在蜡烛之间。
 - 另一个查询没有盘子在蜡烛之间。
-</code></pre><p><strong>提示：</strong></p><ul><li><code>3 &lt;= s.length &lt;= 10^5</code></li><li><code>s</code> 只包含字符 <code>'*'</code> 和 <code>'|'</code> 。</li><li><code>1 &lt;= queries.length &lt;= 10^5</code></li><li><code>queries[i].length == 2</code></li><li><code>0 &lt;= lefti &lt;= righti &lt; s.length</code></li></ul><p><strong>思路</strong></p><p>对于每一个询问，我们只需要找到给定区间内最左侧和最右侧的两个蜡烛，这样两个蜡烛之间的所有盘子都是符合条件的。</p><p>我们记录<strong>以每个位置结尾的累计盘子数量作为前缀和</strong>；</p><p>对于每个位置，记录从它开始往左数，遇到的第一个蜡烛（可以自身是蜡烛）；从他开始往右数，遇到的第一个蜡烛（可以自身是蜡烛）；</p><p>于是，对于每一个询问 <code>q</code> ，我们找到给定区间最左侧和最右侧两个位置，分别记为 <code>q[0]</code> 和 <code>q[1]</code> ，那么<strong>从 <code>q[0]</code> 开始往右数遇到的第一个蜡烛就是给定区间最左侧的蜡烛</strong>，<strong>从 <code>q[1]</code> 开始往左数遇到的第一个蜡烛就是给定区间最右侧的蜡烛</strong>。</p><p>最后返回这两个蜡烛之间的盘子数目即可，具体可通过前面计算的前缀和得到。</p><p>注意还需要判断当前位置左右不存在蜡烛的情况，此处用 -1 来特判。</p><p><strong>Code：</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
-</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
-</span></span><span style=display:flex><span>    vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> platesBetweenCandles(string s, vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> queries) {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> s.length();
-</span></span><span style=display:flex><span>        <span style=color:#75715e>// 计算盘子数量前缀和
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> preSum(n);
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, sum <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (s[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;*&#39;</span>) {
-</span></span><span style=display:flex><span>                <span style=color:#f92672>++</span>sum;
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>            preSum[i] <span style=color:#f92672>=</span> sum;
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        <span style=color:#75715e>// 预处理每个位置左侧的第一个蜡烛
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> left(n);
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>, l <span style=color:#f92672>=</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (s[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;|&#39;</span>) {
-</span></span><span style=display:flex><span>                l <span style=color:#f92672>=</span> i;
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>            left[i] <span style=color:#f92672>=</span> l;
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        <span style=color:#75715e>// 预处理每个位置右侧的第一个蜡烛
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> right(n);
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> n <span style=color:#f92672>-</span> <span style=color:#ae81ff>1</span>, r <span style=color:#f92672>=</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&gt;=</span> <span style=color:#ae81ff>0</span>; <span style=color:#f92672>--</span>i) {
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (s[i] <span style=color:#f92672>==</span> <span style=color:#e6db74>&#39;|&#39;</span>) {
-</span></span><span style=display:flex><span>                r <span style=color:#f92672>=</span> i;
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>            right[i] <span style=color:#f92672>=</span> r;
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> ans;
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>auto</span><span style=color:#f92672>&amp;</span> q: queries) {
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> x <span style=color:#f92672>=</span> right[q[<span style=color:#ae81ff>0</span>]], y <span style=color:#f92672>=</span> left[q[<span style=color:#ae81ff>1</span>]];
-</span></span><span style=display:flex><span>            <span style=color:#75715e>// x == -1 和 y == -1 表示当前位置左右不存在蜡烛的情况
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            ans.push_back(x <span style=color:#f92672>==</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span> <span style=color:#f92672>||</span> y <span style=color:#f92672>==</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span> <span style=color:#f92672>||</span> x <span style=color:#f92672>&gt;=</span> y <span style=color:#f92672>?</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>:</span> preSum[y] <span style=color:#f92672>-</span> preSum[x]);
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> ans;
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>};
-</span></span></code></pre></div><h4 id=你能在你喜欢的那天吃到你喜欢的糖果吗>你能在你喜欢的那天吃到你喜欢的糖果吗？<a hidden class=anchor aria-hidden=true href=#你能在你喜欢的那天吃到你喜欢的糖果吗>#</a></h4><p>给你一个下标从 <strong>0</strong> 开始的正整数数组 <code>candiesCount</code> ，其中 <code>candiesCount[i]</code> 表示你拥有的第 <code>i</code> 类糖果的数目。同时给你一个二维数组 <code>queries</code> ，其中 <code>queries[i] = [favoriteTypei, favoriteDayi, dailyCapi]</code> 。</p><p>你按照如下规则进行一场游戏：</p><ul><li>你从第 <code>**0**</code> 天开始吃糖果。</li><li>你在吃完 <strong>所有</strong> 第 <code>i - 1</code> 类糖果之前，<strong>不能</strong> 吃任何一颗第 <code>i</code> 类糖果。</li><li>在吃完所有糖果之前，你必须每天 <strong>至少</strong> 吃 <strong>一颗</strong> 糖果。</li></ul><p>请你构建一个布尔型数组 <code>answer</code> ，用以给出 <code>queries</code> 中每一项的对应答案。此数组满足：</p><ul><li><code>answer.length == queries.length</code> 。<code>answer[i]</code> 是 <code>queries[i]</code> 的答案。</li><li><code>answer[i]</code> 为 <code>true</code> 的条件是：在每天吃 <strong>不超过</strong> <code>dailyCapi</code> 颗糖果的前提下，你可以在第 <code>favoriteDayi</code> 天吃到第 <code>favoriteTypei</code> 类糖果；否则 <code>answer[i]</code> 为 <code>false</code> 。</li></ul><p>注意，只要满足上面 3 条规则中的第二条规则，你就可以在同一天吃不同类型的糖果。</p><p>请你返回得到的数组 <code>answer</code> 。</p><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：candiesCount = [7,4,5,3,8], queries = [[0,2,2],[4,2,4],[2,13,1000000000]]
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>3 &lt;= s.length &lt;= 10^5</code></li>
+<li><code>s</code> 只包含字符 <code>'*'</code> 和 <code>'|'</code> 。</li>
+<li><code>1 &lt;= queries.length &lt;= 10^5</code></li>
+<li><code>queries[i].length == 2</code></li>
+<li><code>0 &lt;= lefti &lt;= righti &lt; s.length</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>对于每一个询问，我们只需要找到给定区间内最左侧和最右侧的两个蜡烛，这样两个蜡烛之间的所有盘子都是符合条件的。</p>
+<p>我们记录<strong>以每个位置结尾的累计盘子数量作为前缀和</strong>；</p>
+<p>对于每个位置，记录从它开始往左数，遇到的第一个蜡烛（可以自身是蜡烛）；从他开始往右数，遇到的第一个蜡烛（可以自身是蜡烛）；</p>
+<p>于是，对于每一个询问 <code>q</code> ，我们找到给定区间最左侧和最右侧两个位置，分别记为 <code>q[0]</code> 和 <code>q[1]</code> ，那么<strong>从 <code>q[0]</code> 开始往右数遇到的第一个蜡烛就是给定区间最左侧的蜡烛</strong>，<strong>从 <code>q[1]</code> 开始往左数遇到的第一个蜡烛就是给定区间最右侧的蜡烛</strong>。</p>
+<p>最后返回这两个蜡烛之间的盘子数目即可，具体可通过前面计算的前缀和得到。</p>
+<p>注意还需要判断当前位置左右不存在蜡烛的情况，此处用 -1 来特判。</p>
+<p><strong>Code：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> platesBetweenCandles(string s, vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> queries) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> s.length();
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 计算盘子数量前缀和
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> preSum(n);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, sum <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (s[i] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;*&#39;</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">++</span>sum;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            preSum[i] <span style="color:#f92672">=</span> sum;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 预处理每个位置左侧的第一个蜡烛
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> left(n);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>, l <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (s[i] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;|&#39;</span>) {
+</span></span><span style="display:flex;"><span>                l <span style="color:#f92672">=</span> i;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            left[i] <span style="color:#f92672">=</span> l;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">// 预处理每个位置右侧的第一个蜡烛
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> right(n);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> n <span style="color:#f92672">-</span> <span style="color:#ae81ff">1</span>, r <span style="color:#f92672">=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&gt;=</span> <span style="color:#ae81ff">0</span>; <span style="color:#f92672">--</span>i) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (s[i] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;|&#39;</span>) {
+</span></span><span style="display:flex;"><span>                r <span style="color:#f92672">=</span> i;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            right[i] <span style="color:#f92672">=</span> r;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> ans;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> q: queries) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> x <span style="color:#f92672">=</span> right[q[<span style="color:#ae81ff">0</span>]], y <span style="color:#f92672">=</span> left[q[<span style="color:#ae81ff">1</span>]];
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// x == -1 和 y == -1 表示当前位置左右不存在蜡烛的情况
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            ans.push_back(x <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> <span style="color:#f92672">||</span> y <span style="color:#f92672">==</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span> <span style="color:#f92672">||</span> x <span style="color:#f92672">&gt;=</span> y <span style="color:#f92672">?</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">:</span> preSum[y] <span style="color:#f92672">-</span> preSum[x]);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ans;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h4 id="你能在你喜欢的那天吃到你喜欢的糖果吗">你能在你喜欢的那天吃到你喜欢的糖果吗？<a hidden class="anchor" aria-hidden="true" href="#你能在你喜欢的那天吃到你喜欢的糖果吗">#</a></h4>
+<p>给你一个下标从 <strong>0</strong> 开始的正整数数组 <code>candiesCount</code> ，其中 <code>candiesCount[i]</code> 表示你拥有的第 <code>i</code> 类糖果的数目。同时给你一个二维数组 <code>queries</code> ，其中 <code>queries[i] = [favoriteTypei, favoriteDayi, dailyCapi]</code> 。</p>
+<p>你按照如下规则进行一场游戏：</p>
+<ul>
+<li>你从第 <code>**0**</code> 天开始吃糖果。</li>
+<li>你在吃完 <strong>所有</strong> 第 <code>i - 1</code> 类糖果之前，<strong>不能</strong> 吃任何一颗第 <code>i</code> 类糖果。</li>
+<li>在吃完所有糖果之前，你必须每天 <strong>至少</strong> 吃 <strong>一颗</strong> 糖果。</li>
+</ul>
+<p>请你构建一个布尔型数组 <code>answer</code> ，用以给出 <code>queries</code> 中每一项的对应答案。此数组满足：</p>
+<ul>
+<li><code>answer.length == queries.length</code> 。<code>answer[i]</code> 是 <code>queries[i]</code> 的答案。</li>
+<li><code>answer[i]</code> 为 <code>true</code> 的条件是：在每天吃 <strong>不超过</strong> <code>dailyCapi</code> 颗糖果的前提下，你可以在第 <code>favoriteDayi</code> 天吃到第 <code>favoriteTypei</code> 类糖果；否则 <code>answer[i]</code> 为 <code>false</code> 。</li>
+</ul>
+<p>注意，只要满足上面 3 条规则中的第二条规则，你就可以在同一天吃不同类型的糖果。</p>
+<p>请你返回得到的数组 <code>answer</code> 。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：candiesCount = [7,4,5,3,8], queries = [[0,2,2],[4,2,4],[2,13,1000000000]]
 输出：[true,false,true]
 提示：
 1- 在第 0 天吃 2 颗糖果(类型 0），第 1 天吃 2 颗糖果（类型 0），第 2 天你可以吃到类型 0 的糖果。
 2- 每天你最多吃 4 颗糖果。即使第 0 天吃 4 颗糖果（类型 0），第 1 天吃 4 颗糖果（类型 0 和类型 1），你也没办法在第 2 天吃到类型 4 的糖果。换言之，你没法在每天吃 4 颗糖果的限制下在第 2 天吃到第 4 类糖果。
 3- 如果你每天吃 1 颗糖果，你可以在第 13 天吃到类型 2 的糖果。
-</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：candiesCount = [5,2,6,4,1], queries = [[3,1,2],[4,10,3],[3,10,100],[4,100,30],[1,3,1]]
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：candiesCount = [5,2,6,4,1], queries = [[3,1,2],[4,10,3],[3,10,100],[4,100,30],[1,3,1]]
 输出：[false,true,true,false,false]
-</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= candiesCount.length &lt;= 10^5</code></li><li><code>1 &lt;= candiesCount[i] &lt;= 10^5</code></li><li><code>1 &lt;= queries.length &lt;= 10^5</code></li><li><code>queries[i].length == 3</code></li><li><code>0 &lt;= favoriteTypei &lt; candiesCount.length</code></li><li><code>0 &lt;= favoriteDayi &lt;= 10^9</code></li><li><code>1 &lt;= dailyCapi &lt;= 10^9</code></li></ul><p><strong>思路</strong></p><p>题目有点长，读懂了其实就是个前缀和</p><p>由于吃糖果必须按照从前到后的顺序，所以用前缀和记录吃完第 <code>i</code> 种糖果后总共吃掉了多少糖果，</p><p>将其记为 <code>pre[i]</code> ，那么有： <code>pre[i] = pre[i-1] + candiesCount[i]</code> 。</p><p>对于每个询问 <code>q</code> ，记 <code>q[0]</code> 为 <code>type</code> 、<code>q[1]</code> 为 <code>day</code> 、<code>q[2]</code> 为 <code>cap</code> ，</p><p>分别计算按照最大速度 <code>cap</code> 吃糖果共需要的天数，得到最早能吃到第 <code>type</code> 种糖果的日期，</p><p>和按照最低速度 <code>1</code> 吃糖果共需要的天数，得到最晚吃到第 <code>type</code> 种糖果的日期。</p><p>判断 <code>day</code> 是否在这个范围内即可。</p><p><strong>Code：</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
-</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
-</span></span><span style=display:flex><span>    vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>bool</span><span style=color:#f92672>&gt;</span> canEat(vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&amp;</span> candiesCount, vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> queries) {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> candiesCount.size();
-</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span><span style=color:#f92672>&gt;</span> pre(n); <span style=color:#75715e>// 要吃完第 i 种糖果，至少要吃 pre[i] 个糖果
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        pre[<span style=color:#ae81ff>0</span>] <span style=color:#f92672>=</span> candiesCount[<span style=color:#ae81ff>0</span>];
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>1</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
-</span></span><span style=display:flex><span>            pre[i] <span style=color:#f92672>=</span> pre[i<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>+</span> candiesCount[i];
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>
-</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>bool</span><span style=color:#f92672>&gt;</span> res;
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>const</span> <span style=color:#66d9ef>auto</span><span style=color:#f92672>&amp;</span> q: queries) {
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> type <span style=color:#f92672>=</span> q[<span style=color:#ae81ff>0</span>], day <span style=color:#f92672>=</span> q[<span style=color:#ae81ff>1</span>], cap <span style=color:#f92672>=</span> q[<span style=color:#ae81ff>2</span>];
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> x1 <span style=color:#f92672>=</span> day <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>;
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> y1 <span style=color:#f92672>=</span> (<span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span>) (day <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>) <span style=color:#f92672>*</span> cap;
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> x2 <span style=color:#f92672>=</span> (type <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>?</span> <span style=color:#ae81ff>1</span> <span style=color:#f92672>:</span> pre[type<span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>] <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>);
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>long</span> <span style=color:#66d9ef>long</span> y2 <span style=color:#f92672>=</span> pre[type];
-</span></span><span style=display:flex><span>            res.push_back(<span style=color:#f92672>!</span>(x1 <span style=color:#f92672>&gt;</span> y2 <span style=color:#f92672>||</span> y1 <span style=color:#f92672>&lt;</span> x2));
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> res;
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>};
-</span></span></code></pre></div><h2 id=差分数组>差分数组<a hidden class=anchor aria-hidden=true href=#差分数组>#</a></h2><p>考虑数组 <code>a=[1,3,3,5,8]</code>，对其中的相邻元素两两作差（右边减左边），得到数组 <code>[2,0,2,3]</code>。然后在开头补上 <code>a[0]</code>，得到差分数组：<code>d = [1,2,0,2,3]</code> 。</p><p>这有什么用呢？如果从左到右累加 d 中的元素，我们就「还原」回了 a 数组 <code>[1,3,3,5,8]</code>。这类似求导与积分的概念。</p><p>这又有什么用呢？现在把连续子数组 <code>a[1],a[2],a[3]</code> 都加上 10，得到 <code>a′=[1,13,13,15,8]</code>。再次两两作差，并在开头补上 <code>a′[0]</code>，得到差分数组：<code>d'=[1,12,0,2,−7]</code></p><p>对比 d 和 d′，可以发现只有 <code>d[1]</code> 和 <code>d[4]</code> 变化了，这意味着对 <code>a</code> 中连续子数组的操作，可以转变成对差分数组 <code>d</code> 中<strong>两个数</strong>的操作。</p><p><strong>定义与性质：</strong></p><p>对于数组 <em>a</em>，定义其<strong>差分数组</strong>（difference array）为</p><p><img alt=1.png loading=lazy src=https://s2.loli.net/2024/09/13/TGY5Er2OChKjxMQ.png></p><ul><li><p><strong>性质 1</strong>：从左到右累加 <code>d</code> 中的元素，可以得到数组 <code>a</code></p></li><li><p><strong>性质 2</strong>：如下两个操作是等价的。</p><ul><li>把 <code>a</code> 的子数组 <code>a[i],a[i+1], ... ,a[j]</code> 都加上 <code>x</code> 。</li><li>把 <code>d[i]</code> 增加 <code>x</code> ，把 <code>d[j+1]</code> 减少 <code>x</code> 。</li></ul></li></ul><p>利用<strong>性质 2</strong>，我们只需要 <code>O(1)</code> 的时间就可以完成对 <code>a</code> 的子数组的操作。最后利用<strong>性质 1</strong>从差分数组复原出数组 <code>a</code> 。</p><h3 id=例题-1>例题<a hidden class=anchor aria-hidden=true href=#例题-1>#</a></h3><h4 id=拼车>拼车<a hidden class=anchor aria-hidden=true href=#拼车>#</a></h4><p>车上最初有 <code>capacity</code> 个空座位。车 <strong>只能</strong> 向一个方向行驶（也就是说，<strong>不允许掉头或改变方向</strong>）</p><p>给定整数 <code>capacity</code> 和一个数组 <code>trips</code> , <code>trip[i] = [numPassengersi, fromi, toi]</code> 表示第 <code>i</code> 次旅行有 <code>numPassengersi</code> 乘客，接他们和放他们的位置分别是 <code>fromi</code> 和 <code>toi</code> 。这些位置是从汽车的初始位置向东的公里数。</p><p>当且仅当你可以在所有给定的行程中接送所有乘客时，返回 <code>true</code>，否则请返回 <code>false</code>。</p><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：trips = [[2,1,5],[3,3,7]], capacity = 4
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= candiesCount.length &lt;= 10^5</code></li>
+<li><code>1 &lt;= candiesCount[i] &lt;= 10^5</code></li>
+<li><code>1 &lt;= queries.length &lt;= 10^5</code></li>
+<li><code>queries[i].length == 3</code></li>
+<li><code>0 &lt;= favoriteTypei &lt; candiesCount.length</code></li>
+<li><code>0 &lt;= favoriteDayi &lt;= 10^9</code></li>
+<li><code>1 &lt;= dailyCapi &lt;= 10^9</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>题目有点长，读懂了其实就是个前缀和</p>
+<p>由于吃糖果必须按照从前到后的顺序，所以用前缀和记录吃完第 <code>i</code> 种糖果后总共吃掉了多少糖果，</p>
+<p>将其记为 <code>pre[i]</code> ，那么有： <code>pre[i] = pre[i-1] + candiesCount[i]</code> 。</p>
+<p>对于每个询问 <code>q</code> ，记 <code>q[0]</code> 为 <code>type</code> 、<code>q[1]</code> 为 <code>day</code> 、<code>q[2]</code> 为 <code>cap</code> ，</p>
+<p>分别计算按照最大速度 <code>cap</code> 吃糖果共需要的天数，得到最早能吃到第 <code>type</code> 种糖果的日期，</p>
+<p>和按照最低速度 <code>1</code> 吃糖果共需要的天数，得到最晚吃到第 <code>type</code> 种糖果的日期。</p>
+<p>判断 <code>day</code> 是否在这个范围内即可。</p>
+<p><strong>Code：</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">bool</span><span style="color:#f92672">&gt;</span> canEat(vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&amp;</span> candiesCount, vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> queries) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> candiesCount.size();
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span><span style="color:#f92672">&gt;</span> pre(n); <span style="color:#75715e">// 要吃完第 i 种糖果，至少要吃 pre[i] 个糖果
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        pre[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">=</span> candiesCount[<span style="color:#ae81ff">0</span>];
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>            pre[i] <span style="color:#f92672">=</span> pre[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">+</span> candiesCount[i];
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">bool</span><span style="color:#f92672">&gt;</span> res;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">const</span> <span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> q: queries) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> type <span style="color:#f92672">=</span> q[<span style="color:#ae81ff">0</span>], day <span style="color:#f92672">=</span> q[<span style="color:#ae81ff">1</span>], cap <span style="color:#f92672">=</span> q[<span style="color:#ae81ff">2</span>];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> x1 <span style="color:#f92672">=</span> day <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> y1 <span style="color:#f92672">=</span> (<span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span>) (day <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">*</span> cap;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> x2 <span style="color:#f92672">=</span> (type <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">?</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">:</span> pre[type<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>] <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">long</span> <span style="color:#66d9ef">long</span> y2 <span style="color:#f92672">=</span> pre[type];
+</span></span><span style="display:flex;"><span>            res.push_back(<span style="color:#f92672">!</span>(x1 <span style="color:#f92672">&gt;</span> y2 <span style="color:#f92672">||</span> y1 <span style="color:#f92672">&lt;</span> x2));
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><h2 id="差分数组">差分数组<a hidden class="anchor" aria-hidden="true" href="#差分数组">#</a></h2>
+<p>考虑数组 <code>a=[1,3,3,5,8]</code>，对其中的相邻元素两两作差（右边减左边），得到数组 <code>[2,0,2,3]</code>。然后在开头补上 <code>a[0]</code>，得到差分数组：<code>d = [1,2,0,2,3]</code> 。</p>
+<p>这有什么用呢？如果从左到右累加 d 中的元素，我们就「还原」回了 a 数组 <code>[1,3,3,5,8]</code>。这类似求导与积分的概念。</p>
+<p>这又有什么用呢？现在把连续子数组 <code>a[1],a[2],a[3]</code> 都加上 10，得到 <code>a′=[1,13,13,15,8]</code>。再次两两作差，并在开头补上 <code>a′[0]</code>，得到差分数组：<code>d'=[1,12,0,2,−7]</code></p>
+<p>对比 d 和 d′，可以发现只有 <code>d[1]</code> 和 <code>d[4]</code> 变化了，这意味着对 <code>a</code> 中连续子数组的操作，可以转变成对差分数组 <code>d</code> 中<strong>两个数</strong>的操作。</p>
+<p><strong>定义与性质：</strong></p>
+<p>对于数组 <em>a</em>，定义其<strong>差分数组</strong>（difference array）为</p>
+<p><img alt="1.png" loading="lazy" src="https://s2.loli.net/2024/09/13/TGY5Er2OChKjxMQ.png"></p>
+<ul>
+<li>
+<p><strong>性质 1</strong>：从左到右累加 <code>d</code> 中的元素，可以得到数组 <code>a</code></p>
+</li>
+<li>
+<p><strong>性质 2</strong>：如下两个操作是等价的。</p>
+<ul>
+<li>把 <code>a</code> 的子数组 <code>a[i],a[i+1], ... ,a[j]</code> 都加上 <code>x</code> 。</li>
+<li>把 <code>d[i]</code> 增加 <code>x</code> ，把 <code>d[j+1]</code> 减少 <code>x</code> 。</li>
+</ul>
+</li>
+</ul>
+<p>利用<strong>性质 2</strong>，我们只需要 <code>O(1)</code> 的时间就可以完成对 <code>a</code> 的子数组的操作。最后利用<strong>性质 1</strong>从差分数组复原出数组 <code>a</code> 。</p>
+<h3 id="例题-1">例题<a hidden class="anchor" aria-hidden="true" href="#例题-1">#</a></h3>
+<h4 id="拼车">拼车<a hidden class="anchor" aria-hidden="true" href="#拼车">#</a></h4>
+<p>车上最初有 <code>capacity</code> 个空座位。车 <strong>只能</strong> 向一个方向行驶（也就是说，<strong>不允许掉头或改变方向</strong>）</p>
+<p>给定整数 <code>capacity</code> 和一个数组 <code>trips</code> ,  <code>trip[i] = [numPassengersi, fromi, toi]</code> 表示第 <code>i</code> 次旅行有 <code>numPassengersi</code> 乘客，接他们和放他们的位置分别是 <code>fromi</code> 和 <code>toi</code> 。这些位置是从汽车的初始位置向东的公里数。</p>
+<p>当且仅当你可以在所有给定的行程中接送所有乘客时，返回 <code>true</code>，否则请返回 <code>false</code>。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：trips = [[2,1,5],[3,3,7]], capacity = 4
 输出：false
-</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：trips = [[2,1,5],[3,3,7]], capacity = 5
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：trips = [[2,1,5],[3,3,7]], capacity = 5
 输出：true
-</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= trips.length &lt;= 1000</code></li><li><code>trips[i].length == 3</code></li><li><code>1 &lt;= numPassengersi &lt;= 100</code></li><li><code>0 &lt;= fromi &lt; toi &lt;= 1000</code></li><li><code>1 &lt;= capacity &lt;= 10^5</code></li></ul><p><strong>思路</strong></p><p>不用差分数组时，可以开一个新数组 <code>f</code> ，<code>f[i]</code> 存放第 <code>i</code> 天车上的人数，然后遍历每个 <code>trip</code> ，将 <code>f</code> 的第 <code>from</code> 到 <code>to - 1</code> 都累加上 <code>trip</code> 中对应的人数（因为第 <code>to</code> 天时，当前 <code>trip</code> 的人都下车了，所以不用累加到第 <code>to</code> 天）。</p><p>计算完后直接比较 <code>f</code> 的最大值和 <code>capacity</code> 的大小即可。也可以在计算时发现 <code>f</code> 比 <code>capacity</code> 更大而直接返回</p><p><strong>Code</strong></p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
-</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>bool</span> carPooling(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> trips, <span style=color:#66d9ef>int</span> capacity) {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> n <span style=color:#f92672>=</span> trips.size();
-</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span> f(<span style=color:#ae81ff>1005</span>);
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> i <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>; i <span style=color:#f92672>&lt;</span> n; <span style=color:#f92672>++</span>i) {
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> num <span style=color:#f92672>=</span> trips[i][<span style=color:#ae81ff>0</span>], from <span style=color:#f92672>=</span> trips[i][<span style=color:#ae81ff>1</span>], to <span style=color:#f92672>=</span> trips[i][<span style=color:#ae81ff>2</span>];
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> j <span style=color:#f92672>=</span> from; j <span style=color:#f92672>&lt;</span> to; <span style=color:#f92672>++</span>j) {
-</span></span><span style=display:flex><span>                f[j] <span style=color:#f92672>+=</span> num;
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>if</span> (<span style=color:#f92672>*</span>max_element(f.begin(), f.end()) <span style=color:#f92672>&gt;</span> capacity) <span style=color:#66d9ef>return</span> false;
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> true;
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>};
-</span></span></code></pre></div><p>看了上面比较直接的思路，可以发现本题是处理给定数组区间的问题，<strong>我们要做的是将数组 <code>f</code> 的某一段区间加上 <code>num</code></strong> ，这正好可以采用<strong>差分数组</strong>进行优化。</p><p>开一个对应大小的差分数组 <code>d</code> ，对于每个询问，我们只需要计算差分数组的头尾。</p><p>之后我们遍历差分数组进行累加，还原出原数组，判断有没有元素大于 <code>capacity</code> 即可。</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
-</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>bool</span> carPooling(vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;&amp;</span> trips, <span style=color:#66d9ef>int</span> capacity) {
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> d[<span style=color:#ae81ff>1001</span>]{};
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>auto</span><span style=color:#f92672>&amp;</span> t: trips) {
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> num <span style=color:#f92672>=</span> t[<span style=color:#ae81ff>0</span>], from <span style=color:#f92672>=</span> t[<span style=color:#ae81ff>1</span>], to <span style=color:#f92672>=</span> t[<span style=color:#ae81ff>2</span>];
-</span></span><span style=display:flex><span>            d[from] <span style=color:#f92672>+=</span> num;
-</span></span><span style=display:flex><span>            d[to] <span style=color:#f92672>-=</span> num;
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> s <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>auto</span> v: d) {
-</span></span><span style=display:flex><span>            s <span style=color:#f92672>+=</span> v;
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (s <span style=color:#f92672>&gt;</span> capacity) <span style=color:#66d9ef>return</span> false;
-</span></span><span style=display:flex><span>        }
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> true;
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>};
-</span></span></code></pre></div></div><footer class=post-footer><ul class=post-tags></ul></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://yuk1pedia.github.io/>YUKIPEDIA's blog</a></span> ·
-<span>Powered by
-<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
-</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= trips.length &lt;= 1000</code></li>
+<li><code>trips[i].length == 3</code></li>
+<li><code>1 &lt;= numPassengersi &lt;= 100</code></li>
+<li><code>0 &lt;= fromi &lt; toi &lt;= 1000</code></li>
+<li><code>1 &lt;= capacity &lt;= 10^5</code></li>
+</ul>
+<p><strong>思路</strong></p>
+<p>不用差分数组时，可以开一个新数组 <code>f</code> ，<code>f[i]</code> 存放第 <code>i</code> 天车上的人数，然后遍历每个 <code>trip</code> ，将 <code>f</code> 的第 <code>from</code> 到 <code>to - 1</code> 都累加上 <code>trip</code> 中对应的人数（因为第 <code>to</code> 天时，当前 <code>trip</code> 的人都下车了，所以不用累加到第 <code>to</code> 天）。</p>
+<p>计算完后直接比较 <code>f</code> 的最大值和 <code>capacity</code> 的大小即可。也可以在计算时发现 <code>f</code> 比 <code>capacity</code> 更大而直接返回</p>
+<p><strong>Code</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> carPooling(vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> trips, <span style="color:#66d9ef">int</span> capacity) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> n <span style="color:#f92672">=</span> trips.size();
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span> f(<span style="color:#ae81ff">1005</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> i <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; i <span style="color:#f92672">&lt;</span> n; <span style="color:#f92672">++</span>i) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> num <span style="color:#f92672">=</span> trips[i][<span style="color:#ae81ff">0</span>], from <span style="color:#f92672">=</span> trips[i][<span style="color:#ae81ff">1</span>], to <span style="color:#f92672">=</span> trips[i][<span style="color:#ae81ff">2</span>];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> j <span style="color:#f92672">=</span> from; j <span style="color:#f92672">&lt;</span> to; <span style="color:#f92672">++</span>j) {
+</span></span><span style="display:flex;"><span>                f[j] <span style="color:#f92672">+=</span> num;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#f92672">*</span>max_element(f.begin(), f.end()) <span style="color:#f92672">&gt;</span> capacity) <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div><p>看了上面比较直接的思路，可以发现本题是处理给定数组区间的问题，<strong>我们要做的是将数组 <code>f</code> 的某一段区间加上 <code>num</code></strong> ，这正好可以采用<strong>差分数组</strong>进行优化。</p>
+<p>开一个对应大小的差分数组 <code>d</code> ，对于每个询问，我们只需要计算差分数组的头尾。</p>
+<p>之后我们遍历差分数组进行累加，还原出原数组，判断有没有元素大于 <code>capacity</code> 即可。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">bool</span> carPooling(vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;&amp;</span> trips, <span style="color:#66d9ef">int</span> capacity) {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> d[<span style="color:#ae81ff">1001</span>]{};
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;</span> t: trips) {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> num <span style="color:#f92672">=</span> t[<span style="color:#ae81ff">0</span>], from <span style="color:#f92672">=</span> t[<span style="color:#ae81ff">1</span>], to <span style="color:#f92672">=</span> t[<span style="color:#ae81ff">2</span>];
+</span></span><span style="display:flex;"><span>            d[from] <span style="color:#f92672">+=</span> num;
+</span></span><span style="display:flex;"><span>            d[to] <span style="color:#f92672">-=</span> num;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> s <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">auto</span> v: d) {
+</span></span><span style="display:flex;"><span>            s <span style="color:#f92672">+=</span> v;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (s <span style="color:#f92672">&gt;</span> capacity) <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

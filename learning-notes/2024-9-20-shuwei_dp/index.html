@@ -1,51 +1,297 @@
-<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>数位dp通用模板 | YUKIPEDIA's blog</title><meta name=keywords content><meta name=description content="记录"><meta name=author content><link rel=canonical href=https://yuk1pedia.github.io/learning-notes/2024-9-20-shuwei_dp/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://yuk1pedia.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://yuk1pedia.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://yuk1pedia.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://yuk1pedia.github.io/apple-touch-icon.png><link rel=mask-icon href=https://yuk1pedia.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://yuk1pedia.github.io/learning-notes/2024-9-20-shuwei_dp/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2024-9-20-shuwei_dp/"><meta property="og:site_name" content="YUKIPEDIA's blog"><meta property="og:title" content="数位dp通用模板"><meta property="og:description" content="记录"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="learning-notes"><meta name=twitter:card content="summary"><meta name=twitter:title content="数位dp通用模板"><meta name=twitter:description content="记录"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Learning Notes","item":"https://yuk1pedia.github.io/learning-notes/"},{"@type":"ListItem","position":2,"name":"数位dp通用模板","item":"https://yuk1pedia.github.io/learning-notes/2024-9-20-shuwei_dp/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"数位dp通用模板","name":"数位dp通用模板","description":"记录","keywords":[],"articleBody":"数位动态规划（数位dp）主要用于解决“在区间 [l, r] 这个范围内，满足某种约束的数字的数量、总和、平方”这一类问题\n前置知识：位运算与集合论 集合可以用二进制表示，二进制从低到高，第 i 位为 1 表示 i 在集合中，为 0 表示 i 不在集合中。例如集合 {0, 2, 3} 对应的二进制数为 1101 。\n设集合对应的二进制数为 x ：\n判断元素 d 是否在集合中：x \u003e\u003e d \u0026 1 可以取出 x 的第 d 个比特位，如果是 1 就说明 d 在集合中。 把元素 d 添加到集合中：将 x 更新为 x | (1 \u003c\u003c d) 。 下面用一道题来介绍数位 dp 的通用模板\n统计特殊整数 如果一个正整数每一个数位都是 互不相同 的，我们称它是 特殊整数 。\n给你一个 正 整数 n ，请你返回区间 [1, n] 之间特殊整数的数目。\n示例 1：\n输入：n = 20 输出：19 解释：1 到 20 之间所有整数除了 11 以外都是特殊整数。所以总共有 19 个特殊整数。 示例 2：\n输入：n = 5 输出：5 解释：1 到 5 所有整数都是特殊整数。 示例 3：\n输入：n = 135 输出：110 解释：从 1 到 135 总共有 110 个整数是特殊整数。 不特殊的部分数字为：22 ，114 和 131 。 提示：\n1 \u003c= n \u003c= 2 * 10^9 思路 将 n 转换成字符串 s ，定义：dfs(i, mask, isLimit, isNum) 表示构造第 i 位及其之后数位的合法方案数，其余参数的含义为：\nmask 表示前面选过的数字集合，换句话说，第 i 位要选的数字不能在 mask 中。 isLimit 表示当前是否受到了 n 的约束（注意要构造的数字不能超过 n ）。若为 true ，则第 i 位填入的数字至多为 s[i] ，否则可以是 9 。如果在受到约束的情况下填了 s[i] ，那么后续填入的数字仍然会受到 n 的约束。例如 n = 123 ，如果 i = 0 填的是 1 的话，i = 1 的这一位至多填 2 。如果 i = 0 填的是 1， i = 1 填的是 2，那么 i = 2 的这一位至多填 3 。 isNum 表示 i 前面的数位是否填了数字。若为假，则当前位可以跳过（不填数字），或者要填入的数字至少为 1；若为真，则要填入的数字可以从 0 开始。例如 n = 123 ，在 i = 0 时跳过的话，相当于后面要构造的是一个 99 以内的数字了，如果 i = 1 不跳过，那么相当于构造一个 10 到 99 的两位数字，如果 i = 1 跳过，相当于构造的是一个 9 以内的数字。 为什么要定义 isNum ？因为 010 和 10 都是 10 ，如果认为第一个 0 和第三个 0 都是我们填入的数字，就不符合题目每位数字都不重复的要求了，但 10 显然符合题目要求。 实现细节\n递归入口：dfs(0, 0, true, false) ，表示：\ni = 0：从 s[0] 开始枚举； mask = 0：一开始集合中没有数字（空集）； isLimit = true：一开始要受到 n 的约束（否则就可以随意填了）； isNum = false：一开始没有填数字。 递归过程：\n如果 isNum 为 false ，说明前面没有填数字，那么当前也可以不填数字。一旦从这里递归下去，isLimit 就可以置为 false 了，这是因为 s[0] 必然是大于 0 的，后面就不受到 n 的约束了。或者说，最高位不填数字，后面无论怎么填都比 n 小。 如果 isNum 为 true ，那么当前必须填一个数字。于是乎我们可以枚举当前位填入的数字，根据 isNum 和 isLimit 来决定填入数字的范围。 递归终点：当 i 等于 s 的长度时，如果 isNum 为 true ，则表示得到了一个合法的数字（不合法的数字不会递归到终点），返回 1，否则返回 0 。\nCode class Solution { public: int countSpecialNumbers(int n) { string s = to_string(n); int m = s.length(); vector\u003cvector\u003cint\u003e\u003e memo(m, vector\u003cint\u003e(1 \u003c\u003c 10, -1)); // -1 表示当前位没有计算过 auto dfs = [\u0026](auto\u0026\u0026 dfs, int i, int mask, bool is_limit, bool is_num) -\u003e int { if (i == m) { // 递归边界 return is_num; // is_num 为 true 表示得到了一个合法数字 } if (!is_limit \u0026\u0026 is_num \u0026\u0026 memo[i][mask] != -1) { return memo[i][mask]; // 记忆化，之前计算过直接返回 } int res = 0; if (!is_num) { // 当前位前面均跳过，因此当前位也可以跳过 res = dfs(dfs, i + 1, mask, false, false); } // 如果前面填的数字都和 n 对应位一样，那么这一位至多填数字 s[i] int up = is_limit ? s[i] - '0' : 9; // 枚举当前位需要填的数字 // 如果前面没有填数字，则必须从 1 开始（不能有前导零） for (int d = is_num ? 0 : 1; d \u003c= up; ++d) { if ((mask \u003e\u003e d \u0026 1) == 0) { // d 不在 mask 中，说明之前没有填过 d res += dfs(dfs, i + 1, mask | (1 \u003c\u003c d), is_limit \u0026\u0026 d == up, true); } } if (!is_limit \u0026\u0026 is_num) { memo[i][mask] = res; // 记忆化 } return res; }; return dfs(dfs, 0, 0, true, false); } }; ","wordCount":"473","inLanguage":"en","datePublished":"0001-01-01T00:00:00Z","dateModified":"0001-01-01T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://yuk1pedia.github.io/learning-notes/2024-9-20-shuwei_dp/"},"publisher":{"@type":"Organization","name":"YUKIPEDIA's blog","logo":{"@type":"ImageObject","url":"https://yuk1pedia.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://yuk1pedia.github.io/ accesskey=h title="YUKIPEDIA's blog (Alt + H)">YUKIPEDIA's blog</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
-<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://yuk1pedia.github.io/learning-notes title="Learning Notes"><span>Learning Notes</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">数位dp通用模板</h1><div class=post-description>记录</div><div class=post-meta></div></header><div class=post-content><p>数位动态规划（数位dp）主要用于解决“在区间 <code>[l, r]</code> 这个范围内，满足某种<strong>约束</strong>的数字的<strong>数量、总和、平方</strong>”这一类问题</p><h2 id=前置知识位运算与集合论>前置知识：位运算与集合论<a hidden class=anchor aria-hidden=true href=#前置知识位运算与集合论>#</a></h2><p>集合可以用二进制表示，二进制从低到高，<strong>第 <code>i</code> 位为 1 表示 <code>i</code> 在集合中，为 0 表示 <code>i</code> 不在集合中</strong>。例如集合 <code>{0, 2, 3}</code> 对应的二进制数为 <code>1101</code> 。</p><p>设集合对应的二进制数为 <code>x</code> ：</p><ol><li>判断元素 <code>d</code> 是否在集合中：<code>x >> d & 1</code> 可以取出 <code>x</code> 的第 <code>d</code> 个比特位，如果是 1 就说明 <code>d</code> 在集合中。</li><li>把元素 <code>d</code> 添加到集合中：将 <code>x</code> 更新为 <code>x | (1 &lt;&lt; d)</code> 。</li></ol><p>下面用一道题来介绍数位 dp 的通用模板</p><h2 id=统计特殊整数>统计特殊整数<a hidden class=anchor aria-hidden=true href=#统计特殊整数>#</a></h2><p>如果一个正整数每一个数位都是 <strong>互不相同</strong> 的，我们称它是 <strong>特殊整数</strong> 。</p><p>给你一个 <strong>正</strong> 整数 <code>n</code> ，请你返回区间 <code>[1, n]</code> 之间特殊整数的数目。</p><p><strong>示例 1：</strong></p><pre tabindex=0><code>输入：n = 20
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>数位dp通用模板 | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="记录">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2024-9-20-shuwei_dp/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2024-9-20-shuwei_dp/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
+                    <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      数位dp通用模板
+    </h1>
+    <div class="post-description">
+      记录
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><p>数位动态规划（数位dp）主要用于解决“在区间 <code>[l, r]</code> 这个范围内，满足某种<strong>约束</strong>的数字的<strong>数量、总和、平方</strong>”这一类问题</p>
+<h2 id="前置知识位运算与集合论">前置知识：位运算与集合论<a hidden class="anchor" aria-hidden="true" href="#前置知识位运算与集合论">#</a></h2>
+<p>集合可以用二进制表示，二进制从低到高，<strong>第 <code>i</code> 位为 1 表示 <code>i</code> 在集合中，为 0 表示 <code>i</code> 不在集合中</strong>。例如集合 <code>{0, 2, 3}</code> 对应的二进制数为 <code>1101</code> 。</p>
+<p>设集合对应的二进制数为 <code>x</code> ：</p>
+<ol>
+<li>判断元素 <code>d</code> 是否在集合中：<code>x &gt;&gt; d &amp; 1</code> 可以取出 <code>x</code> 的第 <code>d</code> 个比特位，如果是 1 就说明 <code>d</code> 在集合中。</li>
+<li>把元素 <code>d</code> 添加到集合中：将 <code>x</code> 更新为 <code>x | (1 &lt;&lt; d)</code> 。</li>
+</ol>
+<p>下面用一道题来介绍数位 dp 的通用模板</p>
+<h2 id="统计特殊整数">统计特殊整数<a hidden class="anchor" aria-hidden="true" href="#统计特殊整数">#</a></h2>
+<p>如果一个正整数每一个数位都是 <strong>互不相同</strong> 的，我们称它是 <strong>特殊整数</strong> 。</p>
+<p>给你一个 <strong>正</strong> 整数 <code>n</code> ，请你返回区间 <code>[1, n]</code> 之间特殊整数的数目。</p>
+<p><strong>示例 1：</strong></p>
+<pre tabindex="0"><code>输入：n = 20
 输出：19
 解释：1 到 20 之间所有整数除了 11 以外都是特殊整数。所以总共有 19 个特殊整数。
-</code></pre><p><strong>示例 2：</strong></p><pre tabindex=0><code>输入：n = 5
+</code></pre><p><strong>示例 2：</strong></p>
+<pre tabindex="0"><code>输入：n = 5
 输出：5
 解释：1 到 5 所有整数都是特殊整数。
-</code></pre><p><strong>示例 3：</strong></p><pre tabindex=0><code>输入：n = 135
+</code></pre><p><strong>示例 3：</strong></p>
+<pre tabindex="0"><code>输入：n = 135
 输出：110
 解释：从 1 到 135 总共有 110 个整数是特殊整数。
 不特殊的部分数字为：22 ，114 和 131 。
-</code></pre><p><strong>提示：</strong></p><ul><li><code>1 &lt;= n &lt;= 2 * 10^9</code></li></ul><h3 id=思路>思路<a hidden class=anchor aria-hidden=true href=#思路>#</a></h3><p>将 <code>n</code> 转换成字符串 <code>s</code> ，定义：<code>dfs(i, mask, isLimit, isNum)</code> 表示构造第 <code>i</code> 位及其之后数位的合法方案数，其余参数的含义为：</p><ul><li><code>mask</code> 表示前面选过的数字集合，换句话说，第 <code>i</code> 位要选的数字不能在 <code>mask</code> 中。</li><li><code>isLimit</code> 表示当前是否受到了 <code>n</code> 的约束（注意要构造的数字不能超过 <code>n</code> ）。若为 <code>true</code> ，则第 <code>i</code> 位填入的数字至多为 <code>s[i]</code> ，否则可以是 9 。如果在受到约束的情况下填了 <code>s[i]</code> ，那么后续填入的数字仍然会受到 <code>n</code> 的约束。例如 <code>n = 123</code> ，如果 <code>i = 0</code> 填的是 1 的话，<code>i = 1</code> 的这一位至多填 2 。如果 <code>i = 0</code> 填的是 1， <code>i = 1</code> 填的是 2，那么 <code>i = 2</code> 的这一位至多填 3 。</li><li><code>isNum</code> 表示 <code>i</code> 前面的数位是否填了数字。若为假，则当前位可以跳过（不填数字），或者要填入的数字至少为 1；若为真，则要填入的数字可以从 0 开始。例如 <code>n = 123</code> ，在 <code>i = 0</code> 时跳过的话，相当于后面要构造的是一个 99 以内的数字了，如果 <code>i = 1</code> 不跳过，那么相当于构造一个 10 到 99 的两位数字，如果 <code>i = 1</code> 跳过，相当于构造的是一个 9 以内的数字。</li><li>为什么要定义 <code>isNum</code> ？因为 <code>010</code> 和 <code>10</code> 都是 <code>10</code> ，如果认为第一个 0 和第三个 0 都是我们填入的数字，<strong>就不符合题目每位数字都不重复的要求了</strong>，但 <code>10</code> 显然符合题目要求。</li></ul><p><strong>实现细节</strong></p><p><strong>递归入口</strong>：<code>dfs(0, 0, true, false)</code> ，表示：</p><ul><li><code>i = 0</code>：从 <code>s[0]</code> 开始枚举；</li><li><code>mask = 0</code>：一开始集合中没有数字（空集）；</li><li><code>isLimit = true</code>：一开始要受到 <code>n</code> 的约束（否则就可以随意填了）；</li><li><code>isNum = false</code>：一开始没有填数字。</li></ul><p><strong>递归过程</strong>：</p><ul><li>如果 <code>isNum</code> 为 <code>false</code> ，说明前面没有填数字，那么当前也可以不填数字。一旦从这里递归下去，<code>isLimit</code> 就可以置为 <code>false</code> 了，这是因为 <code>s[0]</code> 必然是大于 0 的，后面就不受到 <code>n</code> 的约束了。<strong>或者说，最高位不填数字，后面无论怎么填都比 <code>n</code> 小。</strong></li><li>如果 <code>isNum</code> 为 <code>true</code> ，那么当前必须填一个数字。<strong>于是乎我们可以枚举当前位填入的数字</strong>，根据 <code>isNum</code> 和 <code>isLimit</code> 来决定填入数字的范围。</li></ul><p><strong>递归终点</strong>：当 <code>i</code> 等于 <code>s</code> 的长度时，如果 <code>isNum</code> 为 <code>true</code> ，则表示得到了一个合法的数字（不合法的数字不会递归到终点），返回 1，否则返回 0 。</p><h3 id=code>Code<a hidden class=anchor aria-hidden=true href=#code>#</a></h3><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-c++ data-lang=c++><span style=display:flex><span><span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Solution</span> {
-</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span><span style=color:#f92672>:</span>
-</span></span><span style=display:flex><span>    <span style=color:#66d9ef>int</span> countSpecialNumbers(<span style=color:#66d9ef>int</span> n) {
-</span></span><span style=display:flex><span>        string s <span style=color:#f92672>=</span> to_string(n);
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>int</span> m <span style=color:#f92672>=</span> s.length();
-</span></span><span style=display:flex><span>        vector<span style=color:#f92672>&lt;</span>vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;&gt;</span> memo(m, vector<span style=color:#f92672>&lt;</span><span style=color:#66d9ef>int</span><span style=color:#f92672>&gt;</span>(<span style=color:#ae81ff>1</span> <span style=color:#f92672>&lt;&lt;</span> <span style=color:#ae81ff>10</span>, <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>)); <span style=color:#75715e>// -1 表示当前位没有计算过
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>        <span style=color:#66d9ef>auto</span> dfs <span style=color:#f92672>=</span> [<span style=color:#f92672>&amp;</span>](<span style=color:#66d9ef>auto</span><span style=color:#f92672>&amp;&amp;</span> dfs, <span style=color:#66d9ef>int</span> i, <span style=color:#66d9ef>int</span> mask, <span style=color:#66d9ef>bool</span> is_limit, <span style=color:#66d9ef>bool</span> is_num) <span style=color:#f92672>-&gt;</span> <span style=color:#66d9ef>int</span> {
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (i <span style=color:#f92672>==</span> m) { <span style=color:#75715e>// 递归边界
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                <span style=color:#66d9ef>return</span> is_num; <span style=color:#75715e>// is_num 为 true 表示得到了一个合法数字
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            }
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>is_limit <span style=color:#f92672>&amp;&amp;</span> is_num <span style=color:#f92672>&amp;&amp;</span> memo[i][mask] <span style=color:#f92672>!=</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span>) {
-</span></span><span style=display:flex><span>                <span style=color:#66d9ef>return</span> memo[i][mask]; <span style=color:#75715e>// 记忆化，之前计算过直接返回
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            }
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>int</span> res <span style=color:#f92672>=</span> <span style=color:#ae81ff>0</span>;
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>is_num) { <span style=color:#75715e>// 当前位前面均跳过，因此当前位也可以跳过
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                res <span style=color:#f92672>=</span> dfs(dfs, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, mask, false, false);
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>            <span style=color:#75715e>// 如果前面填的数字都和 n 对应位一样，那么这一位至多填数字 s[i]
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#66d9ef>int</span> up <span style=color:#f92672>=</span> is_limit <span style=color:#f92672>?</span> s[i] <span style=color:#f92672>-</span> <span style=color:#e6db74>&#39;0&#39;</span> <span style=color:#f92672>:</span> <span style=color:#ae81ff>9</span>;
-</span></span><span style=display:flex><span>            <span style=color:#75715e>// 枚举当前位需要填的数字
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#75715e>// 如果前面没有填数字，则必须从 1 开始（不能有前导零）
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            <span style=color:#66d9ef>for</span> (<span style=color:#66d9ef>int</span> d <span style=color:#f92672>=</span> is_num <span style=color:#f92672>?</span> <span style=color:#ae81ff>0</span> <span style=color:#f92672>:</span> <span style=color:#ae81ff>1</span>; d <span style=color:#f92672>&lt;=</span> up; <span style=color:#f92672>++</span>d) {
-</span></span><span style=display:flex><span>                <span style=color:#66d9ef>if</span> ((mask <span style=color:#f92672>&gt;&gt;</span> d <span style=color:#f92672>&amp;</span> <span style=color:#ae81ff>1</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span>) { <span style=color:#75715e>// d 不在 mask 中，说明之前没有填过 d
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>                    res <span style=color:#f92672>+=</span> dfs(dfs, i <span style=color:#f92672>+</span> <span style=color:#ae81ff>1</span>, mask <span style=color:#f92672>|</span> (<span style=color:#ae81ff>1</span> <span style=color:#f92672>&lt;&lt;</span> d), is_limit <span style=color:#f92672>&amp;&amp;</span> d <span style=color:#f92672>==</span> up, true);
-</span></span><span style=display:flex><span>                }
-</span></span><span style=display:flex><span>            }
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>if</span> (<span style=color:#f92672>!</span>is_limit <span style=color:#f92672>&amp;&amp;</span> is_num) {
-</span></span><span style=display:flex><span>                memo[i][mask] <span style=color:#f92672>=</span> res; <span style=color:#75715e>// 记忆化
-</span></span></span><span style=display:flex><span><span style=color:#75715e></span>            }
-</span></span><span style=display:flex><span>            <span style=color:#66d9ef>return</span> res;
-</span></span><span style=display:flex><span>        };
-</span></span><span style=display:flex><span>        <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>dfs</span>(dfs, <span style=color:#ae81ff>0</span>, <span style=color:#ae81ff>0</span>, true, false);
-</span></span><span style=display:flex><span>    }
-</span></span><span style=display:flex><span>};
-</span></span></code></pre></div></div><footer class=post-footer><ul class=post-tags></ul></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://yuk1pedia.github.io/>YUKIPEDIA's blog</a></span> ·
-<span>Powered by
-<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
-</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>
+</code></pre><p><strong>提示：</strong></p>
+<ul>
+<li><code>1 &lt;= n &lt;= 2 * 10^9</code></li>
+</ul>
+<h3 id="思路">思路<a hidden class="anchor" aria-hidden="true" href="#思路">#</a></h3>
+<p>将 <code>n</code> 转换成字符串 <code>s</code> ，定义：<code>dfs(i, mask, isLimit, isNum)</code> 表示构造第 <code>i</code> 位及其之后数位的合法方案数，其余参数的含义为：</p>
+<ul>
+<li><code>mask</code> 表示前面选过的数字集合，换句话说，第 <code>i</code> 位要选的数字不能在 <code>mask</code> 中。</li>
+<li><code>isLimit</code> 表示当前是否受到了 <code>n</code> 的约束（注意要构造的数字不能超过 <code>n</code> ）。若为 <code>true</code> ，则第 <code>i</code> 位填入的数字至多为 <code>s[i]</code> ，否则可以是 9 。如果在受到约束的情况下填了 <code>s[i]</code> ，那么后续填入的数字仍然会受到 <code>n</code> 的约束。例如 <code>n = 123</code> ，如果 <code>i = 0</code> 填的是 1 的话，<code>i = 1</code> 的这一位至多填 2 。如果 <code>i = 0</code> 填的是 1， <code>i = 1</code> 填的是 2，那么 <code>i = 2</code> 的这一位至多填 3 。</li>
+<li><code>isNum</code> 表示 <code>i</code> 前面的数位是否填了数字。若为假，则当前位可以跳过（不填数字），或者要填入的数字至少为 1；若为真，则要填入的数字可以从 0 开始。例如 <code>n = 123</code> ，在 <code>i = 0</code> 时跳过的话，相当于后面要构造的是一个 99 以内的数字了，如果 <code>i = 1</code> 不跳过，那么相当于构造一个 10 到 99 的两位数字，如果 <code>i = 1</code> 跳过，相当于构造的是一个 9 以内的数字。</li>
+<li>为什么要定义 <code>isNum</code> ？因为 <code>010</code> 和 <code>10</code> 都是 <code>10</code> ，如果认为第一个 0 和第三个 0 都是我们填入的数字，<strong>就不符合题目每位数字都不重复的要求了</strong>，但 <code>10</code> 显然符合题目要求。</li>
+</ul>
+<p><strong>实现细节</strong></p>
+<p><strong>递归入口</strong>：<code>dfs(0, 0, true, false)</code> ，表示：</p>
+<ul>
+<li><code>i = 0</code>：从 <code>s[0]</code> 开始枚举；</li>
+<li><code>mask = 0</code>：一开始集合中没有数字（空集）；</li>
+<li><code>isLimit = true</code>：一开始要受到 <code>n</code> 的约束（否则就可以随意填了）；</li>
+<li><code>isNum = false</code>：一开始没有填数字。</li>
+</ul>
+<p><strong>递归过程</strong>：</p>
+<ul>
+<li>如果 <code>isNum</code> 为 <code>false</code> ，说明前面没有填数字，那么当前也可以不填数字。一旦从这里递归下去，<code>isLimit</code> 就可以置为 <code>false</code> 了，这是因为 <code>s[0]</code> 必然是大于 0 的，后面就不受到 <code>n</code> 的约束了。<strong>或者说，最高位不填数字，后面无论怎么填都比 <code>n</code> 小。</strong></li>
+<li>如果 <code>isNum</code> 为 <code>true</code> ，那么当前必须填一个数字。<strong>于是乎我们可以枚举当前位填入的数字</strong>，根据 <code>isNum</code> 和 <code>isLimit</code> 来决定填入数字的范围。</li>
+</ul>
+<p><strong>递归终点</strong>：当 <code>i</code> 等于 <code>s</code> 的长度时，如果 <code>isNum</code> 为 <code>true</code> ，则表示得到了一个合法的数字（不合法的数字不会递归到终点），返回 1，否则返回 0 。</p>
+<h3 id="code">Code<a hidden class="anchor" aria-hidden="true" href="#code">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c++" data-lang="c++"><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Solution</span> {
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span><span style="color:#f92672">:</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> countSpecialNumbers(<span style="color:#66d9ef">int</span> n) {
+</span></span><span style="display:flex;"><span>        string s <span style="color:#f92672">=</span> to_string(n);
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> m <span style="color:#f92672">=</span> s.length();
+</span></span><span style="display:flex;"><span>        vector<span style="color:#f92672">&lt;</span>vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;&gt;</span> memo(m, vector<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">int</span><span style="color:#f92672">&gt;</span>(<span style="color:#ae81ff">1</span> <span style="color:#f92672">&lt;&lt;</span> <span style="color:#ae81ff">10</span>, <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)); <span style="color:#75715e">// -1 表示当前位没有计算过
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">auto</span> dfs <span style="color:#f92672">=</span> [<span style="color:#f92672">&amp;</span>](<span style="color:#66d9ef">auto</span><span style="color:#f92672">&amp;&amp;</span> dfs, <span style="color:#66d9ef">int</span> i, <span style="color:#66d9ef">int</span> mask, <span style="color:#66d9ef">bool</span> is_limit, <span style="color:#66d9ef">bool</span> is_num) <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">int</span> {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (i <span style="color:#f92672">==</span> m) { <span style="color:#75715e">// 递归边界
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#66d9ef">return</span> is_num; <span style="color:#75715e">// is_num 为 true 表示得到了一个合法数字
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>is_limit <span style="color:#f92672">&amp;&amp;</span> is_num <span style="color:#f92672">&amp;&amp;</span> memo[i][mask] <span style="color:#f92672">!=</span> <span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> memo[i][mask]; <span style="color:#75715e">// 记忆化，之前计算过直接返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">int</span> res <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>is_num) { <span style="color:#75715e">// 当前位前面均跳过，因此当前位也可以跳过
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                res <span style="color:#f92672">=</span> dfs(dfs, i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, mask, false, false);
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 如果前面填的数字都和 n 对应位一样，那么这一位至多填数字 s[i]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">int</span> up <span style="color:#f92672">=</span> is_limit <span style="color:#f92672">?</span> s[i] <span style="color:#f92672">-</span> <span style="color:#e6db74">&#39;0&#39;</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">9</span>;
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 枚举当前位需要填的数字
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">// 如果前面没有填数字，则必须从 1 开始（不能有前导零）
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#66d9ef">for</span> (<span style="color:#66d9ef">int</span> d <span style="color:#f92672">=</span> is_num <span style="color:#f92672">?</span> <span style="color:#ae81ff">0</span> <span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>; d <span style="color:#f92672">&lt;=</span> up; <span style="color:#f92672">++</span>d) {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span> ((mask <span style="color:#f92672">&gt;&gt;</span> d <span style="color:#f92672">&amp;</span> <span style="color:#ae81ff">1</span>) <span style="color:#f92672">==</span> <span style="color:#ae81ff">0</span>) { <span style="color:#75715e">// d 不在 mask 中，说明之前没有填过 d
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                    res <span style="color:#f92672">+=</span> dfs(dfs, i <span style="color:#f92672">+</span> <span style="color:#ae81ff">1</span>, mask <span style="color:#f92672">|</span> (<span style="color:#ae81ff">1</span> <span style="color:#f92672">&lt;&lt;</span> d), is_limit <span style="color:#f92672">&amp;&amp;</span> d <span style="color:#f92672">==</span> up, true);
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#f92672">!</span>is_limit <span style="color:#f92672">&amp;&amp;</span> is_num) {
+</span></span><span style="display:flex;"><span>                memo[i][mask] <span style="color:#f92672">=</span> res; <span style="color:#75715e">// 记忆化
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            }
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> res;
+</span></span><span style="display:flex;"><span>        };
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#a6e22e">dfs</span>(dfs, <span style="color:#ae81ff">0</span>, <span style="color:#ae81ff">0</span>, true, false);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>};
+</span></span></code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>

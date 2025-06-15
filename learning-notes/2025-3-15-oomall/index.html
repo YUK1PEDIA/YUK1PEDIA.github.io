@@ -1,7 +1,363 @@
-<!doctype html><html lang=en dir=auto><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>OOMALL相关扩展思考 | YUKIPEDIA's blog</title><meta name=keywords content><meta name=description content="记录"><meta name=author content><link rel=canonical href=https://yuk1pedia.github.io/learning-notes/2025-3-15-oomall/><link crossorigin=anonymous href=/assets/css/stylesheet.8fe10233a706bc87f2e08b3cf97b8bd4c0a80f10675a143675d59212121037c0.css integrity="sha256-j+ECM6cGvIfy4Is8+XuL1MCoDxBnWhQ2ddWSEhIQN8A=" rel="preload stylesheet" as=style><link rel=icon href=https://yuk1pedia.github.io/favicon.ico><link rel=icon type=image/png sizes=16x16 href=https://yuk1pedia.github.io/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=https://yuk1pedia.github.io/favicon-32x32.png><link rel=apple-touch-icon href=https://yuk1pedia.github.io/apple-touch-icon.png><link rel=mask-icon href=https://yuk1pedia.github.io/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate hreflang=en href=https://yuk1pedia.github.io/learning-notes/2025-3-15-oomall/><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--code-block-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><meta property="og:url" content="https://yuk1pedia.github.io/learning-notes/2025-3-15-oomall/"><meta property="og:site_name" content="YUKIPEDIA's blog"><meta property="og:title" content="OOMALL相关扩展思考"><meta property="og:description" content="记录"><meta property="og:locale" content="zh-cn"><meta property="og:type" content="article"><meta property="article:section" content="learning-notes"><meta name=twitter:card content="summary"><meta name=twitter:title content="OOMALL相关扩展思考"><meta name=twitter:description content="记录"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Learning Notes","item":"https://yuk1pedia.github.io/learning-notes/"},{"@type":"ListItem","position":2,"name":"OOMALL相关扩展思考","item":"https://yuk1pedia.github.io/learning-notes/2025-3-15-oomall/"}]}</script><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"OOMALL相关扩展思考","name":"OOMALL相关扩展思考","description":"记录","keywords":[],"articleBody":"\n1.电商往往会涉及到资金的流转，在后端方面如何保证资金在电商平台上的安全？ 如何确保用户账户、支付信息不被篡改或盗用？\n可以采用双重身份验证，引入短信验证码、邮箱验证码进行二次验证\n用户支付密码需要避免明文存储，可以采用 PBKDF2 或者 Argon2 哈希存储\n防止暴力破解，限制支付密码输入错误次数，超过阈值后进行账户锁定或额外验证\n补充：\nPBKDF2（Password-Based Key Derivation Function 2）会对密码进行多次加密，让破解变得非常困难\n原理：用户输入密码，例如 mypassword123 ，系统给它加点“盐”（随机数据），比如 randomsalt ，再用 PBKDF2 算法反复进行哈希运算，得到最终的哈希值，存入数据库 Argon2 是一种更先进的哈希算法，相比 PBKDF2，它不仅反复 “加密” ，还让计算过程 更吃内存，这样黑客即使使用高性能 GPU 或专门的破解硬件，也很难暴力破解\n如何保证用户支付、退款等资金操作不会因为系统异常导致资金错账或丢失？\n采用分布式事务保障\nTCC 事务机制：Try 预留资金（冻结余额）、Confirm 确认扣款（实际转账）、Cancel 取消预留（释放资金） SAGA 事务模式：长事务，如跨行转账，采用补偿机制回滚失败操作 消息事务 + 幂等处理：采用 RocketMQ 的半消息机制实现消息事务，支付成功后发送事务消息到 MQ，再异步更新订单状态。注意订单状态更新必须是 幂等的，防止消息重复消费 对账机制\n定期对账（商户、银行、用户对账），发现差异立即报警 记录交易日志，提高不可篡改性 补充：\nTCC（Try-Confirm-Cancel）是一种 两阶段提交（2PC） 的思想（TCC 可以保证事务操作的严格执行，不会出现一部分成功，一部分失败的情况），核心思路是：“先预留资源，再真正提交，失败后回滚” 。举个例子，你去餐厅订了一桌火锅，整个流程是这样的：\nTry（尝试扣留资源）：你打电话订座，餐厅告诉你“位置已预留”，但还没真正让你入座\nConfirm（确认执行）：你准时到达餐厅，餐厅正式给你安排座位，你可以开始吃火锅了\nCancel（取消执行）：如果你临时有事不去了，餐厅会把你的座位释放出来，别人可以预订\nSAGA（补偿事务）模式，是一种长事务管理模式，适用于 异步、非实时的业务。核心思路是：“如果某个步骤失败，就执行补偿操作撤销已完成的步骤” 。\n假设你在电商平台下单：\n用户下单，订单服务创建订单\n扣减库存\n扣款支付\n通知商家发货\n如果第 4 步失败了（比如商家没货），SAGA 需要执行补偿操作：\n退款\n回复库存\n取消订单\n与 TCC 不同的是，SAGA 不用预留资源，而是进行补偿操作，更适合长时间运行的事务，比如机票预订、物流订单等\n如何防止恶意用户利用支付系统进行欺诈或盗刷？\n结合 IP、设备指纹、地理位置、交易习惯 进行用户风险评分\n黑名单系统，记录欺诈用户、异常设备、IP 段，拒绝高风险交易\n如何确保支付系统 24 小时高可用，不因系统故障影响资金流转？\n多活架构，采用 双机房 + 多活部署（如主流银行的两地三中心）\n负载均衡，进行流量分发，避免单点故障\nRaft/Paxos 分布式一致性协议，保证支付系统在节点故障时可自动切换\n定期进行 容灾演练，确保故障时可以快速恢复\n2.为什么使用 RocketMQ 而不是其他的消息队列？ 商城项目往往会有很高的在线人数，需要高吞吐量，RabbitMQ 就不适合高吞吐场景 电商场景下，要求整体延迟低，RocketMQ 在延迟方面表现更好，适合金融、电商等场景 电商平台中，订单、交易等场景需要保证消息的消费顺序，RocketMQ 支持全局顺序消息和分区顺序消息，适合需要严格顺序的场景 RocketMQ 使用 java 开发，和项目联系更紧密 RocketMQ 顺序消息如何实现？\n确保同一业务的消息 按顺序 发送到同一个队列中，并由同一个消费者线程 按顺序 消费 队列锁机制：每个 queue 都分配一个锁，确保同一时间只有一个线程消费该 queue 的消息，这样可以避免多个线程同时消费同一个 queue 导致消息乱序 消费者 在本地维护一个队列，按照消息的存储顺序逐个处理 消息消费失败，RocketMQ 会将消息重新放入队列，等待下一次消费 ","wordCount":"126","inLanguage":"en","datePublished":"0001-01-01T00:00:00Z","dateModified":"0001-01-01T00:00:00Z","mainEntityOfPage":{"@type":"WebPage","@id":"https://yuk1pedia.github.io/learning-notes/2025-3-15-oomall/"},"publisher":{"@type":"Organization","name":"YUKIPEDIA's blog","logo":{"@type":"ImageObject","url":"https://yuk1pedia.github.io/favicon.ico"}}}</script></head><body id=top><script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add("dark"):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove("dark"):window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=https://yuk1pedia.github.io/ accesskey=h title="YUKIPEDIA's blog (Alt + H)">YUKIPEDIA's blog</a><div class=logo-switches><button id=theme-toggle accesskey=t title="(Alt + T)" aria-label="Toggle theme">
-<svg id="moon" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-<svg id="sun" width="24" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button></div></div><ul id=menu><li><a href=https://yuk1pedia.github.io/learning-notes title="Learning Notes"><span>Learning Notes</span></a></li></ul></nav></header><main class=main><article class=post-single><header class=post-header><h1 class="post-title entry-hint-parent">OOMALL相关扩展思考</h1><div class=post-description>记录</div><div class=post-meta></div></header><div class=post-content><p><img alt=image.png loading=lazy src=https://s2.loli.net/2025/03/15/kGHanfEPQKJZ3hU.png></p><h2 id=1电商往往会涉及到资金的流转在后端方面如何保证资金在电商平台上的安全>1.电商往往会涉及到资金的流转，在后端方面如何保证资金在电商平台上的安全？<a hidden class=anchor aria-hidden=true href=#1电商往往会涉及到资金的流转在后端方面如何保证资金在电商平台上的安全>#</a></h2><ol><li><p>如何确保用户账户、支付信息不被篡改或盗用？</p><ul><li><p>可以采用双重身份验证，引入短信验证码、邮箱验证码进行二次验证</p></li><li><p>用户支付密码需要避免明文存储，可以采用 <strong>PBKDF2</strong> 或者 <strong>Argon2 哈希存储</strong></p></li><li><p>防止暴力破解，限制支付密码输入错误次数，超过阈值后进行账户锁定或额外验证</p></li><li><p>补充：</p><ul><li><p>PBKDF2（Password-Based Key Derivation Function 2）会对密码进行多次加密，让破解变得非常困难</p><ul><li>原理：用户输入密码，例如 <code>mypassword123 </code>，系统给它加点“盐”（随机数据），比如 <code>randomsalt</code> ，再用 PBKDF2 算法反复进行哈希运算，得到最终的哈希值，存入数据库</li></ul></li><li><p>Argon2 是一种更<strong>先进的哈希算法</strong>，相比 PBKDF2，它不仅反复 “加密” ，还让计算过程 <strong>更吃内存</strong>，这样黑客即使使用高性能 GPU 或专门的破解硬件，也很难暴力破解</p></li></ul></li></ul></li><li><p>如何保证用户支付、退款等资金操作不会因为系统异常导致<strong>资金错账或丢失</strong>？</p><ul><li><p>采用分布式事务保障</p><ul><li><strong>TCC 事务机制</strong>：Try 预留资金（冻结余额）、Confirm 确认扣款（实际转账）、Cancel 取消预留（释放资金）</li><li><strong>SAGA 事务模式</strong>：长事务，如跨行转账，采用补偿机制回滚失败操作</li><li><strong>消息事务 + 幂等处理</strong>：采用 RocketMQ 的半消息机制实现消息事务，支付成功后发送事务消息到 MQ，再异步更新订单状态。注意订单状态更新必须是 <strong>幂等的</strong>，防止消息重复消费</li></ul></li><li><p>对账机制</p><ul><li>定期对账（商户、银行、用户对账），发现差异立即报警</li><li>记录交易日志，提高不可篡改性</li></ul></li><li><p>补充：</p><ul><li><p><strong>TCC（Try-Confirm-Cancel）<strong>是一种 <strong>两阶段提交（2PC）</strong> 的思想（TCC 可以保证事务操作的严格执行，不会出现一部分成功，一部分失败的情况），核心思路是：</strong>“先预留资源，再真正提交，失败后回滚”</strong> 。举个例子，你去餐厅订了一桌火锅，整个流程是这样的：</p><ol><li><p>Try（尝试扣留资源）：你打电话订座，餐厅告诉你“位置已预留”，但还没真正让你入座</p></li><li><p>Confirm（确认执行）：你准时到达餐厅，餐厅正式给你安排座位，你可以开始吃火锅了</p></li><li><p>Cancel（取消执行）：如果你临时有事不去了，餐厅会把你的座位释放出来，别人可以预订</p></li></ol></li><li><p>SAGA（补偿事务）模式，是一种<strong>长事务管理</strong>模式，适用于 <strong>异步、非实时的业务</strong>。核心思路是：<strong>“如果某个步骤失败，就执行补偿操作撤销已完成的步骤”</strong> 。</p><ul><li><p>假设你在电商平台下单：</p><ol><li><p>用户下单，订单服务创建订单</p></li><li><p>扣减库存</p></li><li><p>扣款支付</p></li><li><p>通知商家发货</p></li></ol></li><li><p>如果第 4 步失败了（比如商家没货），SAGA 需要执行补偿操作：</p><ul><li><p>退款</p></li><li><p>回复库存</p></li><li><p>取消订单</p></li><li><p>与 TCC 不同的是，SAGA 不用预留资源，而是进行补偿操作，更适合长时间运行的事务，比如机票预订、物流订单等</p></li></ul></li></ul></li></ul></li></ul></li><li><p>如何防止恶意用户利用支付系统进行欺诈或盗刷？</p><ul><li><p>结合 <strong>IP、设备指纹、地理位置、交易习惯</strong> 进行用户风险评分</p></li><li><p>黑名单系统，记录欺诈用户、异常设备、IP 段，拒绝高风险交易</p></li></ul></li><li><p>如何确保支付系统 24 小时高可用，不因系统故障影响资金流转？</p><ul><li><p>多活架构，采用 双机房 + 多活部署（如主流银行的两地三中心）</p></li><li><p>负载均衡，进行流量分发，避免单点故障</p></li><li><p><strong>Raft/Paxos 分布式一致性协议</strong>，保证支付系统在节点故障时可自动切换</p></li><li><p>定期进行 <strong>容灾演练</strong>，确保故障时可以快速恢复</p></li></ul></li></ol><h2 id=2为什么使用-rocketmq-而不是其他的消息队列>2.为什么使用 RocketMQ 而不是其他的消息队列？<a hidden class=anchor aria-hidden=true href=#2为什么使用-rocketmq-而不是其他的消息队列>#</a></h2><ul><li>商城项目往往会有很高的在线人数，需要高吞吐量，RabbitMQ 就不适合高吞吐场景</li><li>电商场景下，要求整体延迟低，RocketMQ 在延迟方面表现更好，适合金融、电商等场景</li><li>电商平台中，订单、交易等场景需要保证消息的消费顺序，RocketMQ 支持全局顺序消息和分区顺序消息，适合需要严格顺序的场景</li><li>RocketMQ 使用 java 开发，和项目联系更紧密</li></ul><p><strong>RocketMQ 顺序消息如何实现？</strong></p><ul><li>确保同一业务的消息 <strong>按顺序</strong> 发送到同一个队列中，并由同一个消费者线程 <strong>按顺序</strong> 消费</li><li>队列锁机制：每个 queue 都分配一个锁，确保同一时间只有一个线程消费该 queue 的消息，这样可以避免多个线程同时消费同一个 queue 导致消息乱序</li><li><strong>消费者</strong> 在本地维护一个队列，按照消息的存储顺序逐个处理</li><li>消息消费失败，RocketMQ 会将消息重新放入队列，等待下一次消费</li></ul></div><footer class=post-footer><ul class=post-tags></ul></footer></article></main><footer class=footer><span>&copy; 2025 <a href=https://yuk1pedia.github.io/>YUKIPEDIA's blog</a></span> ·
-<span>Powered by
-<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-<a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg viewBox="0 0 12 6" fill="currentColor"><path d="M12 6H0l6-6z"/></svg>
-</a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script><script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove("dark"),localStorage.setItem("pref-theme","light")):(document.body.classList.add("dark"),localStorage.setItem("pref-theme","dark"))})</script></body></html>
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="noindex, nofollow">
+<title>OOMALL相关扩展思考 | YUKIPEDIA&#39;s blog</title>
+<meta name="keywords" content="">
+<meta name="description" content="记录">
+<meta name="author" content="">
+<link rel="canonical" href="http://localhost:1313/learning-notes/2025-3-15-oomall/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.36819bea596090d8b48cf10d9831382996197aa7e4fc86f792f7c08c9ca4d23b.css" integrity="sha256-NoGb6llgkNi0jPENmDE4KZYZeqfk/Ib3kvfAjJyk0js=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://localhost:1313/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://localhost:1313/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://localhost:1313/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://localhost:1313/apple-touch-icon.png">
+<link rel="mask-icon" href="http://localhost:1313/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://localhost:1313/learning-notes/2025-3-15-oomall/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --code-block-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://localhost:1313/" accesskey="h" title="YUKIPEDIA&#39;s blog (Alt + H)">YUKIPEDIA&#39;s blog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)" aria-label="Toggle theme">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://localhost:1313/learning-notes" title="Learning Notes">
+                    <span>Learning Notes</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://localhost:1313/algorithm" title="Algorithm">
+                    <span>Algorithm</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title entry-hint-parent">
+      OOMALL相关扩展思考
+    </h1>
+    <div class="post-description">
+      记录
+    </div>
+    <div class="post-meta">
+
+</div>
+  </header> 
+  <div class="post-content"><p><img alt="image.png" loading="lazy" src="https://s2.loli.net/2025/03/15/kGHanfEPQKJZ3hU.png"></p>
+<h2 id="1电商往往会涉及到资金的流转在后端方面如何保证资金在电商平台上的安全">1.电商往往会涉及到资金的流转，在后端方面如何保证资金在电商平台上的安全？<a hidden class="anchor" aria-hidden="true" href="#1电商往往会涉及到资金的流转在后端方面如何保证资金在电商平台上的安全">#</a></h2>
+<ol>
+<li>
+<p>如何确保用户账户、支付信息不被篡改或盗用？</p>
+<ul>
+<li>
+<p>可以采用双重身份验证，引入短信验证码、邮箱验证码进行二次验证</p>
+</li>
+<li>
+<p>用户支付密码需要避免明文存储，可以采用 <strong>PBKDF2</strong> 或者 <strong>Argon2 哈希存储</strong></p>
+</li>
+<li>
+<p>防止暴力破解，限制支付密码输入错误次数，超过阈值后进行账户锁定或额外验证</p>
+</li>
+<li>
+<p>补充：</p>
+<ul>
+<li>
+<p>PBKDF2（Password-Based Key Derivation Function 2）会对密码进行多次加密，让破解变得非常困难</p>
+<ul>
+<li>原理：用户输入密码，例如 <code>mypassword123 </code>，系统给它加点“盐”（随机数据），比如 <code>randomsalt</code> ，再用 PBKDF2 算法反复进行哈希运算，得到最终的哈希值，存入数据库</li>
+</ul>
+</li>
+<li>
+<p>Argon2 是一种更<strong>先进的哈希算法</strong>，相比 PBKDF2，它不仅反复 “加密” ，还让计算过程 <strong>更吃内存</strong>，这样黑客即使使用高性能 GPU 或专门的破解硬件，也很难暴力破解</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>如何保证用户支付、退款等资金操作不会因为系统异常导致<strong>资金错账或丢失</strong>？</p>
+<ul>
+<li>
+<p>采用分布式事务保障</p>
+<ul>
+<li><strong>TCC 事务机制</strong>：Try 预留资金（冻结余额）、Confirm 确认扣款（实际转账）、Cancel 取消预留（释放资金）</li>
+<li><strong>SAGA 事务模式</strong>：长事务，如跨行转账，采用补偿机制回滚失败操作</li>
+<li><strong>消息事务 + 幂等处理</strong>：采用 RocketMQ 的半消息机制实现消息事务，支付成功后发送事务消息到 MQ，再异步更新订单状态。注意订单状态更新必须是 <strong>幂等的</strong>，防止消息重复消费</li>
+</ul>
+</li>
+<li>
+<p>对账机制</p>
+<ul>
+<li>定期对账（商户、银行、用户对账），发现差异立即报警</li>
+<li>记录交易日志，提高不可篡改性</li>
+</ul>
+</li>
+<li>
+<p>补充：</p>
+<ul>
+<li>
+<p><strong>TCC（Try-Confirm-Cancel）<strong>是一种 <strong>两阶段提交（2PC）</strong> 的思想（TCC 可以保证事务操作的严格执行，不会出现一部分成功，一部分失败的情况），核心思路是：</strong>“先预留资源，再真正提交，失败后回滚”</strong> 。举个例子，你去餐厅订了一桌火锅，整个流程是这样的：</p>
+<ol>
+<li>
+<p>Try（尝试扣留资源）：你打电话订座，餐厅告诉你“位置已预留”，但还没真正让你入座</p>
+</li>
+<li>
+<p>Confirm（确认执行）：你准时到达餐厅，餐厅正式给你安排座位，你可以开始吃火锅了</p>
+</li>
+<li>
+<p>Cancel（取消执行）：如果你临时有事不去了，餐厅会把你的座位释放出来，别人可以预订</p>
+</li>
+</ol>
+</li>
+<li>
+<p>SAGA（补偿事务）模式，是一种<strong>长事务管理</strong>模式，适用于 <strong>异步、非实时的业务</strong>。核心思路是：<strong>“如果某个步骤失败，就执行补偿操作撤销已完成的步骤”</strong> 。</p>
+<ul>
+<li>
+<p>假设你在电商平台下单：</p>
+<ol>
+<li>
+<p>用户下单，订单服务创建订单</p>
+</li>
+<li>
+<p>扣减库存</p>
+</li>
+<li>
+<p>扣款支付</p>
+</li>
+<li>
+<p>通知商家发货</p>
+</li>
+</ol>
+</li>
+<li>
+<p>如果第 4 步失败了（比如商家没货），SAGA 需要执行补偿操作：</p>
+<ul>
+<li>
+<p>退款</p>
+</li>
+<li>
+<p>回复库存</p>
+</li>
+<li>
+<p>取消订单</p>
+</li>
+<li>
+<p>与 TCC 不同的是，SAGA 不用预留资源，而是进行补偿操作，更适合长时间运行的事务，比如机票预订、物流订单等</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>如何防止恶意用户利用支付系统进行欺诈或盗刷？</p>
+<ul>
+<li>
+<p>结合 <strong>IP、设备指纹、地理位置、交易习惯</strong> 进行用户风险评分</p>
+</li>
+<li>
+<p>黑名单系统，记录欺诈用户、异常设备、IP 段，拒绝高风险交易</p>
+</li>
+</ul>
+</li>
+<li>
+<p>如何确保支付系统 24 小时高可用，不因系统故障影响资金流转？</p>
+<ul>
+<li>
+<p>多活架构，采用 双机房 + 多活部署（如主流银行的两地三中心）</p>
+</li>
+<li>
+<p>负载均衡，进行流量分发，避免单点故障</p>
+</li>
+<li>
+<p><strong>Raft/Paxos 分布式一致性协议</strong>，保证支付系统在节点故障时可自动切换</p>
+</li>
+<li>
+<p>定期进行 <strong>容灾演练</strong>，确保故障时可以快速恢复</p>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="2为什么使用-rocketmq-而不是其他的消息队列">2.为什么使用 RocketMQ 而不是其他的消息队列？<a hidden class="anchor" aria-hidden="true" href="#2为什么使用-rocketmq-而不是其他的消息队列">#</a></h2>
+<ul>
+<li>商城项目往往会有很高的在线人数，需要高吞吐量，RabbitMQ 就不适合高吞吐场景</li>
+<li>电商场景下，要求整体延迟低，RocketMQ 在延迟方面表现更好，适合金融、电商等场景</li>
+<li>电商平台中，订单、交易等场景需要保证消息的消费顺序，RocketMQ 支持全局顺序消息和分区顺序消息，适合需要严格顺序的场景</li>
+<li>RocketMQ 使用 java 开发，和项目联系更紧密</li>
+</ul>
+<p><strong>RocketMQ 顺序消息如何实现？</strong></p>
+<ul>
+<li>确保同一业务的消息 <strong>按顺序</strong> 发送到同一个队列中，并由同一个消费者线程 <strong>按顺序</strong> 消费</li>
+<li>队列锁机制：每个 queue 都分配一个锁，确保同一时间只有一个线程消费该 queue 的消息，这样可以避免多个线程同时消费同一个 queue 导致消息乱序</li>
+<li><strong>消费者</strong> 在本地维护一个队列，按照消息的存储顺序逐个处理</li>
+<li>消息消费失败，RocketMQ 会将消息重新放入队列，等待下一次消费</li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+        <span>&copy; 2025 <a href="http://localhost:1313/">YUKIPEDIA&#39;s blog</a></span> · 
+
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
